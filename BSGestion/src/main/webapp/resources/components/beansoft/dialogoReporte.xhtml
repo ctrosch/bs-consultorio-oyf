@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"     
+     xmlns:composite="http://java.sun.com/jsf/composite"
+     xmlns:p="http://primefaces.org/ui">
+ <h:head>
+
+   <title></title>
+
+ </h:head>
+
+ <h:body>
+	
+   <composite:interface displayName="Ingrese valor de mostrar reporte y nombre de archivo" >
+      <composite:attribute name="nombreArchivo" required="true" />
+      <composite:attribute name="muestraReporte" required="true" />      
+   </composite:interface>
+
+   <composite:implementation>
+       
+       <p:dialog id="dlgReporte" header="Impresión" width="100%"  modal="true"
+          widgetVar="dlg_reporte"
+          resizable="false" draggable="false" closable="true"
+          position="top"
+          responsive="true"
+          minHeight="600" 
+          showEffect="fade" hideEffect="fade"          
+          onShow="heightSize();"> 
+            <p:outputPanel id="reporte" styleClass="ui-g-12"
+                       rendered="#{cc.attrs.muestraReporte}">   
+
+                <iframe id="frame" style="border: none;"
+                        src="/#{aplicacionBean.parametro.nombreCarpetaArchivos}/temporales/#{cc.attrs.nombreArchivo}.pdf" 
+                        width="100%" height="300">
+                </iframe>                   
+            </p:outputPanel>                
+        </p:dialog>    
+
+       <div class="EmptyBox10" />
+       
+   </composite:implementation>
+
+ </h:body>
+
+</html>

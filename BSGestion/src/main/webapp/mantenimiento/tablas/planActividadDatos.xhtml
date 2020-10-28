@@ -1,0 +1,112 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid id="datos" columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+        <h:outputText value="Código *" />
+        <p:inputText value="#{planActividadBean.planActividad.codigo}" maxlength="10"
+                     required="true" requiredMessage="El código es obligatorio" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{planActividadBean.planActividad.descripcion}" maxlength="120"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+    </p:panelGrid>
+
+    <p:tabView activeIndex="#{planActividadBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{planActividadBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Actividades">
+
+            <p:dataTable id="actividades" style="max-width: 700px;" var="e" value="#{planActividadBean.planActividad.itemsPlanActividad}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{planActividadBean.nuevoItemPlanActividad()}"
+                                     value="Agregar "
+                                     process="actividades"
+                                     update="actividades" />
+
+                </f:facet>
+
+                <p:column headerText="Nro. Orden" width="100"
+                          sortBy="#{e.nroOrden}" >
+                    <p:inputText value="#{e.nroOrden}" styleClass="TexAlRight" >
+                        <f:convertNumber pattern="0" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Actividad"
+                          sortBy="#{e.actividad.descripcion}" >
+
+                    <div class="ui-inputgroup">
+
+                        <p:autoComplete value="#{e.actividad}" dropdown="true" forceSelection="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="La Actividad es obligatoria"
+                                        completeMethod="#{actividadBean.complete}"
+                                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresMantenimiento.actividad}"  >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this"/>
+
+                            <p:column headerText="Código" width="100">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Actividad" url="#{planActividadBean.obtenerUrlMenu('SIS_00617','CODIGO',e.actividad.codigo)}" />
+                        </span>
+
+                    </div>
+
+                </p:column>
+
+
+
+                <p:column headerText="Observaciones" styleClass="TexAlCenter"
+                          sortBy="#{e.observacion}"   >
+                    <p:inputText value="#{e.observacion}" />
+                </p:column>
+
+
+                <p:column headerText="" width="50" styleClass="TexAlCenter" >
+
+                    <p:commandLink process="actividades" update="actividades,message,messageg"
+                                   actionListener="#{planActividadBean.eliminarItemPlanActividad(e)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+    </p:tabView>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

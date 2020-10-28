@@ -1,0 +1,218 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{notificacionBean.notificacion.codigo}" maxlength="6"
+                     required="true" requiredMessage="El código es obligatorio" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{notificacionBean.notificacion.descripcion}" maxlength="200"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+    </p:panelGrid>
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <bs:outputTexWhitLink value="Módulo"
+                              url="#{notificacionBean.obtenerUrlMenu('SIS_00217','CODIGO',notificacionBean.notificacion.modulo.codigo)}" />
+
+        <p:autoComplete value="#{notificacionBean.notificacion.modulo}" forceSelection="true" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{moduloBean.complete}"
+                        var="m" itemLabel="#{m.descripcion}" itemValue="#{m}"
+                        converter="#{conversoresGeneral.modulo}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this,listareportes"  listener="#{notificacionBean.asignarModulo()}" />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{m.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{m.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <bs:outputTexWhitLink value="Reporte"
+                              url="#{notificacionBean.obtenerUrlMenu('SIS_00315','CODIGO',notificacionBean.notificacion.reporte.codigo)}" />
+
+        <p:autoComplete id="listareportes" value="#{notificacionBean.notificacion.reporte}" forceSelection="true" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{notificacionBean.completeReporte}"
+                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                        converter="#{conversoresAdministracion.reporte}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Módulo">
+                <h:outputText value="#{p.modulo.codigo}" />
+            </p:column>
+
+            <p:column headerText="Código">
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{p.nombre}" />
+            </p:column>
+
+            <p:column headerText="Origen">
+                <h:outputText value="#{p.origen}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <h:outputText value="Envío Email *" />
+        <p:selectOneRadio value="#{notificacionBean.notificacion.email}"
+                          required="true" requiredMessage="Indique si envía email" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+
+        <h:outputText value="Envío Mensaje Push *" />
+        <p:selectOneRadio value="#{notificacionBean.notificacion.mensajePush}"
+                          required="true" requiredMessage="Indique si envía mensaje push" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+
+        <h:outputText value="Envío WhatsApp *" />
+        <p:selectOneRadio value="#{notificacionBean.notificacion.whatsapp}"
+                          required="true" requiredMessage="Indique si envía WhatsApp" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+    </p:panelGrid>
+
+    <p:tabView activeIndex="#{notificacionBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{notificacionBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Usuarios">
+
+            <p:dataTable id="usuarios" style="max-width: 500px;" var="u" value="#{notificacionBean.notificacion.usuarios}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{notificacionBean.nuevoItemUsuario() }"
+                                     value="Agregar"
+                                     process="usuarios"
+                                     update="usuarios" />
+
+                </f:facet>
+
+                <p:column headerText="Nombre" width="150"
+                          sortBy="#{u.usuario.nombre}"  >
+                    <p:autoComplete value="#{u.usuario}"  dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{usuarioBean.complete}"
+                                    required="true" requiredMessage="El usuario es obligatorio"
+                                    var="e" itemLabel="#{e.nombre}" itemValue="#{e}"
+                                    converter="#{conversoresSeguridad.usuario}" >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+                    </p:autoComplete>
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="usuarios" update="usuarios,message,messageg"
+                                   actionListener="#{notificacionBean.eliminarItemUsuario(u) }" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Grupos">
+
+            <p:dataTable id="grupos" style="max-width: 500px;" var="g" value="#{notificacionBean.notificacion.grupos}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{notificacionBean.nuevoItemGrupo()}"
+                                     value="Agregar"
+                                     process="grupos"
+                                     update="grupos" />
+
+                </f:facet>
+
+                <p:column headerText="Grupo" width="150"
+                          sortBy="#{g.grupo.descripcion}"  >
+                    <p:autoComplete value="#{g.grupo}"  dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{grupoBean.complete}"
+                                    required="true" requiredMessage="El grupo es obligatorio"
+                                    var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"
+                                    converter="#{conversoresSeguridad.grupo}" >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+                    </p:autoComplete>
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="grupos" update="grupos,message,messageg"
+                                   actionListener="#{notificacionBean.eliminarItemGrupo(g)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

@@ -1,0 +1,161 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid"
+                 rendered="#{not empty movimientoStockBean.m and not movimientoStockBean.buscaMovimiento}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario" />
+        <p:inputText value="#{movimientoStockBean.m.formulario.descripcion}" readonly="true" />
+
+        <h:outputText value="Pto. Venta" rendered="#{movimientoStockBean.muestroCampo('C','PTOVTA')}" />
+        <p:inputText value="#{movimientoStockBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{movimientoStockBean.muestroCampo('C','PTOVTA')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" />
+        <p:inputText value="#{movimientoStockBean.m.numeroFormulario}" readonly="true" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{movimientoStockBean.muestroCampo('C','FCHMOV')}" />
+
+
+        <p:calendar value="#{movimientoStockBean.m.fechaMovimiento}"
+                    disabled="#{movimientoStockBean.m.formulario.modificaFecha ne 'S'}"
+                    rendered="#{movimientoStockBean.muestroCampo('C','FCHMOV')}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{movimientoStockBean.fechaMovimientoMaxima}" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 rendered="#{not empty movimientoStockBean.m and not movimientoStockBean.buscaMovimiento}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"  >
+
+        <bs:outputTexWhitLink value="Deposito "
+                              rendered="#{movimientoStockBean.m.tipoMovimiento ne 'T'}"
+                              url="#{movimientoStockBean.obtenerUrlMenu('SIS_00140','CODIGO',movimientoStockBean.m.deposito.codigo)}" />
+        <p:autoComplete value="#{movimientoStockBean.m.deposito}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        rendered="#{movimientoStockBean.m.tipoMovimiento ne 'T'}"
+                        disabled="#{not movimientoStockBean.detalleVacio}"
+                        completeMethod="#{depositoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresStock.deposito}"   >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" rendered="#{movimientoStockBean.m.tipoMovimiento ne 'T'}" />
+        <h:outputText value="" rendered="#{movimientoStockBean.m.tipoMovimiento ne 'T'}"/>
+
+
+        <bs:outputTexWhitLink value="Deposito egreso"
+                              rendered="#{movimientoStockBean.m.tipoMovimiento eq 'T'}"
+                              url="#{movimientoStockBean.obtenerUrlMenu('SIS_00140','CODIGO',movimientoStockBean.m.depositoTransferencia.codigo)}" />
+        <p:autoComplete value="#{movimientoStockBean.m.depositoTransferencia}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        rendered="#{movimientoStockBean.m.tipoMovimiento eq 'T' }"
+                        disabled="#{not movimientoStockBean.detalleVacio}"
+                        completeMethod="#{depositoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresStock.deposito}"   >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <bs:outputTexWhitLink value="Deposito ingreso"
+                              rendered="#{movimientoStockBean.m.tipoMovimiento eq 'T'}"
+                              url="#{movimientoStockBean.obtenerUrlMenu('SIS_00140','CODIGO',movimientoStockBean.m.deposito.codigo)}" />
+        <p:autoComplete value="#{movimientoStockBean.m.deposito}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        rendered="#{movimientoStockBean.m.tipoMovimiento eq 'T'}"
+                        disabled="#{not movimientoStockBean.detalleVacio}"
+                        completeMethod="#{depositoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresStock.deposito}"   >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Mascara de stock"
+                              rendered="#{movimientoStockBean.muestroCampo('C','MASCAR')}"
+                              url="#{movimientoStockBean.obtenerUrlMenu('SIS_00368','CODIGO',movimientoStockBean.m.mascara.codigo)}" />
+        <p:autoComplete value="#{movimientoStockBean.m.mascara}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoStockBean.muestroCampo('C','MASCAR')}"
+                        maxResults="8" queryDelay="1000"
+                        disabled="#{not movimientoStockBean.detalleVacio}"
+                        completeMethod="#{mascaraStockBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresStock.mascaraStock}"   >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoStockBean.procesarMascaraStock()}" />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="2" value="#{movimientoStockBean.m.observaciones}" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+
+</ui:composition>
+

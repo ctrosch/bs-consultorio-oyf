@@ -1,0 +1,117 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{listaPrecioVentaBean.listaDePrecio.codigo}"
+                     readonly="#{not listaPrecioVentaBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{listaPrecioVentaBean.listaDePrecio.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Moneda " />
+        <p:selectOneMenu value="#{listaPrecioVentaBean.listaDePrecio.moneda}"
+                         required="true" requiredMessage="Seleccione la moneda"
+                         converter="#{conversoresGeneral.moneda}" >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Prioriza moneda producto" />
+        <p:selectOneRadio value="#{listaPrecioVentaBean.listaDePrecio.priorizaMonedaProducto}"
+                          >
+            <f:selectItem itemLabel="Si"  itemValue="S" />
+            <f:selectItem itemLabel="No"  itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Incluye Impuesto" />
+        <p:selectOneRadio value="#{listaPrecioVentaBean.listaDePrecio.incluyeImpuestos}"
+                          >
+            <f:selectItem itemLabel="Si"  itemValue="S" />
+            <f:selectItem itemLabel="No"  itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Precio mínimo" />
+        <p:inputText value="#{listaPrecioVentaBean.listaDePrecio.precioMinimo}"
+                     required="true"
+                     requiredMessage="El precio mínimo es obligatorio" >
+            <f:convertNumber pattern="#,##0.00"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Precio Máximo" />
+        <p:inputText value="#{listaPrecioVentaBean.listaDePrecio.precioMaximo}"
+                     required="true"
+                     requiredMessage="El precio máximo es obligatorio" >
+            <f:convertNumber pattern="#,##0.00"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Calcula Precio Desde Utilidad" />
+        <p:selectOneRadio value="#{listaPrecioVentaBean.listaDePrecio.calculaPrecioDesdeUtilidad}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="Container10, Container90" >
+
+        <h:panelGroup layout="block" >
+            <h:outputText value="Utilidad" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+            <p:selectOneRadio value="#{listaPrecioVentaBean.listaDePrecio.utilidadParaCalcularPrecio}" >
+                <f:selectItem itemLabel="Utilidad 1" itemValue="1" />
+                <f:selectItem itemLabel="Utilidad 2" itemValue="2" />
+                <f:selectItem itemLabel="Utilidad 3" itemValue="3" />
+                <f:selectItem itemLabel="Utilidad 4" itemValue="4" />
+                <f:selectItem itemLabel="Utilidad 5" itemValue="5" />
+                <f:selectItem itemLabel="No Corresponde" itemValue="0" />
+            </p:selectOneRadio>
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+
+
+</ui:composition>
+

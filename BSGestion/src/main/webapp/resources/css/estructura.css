@@ -1,0 +1,119 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/*
+    Created on : 04/11/2014, 19:08:09
+    Author     : Claudio
+*/
+
+body {
+    margin-left: 0px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    font-family: 'Droid Sans', sans-serif,Verdana;
+    font-size: 12px !important;
+
+}
+
+body {
+
+    /*background: url('../resources/fondos/#{aplicacionBean.parametro.fondo}');*/
+    display: block;
+    height: 0;
+    padding-bottom: 62.571428571429%;
+    background-size: 100%;
+
+}
+
+.envoltura {
+
+    width:100%;
+    height:auto;
+    border: 1px solid olive;
+    background-color: teal;
+    position: relative;
+    clear: both;
+}
+
+.header{
+
+    width:100%;
+    height:50px;
+    position: relative;
+    top: 0px;
+    float: left;
+    padding: 5px;
+    background-color: orange;
+}
+
+.header .logo{
+    width: 15%;
+    height: 50px;
+    position: relative;
+    float: left;
+    background-color: tomato;
+}
+
+.header .logo img{
+
+    width: 100%;
+    height: 100%;
+}
+
+.header .centro{
+
+    width:70%;
+    height: 50px;
+    position: relative;
+    float: left;
+    background-color: yellowgreen;
+    text-align: center;
+
+}
+
+.header .derecha{
+
+    width: 15%;
+    height: 50px;
+    position: relative;
+    float: right;
+    background-color: tomato;
+}
+
+.center{
+
+    width:100%;
+    min-height: 480px;
+    position: relative;
+    float: left;
+    padding-top: 0.3em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    margin-left:auto;
+    margin-right:auto;
+    clear: both;
+}
+
+.content {
+    width:980px;
+    height: auto;
+    margin-left:auto;
+    margin-right:auto;
+    background-color: yellowgreen;
+}
+
+.footer {
+
+    width:100%;
+    height:30px;
+    bottom: 0px;
+    position:relative;
+    float:left;
+    text-align: center;
+    background-color:green;
+
+}
+

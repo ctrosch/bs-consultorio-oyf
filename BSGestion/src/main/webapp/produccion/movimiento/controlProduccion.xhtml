@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"      value="#{controlProduccionBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{controlProduccionBean.titulo}"/>
+
+            <f:event type="preRenderView" listener="#{controlProduccionBean.iniciarVariables()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{controlProduccionBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="6" styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+                <h:outputText value="Operario" />
+                <p:inputText value="#{controlProduccionBean.ordenesControl.get(0)[2]}" readonly="true" />
+
+                <h:outputText value="Fecha" />
+                <p:inputText value="#{controlProduccionBean.ordenesControl.get(0)[0]}" readonly="true" />
+
+                <h:outputText value="Turno" />
+                <p:inputText value="#{controlProduccionBean.ordenesControl.get(0)[1]}" readonly="true" />
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+            <p:tabView  >
+
+                <p:tab title="Ordenes de control" >
+
+                    <p:dataTable value="#{controlProduccionBean.ordenesControl}" var="i"
+                                 resizeMode="expand" liveResize="true"
+                                 emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+                        <f:facet name="footer">
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             value="Agregar orden " actionListener="#" />
+                        </f:facet>
+
+                        <p:column headerText="Fecha" width="70" >
+                            <h:outputText value="#{i[0]}" />
+                        </p:column>
+
+                        <p:column headerText="Turno" width="70" >
+                            <h:outputText value="#{i[1]}" />
+                        </p:column>
+
+
+                        <p:column headerText="Operario" width="300" >
+                            <h:outputText value="#{i[2]}" />
+                        </p:column>
+
+                        <p:column headerText="Actualizó Stock" width="70" >
+                            <h:outputText value="#{i[3]}" />
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:tab>
+
+                <p:tab title="Producción programada" >
+
+                    <p:dataTable value="#{controlProduccionBean.produccionProgramada}" var="i"
+                                 resizeMode="expand" liveResize="true"
+                                 emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+                        <f:facet name="footer">
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             value="Agregar producto" actionListener="#" />
+                        </f:facet>
+
+                        <p:column headerText="Código" width="100" >
+                            <h:outputText value="#{i[0]}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción" width="300" >
+                            <h:outputText value="#{i[1]}" />
+                        </p:column>
+
+
+                        <p:column headerText="C. Programado" width="120" >
+                            <h:outputText value="#{i[2]}" />
+                        </p:column>
+
+                        <p:column headerText="Cajas x Pallets" width="120" >
+                            <h:outputText value="#{i[3]}" />
+                        </p:column>
+
+                        <p:column headerText="Código de barras" width="150" >
+                            <h:outputText value="#{i[4]}" />
+                        </p:column>
+
+                    </p:dataTable>
+
+
+                </p:tab>
+
+                <p:tab title="Ingreso producción" >
+
+                    <p:panelGrid columns="2" styleClass="ui-panelgrid-blank"
+                                 columnClasses="ui-g-3,ui-g-9">
+
+                        <h:panelGroup layout="block" >
+
+                            <p:fieldset legend="Modo de ingreso" >
+
+                                <p:selectManyCheckbox value="#{controlProduccionBean.modoIngresoSeleccionado}">
+                                    <f:selectItem itemLabel="Automático" itemValue="A" />
+                                    <f:selectItem itemLabel="Manual" itemValue="M" />
+                                </p:selectManyCheckbox>
+
+                            </p:fieldset>
+
+                            <div class="EmptyBox10"></div>
+
+                            <p:fieldset legend="Lector" >
+
+                                <p:inputText value="" />
+
+                            </p:fieldset>
+
+                            <div class="EmptyBox50"></div>
+
+                            <h3>Notas al operario</h3>
+                            <p:inputTextarea rows="6" cols="30" style="width: 100%;" />
+                            <div class="EmptyBox10"></div>
+                            <h3>Observaciones</h3>
+                            <p:inputTextarea rows="6" cols="30" style="width: 100%;" />
+
+                        </h:panelGroup>
+
+
+                        <p:dataTable value="#{controlProduccionBean.detalleProduccion}" var="i"
+                                     resizeMode="expand" liveResize="true"
+                                     emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+                            <f:facet name="footer">
+                                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                                 value="Agregar producto" actionListener="#" />
+                            </f:facet>
+
+                            <p:column headerText="Código" width="100" >
+                                <h:outputText value="#{i[0]}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción" width="300" >
+                                <h:outputText value="#{i[1]}" />
+                            </p:column>
+
+
+                            <p:column headerText="Cajas" width="120" >
+                                <h:outputText value="#{i[2]}" />
+                            </p:column>
+
+                            <p:column headerText="Lote" width="120" >
+                                <h:outputText value="#{i[3]}" />
+                            </p:column>
+
+                            <p:column headerText="Hora" width="150" >
+                                <h:outputText value="#{i[4]}" />
+                            </p:column>
+
+                            <p:column headerText="" width="70" >
+                                <p:commandButton value="Anular" />
+                            </p:column>
+
+                            <p:column headerText="" width="70" >
+                                <p:commandButton value="Re-imprimir" />
+                            </p:column>
+
+                        </p:dataTable>
+
+
+                    </p:panelGrid>
+
+                </p:tab>
+
+                <p:tab title="Detalle producción" >
+
+                    <p:dataTable value="#{controlProduccionBean.detalleProduccion}" var="i"
+                                 resizeMode="expand" liveResize="true"
+                                 emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+                        <f:facet name="footer">
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             value="Agregar producto" actionListener="#" />
+                        </f:facet>
+
+                        <p:column headerText="Código" width="100" >
+                            <h:outputText value="#{i[0]}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción" width="300" >
+                            <h:outputText value="#{i[1]}" />
+                        </p:column>
+
+
+                        <p:column headerText="Cajas" width="120" >
+                            <h:outputText value="#{i[2]}" />
+                        </p:column>
+
+                        <p:column headerText="Lote" width="120" >
+                            <h:outputText value="#{i[3]}" />
+                        </p:column>
+
+                        <p:column headerText="Hora" width="150" >
+                            <h:outputText value="#{i[4]}" />
+                        </p:column>
+
+                        <p:column headerText="" width="70" >
+                            <p:commandButton value="Anular" />
+                        </p:column>
+
+                        <p:column headerText="" width="90" >
+                            <p:commandButton value="Re-imprimir" />
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:tab>
+
+                <p:tab title="Pallets anulados" >
+
+                    <p:dataTable value="#{controlProduccionBean.produccionAnulada}" var="i"
+                                 resizeMode="expand" liveResize="true"
+                                 emptyMessage="No se encontraron pallets anulados" >
+
+                        <p:column headerText="Código" width="100" >
+                            <h:outputText value="#{i[0]}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción" width="300" >
+                            <h:outputText value="#{i[1]}" />
+                        </p:column>
+
+                        <p:column headerText="Cajas" width="120" >
+                            <h:outputText value="#{i[2]}" />
+                        </p:column>
+
+                        <p:column headerText="Lote" width="120" >
+                            <h:outputText value="#{i[3]}" />
+                        </p:column>
+
+                        <p:column headerText="Hora" width="150" >
+                            <h:outputText value="#{i[4]}" />
+                        </p:column>
+
+
+
+
+                    </p:dataTable>
+                </p:tab>
+
+            </p:tabView>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/stock/busqueda/buscadorProducto.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorStock.xhtml" />
+            <ui:include src="/produccion/busqueda/buscadorPendiente.xhtml" />
+            <ui:include src="/facturacion/busqueda/buscadorFormulario.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

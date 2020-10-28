@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"     
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+
+        <title></title>
+
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="Footer para formulario de búsqueda" >
+            
+            <composite:attribute name="actionListener" required="true" method-signature="java.lang.String action()"/>
+            <composite:attribute name="mostrarDebaja" required="true" />
+            <composite:attribute name="cantidadRegistros" required="true" />      
+            <composite:attribute name="rendered" default="true" />             
+            
+        </composite:interface>
+
+        <composite:implementation>
+            
+            <div class="EmptyBox10" /> 
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                         rendered="#{cc.attrs.rendered}">
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{cc.attrs.mostrarDebaja}" >
+                        <p:ajax process="@this" update="@form" listener="#{cc.attrs.actionListener}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistro" value="#{cc.attrs.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{cc.attrs.actionListener}"
+                                     process="@this,cantRegistro" update="@form" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </composite:implementation>
+
+    </h:body>
+
+</html>

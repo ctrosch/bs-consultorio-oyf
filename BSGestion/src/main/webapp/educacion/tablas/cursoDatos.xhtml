@@ -1,0 +1,266 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,
+                 ui-g-8 ui-md-8 ui-lg-4,
+                 ui-g-4 ui-md-4 ui-lg-2,
+                 ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Sucursal *" />
+        <p:autoComplete value="#{cursoBean.curso.sucursal}" dropdown="true" forceSelection="true"
+                        disabled="#{not cursoBean.esNuevo}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Sucursal"
+                        completeMethod="#{sucursalBean.complete}"
+                        converter="#{conversoresGeneral.sucursal}"
+                        var="s" itemLabel="#{s.nombre}" itemValue="#{s}" >
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{cursoBean.asignarCodigo}"  />
+        </p:autoComplete>
+
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <bs:outputTexWhitLink value="Plan de estudio *"
+                              url="#{cursoBean.obtenerUrlMenu('SIS_00633','CODIGO',cursoBean.curso.planEstudio.codigo)}" />
+
+        <p:autoComplete value="#{cursoBean.curso.planEstudio}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar una carrera"
+                        completeMethod="#{planEstudioBean.complete}"
+                        converter="#{conversoresEducacion.planEstudio}"
+                        var="a" itemLabel="#{a.titulo}" itemValue="#{a}" >
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{cursoBean.asignarCodigo}"  />
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Fecha de Inicio " />
+        <p:calendar value="#{cursoBean.curso.fechaInicio}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this" update="@form" listener="#{cursoBean.asignarCodigo}"  />
+        </p:calendar>
+
+        <h:outputText value="Fecha de Finalización " />
+        <p:calendar value="#{cursoBean.curso.fechaFinalizacion}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this"  update="@form" listener="#{cursoBean.asignarCodigo}"  />
+        </p:calendar>
+
+        <h:outputText value="Código *" />
+        <p:inputText id="codigo" value="#{cursoBean.curso.codigo}" readonly="true" rendered="#{not empty cursoBean.curso}" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText id="tituloCurso" value="#{cursoBean.curso.descripcion}"  maxlength="200"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:tabView>
+
+        <p:tab title="Alumnos">
+
+            <p:dataTable  id="tablaAlumnos" var="i"
+                          value="#{cursoBean.curso.inscripciones}"
+                          scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                          emptyMessage="No se encontraron alumnos. Haga clic en agregar alumnos"
+                          rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer" >
+
+
+                    <p:commandButton icon="fa fa-refresh" styleClass="GreenBack"
+                                     actionListener="#{cursoBean.actualizarDatos()}"
+                                     immediate="true"
+                                     value="Actualizar Datos"
+                                     process="tablaAlumnos"
+                                     update="tablaAlumnos" />
+
+
+                </f:facet>
+
+                <p:column headerText="Estado" width="80"  >
+                    <i class="fa fa-circle fa-2x #{ i.estado.color}" title="#{i.estado.descripcion}" style="padding-right: 5px;" ></i>
+                    <h:outputText value="#{i.estado.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Fecha inscripción" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.fechaMovimiento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Alumno" filterBy="#{i.nombreAlumno}" filterMatchMode="contains"  >
+                    <h:outputText value="#{i.nombreAlumno}" />
+                </p:column>
+
+                <!--
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaAlumnos" update="tablaAlumnos,message,messageg"
+                                   actionListener="#{cursoBean.eliminarItemAlumno(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+                -->
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Materias / Profesores">
+
+            <p:dataTable  id="tablaMaterias" var="m"  resizeMode="expand" liveResize="true"
+                          value="#{cursoBean.curso.materias}"
+                          emptyMessage="No se encontraron items. Haga clic en agregar items"
+                          rowStyleClass="#{m.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{cursoBean.nuevoItemMateria()}"
+                                     immediate="true"
+                                     value="Agregar Materia"
+                                     process="tablaMaterias"
+                                     update="tablaMaterias" />
+
+                </f:facet>
+
+                <p:column headerText="Período de cursado"  >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{m.periodoCursado}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{periodoCursadoBean.complete}"
+                                        required="true" requiredMessage="El período de cursado es obligatorio"
+                                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresEducacion.periodoCursado}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                            <p:column headerText="Codigo" width="100">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver periodo"
+                                                url="#{cursoBean.obtenerUrlMenu('SIS_00610','CODIGO',m.periodoCursado.codigo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Materias"  >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{m.materia}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{materiaBean.complete}"
+                                        required="true" requiredMessage="La materia es obligatoria"
+                                        var="mat" itemLabel="#{mat.nombre}" itemValue="#{mat}"
+                                        converter="#{conversoresEducacion.materia}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this,listaProfesores"  />
+
+                            <p:column headerText="Codigo" width="100">
+                                <h:outputText value="#{mat.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{mat.nombre}" />
+                            </p:column>
+
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver materia"
+                                                url="#{cursoBean.obtenerUrlMenu('SIS_00584','CODIGO',m.materia.codigo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Profesor" >
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu id="listaProfesores" value="#{m.profesor}"
+                                         converter="#{conversoresEntidad.entidadComercial}"  >
+                            <f:selectItem itemLabel="Seleccionar profesor" itemValue="" />
+                            <f:selectItems value="#{m.materia.profesores}" var="p" itemLabel="#{p.profesor.nombreComplete}" itemValue="#{p.profesor}" />
+                            <p:ajax event="itemSelect" process="@this" update="@this"  />
+                        </p:selectOneMenu>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver profesor"
+                                                url="#{cursoBean.obtenerUrlMenu('SIS_00588','NROCTA',m.profesor.nrocta)}" />
+                        </span>
+                    </div>
+
+                    <!--
+                    <p:autoComplete value="#{m.profesor}" dropdown="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{cursoBean.completeProfesor}"
+                                    required="true" requiredMessage="La materia es obligatoria"
+                                    var="p" itemLabel="#{p.nombreComplete}" itemValue="#{p}"
+                                    converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                        <p:column headerText="Nro cuenta" width="100">
+                            <h:outputText value="#{p.nrocta}" />
+                        </p:column>
+
+                        <p:column headerText="Apellido">
+                            <h:outputText value="#{p.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{p.apellido}" />
+                        </p:column>
+
+                        <p:column headerText="Nro doc">
+                            <h:outputText value="#{p.nrodoc}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                    -->
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaMaterias" update="tablaMaterias,message,messageg"
+                                   actionListener="#{cursoBean.eliminarItemMateria(m)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+    </p:tabView>
+
+
+</ui:composition>
+

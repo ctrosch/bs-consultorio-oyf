@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>PrimeFaces Venture</title>
+        <ui:insert name="head" />
+    </h:head>
+
+    <h:body styleClass="DarkPurpleBG">
+
+        <div class="Wid80 MarAuto">
+            <div class="Wid70 MarAuto WidAutoOnMobile TexAlCenter">
+                
+                <div class="EmptyBox100 ShowOnDesktop"></div>
+                <div class="EmptyBox20 ShowOnMobile"></div>
+                <div class="Wid50 MarAuto WidAutoOnMobile">
+                    <div class="Wid100 FontPoppinsRegular White Fs18">Sorry, but the resource you are looking <br/> for has not been found !</div>
+                    <div class="EmptyBox30"></div>
+                    <div class="Card ui-fluid ShadowEffect PurpleBack">
+                        <div class="EmptyBox20"></div>
+                        <div class="Container100">
+                            <i class="icon-document-delete Fs100 White"></i>
+                        </div>
+                        <div class="Container100 FontPoppinsSemiBold Fs30 White Opac50">
+                            404 Page Not Found !
+                        </div>
+                        <div class="EmptyBox10"></div>
+                        <div class="Container100">
+                            <p:button value="Back To Dashboard" styleClass="BlueButton" href="dashboard-social.xhtml"/>
+                        </div>
+                        
+                        <div class="EmptyBox10"></div>
+                        <div class="Separator"></div>
+                        <div class="EmptyBox10"></div>
+                        
+                        <span class="DispBlock OvHidden FontPoppinsSemiBold Fs16 White">Or Contact With Admin</span>
+                        <div class="EmptyBox10"></div>
+                        <div class="Container100">
+                            <p:inputText placeholder="Your E-Mail" style="padding:15px !important;"/>
+                        </div>
+                        <div class="Container100">
+                            <p:inputTextarea rows="3" placeholder="Your Message" style="padding:15px !important;"/>
+                        </div>
+                        <div class="Container100">
+                            <p:commandButton type="button"  value="Send To Admin" styleClass="YellowButton"/>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="EmptyBox20"></div>
+                    <div class="Wid100 FontPoppinsRegular Fs12 TransparentWhite"> <i class="fa fa-copyright DispInlBlock"></i> PrimeFaces Venture Theme And Layout <br/>All rights reserved.</div>
+                    <div class="EmptyBox30"></div>
+                </div>
+            </div>
+        </div>
+        
+        <style>.ui-button-text, .ui-button-text-only .ui-button-text{padding:15px !important; transition:none !important;}</style>
+
+        <h:outputStylesheet name="css/core-layout.css" library="venture-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="venture-layout" />
+        <h:outputStylesheet name="css/animate.css" library="venture-layout" />
+        <h:outputStylesheet name="css/venture-layout.css" library="venture-layout" />
+        <h:outputStylesheet name="css/venture-font.css" library="venture-layout" />
+    </h:body>
+
+</html>

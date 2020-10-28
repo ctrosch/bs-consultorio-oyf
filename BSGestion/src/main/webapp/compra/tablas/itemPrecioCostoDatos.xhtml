@@ -1,0 +1,90 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Lista de costo" />
+        <p:inputText value="#{itemListaPrecioCostoBean.itemListaPrecio.listaCosto.descripcion}" readonly="true"
+                     rendered="#{not itemListaPrecioCostoBean.esNuevo}" />
+
+        <p:autoComplete value="#{itemListaPrecioCostoBean.itemListaPrecio.listaCosto}"
+                        rendered="#{itemListaPrecioCostoBean.esNuevo}"
+                        required="true"
+                        requiredMessage="Seleccione la lista de costo"
+                        dropdown="true" placeholder="Seleccionar Lista de Costo"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{listaPrecioCostoBean.complete}"
+                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                        converter="#{conversoresProveedor.listaCosto}"  forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="producto"   />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:panelGroup  id="producto" >
+            <h:outputText value="Producto"  />
+            <p:commandButton icon="fa fa-search" styleClass="Fright"
+                             rendered="#{itemListaPrecioCostoBean.esNuevo and not empty itemListaPrecioCostoBean.itemListaPrecio.listaCosto}"
+                             process="@this"
+                             oncomplete="PF('dlgProducto').show()" />
+        </h:panelGroup>
+
+        <h:panelGroup id="nombreProducto"  layout="block" >
+            <p:remoteCommand name="procesarProducto" process="@this" update="nombreProducto" actionListener="#{itemListaPrecioCostoBean.procesarProducto}" />
+            <p:inputText value="#{itemListaPrecioCostoBean.itemListaPrecio.producto.codigo} - #{itemListaPrecioCostoBean.itemListaPrecio.producto.descripcion}"
+                         readonly="true"
+                         rendered="#{not empty itemListaPrecioCostoBean.itemListaPrecio.producto}" />
+
+        </h:panelGroup>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="F. Vigencia"  />
+        <p:calendar value="#{itemListaPrecioCostoBean.itemListaPrecio.fechaVigencia}"
+                    required="true" requiredMessage="La fecha de vigencia es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Precio" />
+        <h:panelGroup layout="block">
+            <p:inputText value="#{itemListaPrecioCostoBean.itemListaPrecio.precio}" style="max-width: 150px; text-align: right;"
+                         required="true" requiredMessage="El precio es necesario" >
+                <f:convertNumber pattern="##0.00" />
+            </p:inputText>
+            <h:outputText value="#{itemListaPrecioCostoBean.itemListaPrecio.monedaRegistracion}"
+                          rendered="#{not empty itemListaPrecioCostoBean.itemListaPrecio.monedaRegistracion}"
+                          style="margin-left: 5px;" />
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>
+

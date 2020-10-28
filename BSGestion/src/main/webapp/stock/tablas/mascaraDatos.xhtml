@@ -1,0 +1,108 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-12 ui-lg-6, ui-g-6 ui-md-12 ui-lg-6" >
+
+        <h:panelGroup layout="block" >
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <h:outputText value="Código *" />
+                <p:inputText value="#{mascaraStockBean.mascara.codigo}"
+                             readonly="#{not mascaraStockBean.esNuevo}"
+                             required="true"
+                             requiredMessage="El código es necesario" />
+
+                <h:outputText value="" />
+
+                <h:outputText value="" />
+
+                <h:outputText value="Descripción *" />
+                <p:inputText value="#{mascaraStockBean.mascara.descripcion}"
+                             required="true"
+                             requiredMessage="La descripción es necesaria" />
+
+            </p:panelGrid>
+
+        </h:panelGroup>
+
+        <p:dataTable id="tablaProductos" var="i" style="max-width: 700px;"
+                     value="#{mascaraStockBean.mascara.items}"
+                     emptyMessage="No se encontraron resultados"
+                     resizableColumns="true" resizeMode="expand" liveResize="true"
+                     rows="10"  >
+
+            <f:facet name="footer" >
+
+                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                 actionListener="#{mascaraStockBean.nuevoItem()}"
+                                 value="Agregar item"
+                                 process="tablaProductos"
+                                 update="tablaProductos" />
+
+
+            </f:facet>
+
+            <p:column headerText="Producto" >
+
+                <div class="ui-inputgroup">
+
+                    <p:autoComplete value="#{i.producto}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{productoBean.complete}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <span class="ui-inputgroup-addon">
+                        <bs:linkMenuSistema title="Ver producto"
+                                            url="#{mascaraStockBean.obtenerUrlMenu('SIS_00138','CODIGO',i.producto.codigo)}" />
+                    </span>
+                </div>
+
+            </p:column>
+
+            <p:column headerText="Cantidad" width="100"
+                      sortBy="#{i.cantidad}"   >
+                <p:inputText value="#{i.cantidad}" styleClass="TexAlRight" >
+                    <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                </p:inputText>
+            </p:column>
+
+            <p:column headerText="" width="50" style="text-align: center;" >
+
+                <p:commandLink process="tablaProductos" update="tablaProductos,message,messageg"
+                               actionListener="#{mascaraStockBean.eliminarItem(i)}" >
+                    <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                    <i class="fa fa-close fa-2x Red" ></i>
+                </p:commandLink>
+
+            </p:column>
+
+        </p:dataTable>
+
+    </p:panelGrid>
+
+</ui:composition>
+

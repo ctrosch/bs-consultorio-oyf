@@ -1,0 +1,52 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <div class="EmptyBox20" />
+    <!-- CONCEPTOS -->
+    
+    <!-- DATOS -->
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"  >
+
+        <h:outputText value="Fecha 1er Vencimiento"
+                      rendered="#{movimientoFacturacionBean.muestroCampo('C','FCHVNC')}" />
+
+        <p:calendar value="#{movimientoFacturacionBean.m.fechaVencimiento}"                                          
+                    rendered="#{movimientoFacturacionBean.muestroCampo('C','FCHVNC')}"                     
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true" 
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" update="tAplicaciones" listener="#{movimientoFacturacionBean.onChageFechaVencimiento}" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:dataTable id="tAplicaciones" rows="30" styleClass="MaxWid500"
+                 value="#{movimientoFacturacionBean.m.itemCuentaCorriente}" var="d"                 
+                 resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado items de cuenta corriente">
+
+        <p:column headerText="Cuota" styleClass="TexAlCenter" >
+            <h:outputText value="#{d.cuota}" />
+        </p:column>
+        
+        <p:column headerText="Vencimiento" styleClass="TexAlCenter" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Importe" styleClass="TexAlCenter" >
+            <h:outputText value="#{d.importe}" styleClass="Fright" >
+                <f:convertNumber pattern="$ #,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+    </p:dataTable>
+
+</ui:composition>
+

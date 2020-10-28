@@ -1,0 +1,100 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <div class="EmptyBox10" />
+    <!-- DETALLE -->
+    <p:tabView id="tb" activeIndex="#{movimientoMantenimientoBean.indexTab1}"
+               rendered="#{not empty movimientoMantenimientoBean.m and movimientoMantenimientoBean.m.comprobante.tipoComprobante ne 'SM'}">
+
+        <p:ajax event="tabChange" listener="#{movimientoMantenimientoBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Actividades"  >
+
+            <p:dataTable id="actividades" value="#{movimientoMantenimientoBean.m.itemsMovimientoActividad}" var="i" styleClass="MaxWid800"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <p:column headerText="Nro. Ord. Actividad" width="150" sortBy="#{i.nroOrdenActividad}" styleClass="TexAlCenter" >
+
+                    <h:outputText value="#{i.nroOrdenActividad}" />
+                </p:column>
+
+                <p:column headerText="Actividad">
+                    <h:outputText value="#{i.desccripcionActividad}" />
+
+                </p:column>
+
+                <p:column headerText="Nro. Ord. SubActividad" width="150" sortBy="#{i.nroOrdenSubactividad}"  styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.nroOrdenSubactividad}" />
+
+                </p:column>
+
+                <p:column headerText="SubActividad">
+                    <h:outputText value="#{i.desccripcionSubactividad}" />
+
+                </p:column>
+
+                <p:column headerText="Obligatorio"  width="50" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.obligatorio}" />
+
+                </p:column>
+
+
+            </p:dataTable>
+
+            <div class="EmptyBox10"></div>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Recursos"  >
+
+            <p:dataTable id="recursos" value="#{movimientoMantenimientoBean.m.itemsMovimientoRecurso}" var="r" styleClass="MaxWid800"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items"
+                         rowStyleClass="#{r.conError  ? 'conError' : null}" >
+
+                <p:column headerText="Nro. Ord. Actividad" width="150" sortBy="#{r.nroOrdenActividad}" styleClass="TexAlCenter" >
+
+                    <h:outputText value="#{r.nroOrdenActividad}" />
+                </p:column>
+
+                <p:column headerText="Actividad">
+                    <h:outputText value="#{r.desccripcionActividad}" />
+
+                </p:column>
+
+                <p:column headerText="Producto / Servicio " >
+                    <h:outputText value="#{r.desccripcionRecurso}" />
+
+                </p:column>
+
+                <p:column headerText="Cantidad" width="50" styleClass="TexAlRight">
+                    <h:outputText value="#{r.cantidad}"  >
+                        <f:convertNumber pattern="##0.00" />
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="U.M." width="50" styleClass="TexAlCenter"  >
+                    <h:outputText value="#{r.unidadMedida}" />
+
+                </p:column>
+
+
+            </p:dataTable>
+
+            <div class="EmptyBox10"></div>
+
+        </p:tab>
+
+
+    </p:tabView>
+
+
+</ui:composition>
+

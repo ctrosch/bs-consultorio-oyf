@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!--DATOS-->
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{comprobantePrestamoBean.comprobante.codigo}" readonly="#{not comprobantePrestamoBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{comprobantePrestamoBean.comprobante.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="Título" />
+        <p:inputText value="#{comprobantePrestamoBean.comprobante.titulo}"
+                     required="true"
+                     requiredMessage="El título es necesario" />
+
+        <h:outputText value="Es Comprobante de Reversión *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.esComprobanteReversion}"
+                         required="true" requiredMessage="Seleccione si es comprobante de reversión"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Tipo de registración *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.regisracionManual}"
+                         required="true" requiredMessage="Seleccione registración manual"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Automática" itemValue="A" />
+            <f:selectItem itemLabel="Manual" itemValue="M" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Cant. Copias" />
+        <p:inputText value="#{comprobantePrestamoBean.comprobante.copias}"
+                     required="true"
+                     requiredMessage="La cantidad de copias es necesario" />
+
+        <!--
+        <h:outputText value="Recuperacion de Fecha*" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.recuperacionFecha}"
+                         required="true" requiredMessage="Seleccione recuperación de fecha"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Fecha Actual" itemValue="A" />
+            <f:selectItem itemLabel="Ultima Fecha" itemValue="U" />
+        </p:selectOneMenu>
+        -->
+
+        <h:outputText value="Se incluye en estadísticas *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.seIncluyeEnEstadisticas}"
+                         required="true" requiredMessage="Seleccione incluye en estadísticas"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Debe/Haber *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.debeHaber}"
+                         required="true" requiredMessage="Seleccione debe/haber"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Debe" itemValue="D" />
+            <f:selectItem itemLabel="Haber" itemValue="H" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Tipo de imputación*" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.tipoImputacion}"
+                         required="true" requiredMessage="Seleccione tipo de imputación"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="ND" />
+            <f:selectItem itemLabel="Aplicación" itemValue="AP" />
+            <f:selectItem itemLabel="Cuenta Corriente" itemValue="CC" />
+            <f:selectItem itemLabel="Contado" itemValue="CO" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Signo aplicación en cuenta corriente*" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.signoAplicacionCuentaCorriente}"
+                         required="true" requiredMessage="Seleccione signo de aplicación en cuenta corriente"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Positivo" itemValue="+" />
+            <f:selectItem itemLabel="Negativo" itemValue="-" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Moneda de Registación" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.monedaRegistracion}"
+                         required="true" requiredMessage="Seleccione la moneda"
+                         converter="#{conversoresGeneral.moneda}" >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="Tipo de comprobante *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.tipoComprobante}"
+                         required="true" requiredMessage="Seleccione tipo de comprobante"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{tipoComprobantePrestamoBean.lista}" var="t" itemValue="#{t.codigo}" itemLabel="#{t.descripcion}" />
+        </p:selectOneMenu>
+
+        <!--
+
+        <f:selectItem itemLabel="Solicitud de Prestamo" itemValue="LQ" />
+            <f:selectItem itemLabel="Liquidación" itemValue="LQ" />
+            <f:selectItem itemLabel="Recibo" itemValue="RC" />
+            <f:selectItem itemLabel="Cancelación por Reprogramación" itemValue="CR" />
+            <f:selectItem itemLabel="Cancelación por Reprogramación G. Abogados" itemValue="CJ" />
+            <f:selectItem itemLabel="Reprogramación de Deuda" itemValue="RD" />
+            <f:selectItem itemLabel="Cancelación por Fallecimiento" itemValue="CF" />
+            <f:selectItem itemLabel="Cancelación por Gestión Judicial" itemValue="PA" />
+            <f:selectItem itemLabel="Cancelación por Incobrables" itemValue="PI" />
+
+        -->
+
+
+        <h:outputText value="Estado a asignar al préstamo *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.estadoPrestamo}"
+                         required="true" requiredMessage="Seleccione el estado"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{estadoPrestamoBean.lista}" var="e" itemLabel="#{e.descripcion}" itemValue="#{e.codigo}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Busca préstamos en estado *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.estadoPrestamoBusqueda}"
+                         required="true" requiredMessage="Seleccione el estado de búsqueda"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{estadoPrestamoBean.lista}" var="e" itemLabel="#{e.descripcion}" itemValue="#{e.codigo}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Imputacion Oblig. en CC *" />
+        <p:selectOneMenu value="#{comprobantePrestamoBean.comprobante.imputacionObligatoriaEnCentroCosto}"
+                         required="true" requiredMessage="Seleccione si es comprobante interno"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="3" value="#{comprobantePrestamoBean.comprobante.textos}" />
+
+    </p:panelGrid>
+
+    <p:tabView activeIndex="#{comprobantePrestamoBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{comprobantePrestamoBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Conceptos asociados">
+
+            <p:dataTable id="tablaCO" var="i"  resizeMode="expand" liveResize="true"
+                         value="#{comprobantePrestamoBean.comprobante.conceptos}"
+                         emptyMessage="No se encontraron items. Haga clic en agregar items"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{comprobantePrestamoBean.nuevoItemConcepto()}"
+                                     immediate="true"
+                                     value="Agregar concepto"
+                                     process="tablaCO"
+                                     update="tablaCO" />
+                </f:facet>
+
+                <p:column headerText="Concepto"  >
+
+                    <div class="ui-inputgroup">
+
+                        <p:autoComplete value="#{i.concepto}"
+                                        required="true" requiredMessage="Seleccione el concepto"
+                                        maxResults="8" queryDelay="1000" dropdown="true"
+                                        completeMethod="#{conceptoPrestamoBean.complete}"
+                                        var="p" itemLabel="#{p.codigo} #{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.concepto}" >
+
+                            <p:ajax event="itemSelect" process="@this" listener="#{comprobantePrestamoBean.onConceptoPrestamoSelect}" />
+
+                            <p:column headerText="Tipo">
+                                <h:outputText value="#{p.tipoConcepto.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Concepto" url="#{comprobantePrestamoBean.obtenerUrlMenu('SIS_00416','CODIGO',i.concepto.codigo,'TCONCEPTO',i.concepto.tipo)}" />
+                        </span>
+
+                    </div>
+
+                </p:column>
+
+                <p:column headerText="Cuenta contable"  >
+
+                    <div class="ui-inputgroup">
+
+                        <p:autoComplete value="#{i.cuentaContable}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{cuentaContableBean.completeImputable}"
+                                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                        converter="#{conversoresContabilidad.cuentaContable}" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Nro cuenta">
+                                <h:outputText value="#{p.nrocta}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Imputable">
+                                <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                                <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Cuenta Contable" url="#{comprobantePrestamoBean.obtenerUrlMenu('SIS_00420','NROCTA',i.cuentaContable.nrocta)}" />
+                        </span>
+
+                    </div>
+
+                </p:column>
+
+                <p:column headerText="Debe/Haber" width="100" >
+                    <p:selectOneButton  value="#{i.debeHaber}"
+                                        required="true" requiredMessage="Seleccione debe/haber"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Debe" itemValue="D" />
+                        <f:selectItem itemLabel="Haber" itemValue="H" />
+                    </p:selectOneButton >
+                </p:column>
+
+                <p:column headerText="Es impuesto" width="90" >
+                    <p:selectOneButton  value="#{i.impuesto}"
+                                        required="true" requiredMessage="Seleccione si es un impuesto" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneButton >
+                </p:column>
+
+                <p:column headerText="Edita imputación" width="90" >
+                    <p:selectOneButton  value="#{i.editaImputacion}"
+                                        required="true" requiredMessage="Seleccione si edita imputación"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneButton >
+                </p:column>
+
+                <p:column headerText="Edita si es cero" width="90"  >
+                    <p:selectOneButton  value="#{i.editaSiCero}"
+                                        required="true" requiredMessage="Seleccione si edita si es cero" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneButton >
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaCO" update="@form"
+                                   actionListener="#{comprobantePrestamoBean.eliminarItemConcepto(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Formulario por Condición de IVA">
+
+            <p:dataTable id="tablaFSI" var="f" resizeMode="expand" liveResize="true"
+                         value="#{comprobantePrestamoBean.comprobante.formulariosPorSituacionIVA}"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{comprobantePrestamoBean.nuevoItemFormulario()}"
+                                     immediate="true"
+                                     value="Agregar formulario"
+                                     process="tablaFSI"
+                                     update="tablaFSI" />
+
+                </f:facet>
+
+                <p:column headerText="Formulario" >
+
+                    <div class="ui-inputgroup">
+
+                        <p:autoComplete value="#{f.formulario}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{formularioPrestamoBean.complete}"
+                                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.formulario}" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this"
+                                    listener="#{comprobantePrestamoBean.onFormularioPrestamoSelect}" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Pto. Venta">
+                                <h:outputText value="#{p.puntoVenta.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Letra">
+                                <h:outputText value="#{p.letra}" />
+                            </p:column>
+
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Formulario" url="#{comprobantePrestamoBean.obtenerUrlMenu('SIS_00409','CODIGO',f.formulario.codigo)}" />
+                        </span>
+
+                    </div>
+                </p:column>
+
+                <p:column headerText="Pto. Venta" >
+
+                    <div class="ui-inputgroup">
+                        <p:selectOneMenu value="#{f.puntoVenta}"
+                                         required="true" requiredMessage="Seleccione el punto de venta"
+                                         converter="#{conversoresGeneral.puntoVenta}"
+                                         effect="fade" filter="true" filterMatchMode="contains" >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                            <f:selectItems value="#{puntoVentaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                        </p:selectOneMenu>
+
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Punto de Venta" url="#{comprobantePrestamoBean.obtenerUrlMenu('SIS_00125','CODIGO',f.puntoVenta.codigo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Condición de IVA" >
+                    <p:selectOneMenu value="#{f.condicionDeIva}"
+                                     required="true" requiredMessage="Seleccione la condición de iva"
+                                     converter="#{conversoresGeneral.condicionDeIva}"
+                                     effect="fade" filter="true" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                    </p:selectOneMenu>
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaFSI" update="@form"
+                                   actionListener="#{comprobantePrestamoBean.eliminarItemFormulario(f)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+        </p:tab>
+    </p:tabView>
+
+</html>
+

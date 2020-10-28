@@ -1,0 +1,61 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{vistaBean.buscar()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{vistaBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{vistaBean.guardar(false)}"
+                    rendered="#{not vistaBean.buscaMovimiento}"
+                    update="@form" />
+
+        <p:menuitem id="copy" icon="fa fa-copy"
+                    value="Duplicar"
+                    rendered="#{not vistaBean.esNuevo}"
+                    actionListener="#{vistaBean.duplicar}"
+                    update="@form" />
+
+        <p:menuitem id="sinc" icon="fa fa-refesh"
+                    value="Sincronizar "
+                    rendered="#{not vistaBean.esNuevo and not empty vistaBean.vista.vistaReferencia}"
+                    actionListener="#{vistaBean.sincronizarFromReferencia()}"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{vistaBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty vistaBean.vista and not vistaBean.esNuevo and vistaBean.vista.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{vistaBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty vistaBean.vista and not vistaBean.esNuevo and vistaBean.vista.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+
+    </p:menubar>
+
+    <div class="EmptyBox10" ></div>
+</ui:composition>

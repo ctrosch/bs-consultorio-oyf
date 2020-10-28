@@ -1,0 +1,419 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="8" layout="grid"
+                 rendered="#{not empty prestamoBean.prestamo and not prestamoBean.buscaMovimiento}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Código" />
+        <p:inputText id="codigo" value="#{prestamoBean.prestamo.codigo}" readonly="true"
+                     rendered="#{prestamoBean.muestroCampo('C','CODIGO')}" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha Préstamo" rendered="#{prestamoBean.muestroCampo('C','FCHCRE')}" />
+        <p:calendar value="#{prestamoBean.prestamo.fechaCredito}"
+                    rendered="#{prestamoBean.muestroCampo('C','FCHCRE')}"
+                    disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" listener="#{prestamoBean.generarCuotas}"
+                    update="detalleCuotas,totales" />
+        </p:calendar>
+
+        <h:outputText value="Estado"
+                      rendered="#{prestamoBean.muestroCampo('C','ESTADO')}" />
+        <p:inputText value="#{prestamoBean.prestamo.estado.descripcion}" readonly="true" />
+
+        <h:outputText value="Sucursal" />
+        <p:inputText value="#{prestamoBean.prestamo.sucursal.nombre}" readonly="true" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 rendered="#{not empty prestamoBean.prestamo and not prestamoBean.buscaMovimiento}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Destinatario *"
+                              url="#{prestamoBean.obtenerUrlMenu('SIS_00393','NROCTA',prestamoBean.prestamo.destinatario.nrocta)}" />
+
+        <p:autoComplete value="#{prestamoBean.prestamo.destinatario}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        readonly="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                        completeMethod="#{prestamoBean.completeDestinatario}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{prestamoBean.procesarDestinatario()}"  />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="#{prestamoBean.parametro.descripcionClasificacion3} *"
+                              rendered="#{prestamoBean.muestroCampo('C','CLAS03')}"
+                              url="#{prestamoBean.obtenerUrlMenu('')}" />
+        <p:selectOneMenu value="#{prestamoBean.prestamo.clasificacion03}"
+                         rendered="#{prestamoBean.muestroCampo('C','CLAS03')}"
+                         disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                         converter="#{conversoresPrestamo.clasificacion03}"
+                         required="true" requiredMessage="Seleccione #{prestamoBean.parametro.descripcionClasificacion3}" >
+
+            <p:ajax process="@this" update="codigo" listener="#{prestamoBean.asignarCodigo()}" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{clasificacion03Bean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <bs:outputTexWhitLink value="Promotor *"
+                              rendered="#{prestamoBean.muestroCampo('C','CODPRO')}"
+                              url="#{prestamoBean.obtenerUrlMenu('SIS_00396','IDP',prestamoBean.prestamo.promotor.id)}" />
+
+        <p:autoComplete value="#{prestamoBean.prestamo.promotor}"  dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        rendered="#{prestamoBean.muestroCampo('C','CODPRO')}"
+                        readonly="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                        required="true" requiredMessage="El promotor es necesario"
+                        completeMethod="#{promotorBean.complete}"
+                        var="e" itemLabel="#{e.nombre}" itemValue="#{e}"
+                        converter="#{conversoresPrestamo.promotor}" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="#{prestamoBean.parametro.descripcionClasificacion1} *"
+                              rendered="#{prestamoBean.muestroCampo('C','CLAS01')}"
+                              url="#{prestamoBean.obtenerUrlMenu('')}" />
+        <p:selectOneRadio value="#{prestamoBean.prestamo.clasificacion01}"
+                          rendered="#{prestamoBean.muestroCampo('C','CLAS01')}"
+                          disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                          converter="#{conversoresPrestamo.clasificacion01}"
+                          required="true" requiredMessage="Seleccione #{prestamoBean.parametro.descripcionClasificacion1}" >
+            <p:ajax process="@this" update="codigo" listener="#{prestamoBean.asignarCodigo()}" />
+            <f:selectItems value="#{clasificacion01Bean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneRadio>
+
+        <bs:outputTexWhitLink value="Línea de crédito *"
+                              rendered="#{prestamoBean.muestroCampo('C','CODLIN')}"
+                              url="#{prestamoBean.obtenerUrlMenu('SIS_00395','IDL',prestamoBean.prestamo.lineaCredito.id)}" />
+
+        <p:autoComplete value="#{prestamoBean.prestamo.lineaCredito}"  dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        rendered="#{prestamoBean.muestroCampo('C','CODLIN')}"
+                        disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                        completeMethod="#{lineaCreditoBean.complete}"
+                        required="true" requiredMessage="La línea de crédito es obligatoria"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresPrestamo.lineaCredito}" >
+
+            <p:ajax event="itemSelect" process="@this" update="detalleCuotas,totales" listener="#{prestamoBean.generarCuotas}" />
+
+            <p:column headerText="Descripción" >
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+            <p:column headerText="TNA" width="100">
+                <h:outputText value="#{e.tasaNominalAnual}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Financiador *"
+                              url="#{prestamoBean.obtenerUrlMenu('SIS_00394','IDF',prestamoBean.prestamo.financiador.id)}" />
+        <p:selectOneMenu value="#{prestamoBean.prestamo.financiador}"
+                         disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                         required="true" requiredMessage="El financiador no puede estar vacío"
+                         converter="#{conversoresPrestamo.financiador}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{financiadorBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" rendered="#{not empty prestamoBean.prestamo and not prestamoBean.buscaMovimiento}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-12 ui-lg-4 NoPadding,ui-g-12 ui-md-12 ui-lg-8 NoPadding">
+
+        <h:panelGroup layout="block" >
+
+            <p:panelGrid columns="2" layout="grid"
+                         rendered="#{not empty prestamoBean.prestamo and not prestamoBean.buscaMovimiento}"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4,ui-g-8 " >
+
+                <h:outputText value="Tipo de amortización *"
+                              rendered="#{prestamoBean.muestroCampo('C','CODAMO')}" />
+
+                <p:autoComplete value="#{prestamoBean.prestamo.amortizacion}"  dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                rendered="#{prestamoBean.muestroCampo('C','CODAMO')}"
+                                disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                                completeMethod="#{amortizacionPrestamoBean.complete}"
+                                required="true" requiredMessage="El tipo de amortización es obligatorio"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresPrestamo.amortizacion}" >
+
+                    <p:ajax event="itemSelect" process="@this" update="detalleCuotas,totales" listener="#{prestamoBean.generarCuotas}" />
+                </p:autoComplete>
+
+                <h:outputText value="Importe Solicitado" />
+                <p:inputText value="#{prestamoBean.prestamo.importeCapital}" styleClass="TexAlRight"
+                             readonly="#{prestamoBean.prestamo.estado.codigo ne 'A'}" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax listener="#{prestamoBean.generarCuotas}" event="keyup" delay="500"
+                            update="detalleCuotas,totales" />
+                </p:inputText>
+
+                <h:outputText value="Gastos Otorgamiento" />
+                <p:inputText value="#{prestamoBean.prestamo.gastosOtorgamiento}" styleClass="TexAlRight"
+                             readonly="#{prestamoBean.prestamo.estado.codigo ne 'A'}" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax listener="#{prestamoBean.generarCuotas}" event="keyup" delay="500"
+                            update="detalleCuotas,totales" />
+                </p:inputText>
+
+                <h:outputText value="Microseguros" />
+                <p:inputText value="#{prestamoBean.prestamo.importeMicroseguros}" styleClass="TexAlRight"
+                             readonly="#{prestamoBean.prestamo.estado.codigo ne 'A'}" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax listener="#{prestamoBean.generarCuotas}" event="keyup" delay="500"
+                            update="detalleCuotas,totales" />
+                </p:inputText>
+
+                <bs:outputTexWhitLink value="Periodo de pago *"
+                                      url="#{prestamoBean.obtenerUrlMenu('')}" />
+
+                <p:autoComplete value="#{prestamoBean.prestamo.periodo}"  dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                                completeMethod="#{periodoBean.complete}"
+                                required="true" requiredMessage="El período de pago es obligatorio"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresGeneral.periodo}" >
+
+                    <p:ajax event="itemSelect" process="@this" update="fechaPrimerVencimiento,detalleCuotas,totales"  />
+                </p:autoComplete>
+
+                <h:outputText value="Cantidad de cuotas *" />
+                <p:inputText value="#{prestamoBean.prestamo.cantidadCuotas}" styleClass="TexAlRight"
+                             readonly="#{prestamoBean.prestamo.estado.codigo ne 'A'}">
+                    <p:ajax listener="#{prestamoBean.generarCuotas}" event="keyup" delay="500" update="detalleCuotas,totales" />
+                </p:inputText>
+
+                <h:outputText value="Períodos de gracia *" />
+                <p:inputText value="#{prestamoBean.prestamo.periodosGracia}" styleClass="TexAlRight"
+                             readonly="#{prestamoBean.prestamo.estado.codigo ne 'A'}">
+                    <p:ajax listener="#{prestamoBean.generarCuotas}" event="keyup" delay="500" update="detalleCuotas,totales" />
+                </p:inputText>
+
+                <h:outputText value="Fecha Entrega" rendered="#{prestamoBean.muestroCampo('C','FCHENT')}" />
+                <p:calendar id="fechaPrimerVencimiento" value="#{prestamoBean.prestamo.fechaEntrega}"
+                            rendered="#{prestamoBean.muestroCampo('C','FCHENT')}"
+                            disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true" >
+                    <p:ajax process="@this" event="dateSelect" listener="#{prestamoBean.generarCuotas}"
+                            update="detalleCuotas,totales" />
+                </p:calendar>
+
+            </p:panelGrid>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block">
+
+            <p:dataTable id="detalleCuotas" value="#{prestamoBean.prestamo.itemsPrestamo}" var="i"
+                         rendered="#{not empty prestamoBean.prestamo and not prestamoBean.buscaMovimiento}"
+                         scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true" >
+
+                <f:facet name="header">
+                    Detalle de cuotas
+                </f:facet>
+
+                <!--
+                <f:facet name="header" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{prestamoBean.generarCuotas}"
+                                     disabled="#{prestamoBean.prestamo.estado.codigo ne 'A'}"
+                                     value="Generar cuotas"
+                                     process="@form"
+                                     update="@form" />
+
+                </f:facet>
+                -->
+
+                <p:column headerText="Cuota" width="50" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.cuota}" />
+                </p:column>
+
+                <p:column headerText="Vencimiento" styleClass="TexAlCenter" width="80"
+                          sortBy="#{i.fechaVencimiento}" >
+                    <h:outputText value="#{i.fechaVencimiento}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Capital" styleClass="TexAlCenter" width="100" >
+                    <h:outputText value="#{i.capital}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Interés" styleClass="TexAlCenter" width="100" >
+                    <h:outputText value="#{i.interes}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="G. Otorg." styleClass="TexAlCenter" width="100" >
+                    <h:outputText value="#{i.gastosOtorgamiento}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Microseg." styleClass="TexAlCenter" width="100" >
+                    <h:outputText value="#{i.importeMicroseguros}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Total cuota" styleClass="TexAlCenter" width="100" >
+                    <h:outputText value="#{i.totalCuota}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <!-- TOTALES -->
+    <h:panelGroup id="totales" layout="block" styleClass="p-grid">
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2"  >
+            <div class="Card GreenBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Capital" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{prestamoBean.prestamo.importeCapital}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2" >
+            <div class="Card OrangeBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Intereses" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{prestamoBean.prestamo.importeInteres}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2" >
+            <div class="Card LimeBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Gastos Otorgamiento" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright ">
+                        <h:outputText value="#{prestamoBean.prestamo.gastosOtorgamiento}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2" >
+            <div class="Card PinkBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Microseguro" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright ">
+                        <h:outputText value="#{prestamoBean.prestamo.importeMicroseguros}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2" >
+            <div class="Card BlueBack" >
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Importe Total" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+
+                        <h:outputText value="#{prestamoBean.prestamo.importeTotal}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+    </h:panelGroup>
+
+    <div class="EmptyBox10" />
+
+
+
+</ui:composition>
+

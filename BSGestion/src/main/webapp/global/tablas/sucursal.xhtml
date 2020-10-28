@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Punto de Venta
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{sucursalBean.buscar()}"
+                            update="buscadorSucursal"
+                            process="@this"
+                            oncomplete="PF('dlgSucursal').show()"
+                            immediate="true" />
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{sucursalBean.nuevo}"
+                            process="@this"
+                            update="@form"
+                            immediate="true" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{sucursalBean.guardar(false)}"
+                            rendered="#{not sucursalBean.buscaMovimiento}"
+                            update="@form" />
+
+                <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                            actionListener="#{sucursalBean.habilitaDeshabilita('S')}"
+                            rendered="#{not empty sucursalBean.sucursal and not sucursalBean.esNuevo and sucursalBean.sucursal.auditoria eq 'N'}"
+                            process="@this"
+                            update="@form" />
+
+                <p:menuitem value="Habilitar" icon="fa fa-check"
+                            actionListener="#{sucursalBean.habilitaDeshabilita('N')}"
+                            rendered="#{not empty sucursalBean.sucursal and not sucursalBean.esNuevo and sucursalBean.sucursal.auditoria eq 'S'}"
+                            process="@this"
+                            update="@form" />
+
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarSucursal" process="@this" update="@form" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <!-- DATOS -->
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank MaxWid1000" >
+
+                <h:outputText value="Código" />
+                <p:inputText value="#{sucursalBean.sucursal.codigo}" readonly="#{not sucursalBean.esNuevo}"
+                             required="true"
+                             requiredMessage="El código es necesario" />
+
+                <h:outputText value="Descripción" />
+                <p:inputText value="#{sucursalBean.sucursal.descripcion}"
+                             required="true"
+                             requiredMessage="La descripción es necesaria" />
+
+                <h:outputText value="Implemeta Factura Electrónica:" />
+                <p:selectOneMenu value="#{sucursalBean.sucursal.implementaFE}" style="width: 100px;"
+                                 required="true" requiredMessage="Seleccione si implementa factura electrónica"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Web Services" />
+                <h:outputText value="#{sucursalBean.sucursal.webservice.codigo}-#{sucursalBean.sucursal.webservice.descripcion}" />
+
+            </p:panelGrid>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/global/busqueda/buscadorSucursal.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

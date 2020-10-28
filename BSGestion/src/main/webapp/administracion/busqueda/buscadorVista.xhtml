@@ -1,0 +1,100 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorVista" header="Vistas" modal="true"
+              widgetVar="dlgVista"
+              resizable="false"
+              draggable="false"
+              minHeight="400"
+              style="max-width: 1200px;" responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaVista"/>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaVista" value="#{vistaBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,selectModuloVista,selectOrigenVista" update="tablaVista" listener="#{vistaBean.buscar}"/>
+                </p:inputText>
+
+                <p:selectOneMenu id="selectOrigenVista" value="#{vistaBean.origen}"  >
+                    <f:selectItem itemLabel="Origen" itemValue="" />
+                    <f:selectItem itemLabel="Sistema" itemValue="SIS" />
+                    <f:selectItem itemLabel="Usuario" itemValue="USR" />
+                    <p:ajax process="@this,txtBusquedaVista,selectModuloVista" update="tablaVista" listener="#{vistaBean.buscar}"/>
+                </p:selectOneMenu>
+
+                <p:selectOneMenu id="selectModuloVista" value="#{moduloBean.modulo}" filter="true"
+                                 converter="#{conversoresGeneral.modulo}"  >
+                    <f:selectItem itemLabel="Módulo" itemValue="" />
+                    <f:selectItems value="#{moduloBean.complete}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaVista,selectOrigenVista" update="tablaVista" listener="#{vistaBean.buscar}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaVista" value="#{vistaBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"
+                         rows="10" paginator="true"
+                         selectionMode="single"
+                         selection="#{vistaBean.vista}" rowKey="#{i}"
+                         rowStyleClass="#{i.origen eq 'USR'  ? 'origenUsuario' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{vistaBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgVista').hide(), procesarVista()" />
+
+                <p:column headerText="Nombre" sortBy="#{i.nombre}"                              >
+                    <h:outputText value="#{i.nombre}" />
+                </p:column>
+
+                <p:column headerText="Path" sortBy="#{i.path}"   >
+                    <h:outputText value="#{i.path}" />
+                </p:column>
+
+                <p:column headerText="Módulo" sortBy="#{i.modulo.descripcion}" >
+                    <h:outputText value="#{i.modulo.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Origen" >
+                    <h:outputText value="Sistema" rendered="#{i.origen eq 'SIS'}" />
+                    <h:outputText value="Usuario" rendered="#{i.origen eq 'USR'}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{vistaBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaVista" listener="#{vistaBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistroVista" value="#{vistaBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{vistaBean.buscar}"
+                                     process="@this,cantRegistroVista" update="tablaVista" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </h:form>
+
+
+    </p:dialog>
+
+</ui:composition>

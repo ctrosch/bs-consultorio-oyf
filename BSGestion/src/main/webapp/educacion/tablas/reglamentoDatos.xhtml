@@ -1,0 +1,30 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid id="datos" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-10" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{reglamentoBean.reglamento.id}"
+                     required="true" readonly="true" />
+
+        <h:outputText value="Nombre *" />
+        <p:inputText value="#{reglamentoBean.reglamento.nombre}" maxlength="200"
+                     required="true" requiredMessage="El nombre es obligatorio" />
+
+        <h:outputText value="Detalle " />
+        <p:inputTextarea value="#{reglamentoBean.reglamento.detalle}" rows="10" />
+
+
+    </p:panelGrid>
+
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

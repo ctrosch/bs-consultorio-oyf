@@ -1,0 +1,582 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Nro Cuenta *" />
+        <p:inputText value="#{transporteBean.entidad.nrocta}" readonly="true"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <h:outputText value="Razón Social *" />
+        <p:inputText id="c2" value="#{transporteBean.entidad.razonSocial}"
+                     required="true" requiredMessage="La razón social es obligatoria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <h:outputText value="Nombre Fantasía" />
+        <p:inputText id="nombFanta" value="#{transporteBean.entidad.nombreFantasia}"
+                     required="true"
+                     requiredMessage="El nombre de fantasía es obligatorio"/>
+
+        <h:outputText value="Condición de IVA *" />
+        <p:selectOneMenu value="#{transporteBean.entidad.condicionDeIva}"
+                         required="true" requiredMessage="Seleccione la condición de iva"
+                         converter="#{conversoresGeneral.condicionDeIva}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Calle * " />
+        <p:inputText value="#{transporteBean.entidad.direccion}"
+                     required="true" requiredMessage="La calle es obligatoria" />
+
+        <h:outputText value="Tipo/Nro Documento" />
+        <h:panelGroup id="pnTipoDoc" layout="block"  >
+
+            <div class="Wid50 Responsive100 Fleft">
+                <p:autoComplete value="#{transporteBean.entidad.tipoDocumento}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc" />
+                </p:autoComplete>
+            </div>
+            <div class="Wid50 Responsive100 Fright">
+                <p:inputMask value="#{transporteBean.entidad.nrodoc}"
+                             mask="#{transporteBean.entidad.tipoDocumento.mascara}"
+                             rendered="#{not empty transporteBean.entidad.tipoDocumento}"
+                             required="true"
+                             requiredMessage="El número de documento del transporte es obligatorio"  />
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{transporteBean.obtenerUrlMenu('SIS_00126','IDLC',transporteBean.entidad.localidad.id)}" />
+
+        </h:panelGroup>
+
+        <p:autoComplete id="localidad" value="#{transporteBean.entidad.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{transporteBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Tipo/Nro Documento IB" />
+        <h:panelGroup id="pnTipoDoc1" layout="block">
+
+            <div class="Wid50 Fleft">
+                <p:autoComplete value="#{transporteBean.entidad.tipoDocumento1}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc1" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid50 Fright">
+                <p:inputMask value="#{transporteBean.entidad.nrodo1}"
+                             mask="#{transporteBean.entidad.tipoDocumento1.mascara}"
+                             rendered="#{not empty transporteBean.entidad.tipoDocumento1}"
+                             required="true"
+                             requiredMessage="El número de documento 'Nro IB' del transporte es obligatorio"  />
+            </div>
+
+        </h:panelGroup>
+
+
+        <h:panelGroup id="pgProvinciaD"  layout="block">
+            <h:outputText value="Provincia *" rendered="#{not empty transporteBean.entidad.provincia}" />
+        </h:panelGroup>
+
+        <h:panelGroup id="pgProvincia"  layout="block">
+            <p:inputText value="#{transporteBean.entidad.provincia.descripcion}" readonly="true"
+                         rendered="#{not empty transporteBean.entidad.provincia}"   />
+        </h:panelGroup>
+
+        <h:outputText value="Tipo/Nro Otro" />
+        <h:panelGroup id="pnTipoDoc2" layout="block">
+
+            <div class="Wid50 Fleft">
+                <p:autoComplete value="#{transporteBean.entidad.tipoDocumento2}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc2" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid50 Fright">
+                <p:inputMask value="#{transporteBean.entidad.nrodo2}"
+                             mask="#{transporteBean.entidad.tipoDocumento2.mascara}"
+                             rendered="#{not empty transporteBean.entidad.tipoDocumento2}"
+                             required="true"
+                             requiredMessage="El número de documento 'Nro Otro' del transporte es obligatorio" />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Teléfono" />
+        <p:inputText value="#{transporteBean.entidad.telefono}"   />
+
+        <bs:outputTexWhitLink value="Condición de Pago *"
+                              url="#{transporteBean.obtenerUrlMenu('SIS_00181','CODIGO',transporteBean.entidad.condicionPagoProveedor.codigo)}" />
+
+        <p:selectOneMenu value="#{transporteBean.entidad.condicionPagoProveedor}"
+                         required="true" requiredMessage="Seleccione la condición de pago del transporte"
+                         converter="#{conversoresProveedor.condicionPagoProveedor}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{condicionPagoProveedorBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+
+        <h:outputText value="Dirección de email" />
+        <p:inputText value="#{transporteBean.entidad.email}"
+                     validatorMessage="Ingrese un correo válido">
+            <!--
+            <f:validateLength maximum="200" />
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+            -->
+        </p:inputText>
+
+        <h:outputText value="Tipo Contribuyente IB *" />
+        <p:selectOneMenu  value="#{transporteBean.entidad.tipoIngresosBrutos}"
+                          required="true"
+                          requiredMessage="Seleccione el tipo de contribuyente de ingresos brutos">
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Directo" itemValue="DI" />
+            <f:selectItem itemLabel="Convenio Mult." itemValue="CM" />
+            <f:selectItem itemLabel="No Inscripto" itemValue="NI" />
+            <f:selectItem itemLabel="Exento" itemValue="EX" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Celular" />
+        <p:inputText value="#{transporteBean.entidad.ntelex}"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Fax" />
+        <p:inputText value="#{transporteBean.entidad.nrofax}"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{transporteBean.entidad.notas}" />
+
+        <h:outputText value="Cuenta Vinculada"  />
+        <p:autoComplete value="#{transporteBean.entidad.cuentaVinculada}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{transporteBean.complete}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+
+    </p:panelGrid>
+
+    <div class="EmptyBox20"></div>
+
+    <p:tabView id="tbDireccionesEntrega" rendered="#{not transporteBean.esNuevo}">
+
+        <p:tab title="Direcciones de entrega" >
+
+            <p:dataTable id="tablaDE" var="d"
+                         value="#{transporteBean.entidad.direccionesDeEntrega}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{transporteBean.nuevoItemDireccionEntrega()}"
+                                     immediate="true"
+                                     value="Agregar dirección de entrega"
+                                     process="tablaDE"
+                                     update="tablaDE" />
+                </f:facet>
+
+                <p:column headerText="Código" width="60" style="text-align: center;"
+                          sortBy="#{d.codigo}"   >
+                    <h:outputText value="#{d.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="100" style="text-align: left;"
+                          sortBy="#{d.descripcion}" >
+                    <p:inputText value="#{d.descripcion}"
+                                 required="true" requiredMessage="Debe asignar una descripción a la dirección de entrega" />
+                </p:column>
+
+                <p:column headerText="Dirección" width="200" style="text-align: left;"
+                          sortBy="#{d.direccion}" >
+                    <p:inputText value="#{d.direccion}"
+                                 required="true" requiredMessage="Debe asignar una dirección a la dirección de entrega" />
+                </p:column>
+
+                <p:column headerText="Localidad" width="150" style="text-align: left;" >
+                    <p:autoComplete value="#{d.localidad}" dropdown="true"
+                                    maxResults="8" queryDelay="1000"
+                                    required="true" requiredMessage="La localidad en la dirección de entrega es obligatoria"
+                                    completeMethod="#{localidadBean.complete}"
+                                    var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}"
+                                    converter="#{conversoresGeneral.localidad}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@this"
+                                listener="#{transporteBean.onLocalidadDireccionEntregaSelect}" />
+
+                        <p:column headerText="C.P.">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Provincia">
+                            <h:outputText value="#{p.provincia.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="Nombre Contacto" width="120" style="text-align: left;" >
+                    <p:inputText value="#{d.contacto}"  />
+                </p:column>
+
+                <p:column headerText="Tel. Contacto" width="120" style="text-align: left;" >
+                    <p:inputText value="#{d.telefono}"  />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaDE" update="@form"
+                                   actionListener="#{transporteBean.eliminarItemDireccionEntrega(d)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Retenciones">
+
+            <p:dataTable id="tablaRE" var="r" style="max-width: 700px;"
+                         value="#{transporteBean.entidad.retenciones}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{transporteBean.nuevoItemRetencion()}"
+                                     immediate="true"
+                                     value="Agregar Retención"
+                                     process="tablaRE"
+                                     update="tablaRE" />
+                </f:facet>
+
+                <p:column headerText="Conceptos" style="text-align: left;" >
+
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{r.conceptoRetencion}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="El concepto es obligatorio"
+                                        completeMethod="#{conceptoRetencionBean.complete}"
+                                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                        converter="#{conversoresProveedor.conceptoRetencion}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{l.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{l.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Porcentaje">
+                                <h:outputText value="#{l.porcentajeRetener}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Concepto"
+                                                url="#{distribucionBean.obtenerUrlMenu('SIS_00487','CODIGO',r.conceptoRetencion.codigo,'TCONCEPTO',r.conceptoRetencion.tipo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="% Exensión"  width="100" >
+                    <p:inputText value="#{r.porcentajeExencion}"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en % Exensión"
+                                 style="text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Fecha Desde"  width="100"  >
+                    <p:calendar value="#{r.fechaVigenciaDesde}"
+                                style="text-align: center;"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="Fecha Hasta"  width="100"  >
+                    <p:calendar value="#{r.fechaVigenciaHasta}"
+                                style="text-align: center;"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaRE" update="@form"
+                                   actionListener="#{transporteBean.eliminarItemRetencion(r)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Actividad Comercial" >
+
+            <p:dataTable id="tablaAC" var="a"  style="max-width: 600px;"
+                         value="#{transporteBean.entidad.actividades}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{transporteBean.nuevoItemActividad()}"
+                                     immediate="true"
+                                     value="Agregar Actividad"
+                                     process="tablaAC"
+                                     update="tablaAC" />
+                </f:facet>
+
+
+
+                <p:column headerText="Actividad" width="200" style="text-align: center;" >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{a.actividadComercial}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="La actividad de la entidad es obligatoria"
+                                        completeMethod="#{actividadComercialProveedorBean.complete}"
+                                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                        converter="#{conversoresEntidad.actividad}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{l.descripcion}" />
+                            </p:column>
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Actividad"
+                                                url="#{transporteBean.obtenerUrlMenu('SIS_00682','CODIGO',a.actividadComercial.codigo,'CODTIP',a.actividadComercial.codtip)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaAC" update="@form"
+                                   actionListener="#{transporteBean.eliminarItemActividad(a)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t0" title="Choferes" >
+
+            <p:dataTable id="tablaCH" var="ch" style="max-width: 700px;"
+                         value="#{transporteBean.entidad.choferes}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{transporteBean.nuevoItemChofer()}"
+                                     value="Agregar Chofer"
+                                     process="tablaCH"
+                                     update="tablaCH" />
+                </f:facet>
+
+                <p:column headerText="Nombre" width="100" styleClass="TexAlCenter"    >
+                    <p:inputText  value="#{ch.nombreChofer}"
+                                  required="true" requiredMessage="Debe asignar un Nombre" />
+                </p:column>
+
+                <p:column headerText="Apellido" width="100" styleClass="TexAlCenter" >
+                    <p:inputText value="#{ch.apellidoChofer}"
+                                 required="true" requiredMessage="Debe asignar un Apellido" />
+                </p:column>
+
+                <p:column headerText="DNI/CUIL" width="50" styleClass="TexAlCenter" >
+                    <p:inputText value="#{ch.dniChofer}"
+                                 required="true" requiredMessage="Debe asignar el DNI/CUIL" />
+                </p:column>
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaCH" update="tablaCH,message,messageg"
+                                   actionListener="#{transporteBean.eliminarItemChofer(ch)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+
+        <p:tab id="t1" title="Camiones" >
+
+            <p:dataTable id="tablaCM" style="max-width: 900px;"
+                         value="#{transporteBean.entidad.camiones}" var="cm"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{transporteBean.nuevoItemCamion()}"
+                                     value="Agregar Camión"
+                                     process="tablaCM"
+                                     update="tablaCM" />
+                </f:facet>
+
+
+                <p:column headerText="Modelo/Marca"  style="text-align: center;" width="200"  >
+                    <p:inputText value="#{cm.modelo}"
+                                 required="true" requiredMessage="Debe asignar marca/modelo" >
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Dominio Chasis" width="60" sortBy="#{i.dominioChasis}" >
+                    <p:inputText value="#{cm.dominioChasis}"
+                                 required="true" requiredMessage="Debe asignar dominio de chasis" />
+                </p:column>
+
+                <p:column headerText="Dominio Acoplado" width="60"  sortBy="#{i.dominioAcoplado}">
+                    <p:inputText value="#{cm.dominioAcoplado}" />
+                </p:column>
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaCM"  update="tablaCM,message,messageg"
+                                   actionListener="#{transporteBean.eliminarItemCamion(cm)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+    </p:tabView>
+</ui:composition>
+

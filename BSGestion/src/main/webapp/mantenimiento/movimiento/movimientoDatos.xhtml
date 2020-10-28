@@ -1,0 +1,153 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario"
+                      rendered="#{movimientoMantenimientoBean.muestroCampo('C','CODFOR')}" />
+        <p:inputText value="#{movimientoMantenimientoBean.m.formulario.descripcion} - #{movimientoMantenimientoBean.m.formulario.letra}"
+                     rendered="#{movimientoMantenimientoBean.muestroCampo('C','CODFOR')}"
+                     readonly="true" />
+
+        <h:outputText value="Punto de Venta"
+                      rendered="#{movimientoMantenimientoBean.muestroCampo('C','PTOVTA')}" />
+        <p:inputText value="#{movimientoMantenimientoBean.m.puntoVenta.codigo}"
+                     rendered="#{movimientoMantenimientoBean.muestroCampo('C','PTOVTA')}"
+                     readonly="true" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número"
+                      rendered="#{movimientoMantenimientoBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{movimientoMantenimientoBean.m.numeroFormulario}"
+                     rendered="#{movimientoMantenimientoBean.muestroCampo('C','NROFOR')}"
+                     readonly="true" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{movimientoMantenimientoBean.muestroCampo('C','FCHMOV')}" />
+        <p:calendar value="#{movimientoMantenimientoBean.m.fechaMovimiento}"
+                    rendered="#{movimientoMantenimientoBean.muestroCampo('C','FCHMOV')}"
+                    disabled="#{movimientoMantenimientoBean.m.formulario.modificaFecha ne 'S'}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Bien de Uso *"
+                              url="#{movimientoMantenimientoBean.obtenerUrlMenu('SIS_00138','CODIGO',movimientoMantenimientoBean.m.bienUso.codigo)}" />
+
+        <p:autoComplete value="#{movimientoMantenimientoBean.m.bienUso}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Bien de Uso es obligatorio"
+                        completeMethod="#{movimientoMantenimientoBean.completeBienUso}"
+                        disabled="#{not empty movimientoMantenimientoBean.m.id}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresStock.producto}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" listener="#{movimientoMantenimientoBean.procesarBienUso()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Responsable "
+                      rendered="#{movimientoMantenimientoBean.muestroCampo('C','USRRES')}" />
+        <p:autoComplete value="#{movimientoMantenimientoBean.m.responsable}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoMantenimientoBean.muestroCampo('C','USRRES')}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe asignar un responsable"
+                        completeMethod="#{movimientoMantenimientoBean.completeResponsable}"
+                        var="e" itemLabel="#{e.nombre}" itemValue="#{e}"
+                        converter="#{conversoresSeguridad.usuario}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this"   />
+
+        </p:autoComplete>
+
+
+        <bs:outputTexWhitLink value="Defecto *"
+                              rendered="#{movimientoMantenimientoBean.muestroCampo('C','CODDEF')}"
+                              url="#{movimientoMantenimientoBean.obtenerUrlMenu('SIS_00620','CODIGO',movimientoMantenimientoBean.m.defecto.codigo)}" />
+
+        <p:autoComplete value="#{movimientoMantenimientoBean.m.defecto}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoMantenimientoBean.muestroCampo('C','CODDEF')}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Plan de Actividad es obligatorio"
+                        completeMethod="#{defectoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresMantenimiento.defecto}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this"   />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Detalle del Defecto"
+                      rendered="#{movimientoMantenimientoBean.muestroCampo('C','DETDEF')}" />
+        <p:inputTextarea rows="3" value="#{movimientoMantenimientoBean.m.detalleDefecto}"
+                         rendered="#{movimientoMantenimientoBean.muestroCampo('C','DETDEF')}"
+                         style="width: 100%" />
+
+
+        <bs:outputTexWhitLink value="Plan Actividad *"
+                              rendered="#{movimientoMantenimientoBean.muestroCampo('C','CODPLA')}"
+                              url="#{movimientoMantenimientoBean.obtenerUrlMenu('SIS_00622','CODIGO',movimientoMantenimientoBean.m.planActividad.codigo)}" />
+
+        <p:autoComplete value="#{movimientoMantenimientoBean.m.planActividad}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoMantenimientoBean.muestroCampo('C','CODPLA')}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Plan de Actividad es obligatorio"
+                        completeMethod="#{planActividadBean.complete}"
+                        disabled="#{not empty movimientoMantenimientoBean.m.id}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresMantenimiento.planActividad}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this,tb" listener="#{movimientoMantenimientoBean.procesarPlanActividad()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea rows="3" value="#{movimientoMantenimientoBean.m.observaciones}" style="width: 100%" />
+
+
+    </p:panelGrid>
+
+</ui:composition>
+

@@ -1,0 +1,80 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+    <!-- MENU -->
+    <p:menubar id="menuBar"   >
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{movimientoEducacionBean.buscar()}"
+                    immediate="true"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoEducacionBean.modoVista eq 'B' or empty movimientoEducacionBean.m.alumno or empty movimientoEducacionBean.m.itemsMovimiento }"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{movimientoEducacionBean.nuevo}"
+                    process="@this"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoEducacionBean.modoVista eq 'B' or empty movimientoEducacionBean.m.alumno or empty movimientoEducacionBean.m.itemsMovimiento }"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{movimientoEducacionBean.guardar(false)}"
+                    rendered="#{not empty movimientoEducacionBean.m and movimientoEducacionBean.modoVista eq 'D'}"
+                    update="@form" />
+
+        <p:menuitem value="Pendientes" icon="fa fa-list-alt"
+                    actionListener="#{movimientoEducacionBean.buscarPendientes() }"
+                    rendered="#{empty movimientoEducacionBean.m.id and movimientoEducacionBean.modoVista eq 'D'
+                                and (movimientoEducacionBean.m.comprobante.tipoComprobante eq 'IN'
+                                or movimientoEducacionBean.m.comprobante.tipoComprobante eq 'SC'
+                                or movimientoEducacionBean.m.comprobante.tipoComprobante eq 'SM'
+                                or movimientoEducacionBean.m.comprobante.tipoComprobante eq 'EC'
+                                or movimientoEducacionBean.m.comprobante.tipoComprobante eq 'EM' ) }"
+                    oncomplete="PF('dlgPendiente').show()"
+                    process="@this" update="buscadorPendiente" >
+        </p:menuitem>
+
+        <p:menuitem value="Imprimir" icon="fa fa-print"
+                    actionListener="#{movimientoEducacionBean.imprimir()}"
+                    rendered="#{not empty movimientoEducacionBean.m.id and movimientoEducacionBean.modoVista eq 'D'}"
+                    process="@this" >
+        </p:menuitem>
+
+        <p:menuitem value="Anular" icon="fa fa-close"
+                    actionListener="#{movimientoEducacionBean.revertirMovimiento(movimientoEducacionBean.m)}"
+                    rendered="#{not empty movimientoEducacionBean.m.id and movimientoEducacionBean.m.estado.codigo ne 'X' and movimientoEducacionBean.modoVista eq 'D'}"
+                    update="@form"  >
+            <p:confirm header="Confirmación"
+                       message="¿Está seguro de anular o revertir el movimiento #{movimientoEducacionBean.m.formulario.descripcion}  #{movimientoEducacionBean.m.puntoVenta.codigo} #{movimientoEducacionBean.m.numeroFormulario}?" icon="ui-icon-alert" />
+            <i class="fa fa-close fa-2x Red" ></i>
+        </p:menuitem>
+
+        <p:submenu label="Consultas" icon="fa fa-list-alt"
+                   rendered="#{movimientoEducacionBean.modoVista eq 'D'}" >
+
+            <p:menuitem value="Cuenta Corriente" icon="fa fa-info-circle"
+                        rendered="#{not empty movimientoEducacionBean.m.alumno}"
+                        url="#{request.contextPath}#{movimientoEducacionBean.obtenerUrlMenu('SIS_00597','NROCTA',movimientoEducacionBean.m.alumno.nrocta)}"
+                        target="_blank"
+                        process="@this" >
+            </p:menuitem>
+
+        </p:submenu>
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

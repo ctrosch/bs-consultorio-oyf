@@ -1,0 +1,411 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:tabView>
+
+        <p:tab title="Datos principales">
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+
+                <bs:outputTexWhitLink value="Circuito Inicio *"
+                                      url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00644','CODIGO',circuitoEducacionBean.circuito.circuitoComienzo.codigo)}" />
+                <p:autoComplete value="#{circuitoEducacionBean.circuito.circuitoComienzo}" forceSelection="true" dropdown="true"
+                                required="true" requiredMessage="Seleccione el circuito inicio"
+                                disabled="#{not circuitoEducacionBean.esNuevo}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{codigoCircuitoEducacionBean.complete}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                converter="#{conversoresEducacion.codigoCircuito}"  >
+
+                    <p:ajax event="itemSelect" process="@this" update="@form"  />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{p.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{p.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+
+                <bs:outputTexWhitLink value="Circuito Aplicado *"
+                                      url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00644','CODIGO',circuitoEducacionBean.circuito.circuitoAplicacion.codigo)}" />
+                <p:autoComplete value="#{circuitoEducacionBean.circuito.circuitoAplicacion}" forceSelection="true" dropdown="true"
+                                required="true" requiredMessage="Seleccione el circuito de aplicación"
+                                disabled="#{not circuitoEducacionBean.esNuevo}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{codigoCircuitoEducacionBean.complete}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                converter="#{conversoresEducacion.codigoCircuito}"  >
+
+                    <p:ajax event="itemSelect" process="@this" update="@form"  />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{p.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{p.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Descripción" />
+                <p:inputText value="#{circuitoEducacionBean.circuito.descripcion}"
+                             required="true"
+                             requiredMessage="La descripción es necesaria" />
+
+                <h:outputText value="" />
+                <h:outputText value="" />
+
+                <bs:outputTexWhitLink value="Reporte grupo *"
+                                      url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00315','CODIGO',circuitoEducacionBean.circuito.reporteGrupo.codigo)}" />
+                <bs:autocompleteReporte value="#{circuitoEducacionBean.circuito.reporteGrupo}" />
+
+                <bs:outputTexWhitLink value="Reporte detalle *"
+                                      url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00315','CODIGO',circuitoEducacionBean.circuito.reporteDetalle.codigo)}" />
+                <bs:autocompleteReporte value="#{circuitoEducacionBean.circuito.reporteDetalle}" />
+
+            </p:panelGrid>
+            <!--
+                        <p:fieldset legend="Configuraciones generales">
+
+                            <p:panelGrid columns="6" layout="grid"
+                                         styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2">
+
+
+                            </p:panelGrid>
+
+                        </p:fieldset>
+            -->
+            <div class="EmptyBox10" />
+
+            <p:fieldset legend="Actualización de módulos">
+
+                <p:panelGrid columns="9" layout="grid"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <h:outputText value="Actualiza educación " />
+                    <p:selectOneRadio value="#{circuitoEducacionBean.circuito.actualizaEducacion}"
+                                      required="true" requiredMessage="Indique si genera comprobante de educación" >
+
+                        <p:ajax process="@this" update="@form" listener="#{circuitoEducacionBean.validarModulosActualizarED()}" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Actualiza ventas " />
+                    <p:selectOneRadio value="#{circuitoEducacionBean.circuito.actualizaVenta}"
+                                      required="true" requiredMessage="Indique si genera comprobante de venta" >
+                        <p:ajax process="@this" update="@form" listener="#{circuitoEducacionBean.validarModulosActualizarVT()}" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Actualiza Tesoreria " />
+                    <p:selectOneRadio value="#{circuitoEducacionBean.circuito.actualizaTesoreria}"
+                                      required="true" requiredMessage="Indique si genera comprobante de tesorería" >
+                        <p:ajax process="@this" update="@form" listener="#{circuitoEducacionBean.validarModulosActualizarCJ()}" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Actualiza de Stock " />
+                    <p:selectOneRadio value="#{circuitoEducacionBean.circuito.actualizaStock}"
+                                      required="true" requiredMessage="Indique si genera comprobante de stock" >
+                        <p:ajax process="@this" update="@form" listener="#{circuitoEducacionBean.validarModulosActualizarST()}" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                </p:panelGrid>
+            </p:fieldset>
+
+
+        </p:tab>
+
+
+    </p:tabView>
+
+    <div class="EmptyBox10" />
+
+    <p:tabView>
+
+
+        <p:tab title="Comprobantes de Educación" rendered="#{circuitoEducacionBean.circuito.actualizaEducacion eq 'S'}">
+
+            <p:dataTable id="tablaEED" var="f"
+                         resizeMode="expand" liveResize="true"
+                         value="#{circuitoEducacionBean.circuito.itemCircuitoEducacion}" style="max-width: 600px;"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoEducacionBean.nuevoItemCircuitoEducacion()}"
+                                     value="Agregar Comprobante"
+                                     process="tablaEED"
+                                     update = "tablaEED" />
+                </f:facet>
+
+                <p:column headerText="Comprobante" sortBy="#{f.comprobante.codigo}" >
+
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{f.comprobante}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{comprobanteEducacionBean.complete}"
+                                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.comprobante}" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Comprobante"
+                                                url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00591','CODIGO',f.comprobante.codigo)}" />
+                        </span>
+
+                    </div>
+
+
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaEED" update="tablaEED"
+                                   actionListener="#{circuitoEducacionBean.eliminarItemCircuitoEducacion(f)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+            </p:dataTable>
+
+        </p:tab>
+
+
+        <p:tab title="Comprobantes de Venta" rendered="#{circuitoEducacionBean.circuito.actualizaVenta eq 'S'}" >
+
+            <p:dataTable id="tablaEVT" var="f"
+                         resizeMode="expand" liveResize="true"
+                         value="#{circuitoEducacionBean.circuito.itemCircuitoVenta}" style="max-width: 600px;"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoEducacionBean.nuevoItemCircuitoVenta()}"
+                                     value="Agregar Comprobante"
+                                     process="tablaEVT"
+                                     update="tablaEVT"/>
+
+                </f:facet>
+
+                <p:column headerText="Comprobante" sortBy="#{f.comprobante.codigo}" >
+
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{f.comprobante}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{comprobanteVentaBean.complete}"
+                                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.comprobante}" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Comprobante"
+                                                url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00218','CODIGO',f.comprobante.codigo)}" />
+                        </span>
+
+                    </div>
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaEVT" update="tablaEVT"
+                                   actionListener="#{circuitoEducacionBean.eliminarItemCircuitoVenta(f)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+
+        </p:tab>
+
+        <p:tab title="Comprobantes de Tesoreria" rendered="#{circuitoEducacionBean.circuito.actualizaTesoreria eq 'S'}" >
+
+            <p:dataTable id="tablaECJ" var="f"
+                         resizeMode="expand" liveResize="true"
+                         value="#{circuitoEducacionBean.circuito.itemCircuitoTesoreria}" style="max-width: 600px;"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoEducacionBean.nuevoItemCircuitoTesoreria()}"
+                                     value="Agregar Comprobante"
+                                     process="tablaECJ"
+                                     update="tablaECJ"/>
+
+                </f:facet>
+
+                <p:column headerText="Comprobante" sortBy="#{f.comprobante.codigo}" >
+
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{f.comprobante}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{comprobanteTesoreriaBean.complete}"
+                                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.comprobante}" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Comprobante"
+                                                url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00220','CODIGO',f.comprobante.codigo)}" />
+                        </span>
+
+                    </div>
+
+
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaECJ" update="tablaECJ"
+                                   actionListener="#{circuitoEducacionBean.eliminarItemCircuitoTesoreria(f)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+
+
+            </p:dataTable>
+
+
+        </p:tab>
+
+        <p:tab title="Comprobantes de Stock" rendered="#{circuitoEducacionBean.circuito.actualizaStock eq 'S'}"  >
+
+            <p:dataTable id="tablaEST" var="f"
+                         resizeMode="expand" liveResize="true"
+                         value="#{circuitoEducacionBean.circuito.itemCircuitoStock}" style="max-width: 600px;"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoEducacionBean.nuevoItemCircuitoStock()}"
+                                     value="Agregar Comprobante"
+                                     process="tablaEST"
+                                     update="tablaEST" />
+
+                </f:facet>
+
+
+                <p:column headerText="Comprobante" sortBy="#{f.comprobante.codigo}" >
+
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{f.comprobante}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{comprobanteStockBean.complete}"
+                                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.comprobante}" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Comprobante"
+                                                url="#{circuitoEducacionBean.obtenerUrlMenu('SIS_00221','CODIGO',f.comprobante.codigo)}" />
+                        </span>
+
+                    </div>
+
+
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaEST" update="tablaEST"
+                                   actionListener="#{circuitoEducacionBean.eliminarItemCircuitoStock(f)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+
+</ui:composition>
+

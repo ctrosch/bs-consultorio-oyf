@@ -1,0 +1,315 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"  >
+
+        <h:outputText value="Nro Cuenta *" />
+        <p:inputText value="#{destinatarioBean.entidad.nrocta}" readonly="true"  />
+
+        <h:outputText value="Sucursal*" />
+        <p:autoComplete value="#{destinatarioBean.entidad.sucursal}" dropdown="true" forceSelection="true"
+                        required="true" requiredMessage="Debe seleccionar la sucursal"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{sucursalBean.complete}"
+                        converter="#{conversoresGeneral.sucursal}"
+                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+        <h:outputText value="Nombre completo *" />
+        <p:inputText value="#{destinatarioBean.entidad.razonSocial}"
+                     required="true" requiredMessage="La razón social es obligatoria" />
+
+        <h:outputText value="Condición de IVA *" />
+        <p:selectOneMenu value="#{destinatarioBean.entidad.condicionDeIva}"
+                         required="true" requiredMessage="Seleccione la condición de iva"
+                         converter="#{conversoresGeneral.condicionDeIva}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Tipo/Nro Documento" />
+        <h:panelGroup id="pnTipoDoc" layout="block"  >
+
+            <div class="Wid40 Responsive100 Fleft">
+                <p:autoComplete value="#{destinatarioBean.entidad.tipoDocumento}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid60 Responsive100 Fright">
+                <p:inputMask value="#{destinatarioBean.entidad.nrodoc}"
+                             mask="#{destinatarioBean.entidad.tipoDocumento.mascara}"
+                             rendered="#{not empty destinatarioBean.entidad.tipoDocumento}"
+                             required="true"
+                             requiredMessage="El número de documento del cliente es obligatorio"  />
+            </div>
+
+        </h:panelGroup>
+
+        <h:outputText value="Sexo*" />
+        <p:selectOneMenu value="#{destinatarioBean.entidad.sexo}"
+                         required="true" requiredMessage="Seleccione Sexo"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Masculino" itemValue="M" />
+            <f:selectItem itemLabel="Femenino" itemValue="F" />
+            <f:selectItem itemLabel="No Definido" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Fecha Nacimiento" />
+        <p:calendar value="#{destinatarioBean.entidad.fechaNacimiento}"
+                    required="true"
+                    requiredMessage="La fecha de nacimiento es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+        <h:outputText value="Dirección * " />
+        <p:inputText value="#{destinatarioBean.entidad.direccion}"
+                     required="true" requiredMessage="La calle es obligatoria" />
+
+        <h:outputText value="Teléfono fijo" />
+        <p:inputText value="#{destinatarioBean.entidad.telefono}"   />
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{destinatarioBean.obtenerUrlMenu('SIS_00126','IDLC',destinatarioBean.entidad.localidad.id)}" />
+
+        </h:panelGroup>
+        <p:autoComplete id="localidad" value="#{destinatarioBean.entidad.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{destinatarioBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Celular" />
+        <p:inputText value="#{destinatarioBean.entidad.ntelex}"  />
+
+        <h:panelGroup id="pgProvinciaD"  layout="block">
+            <h:outputText value="Provincia" rendered="#{not empty destinatarioBean.entidad.provincia}" />
+        </h:panelGroup>
+
+        <h:panelGroup id="pgProvincia"  layout="block">
+            <p:inputText value="#{destinatarioBean.entidad.provincia.descripcion}" readonly="true"
+                         rendered="#{not empty destinatarioBean.entidad.provincia}"   />
+        </h:panelGroup>
+
+        <h:outputText value="Dirección de e-mail" />
+        <p:inputText value="#{destinatarioBean.entidad.email}"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateLength minimum="0" maximum="200" />
+            <!--
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+            -->
+        </p:inputText>
+
+        <!--
+        <bs:outputTexWhitLink value="Zona *"
+                              url="#{destinatarioBean.obtenerUrlMenu('SIS_00128')}" />
+        <p:selectOneMenu value="#{destinatarioBean.entidad.zona}"
+                         required="true" requiredMessage="Seleccione una zona"
+                         converter="#{conversoresGeneral.zona}"
+                         effect="fade"  filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{zonaBean.lista}" var="z" itemLabel="#{z.descripcion}" itemValue="#{z}" />
+        </p:selectOneMenu>
+        -->
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{destinatarioBean.entidad.notas}" />
+
+    </p:panelGrid>
+
+
+    <div class="EmptyBox10"> </div>
+
+    <p:tabView id="tbDatosAsociados" activeIndex="#{destinatarioBean.indexTab1}" rendered="#{not destinatarioBean.esNuevo}" >
+
+        <p:ajax event="tabChange" listener="#{destinatarioBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Direcciones de entrega" >
+
+            <p:dataTable id="tablaDE" var="d"
+                         value="#{destinatarioBean.entidad.direccionesDeEntrega}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{destinatarioBean.nuevaDireccionEntrega}"
+                                     value="Agregar dirección de entrega"
+                                     process="@this"
+                                     oncomplete="PF('dlgDireccionEntrega').show()" />
+                </f:facet>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+                    <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                     title="Modificar dirección de entrega"
+                                     actionListener="#{destinatarioBean.seleccionarDireccionEntrega(d)}"
+                                     process="@this"
+                                     oncomplete="PF('dlgDireccionEntrega').show()"/>
+
+                </p:column>
+
+                <p:column headerText="Código" width="60" style="text-align: center;"
+                          sortBy="#{d.codigo}"   >
+                    <h:outputText value="#{d.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="100" style="text-align: left;"
+                          sortBy="#{d.descripcion}" >
+                    <h:outputText value="#{d.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Dirección" width="200" style="text-align: left;"
+                          sortBy="#{d.direccion}" >
+                    <h:outputText value="#{d.direccion}" />
+                </p:column>
+
+                <p:column headerText="Número" width="50" style="text-align: left;" >
+                    <h:outputText value="#{d.numero}" />
+                </p:column>
+
+                <p:column headerText="Dpto piso" width="70" style="text-align: left;" >
+                    <h:outputText value="#{d.departamentoPiso}" />
+                </p:column>
+
+                <p:column headerText="Dpto nro" width="70" style="text-align: left;" >
+                    <h:outputText value="#{e.departamentoNumero}" />
+                </p:column>
+
+                <p:column headerText="Localidad" width="150" style="text-align: left;" >
+                    <h:outputText value="#{d.localidad.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Provincia" width="100" style="text-align: left;" >
+                    <h:outputText value="#{d.localidad.provincia.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Nombre Contacto" width="120" style="text-align: left;" >
+                    <h:outputText value="#{d.contacto}" />
+                </p:column>
+
+                <p:column headerText="Tel. Contacto" width="120" style="text-align: left;" >
+                    <h:outputText value="#{d.telefono}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{destinatarioBean.mostrarDireccionDebaja}" >
+                        <p:ajax process="@this" update="tablaDE"
+                                listener="#{destinatarioBean.sincronizarDireccionEntrega}" />
+                    </p:selectBooleanCheckbox>
+                    Mostrar registros deshabilitados
+                </h:panelGroup>
+
+            </p:panelGrid>
+
+        </p:tab>
+
+        <!--
+        <p:tab title="Geolocalización">
+
+            <script type="text/javascript">
+                function geocode() {
+                    PF('geoMap').geocode(document.getElementById('address').value);
+                }
+
+            </script>
+
+            <h3 style="margin-top:0">Geocode</h3>
+            <h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="address" value="Address:" />
+                <p:inputText id="address" />
+                <p:commandButton value="Geocode" icon="pi pi-search" onclick="geocode()" type="button" />
+            </h:panelGrid>
+
+            <p:gmap id="geoGmap" widgetVar="geoMap" center="#{destinatarioBean.centerGeoMap}" zoom="2" type="ROADMAP"
+                    model="#{destinatarioBean.geoModel}" style="width:100%;height:400px">
+                <p:ajax event="geocode" listener="#{destinatarioBean.onGeocode}" update="@this" />
+            </p:gmap>
+
+            <h:panelGroup layout="block">
+
+                <div>
+                    <div class="Wid50 Fleft">
+                        <p:inputText value="#{destinatarioBean.entidad.coordenadaLatitud}"
+                                     placeholder="Latitud" title="Latitud"  >
+                            <f:convertNumber pattern="0.000000" maxFractionDigits="6" maxIntegerDigits="2" />
+                        </p:inputText>
+                    </div>
+                    <div class="Wid50 Fright">
+                        <p:inputText value="#{destinatarioBean.entidad.coordenadaLongitud}"
+                                     placeholder="Longitud" title="Longitud" >
+
+                            <f:convertNumber pattern="0.000000" maxFractionDigits="6" maxIntegerDigits="2" />
+                        </p:inputText>
+                    </div>
+                </div>
+
+                <div class="EmptyBox5" />
+
+                <p:gmap rendered="#{not empty destinatarioBean.entidad.coordenadaLatitud and not empty destinatarioBean.entidad.coordenadaLongitud }"
+                        center="#{destinatarioBean.entidad.coordenadaLatitud}, #{destinatarioBean.entidad.coordenadaLongitud}"
+                        zoom="14" type="ROADMAP" style="width:100%;height:250px;"
+                        model="#{destinatarioBean.simpleModel}"  />
+
+            </h:panelGroup>
+
+
+        </p:tab>
+        -->
+
+    </p:tabView>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

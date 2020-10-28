@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ED_SCE" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="21db4006-82c7-4753-bdd2-6f5767781961">
+	<property name="ireport.zoom" value="1.6500000000000032"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="38"/>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="LOGO" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CANT_COPIAS" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+  gr_copias.DESCRIPCION As gr_copias_DESCRIPCION,
+  e.NROCTA As en_entidad_NROCTA,
+  m.ID As ed_movimiento_ID,
+  m.FCHMOV As ed_movimiento_FCHMOV,
+  m.NROFOR As ed_movimiento_NROFOR,
+  m.NOMBRE As ed_movimiento_NOMBRE,
+  m.NRODOC As ed_movimiento_NRODOC,
+  m.TIPDOC As ed_movimiento_TIPDOC,
+  m.MODFOR As ed_movimiento_MODFOR,
+  m.CODFOR As ed_movimiento_CODFOR,
+  m.PTOVTA As ed_movimiento_PTOVTA,
+  m.USERID As ed_movimiento_USERID,
+  f.DESCRP As gr_formulario_DESCRP,
+  f.LETRID As gr_formulario_LETRID,
+  p.DESCRP As gr_provincia_DESCRP,
+  l.DESCRP As gr_codigo_postal_DESCRP,
+  c.TITULO as ed_carrera_TITULO
+
+
+from ed_movimiento m
+  Inner join en_entidad e On e.NROCTA = m.NROCTA
+  Inner join gr_formulario f On m.MODFOR = f.MODFOR and m.CODFOR = f.CODFOR
+  Inner join gr_provincia p On m.CODPRO = p.CODIGO and m.CODPAI = p.CODPAI
+  Inner join gr_localidad l On m.CODLOC = l.ID
+  Inner join ed_carrera c On m.CODCAR = c.CODIGO,
+     gr_copias gr_copias
+  where m.MODFOR = 'ED'
+ AND m.`ID` = $P{ID}
+ and gr_copias.ID <= $P{CANT_COPIAS}]]>
+	</queryString>
+	<field name="gr_copias_DESCRIPCION" class="java.lang.String"/>
+	<field name="en_entidad_NROCTA" class="java.lang.String"/>
+	<field name="ed_movimiento_ID" class="java.lang.Integer"/>
+	<field name="ed_movimiento_FCHMOV" class="java.sql.Date"/>
+	<field name="ed_movimiento_NROFOR" class="java.lang.Integer"/>
+	<field name="ed_movimiento_NOMBRE" class="java.lang.String"/>
+	<field name="ed_movimiento_NRODOC" class="java.lang.String"/>
+	<field name="ed_movimiento_TIPDOC" class="java.lang.String"/>
+	<field name="ed_movimiento_MODFOR" class="java.lang.String"/>
+	<field name="ed_movimiento_CODFOR" class="java.lang.String"/>
+	<field name="ed_movimiento_PTOVTA" class="java.lang.String"/>
+	<field name="ed_movimiento_USERID" class="java.lang.String"/>
+	<field name="gr_formulario_DESCRP" class="java.lang.String"/>
+	<field name="gr_formulario_LETRID" class="java.lang.String"/>
+	<field name="gr_provincia_DESCRP" class="java.lang.String"/>
+	<field name="gr_codigo_postal_DESCRP" class="java.lang.String"/>
+	<field name="ed_carrera_TITULO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="115" splitType="Stretch">
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="5" y="5" width="250" height="65" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="315" y="5" width="228" height="15" uuid="fe387915-ad4d-4dc1-ae12-1c7d159f331f"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_formulario_DESCRP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="443" y="19" width="100" height="12" uuid="1e3a7cb3-8289-4a7a-8533-401e028d3c1a"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="315" y="31" width="85" height="12" uuid="0931a391-807e-4c92-82cf-c268493b152b"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ed_movimiento_FCHMOV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="315" y="20" width="85" height="12" uuid="7847c39c-7f77-46f0-86ad-c33ba0f086c2"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<textField pattern="0000">
+				<reportElement x="456" y="31" width="26" height="12" uuid="c3957ca3-f937-4a65-b686-79713cfe22b0"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ed_movimiento_PTOVTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="482" y="31" width="5" height="12" uuid="d43b7128-1272-421f-80c6-eae9c179b674"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField pattern="00000000">
+				<reportElement x="487" y="31" width="47" height="12" uuid="c3957ca3-f937-4a65-b686-79713cfe22b0"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ed_movimiento_NROFOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="255" y="2" width="45" height="49" uuid="2c3ebe09-6122-4584-9385-83add10d6d7e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="38" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_formulario_LETRID}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="114" width="555" height="1" forecolor="#666666" uuid="d701330b-1f9b-4620-a32b-8e9000f9817e"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="276" y="51" width="1" height="63" forecolor="#666666" uuid="e4d2184d-6df1-4e9e-8c51-7dbebfc44aea"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="284" y="91" width="153" height="11" uuid="d00d7fa5-efa7-4339-ac10-4a95c9c3f7f4"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["D.R.e.I.: "+($P{EMP_IMPMUN}==null?"":$P{EMP_IMPMUN})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="102" width="153" height="11" uuid="10132954-3df2-4b23-8a7b-f94c7ccb402c"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["INICIO DE ACTIVIDAD: "+$P{EMP_INIACT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="80" width="257" height="11" uuid="4660e287-17e0-46a2-bdb9-7f0c5c1979c3"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_DIRECCION}
++" | "+$P{EMP_CIUDAD}
++" | "+$P{EMP_PROVINCIA}
++" | "+$P{EMP_PAIS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="69" width="153" height="11" uuid="0552df63-f2d0-42d2-b439-23b8abdba23b"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.U.I.T.: " + $P{EMP_CUIT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="69" width="257" height="11" uuid="f6fc0dbd-ab4a-4a89-ac69-84c2b30eb584"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="91" width="257" height="11" uuid="336bd7e1-1bef-4c04-bb73-238b7dce2915"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EMP_TELEFONO}==null?"":$P{EMP_TELEFONO})
++($P{EMP_EMAIL}==null?"":" | "+$P{EMP_EMAIL})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="102" width="257" height="11" uuid="e43bd0bd-b476-4609-844c-1697e40d2d78"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_CONDICION_IVA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="80" width="153" height="11" uuid="cd522557-0a88-490f-95be-4a5575e2d38c"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ING. BRUTOS : " + ($P{EMP_IB}==null?"":$P{EMP_IB})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="382" y="43" width="100" height="15" backcolor="#CC0000" uuid="367810e9-2a1b-4d83-adc9-f8cc28234e1b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_copias_DESCRIPCION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="1" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="455" splitType="Stretch">
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="153" y="14" width="304" height="15" uuid="704bbc02-301a-41e6-9038-90f1bbb038de"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ed_movimiento_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="14" width="143" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="ad765d65-e6a1-461d-bc46-a2c7ecc4bea8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Se deja constancia que el/la Sr. /Srta.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="25" width="19" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="8ecb742e-2b12-4ea9-b225-918182880f9e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[DNI :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="36" width="68" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="9e671240-bd69-4cdd-aa40-057d71442421"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[la capacitación en]]></text>
+			</staticText>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="78" y="36" width="344" height="15" uuid="2e61b297-8e8f-4fff-b664-123d9fd53a8f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ed_carrera_TITULO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="47" width="479" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="02c017c4-0c68-4fad-85d4-aac8ebab5f31"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[El mismo se entregará de acuerdo a los tiempos estipulados en el anexo firmado junto a la inscripción correspondiente.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="69" width="545" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="6ba5a0a5-1f12-463f-9c21-2db54cc5cd6f"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Se extiende la presente en carácter de provisorio, a pedido del interesado/a para ser presentado ante las autoridades que así lo requieran. Teniendo el mismo vigencia hasta la entrega personal del Certificado solicitado.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="103" width="545" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="e1ea5bf4-b3a2-4b6b-8d0a-363d4fb15293"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Deberá presentarse la misma para retirar el Certificado en la sede que corresponda, de lo contrario no se garantiza la entrega, sirviendo este en original como prueba del tramite realizado.]]></text>
+			</staticText>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="29" y="25" width="75" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="f693e232-e587-4c3e-878e-2cd99c7f55a1"/>
+				<textElement verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ed_movimiento_NRODOC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="95" y="25" width="465" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="c341ab16-34f4-4424-89cd-101b0e09abb3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[, realizó el trámite correspondiente para obtener su Certificado de finalización y aprobación del cursado, correspondiente al curso o]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="75" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

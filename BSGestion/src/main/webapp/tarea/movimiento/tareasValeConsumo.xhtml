@@ -1,0 +1,161 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dataTable id="detalleVC" value="#{tareaBean.componentesPendientes}"
+                 rendered="#{(tareaBean.tarea.estado eq 'B' or tareaBean.tarea.estado eq 'C') and tareaBean.tarea.area.codigo eq 'PRD'}"
+                 var="i" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se encontraron datos" >
+
+        <f:facet name="header" >
+            <h:outputText value="Insumos" />
+        </f:facet>
+
+        <f:facet name="footer">
+            <div class="Wid50 MarAuto">
+                <p:commandButton icon="fa fa-search" value="Agregar producto" styleClass="GreenBack"
+                                 actionListener="#{productoBean.buscar()}"
+                                 process="@this"
+                                 update="buscadorProducto"
+                                 oncomplete="PF('dlgProducto').show()" >
+
+                    <f:setPropertyActionListener target="#{productoBean.tipoProducto}" value="#{null}" />
+                </p:commandButton>
+            </div>
+        </f:facet>
+
+        <p:column headerText="Código" width="70" >
+            <h:outputText value="#{i.producto.codigo}" rendered="#{not empty i.producto}" />
+        </p:column>
+
+        <p:column headerText="Producto" width="300" >
+            <h:outputText value="#{i.producto.descripcion}"
+                          rendered="#{not empty i.producto}"/>
+        </p:column>
+
+        <p:column headerText="Programado" width="70"  >
+            <h:outputText  value="#{i.cantidad}" styleClass="Fright"
+                           rendered="#{not empty i.producto}" style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00"  />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Pendiente" width="70"  >
+            <h:outputText  value="#{i.cantidadPendiente}" styleClass="Fright"
+                           rendered="#{not empty i.producto}" style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00"  />
+            </h:outputText>
+        </p:column>
+        <p:column headerText="Consumido" width="70" >
+            <p:inputText  value="#{i.produccion}" styleClass="Fright"
+                          rendered="#{not empty i.producto}" style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00"  />
+                <p:ajax listener="#{tareaBean.sincronizarCantidadesProduccion(i)}" event="keyup"
+                        update="detalleItem" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="U.M" width="50"  >
+            <h:outputText  value="#{i.unidadMedida.codigo}" />
+        </p:column>
+
+        <p:column headerText="Detalle" style="width: 50px; text-align: center;"
+                  rendered="#{tareaBean.muestroCampo('D','DETALL')}"   >
+            <p:rowToggler  />
+        </p:column>
+
+        <p:rowExpansion>
+
+            <div class="Wid60 Fright MarAuto WidAutoOnMobile">
+
+                <p:dataTable id="detalleItem" value="#{i.itemDetalleTemporal}" var="d" reflow="true"  >
+
+                    <f:facet name="footer">
+                        <p:commandButton icon="fa fa-plus" value="Agregar item" styleClass="GreenBack"
+                                         process="detalleItem"
+                                         update="detalleItem,message,messageg"
+                                         actionListener="#{tareaBean.agregarItemDetalleTemporal(i)}" />
+
+                    </f:facet>
+
+                    <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}" width="80" >
+                        <p:inputText value="#{d.atributo1}" readonly="#{empty d.producto}" />
+                    </p:column>
+
+                    <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}" width="80" >
+
+                        <p:inputText  value="#{d.atributo2}" readonly="#{empty d.producto}" />
+                    </p:column>
+
+                    <p:column headerText="Cantidad" width="70" >
+                        <p:inputText value="#{d.cantidad}" required="true" styleClass="TexAlRight"
+                                     rendered="#{not empty d.producto}"  >
+                            <f:convertNumber pattern="#{d.producto.unidadDeMedida.formato}" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="U.M" width="50"  >
+                        <h:outputText  value="#{d.unidadMedida.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                        <p:commandButton icon="fa fa-close" process="detalleItem" update="detalleItem,message,messageg"
+                                         actionListener="#{tareaBean.eliminarItemDetalleTemporal(i,d)}"  >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{d.producto.descripcion}?" icon="ui-icon-alert" />
+                        </p:commandButton>
+
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+
+        </p:rowExpansion>
+
+        <!--
+        <p:column headerText="Nro Trazabilidad" width="70" >
+            <p:inputText  value="#{i.atributo1}" styleClass="Fright"
+                          rendered="#{not empty i.producto}" style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00"  />
+            </p:inputText>
+        </p:column>
+        -->
+
+    </p:dataTable>
+
+    <div class="EmptyBox20" />
+    <!--
+    <div class="Wid100">
+
+        <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Registra Consumo y continuar" styleClass="GreenBack"
+                             rendered="#{tareaBean.tarea.estado eq 'B' and not empty tareaBean.tarea.movimientoProduccion}"
+                             actionListener="#{tareaBean.registrarConsumo(true)}"
+                             process="detalleVC,@this" update="@form"/>
+
+            <p:commandButton value="Registra Consumo y finalizar" styleClass="OrangeBack"
+                             rendered="#{tareaBean.tarea.estado eq 'B' and not empty tareaBean.tarea.movimientoProduccion}"
+                             actionListener="#{tareaBean.registrarConsumo(false)}"
+                             process="detalleVC,@this" update="@form"/>
+
+            <p:commandButton value="Finalizar" styleClass="RedBack"
+                             rendered="#{tareaBean.tarea.estado eq 'B'}"
+                             actionListener="#{tareaBean.finalizarTarea(false)}"
+                             process="@form" update="@form,fCabecera"/>
+
+        </p:panelGrid>
+
+        <div class="Wid50 Responsive100 MarAuto">
+
+
+        </div>
+    </div>
+    <div class="EmptyBox20" />
+    -->
+
+
+</ui:composition>

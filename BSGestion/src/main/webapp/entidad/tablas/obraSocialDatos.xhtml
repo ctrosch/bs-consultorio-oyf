@@ -1,0 +1,144 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Nro Cuenta *" />
+        <p:inputText value="#{obraSocialBean.entidad.nrocta}" readonly="true"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Razón Social *" />
+        <p:inputText id="c2" value="#{obraSocialBean.entidad.razonSocial}"
+                     required="true" requiredMessage="La razón social es obligatoria" />
+
+        <h:outputText value="Nombre Fantasía" />
+        <p:inputText id="nombFanta" value="#{obraSocialBean.entidad.nombreFantasia}"
+                     required="true"
+                     requiredMessage="El nombre de fantasía es obligatorio"/>
+
+        <h:outputText value="Condición de IVA *" />
+        <p:selectOneMenu value="#{obraSocialBean.entidad.condicionDeIva}"
+                         required="true" requiredMessage="Seleccione la condición de iva"
+                         converter="#{conversoresGeneral.condicionDeIva}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Tipo/Nro Documento" />
+        <h:panelGroup id="pnTipoDoc" layout="block"  >
+
+            <div class="Wid50 Responsive100 Fleft">
+                <p:autoComplete value="#{obraSocialBean.entidad.tipoDocumento}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc" />
+                </p:autoComplete>
+            </div>
+            <div class="Wid50 Responsive100 Fright">
+                <p:inputMask value="#{obraSocialBean.entidad.nrodoc}"
+                             mask="#{obraSocialBean.entidad.tipoDocumento.mascara}"
+                             rendered="#{not empty obraSocialBean.entidad.tipoDocumento}"
+                             required="true"
+                             requiredMessage="El número de documento de la Obra Social es obligatorio"  />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Calle * " />
+        <p:inputText value="#{obraSocialBean.entidad.direccion}"
+                     required="true" requiredMessage="La calle es obligatoria" />
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{obraSocialBean.obtenerUrlMenu('SIS_00126','IDLC',obraSocialBean.entidad.localidad.id)}" />
+
+        </h:panelGroup>
+
+        <p:autoComplete id="localidad" value="#{obraSocialBean.entidad.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{obraSocialBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:panelGroup id="pgProvinciaD"  layout="block">
+            <h:outputText value="Provincia *" rendered="#{not empty obraSocialBean.entidad.provincia}" />
+        </h:panelGroup>
+
+        <h:panelGroup id="pgProvincia"  layout="block">
+            <p:inputText value="#{obraSocialBean.entidad.provincia.descripcion}" readonly="true"
+                         rendered="#{not empty obraSocialBean.entidad.provincia}"   />
+        </h:panelGroup>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Teléfono" />
+        <p:inputText value="#{obraSocialBean.entidad.telefono}"   />
+
+        <h:outputText value="Dirección de email" />
+        <p:inputText value="#{obraSocialBean.entidad.email}"
+                     validatorMessage="Ingrese un correo válido">
+            <!--
+            <f:validateLength maximum="200" />
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+            -->
+        </p:inputText>
+
+        <h:outputText value="Celular" />
+        <p:inputText value="#{obraSocialBean.entidad.ntelex}"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Fax" />
+        <p:inputText value="#{obraSocialBean.entidad.nrofax}"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{obraSocialBean.entidad.notas}" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox20"></div>
+
+</ui:composition>
+

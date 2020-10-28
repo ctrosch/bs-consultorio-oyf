@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pv="http://primefaces.org/volt"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- RESULTADO BUSQUEDA -->
+    <h:panelGroup id="dgResultado" layout="block" styleClass="Responsive100 fadeIn"  >
+
+        <p:panel styleClass="fadeIn" style="border:none;" rendered="#{not empty principalBean.resultadoBusqueda}" >
+
+            <div class="EmptyBox10" />
+            <div class="CardTopic Fs15 FontVoltSemiBold">
+                Resultado
+
+                <p:commandLink styleClass="Fright Fs20" style="width:auto"
+                               process="@this" update="@form,:fCabecera" >
+
+                    <i class="fa fa-close" ></i>
+                    <f:setPropertyActionListener value="" target="#{principalBean.txtBusqueda}" />
+                    <f:setPropertyActionListener value="" target="#{principalBean.resultadoBusqueda}" />
+                </p:commandLink>
+            </div>
+            <div class="Separator"></div>
+
+            <p:dataList value="#{principalBean.resultadoBusqueda}" var="r"
+                        type="unordered" itemType="none"
+                        rows="40" paginator="true" paginatorAlwaysVisible="false" >
+
+                <h:outputLink  value="#{request.contextPath}#{r.urlCompleta}"
+                               target="_blank"
+                               rendered="#{empty r.menuItem}" >
+
+                    <div class="EmptyBox5"></div>
+
+                    <div style="display:inline-block; ">
+                        <i class="fa #{r.icono} Fs18" style="margin-top:5px; margin-right: 5px;"></i>
+                        <h:outputText value="#{r.modulo.codigo} - #{r.nombre}" />
+                    </div>
+
+                    <p:ajax event="click" update="@form" listener="#{principalBean.agregarReciente(r)}" />
+
+                    <p:commandLink title="Agregar a favorito"
+                                   actionListener="#{principalBean.agregarFavorito(r)}" update="@form"  >
+                        <i class="fa fa-star Fs18" style="margin-left: 10px;"></i>
+                    </p:commandLink>
+
+                </h:outputLink>
+            </p:dataList>
+
+        </p:panel>
+
+    </h:panelGroup>
+
+</html>

@@ -1,0 +1,1024 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ordenProduccion" language="groovy" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="79"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Detalle_productos" uuid="40e38970-c5db-46f6-8105-f8acf2e26b8f">
+		<parameter name="MODFOR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[$P{MODFOR}]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CODFOR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[$P{CODFOR}]]></defaultValueExpression>
+		</parameter>
+		<parameter name="NROFOR" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[$P{NROFOR}]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+     pdrmvi.*,
+     stmpdh.`STMPDH_DESCRP` AS STMPDH_DESCRP,
+     stmpdh.`STMPDH_UNIMED` AS STMPDH_UNIMED,
+     stmpdh.`STMPDH_ARTCOD` AS STMPDH_ARTCOD
+FROM
+     `stmpdh` stmpdh INNER JOIN `pdrmvi` pdrmvi ON stmpdh.`STMPDH_TIPPRO` = pdrmvi.`PDRMVI_TIPPRO`
+     AND stmpdh.`STMPDH_ARTCOD` = pdrmvi.`PDRMVI_ARTCOD`
+WHERE
+     PDRMVI_MODFOR = $P{MODFOR}
+ AND PDRMVI_CODFOR = $P{CODFOR}
+ AND PDRMVI_NROFOR = $P{NROFOR}
+ AND PDRMVI_MODAPL = $P{MODFOR}
+ AND PDRMVI_CODAPL = $P{CODFOR}
+ AND PDRMVI_NROAPL = $P{NROFOR}
+ AND OALIAS = 'PDRITM']]>
+		</queryString>
+		<field name="PDRMVI_MODFOR" class="java.lang.String"/>
+		<field name="PDRMVI_CODFOR" class="java.lang.String"/>
+		<field name="PDRMVI_NROFOR" class="java.lang.Integer"/>
+		<field name="PDRMVI_NROITM" class="java.lang.Integer"/>
+		<field name="PDRMVI_NIVEXP" class="java.lang.String"/>
+		<field name="PDRMVI_ITMEXP" class="java.lang.Integer"/>
+		<field name="PDRMVI_MODAPL" class="java.lang.String"/>
+		<field name="PDRMVI_CODAPL" class="java.lang.String"/>
+		<field name="PDRMVI_NROAPL" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMAPL" class="java.lang.Integer"/>
+		<field name="PDRMVI_NIVAPL" class="java.lang.String"/>
+		<field name="PDRMVI_EXPAPL" class="java.lang.Integer"/>
+		<field name="PDRMVI_TIPPRO" class="java.lang.String"/>
+		<field name="PDRMVI_ARTCOD" class="java.lang.String"/>
+		<field name="PDRMVI_TIPORI" class="java.lang.String"/>
+		<field name="PDRMVI_ARTORI" class="java.lang.String"/>
+		<field name="PDRMVI_DEPOSI" class="java.lang.String"/>
+		<field name="PDRMVI_SECTOR" class="java.lang.String"/>
+		<field name="PDRMVI_SUCURS" class="java.lang.String"/>
+		<field name="PDRMVI_CANTID" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_CANTST" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_CNTORI" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_UNIMED" class="java.lang.String"/>
+		<field name="PDRMVI_TIPFOR" class="java.lang.String"/>
+		<field name="PDRMVI_ARTFOR" class="java.lang.String"/>
+		<field name="PDRMVI_FORMUL" class="java.lang.String"/>
+		<field name="PDRMVI_TIPAPL" class="java.lang.String"/>
+		<field name="PDRMVI_ARTAPL" class="java.lang.String"/>
+		<field name="PDRMVI_FORAPL" class="java.lang.String"/>
+		<field name="PDRMVI_SERAPL" class="java.lang.String"/>
+		<field name="PDRMVI_NDEAPL" class="java.lang.String"/>
+		<field name="PDRMVI_ENVAPL" class="java.lang.String"/>
+		<field name="PDRMVI_PREREP" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_PRECIO" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_FCHENT" class="java.sql.Timestamp"/>
+		<field name="PDRMVI_FCHHAS" class="java.sql.Timestamp"/>
+		<field name="PDRMVI_TEXTOS" class="java.lang.String"/>
+		<field name="PDRMVI_STOCKS" class="java.lang.String"/>
+		<field name="PDRMVI_MODORI" class="java.lang.String"/>
+		<field name="PDRMVI_CODORI" class="java.lang.String"/>
+		<field name="PDRMVI_NROORI" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMORI" class="java.lang.Integer"/>
+		<field name="PDRMVI_NIVORI" class="java.lang.String"/>
+		<field name="PDRMVI_EXPORI" class="java.lang.Integer"/>
+		<field name="PDRMVI_MODCIE" class="java.lang.String"/>
+		<field name="PDRMVI_CODCIE" class="java.lang.String"/>
+		<field name="PDRMVI_NROCIE" class="java.lang.Integer"/>
+		<field name="PDRMVI_TIPSUS" class="java.lang.String"/>
+		<field name="PDRMVI_ARTSUS" class="java.lang.String"/>
+		<field name="PDRMVI_FACPRO" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_NROINT" class="java.lang.Float"/>
+		<field name="PDRMVI_UNISEC" class="java.lang.String"/>
+		<field name="PDRMVI_FACSEC" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_CNTSEC" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_APLICA" class="java.lang.String"/>
+		<field name="PDRMVI_GENERA" class="java.lang.String"/>
+		<field name="FECALT" class="java.sql.Timestamp"/>
+		<field name="FECMOD" class="java.sql.Timestamp"/>
+		<field name="USERID" class="java.lang.String"/>
+		<field name="ULTOPR" class="java.lang.String"/>
+		<field name="DEBAJA" class="java.lang.String"/>
+		<field name="OALIAS" class="java.lang.String"/>
+		<field name="TSTAMP" class="java.sql.Timestamp"/>
+		<field name="CODEMP" class="java.lang.String"/>
+		<field name="PDRMVI_HORMOV" class="java.lang.String"/>
+		<field name="PDRMVI_MODULE" class="java.lang.String"/>
+		<field name="PDRMVI_LOTTRA" class="java.lang.String"/>
+		<field name="PDRMVI_LOTREC" class="java.lang.String"/>
+		<field name="PDRMVI_LOTORI" class="java.lang.String"/>
+		<field name="PDRMVI_SYSVER" class="java.lang.String"/>
+		<field name="PDRMVI_CMPVER" class="java.lang.String"/>
+		<field name="PDRMVI_EMPAPL" class="java.lang.String"/>
+		<field name="PDRMVI_EMPORI" class="java.lang.String"/>
+		<field name="PDRMVI_EMPCIE" class="java.lang.String"/>
+		<field name="PDRMVI_CNTPEN" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_MODREQ" class="java.lang.String"/>
+		<field name="PDRMVI_CODREQ" class="java.lang.String"/>
+		<field name="PDRMVI_NROREQ" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMREQ" class="java.lang.Integer"/>
+		<field name="PDRMVI_EMPREQ" class="java.lang.String"/>
+		<field name="PDRMVI_MODINI" class="java.lang.String"/>
+		<field name="PDRMVI_CODINI" class="java.lang.String"/>
+		<field name="PDRMVI_NROINI" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMINI" class="java.lang.Integer"/>
+		<field name="PDRMVI_EXPINI" class="java.lang.Integer"/>
+		<field name="PDRMVI_EMPINI" class="java.lang.String"/>
+		<field name="PDRMVI_NIVINI" class="java.lang.String"/>
+		<field name="STMPDH_DESCRP" class="java.lang.String"/>
+		<field name="STMPDH_UNIMED" class="java.lang.String"/>
+		<field name="STMPDH_ARTCOD" class="java.lang.String"/>
+		<group name="STMPDH_ARTCOD">
+			<groupExpression><![CDATA[$F{STMPDH_ARTCOD}]]></groupExpression>
+		</group>
+	</subDataset>
+	<subDataset name="Procesos" uuid="21a0af2a-9b4b-4890-abb6-940931df8861">
+		<parameter name="MODFOR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CODFOR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="NROFOR" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+     pdrmvi.*,
+     stmpdh.`STMPDH_DESCRP` AS STMPDH_DESCRP,
+     stmpdh.`STMPDH_UNIMED` AS STMPDH_UNIMED,
+     stmpdh.`STMPDH_ARTCOD` AS STMPDH_ARTCOD
+FROM
+     `stmpdh` stmpdh INNER JOIN `pdrmvi` pdrmvi ON stmpdh.`STMPDH_TIPPRO` = pdrmvi.`PDRMVI_TIPPRO`
+     AND stmpdh.`STMPDH_ARTCOD` = pdrmvi.`PDRMVI_ARTCOD`
+WHERE
+     PDRMVI_MODFOR = $P{MODFOR}
+ AND PDRMVI_CODFOR = $P{CODFOR}
+ AND PDRMVI_NROFOR = $P{NROFOR}
+ AND PDRMVI_MODAPL = $P{MODFOR}
+ AND PDRMVI_CODAPL = $P{CODFOR}
+ AND PDRMVI_NROAPL = $P{NROFOR}
+ AND PDRMVI_TIPPRO = 'PRC']]>
+		</queryString>
+		<field name="PDRMVI_MODFOR" class="java.lang.String"/>
+		<field name="PDRMVI_CODFOR" class="java.lang.String"/>
+		<field name="PDRMVI_NROFOR" class="java.lang.Integer"/>
+		<field name="PDRMVI_NROITM" class="java.lang.Integer"/>
+		<field name="PDRMVI_NIVEXP" class="java.lang.String"/>
+		<field name="PDRMVI_ITMEXP" class="java.lang.Integer"/>
+		<field name="PDRMVI_MODAPL" class="java.lang.String"/>
+		<field name="PDRMVI_CODAPL" class="java.lang.String"/>
+		<field name="PDRMVI_NROAPL" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMAPL" class="java.lang.Integer"/>
+		<field name="PDRMVI_NIVAPL" class="java.lang.String"/>
+		<field name="PDRMVI_EXPAPL" class="java.lang.Integer"/>
+		<field name="PDRMVI_TIPPRO" class="java.lang.String"/>
+		<field name="PDRMVI_ARTCOD" class="java.lang.String"/>
+		<field name="PDRMVI_TIPORI" class="java.lang.String"/>
+		<field name="PDRMVI_ARTORI" class="java.lang.String"/>
+		<field name="PDRMVI_DEPOSI" class="java.lang.String"/>
+		<field name="PDRMVI_SECTOR" class="java.lang.String"/>
+		<field name="PDRMVI_SUCURS" class="java.lang.String"/>
+		<field name="PDRMVI_CANTID" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_CANTST" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_CNTORI" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_UNIMED" class="java.lang.String"/>
+		<field name="PDRMVI_TIPFOR" class="java.lang.String"/>
+		<field name="PDRMVI_ARTFOR" class="java.lang.String"/>
+		<field name="PDRMVI_FORMUL" class="java.lang.String"/>
+		<field name="PDRMVI_TIPAPL" class="java.lang.String"/>
+		<field name="PDRMVI_ARTAPL" class="java.lang.String"/>
+		<field name="PDRMVI_FORAPL" class="java.lang.String"/>
+		<field name="PDRMVI_SERAPL" class="java.lang.String"/>
+		<field name="PDRMVI_NDEAPL" class="java.lang.String"/>
+		<field name="PDRMVI_ENVAPL" class="java.lang.String"/>
+		<field name="PDRMVI_PREREP" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_PRECIO" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_FCHENT" class="java.sql.Timestamp"/>
+		<field name="PDRMVI_FCHHAS" class="java.sql.Timestamp"/>
+		<field name="PDRMVI_TEXTOS" class="java.lang.String"/>
+		<field name="PDRMVI_STOCKS" class="java.lang.String"/>
+		<field name="PDRMVI_MODORI" class="java.lang.String"/>
+		<field name="PDRMVI_CODORI" class="java.lang.String"/>
+		<field name="PDRMVI_NROORI" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMORI" class="java.lang.Integer"/>
+		<field name="PDRMVI_NIVORI" class="java.lang.String"/>
+		<field name="PDRMVI_EXPORI" class="java.lang.Integer"/>
+		<field name="PDRMVI_MODCIE" class="java.lang.String"/>
+		<field name="PDRMVI_CODCIE" class="java.lang.String"/>
+		<field name="PDRMVI_NROCIE" class="java.lang.Integer"/>
+		<field name="PDRMVI_TIPSUS" class="java.lang.String"/>
+		<field name="PDRMVI_ARTSUS" class="java.lang.String"/>
+		<field name="PDRMVI_FACPRO" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_NROINT" class="java.lang.Float"/>
+		<field name="PDRMVI_UNISEC" class="java.lang.String"/>
+		<field name="PDRMVI_FACSEC" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_CNTSEC" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_APLICA" class="java.lang.String"/>
+		<field name="PDRMVI_GENERA" class="java.lang.String"/>
+		<field name="FECALT" class="java.sql.Timestamp"/>
+		<field name="FECMOD" class="java.sql.Timestamp"/>
+		<field name="USERID" class="java.lang.String"/>
+		<field name="ULTOPR" class="java.lang.String"/>
+		<field name="DEBAJA" class="java.lang.String"/>
+		<field name="OALIAS" class="java.lang.String"/>
+		<field name="TSTAMP" class="java.sql.Timestamp"/>
+		<field name="CODEMP" class="java.lang.String"/>
+		<field name="PDRMVI_HORMOV" class="java.lang.String"/>
+		<field name="PDRMVI_MODULE" class="java.lang.String"/>
+		<field name="PDRMVI_LOTTRA" class="java.lang.String"/>
+		<field name="PDRMVI_LOTREC" class="java.lang.String"/>
+		<field name="PDRMVI_LOTORI" class="java.lang.String"/>
+		<field name="PDRMVI_SYSVER" class="java.lang.String"/>
+		<field name="PDRMVI_CMPVER" class="java.lang.String"/>
+		<field name="PDRMVI_EMPAPL" class="java.lang.String"/>
+		<field name="PDRMVI_EMPORI" class="java.lang.String"/>
+		<field name="PDRMVI_EMPCIE" class="java.lang.String"/>
+		<field name="PDRMVI_CNTPEN" class="java.math.BigDecimal"/>
+		<field name="PDRMVI_MODREQ" class="java.lang.String"/>
+		<field name="PDRMVI_CODREQ" class="java.lang.String"/>
+		<field name="PDRMVI_NROREQ" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMREQ" class="java.lang.Integer"/>
+		<field name="PDRMVI_EMPREQ" class="java.lang.String"/>
+		<field name="PDRMVI_MODINI" class="java.lang.String"/>
+		<field name="PDRMVI_CODINI" class="java.lang.String"/>
+		<field name="PDRMVI_NROINI" class="java.lang.Integer"/>
+		<field name="PDRMVI_ITMINI" class="java.lang.Integer"/>
+		<field name="PDRMVI_EXPINI" class="java.lang.Integer"/>
+		<field name="PDRMVI_EMPINI" class="java.lang.String"/>
+		<field name="PDRMVI_NIVINI" class="java.lang.String"/>
+		<field name="STMPDH_DESCRP" class="java.lang.String"/>
+		<field name="STMPDH_UNIMED" class="java.lang.String"/>
+		<field name="STMPDH_ARTCOD" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="NroSerie" uuid="21a0af2a-9b4b-4890-abb6-940931df8861">
+		<parameter name="ARTCOD" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+     'Desde',
+     'Hasta']]>
+		</queryString>
+		<field name="Desde" class="java.lang.String"/>
+		<field name="Hasta" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="MODFOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODFOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NROFOR" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_DIRECION" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_FAX" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_IVA" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     cab.*,
+     (SELECT grccbh.GRCCBH_DESCRP FROM `grccbh`
+     WHERE grccbh.`GRCCBH_CODCOM` = cab.`PDRMVH_CODFOR` AND grccbh.`GRCCBH_MODCOM` = cab.`PDRMVH_MODFOR` ) AS GRCCBH_DESCRP,
+     pdtdep.`PDTDEP_DESCRP` AS pdtdep_PDTDEP_DESCRP
+FROM
+     `pdtdep` pdtdep INNER JOIN `pdrmvh` cab ON pdtdep.`PDTDEP_CODIGO` = cab.`PDRMVH_DEPPRD`
+WHERE
+     cab.PDRMVH_MODFOR = $P{MODFOR}
+ AND cab.PDRMVH_CODFOR = $P{CODFOR}
+ AND cab.PDRMVH_NROFOR = $P{NROFOR}]]>
+	</queryString>
+	<field name="PDRMVH_MODFOR" class="java.lang.String"/>
+	<field name="PDRMVH_CODFOR" class="java.lang.String"/>
+	<field name="PDRMVH_NROFOR" class="java.lang.Integer"/>
+	<field name="PDRMVH_SUCURS" class="java.lang.String"/>
+	<field name="PDRMVH_MODCOM" class="java.lang.String"/>
+	<field name="PDRMVH_CODCOM" class="java.lang.String"/>
+	<field name="PDRMVH_FCHMOV" class="java.sql.Timestamp"/>
+	<field name="PDRMVH_FCHREQ" class="java.sql.Timestamp"/>
+	<field name="PDRMVH_FCHINI" class="java.sql.Timestamp"/>
+	<field name="PDRMVH_CIRCOM" class="java.lang.String"/>
+	<field name="PDRMVH_CIRAPL" class="java.lang.String"/>
+	<field name="PDRMVH_TIPCOM" class="java.lang.String"/>
+	<field name="PDRMVH_PRIORI" class="java.lang.String"/>
+	<field name="PDRMVH_DEPOSI" class="java.lang.String"/>
+	<field name="PDRMVH_SECTOR" class="java.lang.String"/>
+	<field name="PDRMVH_DEPPRD" class="java.lang.String"/>
+	<field name="PDRMVH_SOLICI" class="java.lang.String"/>
+	<field name="PDRMVH_MARFAC" class="java.lang.String"/>
+	<field name="PDRMVH_HSTFOR" class="java.lang.Integer"/>
+	<field name="PDRMVH_TEXTOS" class="java.lang.String"/>
+	<field name="PDRMVH_MODCIE" class="java.lang.String"/>
+	<field name="PDRMVH_CODCIE" class="java.lang.String"/>
+	<field name="PDRMVH_NROCIE" class="java.lang.Integer"/>
+	<field name="PDRMVH_DIMOBL" class="java.lang.String"/>
+	<field name="PDRMVH_SUBCUE" class="java.lang.String"/>
+	<field name="PDRMVH_DIMORI" class="java.lang.String"/>
+	<field name="PDRMVH_SUBORI" class="java.lang.String"/>
+	<field name="PDRMVH_OLEOLE" class="java.lang.String"/>
+	<field name="PDRMVH_BMPBMP" class="java.lang.String"/>
+	<field name="PDRMVH_CAMSEC" class="java.math.BigDecimal"/>
+	<field name="PDRMVH_GRAFOR" class="java.lang.String"/>
+	<field name="FECALT" class="java.sql.Timestamp"/>
+	<field name="FECMOD" class="java.sql.Timestamp"/>
+	<field name="USERID" class="java.lang.String"/>
+	<field name="ULTOPR" class="java.lang.String"/>
+	<field name="DEBAJA" class="java.lang.String"/>
+	<field name="OALIAS" class="java.lang.String"/>
+	<field name="TSTAMP" class="java.sql.Timestamp"/>
+	<field name="PDRMVH_MODULE" class="java.lang.String"/>
+	<field name="PDRMVH_HORMOV" class="java.lang.String"/>
+	<field name="PDRMVH_LOTTRA" class="java.lang.String"/>
+	<field name="PDRMVH_LOTREC" class="java.lang.String"/>
+	<field name="PDRMVH_LOTORI" class="java.lang.String"/>
+	<field name="PDRMVH_SYSVER" class="java.lang.String"/>
+	<field name="PDRMVH_CMPVER" class="java.lang.String"/>
+	<field name="PDRMVH_EMPCIE" class="java.lang.String"/>
+	<field name="CODEMP" class="java.lang.String"/>
+	<field name="GRCCBH_DESCRP" class="java.lang.String"/>
+	<field name="pdtdep_PDTDEP_DESCRP" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="135" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement uuid="4465d7f4-e048-4200-8474-f6a527fb1223" x="0" y="0" width="802" height="90"/>
+			</rectangle>
+			<line>
+				<reportElement uuid="b1748535-e078-4f35-a169-21f5cc2b96e3" x="400" y="0" width="1" height="88"/>
+			</line>
+			<textField>
+				<reportElement uuid="2caf4df1-c914-4b28-a140-56684579e7b4" x="424" y="5" width="359" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GRCCBH_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f105f519-4779-438c-84e3-a1ebf5094287" x="79" y="65" width="313" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_TELEFONO}+" | "+$P{EMP_FAX}+" | "+$P{EMP_EMAIL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b524773c-d3aa-458b-9d7e-5c6549723db1" x="278" y="43" width="114" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f105f519-4779-438c-84e3-a1ebf5094287" x="406" y="65" width="126" height="11"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ING. BRUTOS : " + $P{EMP_IB}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cde29b6f-c09a-4dd8-b1ac-c138522de8dd" x="79" y="76" width="313" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_IVA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ba882b76-c605-41ba-9916-ca4482832282" x="79" y="54" width="313" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_DIRECION} +" | "+ $P{EMP_CIUDAD} +"|"+$P{EMP_PROVINCIA}+"|"+$P{EMP_PAIS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cde29b6f-c09a-4dd8-b1ac-c138522de8dd" x="406" y="76" width="126" height="11"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["INICIO DE ACTIVIDAD: "+$P{EMP_INIACT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ba882b76-c605-41ba-9916-ca4482832282" x="406" y="54" width="126" height="11"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.U.I.T.: " + $P{EMP_CUIT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement uuid="46887d98-5c81-48b2-a857-6671ec3abb12" x="666" y="45" width="117" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PDRMVH_NROFOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="91dfa5bd-77b3-4875-b864-7bef7c02557f" x="532" y="45" width="134" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro Documento:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e" x="666" y="65" width="86" height="13"/>
+				<textElement>
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PDRMVH_FCHMOV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c" x="557" y="65" width="109" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha movimiento:]]></text>
+			</staticText>
+			<rectangle radius="10">
+				<reportElement uuid="b5e8c7fb-5575-483e-8680-17cbcd55196a" x="0" y="90" width="802" height="45"/>
+			</rectangle>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e" x="100" y="100" width="106" height="11"/>
+				<textElement>
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PDRMVH_FCHINI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c" x="11" y="100" width="89" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha inicio:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e" x="310" y="100" width="96" height="11"/>
+				<textElement>
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PDRMVH_FCHREQ}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c" x="221" y="100" width="89" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha requerida:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c" x="30" y="122" width="70" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Solicitante:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e" x="100" y="122" width="292" height="11"/>
+				<textElement>
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PDRMVH_SOLICI}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e" x="486" y="100" width="106" height="11"/>
+				<textElement>
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PDRMVH_PRIORI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c" x="443" y="100" width="43" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prioridad:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e" x="100" y="111" width="292" height="11"/>
+				<textElement>
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdtdep_PDTDEP_DESCRP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c" x="14" y="111" width="86" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Departamento:]]></text>
+			</staticText>
+			<image onErrorType="Blank">
+				<reportElement uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945" x="5" y="5" width="140" height="50"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="322">
+			<rectangle radius="10">
+				<reportElement uuid="cd4c6074-15da-4dce-bad1-1170c5439f46" x="0" y="0" width="802" height="322"/>
+			</rectangle>
+			<componentElement>
+				<reportElement uuid="92eebec7-0726-4f9d-935d-82034c99303f" key="table 2" style="table 2" x="5" y="5" width="790" height="41"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Detalle_productos" uuid="034c5af1-99fe-4c27-b953-ca993e51882d">
+						<datasetParameter name="MODFOR">
+							<datasetParameterExpression><![CDATA[$P{MODFOR}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CODFOR">
+							<datasetParameterExpression><![CDATA[$P{CODFOR}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="NROFOR">
+							<datasetParameterExpression><![CDATA[$P{NROFOR}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column uuid="267af4fb-23b2-448c-9bdf-7f42de40e7f0" width="156">
+						<jr:columnHeader style="table 2_CH" height="18" rowSpan="1">
+							<staticText>
+								<reportElement uuid="f228a4cf-2b08-49a1-b0cc-7682a95d7795" x="0" y="0" width="156" height="18"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Código]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="21" rowSpan="1">
+							<textField>
+								<reportElement uuid="50be06e2-ad3a-4d32-aab9-3772222b38aa" x="0" y="0" width="156" height="20"/>
+								<textElement verticalAlignment="Middle">
+									<font size="10"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PDRMVI_ARTCOD}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="b873492b-b036-4ffb-b328-6bbabec0b6c0" width="434">
+						<jr:columnHeader style="table 2_CH" height="18" rowSpan="1">
+							<staticText>
+								<reportElement uuid="dff35f91-a954-4f0f-af9a-af1229852225" x="0" y="0" width="434" height="18"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Descripción]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="21" rowSpan="1">
+							<textField>
+								<reportElement uuid="506a384f-2588-4d2b-9561-0c56119d338c" x="0" y="0" width="434" height="21"/>
+								<textElement verticalAlignment="Middle">
+									<font size="10"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{STMPDH_DESCRP}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="d0f6dc0b-31b7-4b7c-acd0-09d002841398" width="67">
+						<jr:columnHeader style="table 2_CH" height="18" rowSpan="1">
+							<staticText>
+								<reportElement uuid="8dc02e7d-e32a-4d46-b06c-765e3c90d10c" x="0" y="0" width="67" height="18"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Cantidad]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="21" rowSpan="1">
+							<textField pattern="###0">
+								<reportElement uuid="79e517e0-ba50-45f8-a770-2addaa237915" x="0" y="0" width="67" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="10"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PDRMVI_CANTID}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="ec5a0bc0-2923-484c-85c1-f4f427ba24f7" width="69">
+						<jr:columnHeader style="table 2_CH" height="18" rowSpan="1">
+							<staticText>
+								<reportElement uuid="4795c25c-02e9-4373-bab4-4a42185fbd58" x="0" y="0" width="69" height="18"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[U.M.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="21" rowSpan="1">
+							<textField>
+								<reportElement uuid="94e436aa-3c16-43e2-b4b8-385095bb5dbf" x="0" y="0" width="69" height="21"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{STMPDH_UNIMED}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="70862f33-6ccd-4c2f-ac40-085f364b2232" width="61">
+						<jr:columnHeader style="table 2_CH" height="18" rowSpan="1">
+							<staticText>
+								<reportElement uuid="e734355f-2d65-4e2e-9df7-ce05e5957296" x="0" y="0" width="61" height="18"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Fórmula]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="21" rowSpan="1">
+							<textField>
+								<reportElement uuid="d68f1b81-25be-4f05-8782-fc4e9766f7e7" x="0" y="0" width="61" height="21"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{PDRMVI_FORMUL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement uuid="12c43f97-4168-4dcf-8025-565ce92fefb1" key="table 3" style="table 3" positionType="Float" isPrintRepeatedValues="false" x="5" y="50" width="790" height="79"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Procesos" uuid="ebd6efaa-721d-4025-bb94-a888020a4efc">
+						<datasetParameter name="MODFOR">
+							<datasetParameterExpression><![CDATA[$P{MODFOR}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CODFOR">
+							<datasetParameterExpression><![CDATA[$P{CODFOR}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="NROFOR">
+							<datasetParameterExpression><![CDATA[$P{NROFOR}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column uuid="05d43f8d-8269-44d6-95cd-05679abfdf3a" width="410">
+						<jr:columnHeader style="table 3_CH" height="22" rowSpan="1">
+							<staticText>
+								<reportElement uuid="562e1315-ae8f-492c-9959-fffd425ab5ab" x="0" y="0" width="362" height="22"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Procesos]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="56" rowSpan="1">
+							<textField>
+								<reportElement uuid="a381b1f4-c590-4d14-a22b-268538921ec6" x="0" y="0" width="410" height="16"/>
+								<textElement verticalAlignment="Middle">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{STMPDH_DESCRP}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="349e850f-5999-4f03-8a3b-06d078781ea5" width="128">
+						<jr:columnHeader style="table 3_CH" height="22" rowSpan="1">
+							<staticText>
+								<reportElement uuid="36dc1def-b924-4063-9750-f82bfb76b2c4" x="0" y="0" width="128" height="22"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Operario]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="56" rowSpan="1">
+							<line>
+								<reportElement uuid="bfb82687-24f3-407c-80c9-3f62c3da1919" x="0" y="14" width="128" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="9038c8bb-6e90-4f14-b443-2e5572848aa2" x="0" y="28" width="128" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="1a7fc337-6870-4e1e-b2e0-e4a2cda85450" x="0" y="42" width="128" height="1"/>
+							</line>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="2855decc-5672-42c7-b611-cf9f892baac6" width="80">
+						<jr:columnHeader style="table 3_CH" height="22" rowSpan="1">
+							<staticText>
+								<reportElement uuid="f60778cf-9314-4bd2-a064-aa4d48b5bc09" x="0" y="0" width="80" height="22"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Cant. OK]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="56" rowSpan="1">
+							<line>
+								<reportElement uuid="3755d3e8-bb22-4844-8f9b-54e08b33d507" x="0" y="14" width="80" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="17021998-b758-470d-8fc1-200705ae338e" x="0" y="28" width="80" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="b1c5fc30-07b3-4a56-9b63-cd4f26ff5c3e" x="0" y="42" width="80" height="1"/>
+							</line>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="fc54bdcf-2512-469f-935f-9d39e441386f" width="76">
+						<jr:columnHeader style="table 3_CH" height="22" rowSpan="1">
+							<staticText>
+								<reportElement uuid="612531ba-42bc-4eb2-ab30-d9959fb5cf44" x="0" y="0" width="76" height="22"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Cant. Rech.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="56" rowSpan="1">
+							<line>
+								<reportElement uuid="89c8cdaf-c926-4b44-8e6f-d3add6025cfa" x="0" y="14" width="76" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="f15d87de-b3a9-4f02-b61e-47bd80627722" x="0" y="28" width="76" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="fa76c1c3-560e-4f2e-8fc7-4a89d1763f28" x="0" y="42" width="76" height="1"/>
+							</line>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column uuid="3ae440be-befe-4551-8e40-20a45448d886" width="93">
+						<jr:columnHeader style="table 3_CH" height="22" rowSpan="1">
+							<staticText>
+								<reportElement uuid="66a36a51-d8f1-498f-b8ba-4e81343cb0fa" x="0" y="0" width="93" height="22"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Tiempo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="56" rowSpan="1">
+							<line>
+								<reportElement uuid="89676e9b-f39e-41f7-8a0d-1abcf2624dc0" x="0" y="14" width="93" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="0dd8cd7f-6492-4a3b-b7e1-44838a8c8d49" x="0" y="28" width="93" height="1"/>
+							</line>
+							<line>
+								<reportElement uuid="cd443ed2-df06-4cc2-83bd-8746abbb502b" x="0" y="42" width="93" height="1"/>
+							</line>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="98" splitType="Immediate">
+			<rectangle radius="10">
+				<reportElement uuid="2f2e3364-6e0a-49a4-9378-cf367b3aba38" x="0" y="0" width="802" height="84"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="36478531-231d-4c58-bad8-e34ac12c93de" x="275" y="20" width="520" height="51"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PDRMVH_TEXTOS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="04929e00-7803-4963-b948-6775100d5cbd" x="275" y="5" width="71" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[Observaciones:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a" x="343" y="72" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0427b782-8e84-49fb-8bce-824533e57710" x="685" y="72" width="117" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8212ba1a-b294-499c-8696-fa465f6759d9" x="5" y="72" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="12c43f97-4168-4dcf-8025-565ce92fefb1" key="NroSerie" style="table 3" positionType="FixRelativeToBottom" x="5" y="5" width="270" height="66"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="NroSerie" uuid="ebd6efaa-721d-4025-bb94-a888020a4efc">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:columnGroup uuid="2a6a6568-74e5-41b7-b605-0262ee33db79" width="256">
+						<jr:columnHeader style="table 3_CH" height="18" rowSpan="1">
+							<staticText>
+								<reportElement uuid="ef25ae63-0d02-4e28-86ea-d5c2eb795e22" x="0" y="0" width="256" height="18"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Proceso carga número de serie]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:column uuid="19a717a9-754c-41ff-ab64-d42e3f948528" width="58">
+							<jr:tableFooter style="table 3_TD" height="15" rowSpan="1">
+								<textField>
+									<reportElement uuid="0ca658f1-466c-4722-a9fb-bf475374a804" x="0" y="0" width="53" height="15"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Desde}]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:columnFooter style="table 3_TD" height="15" rowSpan="1">
+								<textField>
+									<reportElement uuid="0ca658f1-466c-4722-a9fb-bf475374a804" x="0" y="0" width="53" height="15"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Desde}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+								<textField>
+									<reportElement uuid="0ca658f1-466c-4722-a9fb-bf475374a804" x="0" y="0" width="53" height="15"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Desde}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="0babc5e8-cbb9-411c-b5f3-6ff40588e2eb" width="72">
+							<jr:tableFooter style="table 3_TD" height="15" rowSpan="1"/>
+							<jr:columnFooter style="table 3_TD" height="15" rowSpan="1"/>
+							<jr:detailCell style="table 3_TD" height="15" rowSpan="1"/>
+						</jr:column>
+						<jr:column uuid="c485f3fa-9776-4987-b4f2-34216a46223a" width="50">
+							<jr:tableFooter style="table 3_TD" height="15" rowSpan="1">
+								<textField>
+									<reportElement uuid="95e0704d-de17-4971-bac7-8029d7aa4fea" x="0" y="0" width="47" height="15"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Hasta}]]></textFieldExpression>
+								</textField>
+							</jr:tableFooter>
+							<jr:columnFooter style="table 3_TD" height="15" rowSpan="1">
+								<textField>
+									<reportElement uuid="95e0704d-de17-4971-bac7-8029d7aa4fea" x="0" y="0" width="47" height="15"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Hasta}]]></textFieldExpression>
+								</textField>
+							</jr:columnFooter>
+							<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+								<textField>
+									<reportElement uuid="95e0704d-de17-4971-bac7-8029d7aa4fea" x="0" y="0" width="47" height="15"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Hasta}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column uuid="21cf58c8-7267-480b-a241-1b502444e514" width="76">
+							<jr:tableFooter style="table 3_TD" height="15" rowSpan="1"/>
+							<jr:columnFooter style="table 3_TD" height="15" rowSpan="1"/>
+							<jr:detailCell style="table 3_TD" height="15" rowSpan="1"/>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

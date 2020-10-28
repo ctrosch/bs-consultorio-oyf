@@ -1,0 +1,95 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorMonedaValores" header="Cotizaciones" modal="true"
+              widgetVar="dlgMonedaValores"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 800px;" responsive="true" >
+
+        <h:form prependId="false" >
+            
+            <p:focus for="txtBusquedaMonedaValores"/>
+            
+            <p:panelGrid columns="1" layout="grid"
+                     style="max-width: 400px;"
+                     styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaMonedaValores" value="#{monedaValoresBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaMonedaValores" listener="#{monedaValoresBean.buscar}"/>
+                </p:inputText>
+            </p:panelGrid>       
+
+            <p:dataTable id="tablaMonedaValores" var="e" style="max-width: 500px;" value="#{monedaValoresBean.lista}" 
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true" 
+                         selectionMode="single" 
+                         selection="#{monedaValoresBean.monedaValores}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+                
+                <p:ajax event="rowSelect" listener="#{monedaValoresBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgMonedaValores').hide(), procesarMonedaValores()" />
+
+                <p:column headerText="Moneda" style="text-align: center;"
+                          sortBy="#{e.codcof}"   >                         
+                    <h:outputText value="#{e.codcof}" />
+                </p:column>
+
+                <p:column headerText="Fecha de Alta"  style="text-align: left;"
+                          sortBy="#{e.fecha}" >                    
+                    <h:outputText value="#{e.fecha}" >                                        
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>  
+
+                <p:column headerText="Cotización" style="text-align: left;"
+                          sortBy="#{e.cotizacion}" >                    
+                    <h:outputText value="#{e.cotizacion}" />                                        
+                </p:column>  
+
+                <!--
+                <p:column headerText="" width="10%" style="text-align: center;" >
+                    <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                     actionListener="#{monedaValoresBean.seleccionar(e)}"  
+                                     process="@this"
+                                     update="@form" />
+                </p:column> 
+                -->
+
+            </p:dataTable>  
+
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{monedaValoresBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaMonedaValores" listener="#{monedaValoresBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistrosMonedaValores" value="#{monedaValoresBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{monedaValoresBean.buscar}"
+                                     process="@this,cantRegistrosMonedaValores" update="tablaMonedaValores" />
+                </h:panelGroup>
+            </p:panelGrid> 
+           
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

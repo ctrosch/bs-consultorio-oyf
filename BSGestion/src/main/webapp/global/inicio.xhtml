@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+
+    <ui:composition template="/template-inicio.xhtml" >
+
+        <ui:define name="contenido">
+
+            <p:inputText style="display: none;"/>
+
+            <p:growl showDetail="true"  />
+
+            <div class="Container100 Opac90">
+                <div class="Container100">
+                    <div class="Wid30 OvHidden DispBlock WidAutoOnMobile Fleft" style="margin-left: 5%;margin-top:5%; max-width: 380px;">
+
+                        <div class="Card ShadowEffect">
+                            <div class="Container100 ">
+                                <div class="Wid80 MarAuto" >
+                                    <p:graphicImage value="#{aplicacionBean.organizacion.logo}" styleClass="Wid100"  />
+                                </div>
+                            </div>
+
+                            <div class="Container100 Responsive100">
+                                <div class="Card TexAlCenter" style="border: none;">
+                                    <i class="icon-unlocked2 Fs60 TealGreen"></i>
+
+                                    <p:messages showDetail="true" />
+
+                                    <div class="EmptyBox10"></div>
+                                    <p:inputText id="txtUsuario" value="#{usuarioSessionBean.nombreUsuario}" styleClass="Wid90"
+                                                 rendered="#{aplicacionBean.parametro.tipoLogin eq 'N'}"
+                                                 placeholder="Usuario"
+                                                 required="true" requiredMessage="Ingrese el usuario"  >
+                                        <f:validateLength minimum="4" maximum="30" />
+                                    </p:inputText>
+
+                                    <div class="EmptyBox10"></div>
+                                    <p:password value="#{usuarioSessionBean.claveUsuario}"
+                                                rendered="#{aplicacionBean.parametro.tipoLogin eq 'N'}"
+                                                feedback="false"
+                                                maxlength="20" required="true"
+                                                placeholder="Clave"
+                                                styleClass="Wid90"
+                                                requiredMessage="Ingrese la clave"   />
+
+                                    <p:password value="#{usuarioSessionBean.nombreUsuario}"
+                                                rendered="#{aplicacionBean.parametro.tipoLogin eq 'S'}"
+                                                feedback="false"
+                                                maxlength="20" required="true"
+                                                placeholder="Clave"
+                                                styleClass="Wid90"
+                                                requiredMessage="Ingrese su usuario"   />
+
+
+                                    <div class="EmptyBox10"></div>
+
+                                    <p:commandButton id="btnLogin" value="Ingresar"
+                                                     styleClass="GreenButton"
+                                                     icon="fa fa-unlock"
+                                                     actionListener="#{usuarioSessionBean.login}"
+                                                     process="@form"
+                                                     update="@form"/>
+
+                                    <p:ajaxStatus widgetVar="ajaxStatus" >
+                                        <f:facet name="default" />
+                                        <f:facet name="start">
+                                            <span>
+                                                <p:graphicImage value="/resources/ajax/ajax02.GIF"                                                 />
+                                            </span>
+                                        </f:facet>
+                                        <f:facet name="complete" />
+                                    </p:ajaxStatus>
+
+                                    <div class="SeparatorFull"></div>
+                                    <span class="Fs14"> Perdió la clave ? -
+                                        <h:outputLink value="#{request.contextPath}/recupero-clave" target="_blank" >
+                                            Recuperar!
+                                        </h:outputLink>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h:panelGroup layout="block" rendered="#{not empty aplicacionBean.parametro.pathExterno}">
+                <p:hotkey bind="ctrl+p" handler="menuHome.click()"  />
+                <h:outputLink id="menuHome" value="/#{aplicacionBean.parametro.pathExterno}/" target="_blank" ></h:outputLink>
+            </h:panelGroup>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>

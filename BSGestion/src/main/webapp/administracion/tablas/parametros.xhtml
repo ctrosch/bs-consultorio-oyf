@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Parámetros
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Parámetros
+        </ui:define>
+
+        <ui:define name="menu">
+            <p:menubar id="menuBar">
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{parametroBean.guardar}"
+                            update="@form" />
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+            <div class="EmptyBox10" />
+
+            <!-- DATOS -->
+            <p:panel header="Datos" >
+
+                <p:tabView id="tbView" >
+
+                    <p:tab title="Conf. General" >
+
+                        <p:panelGrid columns="2" layout="grid"
+                                     styleClass="ui-panelgrid-blank"
+                                     columnClasses="Container40, Container60" >
+
+                            <h:outputText value="Modo Prueba:"  />
+                            <p:selectOneRadio value="#{parametroBean.parametro.modoPrueba}" >
+                                <f:selectItem itemLabel="Si" itemValue="S" />
+                                <f:selectItem itemLabel="No" itemValue="N" />
+                            </p:selectOneRadio>
+
+                            <h:outputText value="Modo ingreso:"  />
+                            <p:selectOneRadio value="#{parametroBean.parametro.tipoLogin}" >
+                                <f:selectItem itemLabel="Normal (Usuario y contraseña)" itemValue="N" />
+                                <f:selectItem itemLabel="Simple (Usuario)" itemValue="S" />
+                            </p:selectOneRadio>
+
+                            <h:outputText value="Tipo Navegación :"  />
+                            <p:selectOneRadio value="#{parametroBean.parametro.tipoNavegacion}" >
+                                <f:selectItem itemLabel="Múltiples páginas" itemValue="M" />
+                                <f:selectItem itemLabel="Página única" itemValue="U" />
+                            </p:selectOneRadio>
+
+                            <h:outputText value="Fondo:"  />
+                            <p:selectOneRadio value="#{parametroBean.parametro.fondo}" >
+                                <f:selectItem itemLabel="BlueBody"    itemValue="BlueBody" />
+                                <f:selectItem itemLabel="LeadenBody" itemValue="LeadenBody" />
+                                <f:selectItem itemLabel="RedBody" itemValue="RedBody" />
+                                <f:selectItem itemLabel="GreenBody" itemValue="GreenBody" />
+                            </p:selectOneRadio>
+
+                            <!--
+                            <h:outputText value="Tema:"  />
+                            <p:inputText  value="#{parametroBean.parametro.tema}" />
+                            -->
+
+                            <h:outputText value="Moneda Primaria:"  />
+                            <p:selectOneMenu value="#{parametroBean.parametro.codigoMonedaPrimaria}"     >
+                                <!--<f:selectItem itemLabel="Todas" itemValue="" />-->
+                                <f:selectItems value="#{monedaBean.lista}"
+                                               var="i" itemLabel="#{i.descripcion}" itemValue="#{i.codigo}"/>
+                                <p:ajax process="@this"  />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Moneda Secundaria:"  />
+                            <p:selectOneMenu value="#{parametroBean.parametro.codigoMonedaSecundaria}"     >
+                                <!--<f:selectItem itemLabel="Todas" itemValue="" />-->
+                                <f:selectItems value="#{monedaBean.lista}"
+                                               var="i" itemLabel="#{i.descripcion}" itemValue="#{i.codigo}"/>
+                                <p:ajax process="@this"  />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Muestra Cotización Mon. Secundaria :"  />
+                            <p:selectOneRadio value="#{parametroBean.parametro.muestroCotizacionMonedaSecundaria}" >
+                                <f:selectItem itemLabel="Si" itemValue="S" />
+                                <f:selectItem itemLabel="No" itemValue="N" />
+                            </p:selectOneRadio>
+
+
+
+                            <h:outputText value="Modo Dashboard:"  />
+                            <p:selectOneRadio value="#{parametroBean.parametro.modoDashboard}" >
+                                <f:selectItem itemLabel="Básico"    itemValue="B" />
+                                <f:selectItem itemLabel="Extendido" itemValue="E" />
+                            </p:selectOneRadio>
+
+                            <h:outputText value="Zoom:"  />
+                            <p:selectOneRadio value="#{parametroBean.parametro.zoom}" >
+                                <f:selectItem itemLabel="2.0"    itemValue="2.0" />
+                                <f:selectItem itemLabel="1.5"    itemValue="1.5" />
+                                <f:selectItem itemLabel="1.3"    itemValue="1.3" />
+                                <f:selectItem itemLabel="1.2"    itemValue="1.2" />
+                                <f:selectItem itemLabel="1.1"    itemValue="1.1" />
+                                <f:selectItem itemLabel="1.0"    itemValue="1.0" />
+                                <f:selectItem itemLabel="0.95"    itemValue="0.95" />
+                                <f:selectItem itemLabel="0.9"    itemValue="0.9" />
+                                <f:selectItem itemLabel="0.85"    itemValue="0.85" />
+                                <f:selectItem itemLabel="0.8"    itemValue="0.8" />
+                                <f:selectItem itemLabel="0.75"    itemValue="0.75" />
+                                <f:selectItem itemLabel="0.7"    itemValue="0.7" />
+                            </p:selectOneRadio>
+
+                            <h:outputText value="Carpeta Archivos temporales:"  />
+                            <p:inputText  required="true" value="#{parametroBean.parametro.nombreCarpetaArchivos}" />
+
+                            <h:outputText value="Datasource para reportes:"  />
+                            <p:inputText  required="true" value="#{parametroBean.parametro.dataSource}" />
+
+                            <h:outputText value="URL Imagen de fondo" />
+                            <p:inputTextarea rows="2" cols="80"
+                                             value="#{parametroBean.parametro.pathImagenInicio}"  />
+
+                            <h:outputText value="URL Servidor:"  />
+                            <p:inputTextarea rows="2" cols="80" value="#{parametroBean.parametro.urlServidor}" />
+
+                            <h:outputText value="Path Imagenes Default:" />
+                            <p:inputTextarea id="pathImagenesDefault" rows="2" cols="80"
+                                             value="#{parametroBean.parametro.pathImagenesDefault}" title="PathImagenesHome" />
+
+                            <h:outputText value="Path upload:"  />
+                            <p:inputTextarea id="pathUpload" rows="3" cols="80"
+                                             value="#{parametroBean.parametro.pathUpload}" title="pathUpload" />
+
+                            <h:outputText value="Código seguimiento GA:"  />
+                            <p:inputTextarea id="ga" rows="3" cols="80"
+                                             value="#{parametroBean.parametro.codigoGoogleAnalitycs}" title="google Analitycs" />
+
+                            <h:outputText value="Chat:"  />
+                            <p:inputTextarea rows="3" cols="80"
+                                             value="#{parametroBean.parametro.chat}" title="Chat" />
+
+
+
+                        </p:panelGrid>
+
+                        <p:spacer height="20" />
+
+                        <p:fieldset legend="Mantenimiento">
+
+                            <p:panelGrid columns="2" layout="grid"
+                                         styleClass="ui-panelgrid-blank"
+                                         columnClasses="Container40, Container60" >
+
+                                <h:outputLabel value="Sistema en mantenimiento:" for="sistemaEnMantenimiento" />
+                                <p:selectOneRadio id="sistemaEnMantenimiento" value="#{parametroBean.parametro.sistemaEnMantenimiento}" >
+                                    <f:selectItem itemLabel="Si" itemValue="S" />
+                                    <f:selectItem itemLabel="No"      itemValue="N" />
+                                </p:selectOneRadio>
+
+                                <h:outputLabel value="Mensaje Mantenimiento:" for="mensajeMantenimiento" />
+                                <p:inputTextarea id="mensajeMantenimiento" rows="3" cols="80"
+                                                 value="#{parametroBean.parametro.mensajeMantenimiento}" title="MensajeMantenimiento" />
+
+                            </p:panelGrid>
+                        </p:fieldset>
+                    </p:tab>
+
+                    <p:tab title="Conf. Notificaciones">
+
+
+                        <p:panelGrid columns="2" layout="grid"
+                                     styleClass="ui-panelgrid-blank"
+                                     columnClasses="Container40, Container60" >
+
+                            <h:outputText value="E-mail recepción notificaciones de consulta:"  />
+                            <p:inputTextarea rows="2" cols="90" value="#{parametroBean.parametro.emailRecepcionConsulta}"
+                                             validatorMessage="Ingrese un correo válido">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            </p:inputTextarea>
+
+                            <h:outputText value="E-mail recepción notificaciones modo prueba:"  />
+                            <p:inputTextarea rows="2" cols="90" value="#{parametroBean.parametro.recepcionNotificacionModoPrueba}" />
+
+                        </p:panelGrid>
+
+                        <h1>Plantilla envío notificaciones</h1>
+                        <p:editor id="editor" value="#{parametroBean.parametro.plantillaNotificaciones}"
+                                  width="900" height="300"
+                                  style="border: 1px solid lightgrey;" />
+                    </p:tab>
+
+                </p:tabView>
+            </p:panel>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+
+
+

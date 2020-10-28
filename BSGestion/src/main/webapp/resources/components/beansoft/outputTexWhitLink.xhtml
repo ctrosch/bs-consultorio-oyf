@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title></title>
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="Muestra la url completa del item menú asignado" >
+            <composite:attribute name="value" required="true" />
+            <composite:attribute name="url" required="true" />
+            <composite:attribute name="rendered" type="boolean" />
+
+        </composite:interface>
+
+        <composite:implementation>
+
+            <h:panelGroup layout="block" rendered="#{cc.attrs.rendered}">
+
+                <h:outputText value="#{cc.attrs.value}" />
+                <h:outputLink value="#{request.contextPath}#{cc.attrs.url}"
+                              target="#{aplicacionBean.parametro.tipoNavegacion eq 'U'? '_self': '_blank'}"
+                              styleClass="Fs18 Fright icono-link" style="color: #0277bd;"
+                              rendered="#{not empty cc.attrs.url}" >
+
+                    <i class="fa fa-external-link" ></i>
+                </h:outputLink>
+            </h:panelGroup>
+
+        </composite:implementation>
+
+    </h:body>
+
+</html>

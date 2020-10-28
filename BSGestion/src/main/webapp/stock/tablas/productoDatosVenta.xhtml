@@ -1,0 +1,165 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Concepto de Venta *" />
+        <p:selectOneMenu value="#{productoBean.producto.conceptoVenta}" style="max-width: 100% !important; min-width: 100% !important;"
+                         required="true" requiredMessage="Seleccione el concepto de venta"
+                         converter="#{conversoresVenta.conceptoVenta}">
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{productoBean.conceptosVenta}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <bs:outputTexWhitLink value="Cuenta contable de venta *"
+                              url="#{productoBean.obtenerUrlMenu('SIS_00420','NROCTA',productoBean.producto.cuentaContableVenta.nrocta)}" />
+
+        <p:autoComplete value="#{productoBean.producto.cuentaContableVenta}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresContabilidad.cuentaContable}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Imprime cantidad en comprobante *" />
+        <p:selectOneMenu value="#{productoBean.producto.imprimeCantidad}"  style="min-width: 50px;"
+                         required="true" requiredMessage="Seleccione si imprime cantidad"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Kit de Venta " />
+        <p:selectOneRadio value="#{productoBean.producto.esKitVenta}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+            <p:ajax process="@this" update="forCompKit" />
+        </p:selectOneRadio>
+
+        <bs:outputTexWhitLink value="Formula de composición kit"
+                              url="#{productoBean.obtenerUrlMenu('SIS_00197','CODIGO',productoBean.producto.formulaComposicionVenta.codigo)}" />
+        <p:selectOneMenu id="forCompKit" value="#{productoBean.producto.formulaComposicionVenta}"
+                         required="#{productoBean.producto.esKitVenta eq 'S'}"
+                         requiredMessage="Seleccione la fórmula para la composición de venta"
+                         converter="#{conversoresStock.formula}"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{formulaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="Disp. para picking Facturación " />
+        <p:selectOneMenu value="#{productoBean.producto.disponibleParaPickingFacturacion}"  style="min-width: 50px;"
+                         required="true" requiredMessage="Seleccione si imprime cantidad"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+
+
+    <p:panelGrid columns="4" layout="grid" style="max-width: 600px;"
+                 styleClass="ui-panelgrid-blank MarAuto"
+                 columnClasses="ui-col-3,ui-col-3,ui-col-3,ui-col-3" >
+
+        <h:outputText value="Precio de Reposición" />
+        <p:inputText value="#{productoBean.producto.precioReposicion}" styleClass="TexAlRight" readonly="true"
+                     title="Modifique el precio de reposición desde la solapa Datos Asociados a Compras">
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="% Utilidad 1" />
+        <p:inputText value="#{productoBean.producto.utilidad}" styleClass="TexAlRight" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+            <p:ajax event="keyup" delay="500" process="@this" update="precioVenta1" />
+        </p:inputText>
+
+        <h:outputText value="Precio de Venta 1" />
+        <p:inputText id="precioVenta1" value="#{productoBean.producto.utilidad > 0?productoBean.producto.precioReposicion + productoBean.producto.precioReposicion*productoBean.producto.utilidad/100:0}"
+                     styleClass="TexAlRight" readonly="true" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+        </p:inputText>
+
+        <h:outputText value="% Utilidad 2" />
+        <p:inputText value="#{productoBean.producto.utilidad2}" styleClass="TexAlRight" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+            <p:ajax event="keyup" delay="500" process="@this" update="precioVenta2" />
+        </p:inputText>
+
+        <h:outputText value="Precio de Venta 2" />
+        <p:inputText id="precioVenta2" value="#{productoBean.producto.utilidad2 > 0?productoBean.producto.precioReposicion + productoBean.producto.precioReposicion*productoBean.producto.utilidad2/100:0}"
+                     styleClass="TexAlRight" readonly="true" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+        </p:inputText>
+
+        <h:outputText value="% Utilidad 3" />
+        <p:inputText value="#{productoBean.producto.utilidad3}" styleClass="TexAlRight" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+            <p:ajax event="keyup" delay="500" process="@this" update="precioVenta3" />
+        </p:inputText>
+
+        <h:outputText value="Precio de Venta 3" />
+        <p:inputText id="precioVenta3"  value="#{productoBean.producto.utilidad3 > 0?productoBean.producto.precioReposicion + productoBean.producto.precioReposicion*productoBean.producto.utilidad3/100:0}"
+                     styleClass="TexAlRight" readonly="true" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+        </p:inputText>
+
+
+        <h:outputText value="% Utilidad 4" />
+        <p:inputText value="#{productoBean.producto.utilidad4}" styleClass="TexAlRight" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+            <p:ajax event="keyup" delay="500" process="@this" update="precioVenta4" />
+        </p:inputText>
+
+        <h:outputText value="Precio de Venta 4" />
+        <p:inputText id="precioVenta4"  value="#{productoBean.producto.utilidad4 > 0?productoBean.producto.precioReposicion + productoBean.producto.precioReposicion*productoBean.producto.utilidad4/100:0}"
+                     styleClass="TexAlRight" readonly="true" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+        </p:inputText>
+
+        <h:outputText value="% Utilidad 5" />
+        <p:inputText value="#{productoBean.producto.utilidad5}" styleClass="TexAlRight" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+            <p:ajax event="keyup" delay="500" process="@this" update="precioVenta5" />
+        </p:inputText>
+
+        <h:outputText value="Precio de Venta 5" />
+        <p:inputText id="precioVenta5"  value="#{productoBean.producto.utilidad5 > 0?productoBean.producto.precioReposicion + productoBean.producto.precioReposicion*productoBean.producto.utilidad5/100:0}"
+                     styleClass="TexAlRight" readonly="true" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,###,##0.00" />
+        </p:inputText>
+
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

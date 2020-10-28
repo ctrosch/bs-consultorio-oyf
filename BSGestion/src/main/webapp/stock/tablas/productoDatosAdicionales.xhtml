@@ -1,0 +1,171 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Número de serie" />
+        <p:inputText value="#{productoBean.producto.numeroSerie}"  />
+
+        <h:outputText value="Código de barra " />
+        <p:inputText value="#{productoBean.producto.codigoBarra}"  />
+
+        <h:outputText value="Nro de Parte " />
+        <p:inputText value="#{productoBean.producto.numeroParte}" />
+
+        <bs:outputTexWhitLink value="Unidad M. Peso"
+                              url="#{productoBean.obtenerUrlMenu('SIS_00141','CODIGO',productoBean.producto.unidadDePeso.codigo)}" />
+        <p:selectOneMenu value="#{productoBean.producto.unidadDePeso}"
+                         required="false" requiredMessage="Seleccione la unidad de medida de peso"
+                         converter="#{conversoresStock.unidadMedida}" filter="true"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{unidadMedidaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+
+        <h:outputText value="Peso mínimo " />
+        <p:inputText value="#{productoBean.producto.pesoMinimo}" styleClass="TexAlRight" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,##0.00"  />
+        </p:inputText>
+
+        <h:outputText value="Peso máximo " />
+        <p:inputText value="#{productoBean.producto.pesosMaximo}" styleClass="TexAlRight" >
+            <f:convertNumber maxFractionDigits="2" pattern="#,##0.00"  />
+        </p:inputText>
+
+        <h:outputText value="Garantía" />
+        <h:panelGroup layout="block" >
+            <div class="Wid20 Responsive100 Fleft">
+                <p:inputText value="#{productoBean.producto.garantia}" styleClass="TexAlRight" />
+            </div>
+            <div class="Wid80 Responsive100 Fright">
+                <p:selectOneMenu value="#{productoBean.producto.unidadDeGarantia}"
+                                 required="false" requiredMessage="Seleccione la unidad de medida"
+                                 converter="#{conversoresStock.unidadMedida}" filter="true"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{unidadMedidaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Descripción Alternativa" />
+        <p:inputText value="#{productoBean.producto.descripcionAlternativa}" />
+
+        <h:outputText value="Código de Referencia " />
+        <p:inputText value="#{productoBean.producto.codigoReferencia}"  />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Detalle " />
+        <p:inputTextarea style="width: 100%" rows="3" value="#{productoBean.producto.detalle}"
+                         rendered="#{productoBean.muestroCampo('C','DETALLE')}" />
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="3" value="#{productoBean.producto.observaciones}" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Es un bien de uso *" />
+        <p:selectOneRadio value="#{productoBean.producto.bienDeUso}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Es Pesable " />
+        <p:selectOneRadio value="#{productoBean.producto.pesable}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Pide precio de costo si es cero" />
+        <p:selectOneRadio value="#{productoBean.producto.pidePrecioCosto}" required="true" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+            <p:ajax process="@this" update="forCompKit" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Congela Precio En Facturación/Compras" />
+        <p:selectOneRadio value="#{productoBean.producto.congelaPrecioEnFacturacion}"
+                          required="true"
+                          requiredMessage="Indique si congela precio" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Valida duplicidad En Facturación/Compras" />
+        <p:selectOneRadio value="#{productoBean.producto.validaDuplicidad}"
+                          required="true"
+                          requiredMessage="Indique si valida duplicidad" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Edita Descripción Facturación/Compras" />
+        <p:selectOneRadio value="#{productoBean.producto.editaDescripcion}"
+                          required="true"
+                          requiredMessage="Indique si edita descripción" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+</ui:composition>
+

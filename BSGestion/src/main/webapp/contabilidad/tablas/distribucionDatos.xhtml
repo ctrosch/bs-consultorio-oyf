@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <!--DATOS-->
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Centro de Costo"
+                              url="#{distribucionBean.obtenerUrlMenu('SIS_00418','CODIGO',distribucionBean.distribucion.centroCosto.codigo)}" />
+        <p:autoComplete value="#{distribucionBean.distribucion.centroCosto}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{centroCostoBean.complete}"
+                        disabled="#{not empty distribucionBean.distribucion.itemsDistribucion}"
+                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                        converter="#{conversoresContabilidad.centroCosto}" >
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{distribucionBean.distribucion.codigo}"
+                     readonly="#{not distribucionBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{distribucionBean.distribucion.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="itemDistribucion" var="i"  resizeMode="expand" liveResize="true" style="max-width: 900px;"
+                 value="#{distribucionBean.distribucion.itemsDistribucion}"
+                 emptyMessage="No se encontraron items. Haga clic en agregar items"
+                 rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+        <f:facet name="header" >
+            Subcuentas por Centro de Costo
+        </f:facet>
+
+        <f:facet name="footer" >
+
+            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                             actionListener="#{distribucionBean.nuevoItemDistribucion()}"
+                             immediate="true"
+                             value="Agregar Sub Cuenta"
+                             process="itemDistribucion"
+                             update="itemDistribucion,message,messageg" />
+        </f:facet>
+
+        <p:column headerText="Sub Cuenta"  >
+
+            <div class="ui-inputgroup">
+                <p:autoComplete value="#{i.subCuenta}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{distribucionBean.completeSubCuenta}"
+                                var="s" itemLabel="#{s.descripcionComplete}" itemValue="#{s}"
+                                converter="#{conversoresContabilidad.subCuenta}" >
+                    <p:ajax event="itemSelect" process="@this"  />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{s.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{s.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+                <span class="ui-inputgroup-addon">
+                    <bs:linkMenuSistema title="Ver Sub Cuenta"
+                                        url="#{distribucionBean.obtenerUrlMenu('SIS_00419','CODIGO',i.subCuenta.codigo)}" />
+                </span>
+            </div>
+
+
+
+        </p:column>
+
+        <p:column headerText="Porcentaje"  >
+
+            <p:inputText value="#{i.porcentaje}" >
+                <f:convertNumber pattern="##0.00" />
+                <p:ajax  process="@this"  />
+            </p:inputText>
+
+        </p:column>
+
+        <p:column headerText="" width="50" style="text-align: center;" >
+
+            <p:commandLink process="itemDistribucion" update="itemDistribucion,message,messageg"
+                           actionListener="#{distribucionBean.eliminarItemDistribucion(i)}" >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+    </p:dataTable>
+
+</html>
+

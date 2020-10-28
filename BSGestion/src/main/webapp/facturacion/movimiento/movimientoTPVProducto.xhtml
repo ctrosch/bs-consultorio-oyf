@@ -1,0 +1,123 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DETALLE -->
+    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-4, ui-g-12 ui-md-4,ui-g-6 ui-md-2,ui-g-6 ui-md-2"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusquedaProductoTPV" value="#{productoBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500" process="@this,filtroProductoTVP" update="productos" listener="#{productoBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <p:autoComplete id="tipoProductoTVP" value="#{productoBean.tipoProducto}" dropdown="true" forceSelection="true"
+                        placeholder="Tipo de Producto"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{tipoProductoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresStock.tipoProducto}" >
+
+            <p:ajax event="itemSelect" process="@this,txtBusquedaProductoTPV" update="productos" listener="#{productoBean.buscar}" />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <p:commandButton value="+ Filtros" icon="fa fa-filter"
+                         onclick="PF('pFiltroProducto').toggle()">
+        </p:commandButton>
+
+        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="RedBack"
+                         actionListener="#{productoBean.limpiarFiltroBusqueda()}"
+                         process="@this"
+                         update="filtroProductoTVP,productos" >
+        </p:commandButton>
+
+
+    </p:panelGrid>
+
+
+    <p:panel id="pFiltroProducto" widgetVar="pFiltroProducto" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtroProductoTVP" columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:selectOneMenu filter="true" filterMatchMode="startsWith"
+                             value="#{productoBean.rubro01}"
+                             converter="#{conversoresStock.rubro01}"   >
+                <p:ajax event="itemSelect" process="@this,txtBusquedaProductoTPV" update="productos" listener="#{productoBean.buscar}" />
+                <f:selectItem itemLabel="Seleccionar Rubro" itemValue="" />
+                <f:selectItems value="#{productoBean.tipoProducto.rubro01}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+            </p:selectOneMenu>
+
+            <p:selectOneMenu filter="true" filterMatchMode="startsWith"
+                             value="#{productoBean.rubro02}"
+                             converter="#{conversoresStock.rubro02}"  >
+                <p:ajax event="itemSelect" process="@this,txtBusquedaProductoTPV" update="productos" listener="#{productoBean.buscar}" />
+                <f:selectItem itemLabel="Seleccionar Sub Rubro" itemValue="" />
+                <f:selectItems value="#{productoBean.tipoProducto.rubro02}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+            </p:selectOneMenu>
+
+            <p:selectOneMenu filter="true" filterMatchMode="startsWith"
+                             value="#{productoBean.rubro03}"
+                             converter="#{conversoresStock.rubro03}"  >
+                <p:ajax event="itemSelect" process="@this,txtBusquedaProductoTPV" update="productos" listener="#{productoBean.buscar}" />
+                <f:selectItem itemLabel="Seleccionar Familia" itemValue="" />
+                <f:selectItems value="#{productoBean.tipoProducto.rubro03}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+            </p:selectOneMenu>
+
+
+        </p:panelGrid>
+
+    </p:panel>
+
+
+    <p:dataGrid id="productos" var="p" value="#{productoBean.lista}" columns="6" layout="grid" >
+
+        <p:commandLink title="Agregar producto"
+                       actionListener="#{movimientoFacturacionBean.nuevoItem(p)}"
+                       process="@this"
+                       update="@form" >
+
+            <p:panel style="text-align:center">
+
+                <h:panelGrid columns="1" style="width:100%">
+
+                    <h:graphicImage url="#{p.imagenes[0].urlImagen}"
+                                    rendered="#{not empty p.imagenes}"
+                                    width="100%" />
+
+                    <h:graphicImage name="image/noimage.png" styleClass="TexAlCenter MarAuto" width="100%"
+                                    rendered="#{empty p.imagenes}" />
+
+                    <h:outputText value="#{p.descripcion}" />
+
+                    <h:outputText value="#{p.precioReposicion + p.precioReposicion*p.utilidad/100}" >
+                        <f:convertNumber pattern="$ 0.00" />
+                    </h:outputText>
+
+
+                </h:panelGrid>
+            </p:panel>
+
+
+        </p:commandLink>
+
+    </p:dataGrid>
+
+
+</ui:composition>
+

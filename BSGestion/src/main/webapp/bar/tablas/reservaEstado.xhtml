@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Estados Reservas
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Estados Reservas
+        </ui:define>
+
+        <ui:define name="menu">
+
+            <p:menuitem value="Buscar" icon="fa fa-search"
+                        actionListener="#{reservaEstadoBean.buscar()}"
+                        process="@this"
+                        update="buscadorReservaEstado"
+                        oncomplete="PF('dlgReservaEstado').show()"
+                        immediate="true" />
+
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{reservaEstadoBean.nuevo}"
+                            process="@this"
+                            update="@form"
+                            immediate="true" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{reservaEstadoBean.guardar(false)}"
+                            rendered="#{not reservaEstadoBean.buscaMovimiento}"
+                            update="@form" />
+
+                <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                            actionListener="#{reservaEstadoBean.habilitaDeshabilita('S')}"
+                            rendered="#{not empty reservaEstadoBean.reservaEstado and not reservaEstadoBean.esNuevo and reservaEstadoBean.reservaEstado.auditoria.debaja eq 'N'}"
+                            process="@this"
+                            update="@form" />
+
+                <p:menuitem value="Habilitar" icon="fa fa-check"
+                            actionListener="#{reservaEstadoBean.habilitaDeshabilita('N')}"
+                            rendered="#{not empty reservaEstadoBean.reservaEstado and not reservaEstadoBean.esNuevo and reservaEstadoBean.reservaEstado.auditoria.debaja eq 'S'}"
+                            process="@this"
+                            update="@form" />
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            actionListener="#{reservaEstadoBean.imprimir}"
+                            rendered="#{not empty reservaEstadoBean.reservaEstado.codigo}"
+                            ajax="false" target="blank" >
+                </p:menuitem>
+
+
+
+
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarReservaEstado" process="@this" update="@form" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <!-- DATOS -->
+            <p:panel header="Datos">
+
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="Container40, Container60" >
+
+                    <h:outputText value="Código" />
+                    <p:inputText value="#{reservaEstadoBean.reservaEstado.codigo}"
+                                 readonly="#{not reservaEstadoBean.esNuevo}"
+                                 required="true"
+                                 requiredMessage="El código es necesario" />
+
+                    <h:outputText value="Descripción" />
+                    <p:inputText value="#{reservaEstadoBean.reservaEstado.descripcion}"
+                                 required="true"
+                                 requiredMessage="La descripción es necesaria" />
+
+
+                </p:panelGrid>
+
+            </p:panel>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/stock/busqueda/buscadorReservaEstado.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

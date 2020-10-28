@@ -1,0 +1,59 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:sticky target="menuBar" />
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{defectoBean.buscar()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{defectoBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+
+            <p:confirm header="Confirmacion" rendered="#{not empty defectoBean.defecto}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{defectoBean.guardar(false)}"
+                    rendered="#{not empty defectoBean.defecto}"
+                    update="@form" />
+
+        <p:menuitem value="Duplicar" icon="fa fa-copy"
+                    actionListener="#{defectoBean.duplicar()}"
+                    rendered="#{not empty defectoBean.defecto}"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{defectoBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty defectoBean.defecto and not defectoBean.esNuevo and defectoBean.defecto.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{defectoBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty defectoBean.defecto and not defectoBean.esNuevo and defectoBean.defecto.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

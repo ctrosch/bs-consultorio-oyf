@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{reporteService.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{reporteService.titulo}"/>
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+
+            <f:event type="preRenderView" listener="#{productoBean.setearTipo('02')}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:panelGrid id="informePanelGrid" columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid500"
+                         columnClasses="Container40, Container60" >
+
+                <h:outputText value="Fecha desde" />
+                <p:calendar value="#{reporteService.fechaDesde}" pattern="dd/MM/yyyy"
+                            required="true" requiredMessage="La fecha desde es obligatoria" />
+
+                <h:outputText value="Fecha hasta" />
+                <p:calendar value="#{reporteService.fechaHasta}" pattern="dd/MM/yyyy"
+                            required="true" requiredMessage="La fecha hasta es obligatoria" />
+
+                <h:outputText value="Número formulario desde" />
+                <p:inputText value="#{reporteService.numeroFormularioDesde}" />
+
+                <h:outputText value="Número formulario hasta" />
+                <p:inputText value="#{reporteService.numeroFormularioHasta}"  />
+
+                <h:outputText value="Proceso" />
+                <p:autoComplete value="#{reporteService.producto}" dropdown="true"
+                                completeMethod="#{productoBean.complete}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                converter="#{conversoresStock.producto}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this"
+
+                            <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+
+                </p:autoComplete>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                 actionListener="#{reporteService.verReporte}"
+                                 update="@form"  />
+
+                <p:commandButton value="A Excel" icon="fa fa-file-excel-o"
+                                 actionListener="#{reporteService.reporteToXls}"
+                                 update="@form"
+                                 ajax="false" />
+
+            </p:panelGrid>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/stock/busqueda/buscadorProducto.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

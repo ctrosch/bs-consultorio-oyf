@@ -1,0 +1,34 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+
+    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" rendered="#{not empty equipoMarcaBean.equipoMarca.codigo}"  />
+        <p:inputText value="#{equipoMarcaBean.equipoMarca.codigo}"
+                     readonly="true"
+                     rendered="#{not empty equipoMarcaBean.equipoMarca.codigo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" rendered="#{not empty equipoMarcaBean.equipoMarca.codigo}" />
+
+        <h:outputText value="" rendered="#{not empty equipoMarcaBean.equipoMarca.codigo}" />
+
+        <h:outputText value="Nombre *" />
+        <p:inputText value="#{equipoMarcaBean.equipoMarca.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

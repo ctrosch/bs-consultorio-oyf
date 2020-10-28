@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Etiquetas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="NROCTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NROCT2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NROCT3" class="java.lang.String"/>
+	<parameter name="COPIAS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     en_entidad.*,
+     gr_localidad.`CODIGO` AS gr_localidad_CODIGO,
+     gr_localidad.`DESCRP` AS gr_localidad_DESCRP,
+     gr_provincia.`DESCRP` AS gr_provincia_DESCRP,
+     gr_provincia.`CODIGO` AS gr_provincia_CODIGO
+FROM
+     `gr_localidad` gr_localidad INNER JOIN `en_entidad` en_entidad ON gr_localidad.`ID` = en_entidad.`CODPOS`
+     INNER JOIN `gr_provincia` gr_provincia ON en_entidad.`CODPRO` = gr_provincia.`CODIGO`
+     AND gr_provincia.`CODPAI` = en_entidad.`CODPAI`
+     AND gr_provincia.`CODIGO` = gr_localidad.`CODPRO`
+     AND gr_provincia.`CODPAI` = gr_localidad.`CODPAI`,
+	  gr_copias gr_copias
+WHERE gr_copias.ID <= $P{COPIAS}
+AND en_entidad.NROCTA IN (IF(LENGTH($P{NROCTA}) > 0, $P{NROCTA},''),IF(LENGTH($P{NROCT2}) > 0, $P{NROCT2},''),IF(LENGTH($P{NROCT3}) > 0, $P{NROCT3},''))]]>
+	</queryString>
+	<field name="NROCTA" class="java.lang.String">
+		<fieldDescription><![CDATA[Código]]></fieldDescription>
+	</field>
+	<field name="RAZONS" class="java.lang.String">
+		<fieldDescription><![CDATA[Razón Social]]></fieldDescription>
+	</field>
+	<field name="FNTSIA" class="java.lang.String">
+		<fieldDescription><![CDATA[Nombre Fantasía]]></fieldDescription>
+	</field>
+	<field name="CODTIP" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Tipo entidad]]></fieldDescription>
+	</field>
+	<field name="BARRIO" class="java.lang.String">
+		<fieldDescription><![CDATA[Barrio]]></fieldDescription>
+	</field>
+	<field name="LATTUD" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Latitud]]></fieldDescription>
+	</field>
+	<field name="LONTUD" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Longitud]]></fieldDescription>
+	</field>
+	<field name="PCTRET" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DEPTOS" class="java.lang.String">
+		<fieldDescription><![CDATA[Departamento]]></fieldDescription>
+	</field>
+	<field name="DPPISO" class="java.lang.String">
+		<fieldDescription><![CDATA[Piso]]></fieldDescription>
+	</field>
+	<field name="DIRECC" class="java.lang.String">
+		<fieldDescription><![CDATA[Calle]]></fieldDescription>
+	</field>
+	<field name="DIREML" class="java.lang.String">
+		<fieldDescription><![CDATA[Correo electrónico]]></fieldDescription>
+	</field>
+	<field name="INHIBE" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="NOTAS" class="java.lang.String">
+		<fieldDescription><![CDATA[Notas]]></fieldDescription>
+	</field>
+	<field name="NRODO1" class="java.lang.String">
+		<fieldDescription><![CDATA[Número de documento 1]]></fieldDescription>
+	</field>
+	<field name="NRODO2" class="java.lang.String">
+		<fieldDescription><![CDATA[Número de documento 2]]></fieldDescription>
+	</field>
+	<field name="NRODO3" class="java.lang.String">
+		<fieldDescription><![CDATA[Número de documento 3]]></fieldDescription>
+	</field>
+	<field name="NRODOC" class="java.lang.String">
+		<fieldDescription><![CDATA[Número de documento ]]></fieldDescription>
+	</field>
+	<field name="NROFAX" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="NROSUB" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="NTELEX" class="java.lang.String">
+		<fieldDescription><![CDATA[Celular]]></fieldDescription>
+	</field>
+	<field name="NUMERO" class="java.lang.String">
+		<fieldDescription><![CDATA[Numero Dirección]]></fieldDescription>
+	</field>
+	<field name="CONTAD" class="java.lang.String">
+		<fieldDescription><![CDATA[Cliente solo contado]]></fieldDescription>
+	</field>
+	<field name="ENTCOM" class="java.lang.String">
+		<fieldDescription><![CDATA[Entidad comodín]]></fieldDescription>
+	</field>
+	<field name="TELEFN" class="java.lang.String">
+		<fieldDescription><![CDATA[Telefono]]></fieldDescription>
+	</field>
+	<field name="TIPING" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo ingresos brutos]]></fieldDescription>
+	</field>
+	<field name="ULTCON" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="POTENC" class="java.lang.String">
+		<fieldDescription><![CDATA[Potencial]]></fieldDescription>
+	</field>
+	<field name="CODCAT" class="java.lang.String">
+		<fieldDescription><![CDATA[Categoría]]></fieldDescription>
+	</field>
+	<field name="CODTRA" class="java.lang.String">
+		<fieldDescription><![CDATA[Transporte]]></fieldDescription>
+	</field>
+	<field name="COBRAD" class="java.lang.String">
+		<fieldDescription><![CDATA[Cobrador]]></fieldDescription>
+	</field>
+	<field name="CODPOS" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Localidad]]></fieldDescription>
+	</field>
+	<field name="CNDIVA" class="java.lang.String">
+		<fieldDescription><![CDATA[Condición de IVA]]></fieldDescription>
+	</field>
+	<field name="CNDPVT" class="java.lang.String">
+		<fieldDescription><![CDATA[Condición de pago venta]]></fieldDescription>
+	</field>
+	<field name="CNDPPV" class="java.lang.String">
+		<fieldDescription><![CDATA[Condición de pago compra]]></fieldDescription>
+	</field>
+	<field name="CODEST" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CODLCV" class="java.lang.String">
+		<fieldDescription><![CDATA[Límite crédito Venta]]></fieldDescription>
+	</field>
+	<field name="CODLIS" class="java.lang.String">
+		<fieldDescription><![CDATA[Lista de precio de venta]]></fieldDescription>
+	</field>
+	<field name="CODLIC" class="java.lang.String">
+		<fieldDescription><![CDATA[Lista de precio de costo]]></fieldDescription>
+	</field>
+	<field name="CODPAI" class="java.lang.String">
+		<fieldDescription><![CDATA[Pais]]></fieldDescription>
+	</field>
+	<field name="CODPRO" class="java.lang.String">
+		<fieldDescription><![CDATA[Provincia]]></fieldDescription>
+	</field>
+	<field name="TIPDOC" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo de documento ]]></fieldDescription>
+	</field>
+	<field name="TIPDO1" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo de documento 1]]></fieldDescription>
+	</field>
+	<field name="TIPDO2" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo de documento 2]]></fieldDescription>
+	</field>
+	<field name="TIPDO3" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo de documento 3]]></fieldDescription>
+	</field>
+	<field name="VNDDOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Vendedor]]></fieldDescription>
+	</field>
+	<field name="REPDOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Repartidor]]></fieldDescription>
+	</field>
+	<field name="COMDOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Comprador]]></fieldDescription>
+	</field>
+	<field name="CODZON" class="java.lang.String">
+		<fieldDescription><![CDATA[Zona]]></fieldDescription>
+	</field>
+	<field name="CODEMP" class="java.lang.String">
+		<fieldDescription><![CDATA[Empresa]]></fieldDescription>
+	</field>
+	<field name="CODSUC" class="java.lang.String">
+		<fieldDescription><![CDATA[Sucursal]]></fieldDescription>
+	</field>
+	<field name="UNINEG" class="java.lang.String">
+		<fieldDescription><![CDATA[Unidad de Negocio]]></fieldDescription>
+	</field>
+	<field name="FCHNAC" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fecha Nacimiento]]></fieldDescription>
+	</field>
+	<field name="CODORI" class="java.lang.String">
+		<fieldDescription><![CDATA[Origen]]></fieldDescription>
+	</field>
+	<field name="CODREF" class="java.lang.String">
+		<fieldDescription><![CDATA[Código de referencia]]></fieldDescription>
+	</field>
+	<field name="PIDECA" class="java.lang.String">
+		<fieldDescription><![CDATA[Pide Código de Autorización]]></fieldDescription>
+	</field>
+	<field name="DEBAJA" class="java.lang.String">
+		<fieldDescription><![CDATA[Debaja]]></fieldDescription>
+	</field>
+	<field name="FECALT" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Fecha Alta]]></fieldDescription>
+	</field>
+	<field name="FECMOD" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Fecha Modificación]]></fieldDescription>
+	</field>
+	<field name="ULTOPR" class="java.lang.String">
+		<fieldDescription><![CDATA[Ultima operación]]></fieldDescription>
+	</field>
+	<field name="USERID" class="java.lang.String">
+		<fieldDescription><![CDATA[Usuario]]></fieldDescription>
+	</field>
+	<field name="NOMBRE" class="java.lang.String">
+		<fieldDescription><![CDATA[Nombre Completo]]></fieldDescription>
+	</field>
+	<field name="SEXO" class="java.lang.String">
+		<fieldDescription><![CDATA[Sexo]]></fieldDescription>
+	</field>
+	<field name="MEDPUB" class="java.lang.String">
+		<fieldDescription><![CDATA[Medio Publicitario]]></fieldDescription>
+	</field>
+	<field name="TRABAJ" class="java.lang.String">
+		<fieldDescription><![CDATA[Trabaja]]></fieldDescription>
+	</field>
+	<field name="ESTREA" class="java.lang.String">
+		<fieldDescription><![CDATA[Estudios Realizados]]></fieldDescription>
+	</field>
+	<field name="AMNOMB" class="java.lang.String">
+		<fieldDescription><![CDATA[Nombre Asistencia Médica]]></fieldDescription>
+	</field>
+	<field name="AMTELE" class="java.lang.String">
+		<fieldDescription><![CDATA[Teléfono Asistencía Médica]]></fieldDescription>
+	</field>
+	<field name="AMNRO" class="java.lang.String">
+		<fieldDescription><![CDATA[Número Afiliado Asistencai Médica]]></fieldDescription>
+	</field>
+	<field name="AMGRUS" class="java.lang.String">
+		<fieldDescription><![CDATA[Grupo Sanguíneo]]></fieldDescription>
+	</field>
+	<field name="AMRH" class="java.lang.String">
+		<fieldDescription><![CDATA[Factor RH]]></fieldDescription>
+	</field>
+	<field name="AMALER" class="java.lang.String">
+		<fieldDescription><![CDATA[Es Alergico]]></fieldDescription>
+	</field>
+	<field name="AMDETA" class="java.lang.String">
+		<fieldDescription><![CDATA[Detalle Alergia]]></fieldDescription>
+	</field>
+	<field name="AMTRAT" class="java.lang.String">
+		<fieldDescription><![CDATA[En Tratamiendo ]]></fieldDescription>
+	</field>
+	<field name="AMDTRA" class="java.lang.String">
+		<fieldDescription><![CDATA[Detalle Tratamiento]]></fieldDescription>
+	</field>
+	<field name="AMCEME" class="java.lang.String">
+		<fieldDescription><![CDATA[Contacto Emergencia]]></fieldDescription>
+	</field>
+	<field name="AMTCEM" class="java.lang.String">
+		<fieldDescription><![CDATA[Teléfono Contacto Emergencia]]></fieldDescription>
+	</field>
+	<field name="AMDEXT" class="java.lang.String">
+		<fieldDescription><![CDATA[Datos extra Alumno]]></fieldDescription>
+	</field>
+	<field name="FCDIRE" class="java.lang.String">
+		<fieldDescription><![CDATA[Dirección Facturación]]></fieldDescription>
+	</field>
+	<field name="FCPROV" class="java.lang.String">
+		<fieldDescription><![CDATA[Provincia de Facturación]]></fieldDescription>
+	</field>
+	<field name="FCPAIS" class="java.lang.String">
+		<fieldDescription><![CDATA[País de Factruación]]></fieldDescription>
+	</field>
+	<field name="FCCDLO" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Localidad de Facturación]]></fieldDescription>
+	</field>
+	<field name="APELLI" class="java.lang.String">
+		<fieldDescription><![CDATA[Apelllido/s]]></fieldDescription>
+	</field>
+	<field name="gr_localidad_CODIGO" class="java.lang.String"/>
+	<field name="gr_localidad_DESCRP" class="java.lang.String"/>
+	<field name="gr_provincia_DESCRP" class="java.lang.String"/>
+	<field name="gr_provincia_CODIGO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="280">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="16" y="45" width="527" height="72" uuid="e24c80c2-5a97-4c8d-9d0d-57c6bf46fcc3"/>
+				<textElement textAlignment="Center">
+					<font size="26"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAZONS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="482" y="209" width="61" height="17" uuid="a36b24ca-b06b-4b9a-94a3-771f08add99f"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NROCTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="159" width="431" height="25" uuid="09fe3181-96a8-4f57-add2-77054cc8476e"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["("+$F{gr_localidad_CODIGO}+") "+$F{gr_localidad_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="184" width="431" height="25" uuid="df9c337a-56e7-452b-8f14-0fc3d2370c33"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_provincia_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="134" width="431" height="25" uuid="6aeb4e22-3a3b-49c9-a3ea-5884813c7ce8"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIRECC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="16" y="117" width="527" height="17" uuid="26663f64-e092-4452-b527-3dc1799f8a79"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FNTSIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="134" width="96" height="25" uuid="cf3aba38-2692-48b9-aeac-93f9df5fa276"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Dirección]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="159" width="96" height="25" uuid="7c4396cc-d1e5-4021-bfc3-bcdd036bbcce"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Localidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="184" width="96" height="25" uuid="2ef850de-4872-4f3e-b0bb-2b2ec5915638"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Provincia]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="277" width="555" height="1" uuid="053a4b23-1a43-47c5-80d0-14640f01a7ec"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="112" y="209" width="194" height="25" uuid="f0be4a83-15c1-4ab0-96d9-a241b8214606"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TELEFN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="209" width="96" height="25" uuid="05c64cd9-8863-44a8-9207-185294c45201"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Teléfono]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

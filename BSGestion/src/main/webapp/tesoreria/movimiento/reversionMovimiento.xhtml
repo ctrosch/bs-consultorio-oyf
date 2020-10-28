@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="TITULO" value="#{movimientoTesoreriaBean.titulo}"/>
+            <f:viewParam name="SUCURS" value="#{movimientoTesoreriaBean.SUCURS}"/>
+            <f:viewParam name="MODCJ"  value="#{movimientoTesoreriaBean.MODCJ}"/>
+            <f:viewParam name="CODCJ"  value="#{movimientoTesoreriaBean.CODCJ}"/>
+            <f:viewParam name="MODVT"  value="#{movimientoTesoreriaBean.MODVT}"/>
+            <f:viewParam name="CODVT"  value="#{movimientoTesoreriaBean.CODVT}"/>
+            <f:viewParam name="MODPV"  value="#{movimientoTesoreriaBean.MODPV}"/>
+            <f:viewParam name="CODPV"  value="#{movimientoTesoreriaBean.CODPV}"/>
+            <f:viewParam name="MODDE"  value="#{movimientoTesoreriaBean.modoVista}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoTesoreriaBean.iniciarVariables()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoTesoreriaBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{movimientoTesoreriaBean.nuevaBusqueda}"
+                            rendered="#{not movimientoTesoreriaBean.seleccionaMovimiento}"
+                            update="@form" />
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{movimientoTesoreriaBean.nuevoMovimiento}"
+                            process="@this"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{movimientoTesoreriaBean.guardar(false)}"
+                            rendered="#{not movimientoTesoreriaBean.m.persistido }"
+                            update="@form" />
+
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            actionListener="#{movimientoTesoreriaBean.imprimir}"
+                            rendered="#{movimientoTesoreriaBean.m.persistido }"
+                            process="@this"
+                            update="@form"
+                            oncomplete="PF('dlg_reporte').show()">
+                </p:menuitem>
+
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <!-- BUSQUEDA -->
+            <p:panel header="Busqueda" rendered="#{movimientoTesoreriaBean.seleccionaMovimiento}" >
+
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="Container40, Container60" >
+
+                    <h:outputText value="Formulario" />
+                    <h:panelGroup id="formularioTesoreria" layout="block" style="text-align: left;">
+                        <p:remoteCommand name="procesarFormularioTesoreria"
+                                         process="@this" update="formularioTesoreria"
+                                         actionListener="#{movimientoTesoreriaBean.procesarFormulario}" />
+                        <p:commandButton icon="fa fa-search" process="@this" oncomplete="PF('dlgFormularioTesoreria').show()" />
+                        <h:outputText value="#{movimientoTesoreriaBean.formulario.descripcion}" />
+                    </h:panelGroup>
+
+                    <h:outputText value="Número" />
+                    <p:inputText value="#{movimientoTesoreriaBean.numeroFormulario}"  />
+
+                </p:panelGrid>
+
+                <div class="EmptyBox10" />
+
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                    <p:commandButton value="Buscar" icon="fa fa-search" styleClass="BlueBack"
+                                     process="@form"
+                                     update="@form "
+                                     actionListener="#{movimientoTesoreriaBean.seleccionarMovimiento}"   />
+
+                    <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="OrangeBack"
+                                     process="@this"
+                                     update="@form"
+                                     actionListener="#{movimientoTesoreriaBean.resetParametros}"   />
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <!-- DATOS -->
+            <p:panel header="Datos" rendered="#{not movimientoTesoreriaBean.m.persistido and not movimientoTesoreriaBean.seleccionaMovimiento}">
+                <!-- CABECERA -->
+                <p:panelGrid columns="4" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:outputText value="Formulario" />
+                    <h:outputText value="#{movimientoTesoreriaBean.m.formulario.descripcion}" />
+
+                    <h:outputText value="Número" />
+                    <h:outputText value="#{movimientoTesoreriaBean.m.numeroFormulario}" >
+                        <f:convertNumber pattern="00000000" />
+                    </h:outputText>
+
+                    <h:outputText value="Fecha" />
+                    <h:outputText value="#{movimientoTesoreriaBean.m.fechaMovimiento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+
+                    <h:outputText value="Cliente *" />
+                    <h:outputText value="#{movimientoTesoreriaBean.m.entidad.razonSocial}" style="width: 80%;"  />
+
+                    <h:outputText value="Cobrador *" />
+                    <h:outputText value="#{movimientoTesoreriaBean.m.cobrador.descripcion}" style="width: 80%;"  />
+
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <h:outputText value="Observaciones" />
+                    <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoTesoreriaBean.m.observaciones}" />
+
+                    <h:outputText value="Comprobante proveedor" />
+                    <h:outputText value="#{movimientoTesoreriaBean.m.comprobanteProveedor.descripcion}" />
+
+                    <h:outputText value="Comprobante ventas" />
+                    <h:outputText value="#{movimientoTesoreriaBean.m.comprobanteVenta}" />
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoTesoreriaBean.muestraReporte}"
+                               nombreArchivo="#{movimientoTesoreriaBean.nombreArchivo}" />
+
+            <div class="EmptyBox10" />
+
+            <!-- DETALLE -->
+            <p:panel header="Detalle" rendered="#{not movimientoTesoreriaBean.m.persistido and not movimientoTesoreriaBean.seleccionaMovimiento}">
+
+                <p:dataTable id="detalleDebe" value="#{movimientoTesoreriaBean.m.itemsDetalle}" var="i"
+                             resizeMode="expand" liveResize="true" >
+
+                    <p:column headerText="Item" width="5%" >
+                        <h:outputText value="#{i.nroItem}" />
+                    </p:column>
+
+                    <p:column headerText="Concepto" width="15%" >
+                        <h:outputText value="#{i.concepto.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Cheque/Docum."  width="10%" >
+                        <p:inputText value="#{i.cheque}"
+                                     readonly="#{i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                     rendered="#{i.concepto.tipo ne 'C'}"   />
+                    </p:column>
+
+                    <p:column headerText="Categoría"  width="12%" style="min-width: 120px;" >
+                        <h:outputText value="Propio" rendered="#{i.categoriaCheque eq 'P'}"  />
+                        <h:outputText value="Terceros" rendered="#{i.categoriaCheque eq 'T'}"  />
+                    </p:column>
+
+                    <p:column headerText="F. Emisión"  width="100" >
+                        <p:calendar value="#{i.fechaCheque}"
+                                    style="text-align: center;"
+                                    rendered="#{i.concepto.pideNumeroCheque eq 'S' or i.concepto.tipo eq 'R' or i.concepto.tipo eq 'B'}"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true" >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+                    </p:column>
+
+                    <p:column headerText="F. Vto"  width="100" >
+                        <p:calendar value="#{i.fechaVencimiento}"
+                                    style="text-align: center;"
+                                    rendered="#{i.concepto.pideNumeroCheque eq 'S'}"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true" >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+                    </p:column>
+
+                    <p:column headerText="Banco"  width="20%" >
+
+                        <h:outputText value="#{i.banco.descripcion}"
+                                      rendered="#{not empty i.banco}" />
+                    </p:column>
+
+                    <!--
+                    <p:column headerText="Firmante"  width="15%" >
+                        <h:outputText value="#{i.firmanteDocumento}"  />
+                    </p:column>
+
+                    <p:column headerText="CUIT"  width="10%" >
+                        <h:outputText value="#{i.numeroDocumento}"   />
+                    </p:column>
+                    -->
+
+                    <p:column headerText="Importe Debe"  width="10%" style="text-align: right;" >
+                        <h:outputText value="#{i.importeDebe}" >
+                            <f:convertNumber pattern="###,###,##0.00" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Importe Haber"  width="10%" style="text-align: right;" >
+                        <h:outputText value="#{i.importeHaber}" >
+                            <f:convertNumber pattern="###,###,##0.00" />
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+            <div class="EmptyBox10" />
+
+            <!-- RETENCIONES -->
+            <p:panel id="panelRetenciones" header="Retenciones que se anulan"
+                     rendered="#{not movimientoTesoreriaBean.m.persistido and not empty movimientoTesoreriaBean.m.movimientoReversion.movimientoProveedor.retenciones}" >
+
+                <p:dataTable id="tRetenciones"  value="#{movimientoTesoreriaBean.m.movimientoReversion.movimientoProveedor.retenciones}" var="r"
+                             resizeMode="expand" liveResize="true"
+                             paginator="true" rows="5"
+                             emptyMessage="No se han encontrado retenciones ">
+
+                    <f:facet name="header">
+                        <div class="headerTable">
+                            Retenciones que se anulan
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="Documento" style="text-align: center;" >
+                        <h:outputText value="#{r.comprobante.descripcion} " />
+                        <h:outputText value="#{r.puntoVenta.codigo}" >
+                            <f:convertNumber pattern="0000" />
+                        </h:outputText>
+                        <h:outputText value="#{r.numeroFormulario}" >
+                            <f:convertNumber pattern="-00000000" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Vencimiento" style="text-align: center;" >
+                        <h:outputText value="#{r.fechaMovimiento}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Importe" style="text-align: right;" >
+                        <h:outputText value="#{r.importeTotal}" >
+                            <f:convertNumber pattern="$ #,###,##0.00" />
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+            </p:panel>
+
+            <p:spacer width="100%" height="1em" rendered="#{not movimientoTesoreriaBean.m.persistido and not empty movimientoTesoreriaBean.m.movimientoReversion.movimientoProveedor.retenciones}" />
+
+            <!-- TOTALES -->
+            <p:panel id="totales" header="Importes "
+                     rendered="#{not movimientoTesoreriaBean.m.persistido and not movimientoTesoreriaBean.seleccionaMovimiento}">
+
+                <p:panelGrid columns="4" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:panelGroup layout="block"   >
+
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block"  >
+
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block"  >
+
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block" style="text-align: right;" >
+                        <h:outputText value="Total comprobante:   " />
+                        <h:outputText value="#{movimientoTesoreriaBean.m.importeTotalDebe}" styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </h:panelGroup>
+
+                </p:panelGrid>
+
+            </p:panel>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/tesoreria/busqueda/buscadorFormulario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

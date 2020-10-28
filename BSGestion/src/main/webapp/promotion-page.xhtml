@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>BS Gestión</title>
+
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+
+        <style>
+            #menubutton{height:auto; width:25px; float:left; display:block; text-align:center; cursor:pointer; margin-left:20px;}
+            #menubutton i{color:#fff; font-size:20px; margin:0px auto 0px auto; vertical-align:middle;}
+            #menubutton:hover i, #menubutton:active i, #menubutton:focus i{color:rgba(255,255,255,0.7);}
+            #menubody{width:270px; height:auto; background-color:#fff; position:absolute; overflow:hidden; border-radius:5px; margin-top:30px; display:none;
+                      box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.1);
+                      -webkit-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.1);
+                      -moz-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.1);}
+            #menubody.active{display:block;}
+            #menubody li{display:block; padding:0px;}
+            #menubody li a{display:block; padding:15px 20px; color:#567a84; font-size:16px;}
+            #menubody li a:hover, #menubody li a:active, #menubody li a:focus{background-color:#f2f2f2;}
+        </style>
+    </h:head>
+
+    <h:body style="margin: 0px; background-color:#fff;" styleClass="GreenBody PopupMenu">
+
+        <div class="Container100 PosFixed" style="background-color:whitesmoke; z-index:999;">
+            <div class="EmptyBox10"></div>
+            <div class="Wid90 OvHidden MarAuto">
+
+                <p:graphicImage value="#{aplicacionBean.organizacion.logo}" style="max-width: 200px; max-height: 50px;"   />
+
+                <a id="menubutton"><i class="fa fa-bars"></i></a>
+                <ul class="" style="padding:0px;" id="menubody">
+                    <li class=""><a href="dashboard.xhtml" class="">Volt Dashboard</a></li>
+                    <li class=""><a href="#volt-highlight" class="">Promotion Page Slogan</a></li>
+                    <li class=""><a href="#volt-cardsArea" class="">Como trabajamos</a></li>
+                    <li class=""><a href="#volt-infoArea" class=""></a></li>
+                    <li class=""><a href="#volt-pricingtables" class="">Precios</a></li>
+                    <li class=""><a href="#volt-features" class="">Características</a></li>
+                    <li class=""><a href="#volt-customers" class="">Customers</a></li>
+                    <li class=""><a href="#volt-contact" class="">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="EmptyBox10"></div>
+        </div>
+
+        <!-- -->
+
+        <div class="Container100 NoIndent" id="volt-highlight" style="background-color:#29506B; padding:10rem 0px;">
+
+            <div class="Wid90 OvHidden MarAuto">
+                <div class="Container100">
+                    <div class="EmptyBox90 ShowOnDesktop"></div>
+                    <div class="Wid80 Responsive100 MarAuto Flex FlexWrap ui-fluid">
+                        <div class="Container20 Responsive Flex">
+                            <div class="Card Green TexAlCenter">
+                                <i class="icon-cloud DispBlock Fs50"></i>
+                                <span class="DispBlock FontVoltSemiBold">Ventas</span>
+                                <div class="EmptyBox5"></div>
+                                <p:commandButton value="Go App" styleClass="TealGreenButton"/>
+                            </div>
+                        </div>
+                        <div class="Container20 Responsive Flex">
+                            <div class="Card Red TexAlCenter">
+                                <i class="icon-flag DispBlock Fs50"></i>
+                                <span class="DispBlock FontVoltSemiBold">Stock</span>
+                                <div class="EmptyBox5"></div>
+                                <p:commandButton value="Go App" styleClass="TealGreenButton"/>
+                            </div>
+                        </div>
+                        <div class="Container20 Responsive Flex">
+                            <div class="Card Orange TexAlCenter">
+                                <i class="icon-feather DispBlock Fs50"></i>
+                                <span class="DispBlock FontVoltSemiBold">Tesorería</span>
+                                <div class="EmptyBox5"></div>
+                                <p:commandButton value="Go App" styleClass="TealGreenButton"/>
+                            </div>
+                        </div>
+                        <div class="Container20 Responsive Flex">
+                            <div class="Card Purple TexAlCenter">
+                                <i class="icon-meter DispBlock Fs50"></i>
+                                <span class="DispBlock FontVoltSemiBold">Compras</span>
+                                <div class="EmptyBox5"></div>
+                                <p:commandButton value="Go App" styleClass="TealGreenButton"/>
+                            </div>
+                        </div>
+                        <div class="Container20 Responsive Flex">
+                            <div class="Card Leaden TexAlCenter">
+                                <i class="icon-atom DispBlock Fs50"></i>
+                                <span class="DispBlock FontVoltSemiBold">Contabilidad</span>
+                                <div class="EmptyBox5"></div>
+                                <p:commandButton value="Go App" styleClass="TealGreenButton"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="EmptyBox50"></div>
+                    <h1 class="FontVoltSemiBold Fs50 TealGreen TexAlCenter">LA PLATAFORMA DE GESTIÓN EN LA NUBE</h1>
+                    <div class="EmptyBox20"></div>
+                    <span class="DispBlock Fs20 FontVoltRegular White TexAlCenter">
+                        "Mejorar la gestión, optimizar costos y analizar mejor cada aspecto del
+                        negocio son objetivos complejos. Para nosotros es una cuestión de simplicidad."
+                    </span>
+                    <div class="EmptyBox10" />
+                    <span class="DispBlock Fs20 FontVoltRegular White TexAlCenter">
+                        "BS Gestión es una plataforma eficiente en la gestión de la organización debido a su tecnología,
+                        única del mercado en aportar soluciones de este tipo, y a sus herramientas de administración,
+                        de gestión contable e impositiva y de control de su negocio."
+                    </span>
+                    <div class="EmptyBox40"></div>
+                    <div class="Wid50 MarAuto ui-fluid Responsive100">
+                        <div class="Container50 Responsive100">
+                            <p:button value="Probar demo" href="/inicio"  styleClass="OrangeButton"/>
+                        </div>
+                        <div class="Container50 Responsive100">
+                            <p:button value="Mostrame más" href="/inicio" styleClass="PinkButton"/>
+                        </div>
+                    </div>
+
+                    <div class="EmptyBox20 ShowOnMobile"></div>
+                    <div class="EmptyBox120 ShowOnDesktop"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- -->
+
+        <div class="Container100 NoIndent" id="volt-cardsArea" style="background-color:#F0F2F5; padding:0px 3rem;">
+
+            <div class="EmptyBox80"></div>
+
+            <h1 class="FontVoltRegular Fs30 Leaden TexAlCenter">¿Como funciona?</h1>
+            <div class="EmptyBox30"></div>
+
+            <div class="Wid90 OvHidden MarAuto">
+                <div class="Container100">
+
+                    <div class="Container50 Responsive50">
+                        <i class="icon-calendar TealGreen Fs100 DispBlock Fleft"></i>
+                        <div class="Container10 Responsive50"></div>
+                        <div class="Container70 Responsive50">
+                            <h2 class="Leaden FontVoltSemiBold Fs30">1. Cloud Server</h2>
+                            <div class="EmptyBox10"></div>
+                            <h3 class="Leaden FontVoltRegular Fs20">Servidores en la nube</h3>
+                            <div class="EmptyBox20"></div>
+                            <span class="Leaden Fs14 FontVoltLight">Usted dispondrá de un servidor en la nube
+                                para correr el sistema de su organización sin necesidad de invertir en costosos equipos,
+                                licencias de software ni preocuparse por el mantenimiento y los bakcups.
+                            </span>
+                            <div class="EmptyBox30"></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Learn More" styleClass="PinkButton Fleft"/></div></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Try Now" styleClass="TealGreenButton Fleft"/></div></div>
+                        </div>
+                    </div>
+
+                    <div class="Container50 Responsive50">
+                        <i class="icon-uniE66F TealGreen Fs100 DispBlock Fleft"></i>
+                        <div class="Container10 Responsive50"></div>
+                        <div class="Container70 Responsive50">
+                            <h2 class="Leaden FontVoltSemiBold Fs30">2. Actualizaciones Automáticas</h2>
+                            <div class="EmptyBox10"></div>
+                            <h3 class="Leaden FontVoltRegular Fs20">Monitor the app ecosystem and your competitors.</h3>
+                            <div class="EmptyBox20"></div>
+                            <span class="Leaden Fs14 FontVoltLight">Vitae potenti ante praesent a dui eget nibh eu quam accumsan porttitor tincidunt
+                                ultrices vel auctor aenean placerat viverra ac vel parturient tristique malesuada hac
+                                conubia sed tincidunt.Quisque a imperdiet suspendisse parturient adipiscing justo sem a
+                                in eros eros luctus a turpis urna sapien ullamcorper vulputate at mi.Dis vestibulum vel
+                                lectus sed vestibulum consectetur vivamus a feugiat pharetra fames ullamcorper adipiscing
+                                condimentum tempor egestas at at lacus.</span>
+                            <div class="EmptyBox30"></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Learn More" styleClass="PinkButton Fleft"/></div></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Try Now" styleClass="TealGreenButton Fleft"/></div></div>
+                        </div>
+                    </div>
+
+                    <div class="Container50 Responsive50">
+                        <i class="icon-newspaper TealGreen Fs100 DispBlock Fleft"></i>
+                        <div class="Container10 Responsive50"></div>
+                        <div class="Container70 Responsive50">
+                            <h2 class="Leaden FontVoltSemiBold Fs30">3. Backups automáticos</h2>
+                            <div class="EmptyBox10"></div>
+                            <h3 class="Leaden FontVoltRegular Fs20">No se preocupe por las copias de seguridad</h3>
+                            <div class="EmptyBox20"></div>
+                            <span class="Leaden Fs14 FontVoltLight">Vitae potenti ante praesent a dui eget nibh eu quam accumsan porttitor tincidunt
+                                ultrices vel auctor aenean placerat viverra ac vel parturient tristique malesuada hac
+                                conubia sed tincidunt.Quisque a imperdiet suspendisse parturient adipiscing justo sem a
+                                in eros eros luctus a turpis urna sapien ullamcorper vulputate at mi.Dis vestibulum vel
+                                lectus sed vestibulum consectetur vivamus a feugiat pharetra fames ullamcorper adipiscing
+                                condimentum tempor egestas at at lacus.</span>
+                            <div class="EmptyBox30"></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Learn More" styleClass="PinkButton Fleft"/></div></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Try Now" styleClass="TealGreenButton Fleft"/></div></div>
+                        </div>
+                    </div>
+
+                    <div class="Container50 Responsive50">
+                        <i class="icon-graph TealGreen Fs100 DispBlock Fleft"></i>
+                        <div class="Container10 Responsive50"></div>
+                        <div class="Container70 Responsive50">
+                            <h2 class="Leaden FontVoltSemiBold Fs30">4. Usage Datas</h2>
+                            <div class="EmptyBox10"></div>
+                            <h3 class="Leaden FontVoltRegular Fs20">Monitor the app ecosystem and your competitors.</h3>
+                            <div class="EmptyBox20"></div>
+                            <span class="Leaden Fs14 FontVoltLight">Vitae potenti ante praesent a dui eget nibh eu quam accumsan porttitor tincidunt
+                                ultrices vel auctor aenean placerat viverra ac vel parturient tristique malesuada hac
+                                conubia sed tincidunt.Quisque a imperdiet suspendisse parturient adipiscing justo sem a
+                                in eros eros luctus a turpis urna sapien ullamcorper vulputate at mi.Dis vestibulum vel
+                                lectus sed vestibulum consectetur vivamus a feugiat pharetra fames ullamcorper adipiscing
+                                condimentum tempor egestas at at lacus.</span>
+                            <div class="EmptyBox30"></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Learn More" styleClass="PinkButton Fleft"/></div></div>
+                            <div class="Container50 Responsive50 ui-fluid"><div class="ContainerIndent"><p:commandButton value="Try Now" styleClass="TealGreenButton Fleft"/></div></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="EmptyBox50"></div>
+
+        </div>
+
+        <!-- -->
+
+        <div class="Container100 NoIndent RedBack" id="volt-infoArea" style="padding:0px 3rem;">
+
+            <div class="EmptyBox80"></div>
+
+            <h1 class="FontVoltRegular Fs30 White TexAlCenter">Lo quiero ahora !</h1>
+            <div class="EmptyBox30"></div>
+
+            <div class="Wid90 OvHidden MarAuto">
+                <div class="Container100">
+
+                    <div class="Wid70 WidAutoOnMobile MarAuto White Fs26 TexAlCenter FontVoltLight">
+                        Pruebe nuestra plataforma ahora, sin registro previo, ni compromiso de compra!
+                        <div class="EmptyBox20"></div>
+                        <p:button value="Probar Demo" styleClass="CyanButton" href="/inicio" />
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="EmptyBox50"></div>
+
+        </div>
+
+        <!-- -->
+
+        <div class="Container100 NoIndent" id="volt-pricingtables" style="background-color:#F0F2F5; padding:0px 3rem;">
+
+            <div class="EmptyBox80"></div>
+
+            <h1 class="FontVoltRegular Fs30 Leaden TexAlCenter">Tabla De Precios</h1>
+            <div class="EmptyBox30"></div>
+
+            <div class="Wid90 MarAuto Responsive100 Flex FlexWrap">
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold BoldLeaden" style="font-size:1.4rem;">Base</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Container100 FontVoltRegular BoldLeaden" style="font-size:3rem;">Desde $300<span class="Fs30 Leaden">/mo*</span></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">
+                            Plan básico para que pueda emitir su factura electrónicas y gestionar sus ventas
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">$300 por mes</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="GreenButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold Red" style="font-size:1.4rem;">Intermedio</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Container100 FontVoltRegular BoldLeaden" style="font-size:3rem;"> Desde $600<span class="Fs30 Leaden">/mo*</span></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">
+                            Gestione sus compras y ventas
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">$35 for monthly</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="RedButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold BoldLeaden" style="font-size:1.4rem;">Avanzado</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Container100 FontVoltRegular BoldLeaden" style="font-size:3rem;">Desde $800<span class="Fs30 Leaden">/mes*</span></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">Business class customer <br/>support + One to one help</div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">$155 for monthly</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="GreenButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container25 TexAlCenter Responsive50 Flex">
+                    <div class="Card Zoom1point05x">
+                        <div class="Container100 FontDosisSemibold BoldLeaden" style="font-size:1.4rem;">Profesional</div>
+                        <div class="Separator"></div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Container100 FontVoltRegular BoldLeaden" style="font-size:3rem;">Desde $1.000<span class="Fs30 Leaden">/mes*</span></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">
+                            Todos los módulos que usted necesita para su organizacion
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="Separator"></div>
+                        <div class="Container100 FontVoltRegular Leaden Fs16">$555 for monthly</div>
+                        <div class="Container100 ui-fluid"> <p:button value="Get Started" styleClass="GreenButton Fleft"/> </div>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="EmptyBox50"></div>
+
+        </div>
+
+
+        <div class="Container100 NoIndent" id="volt-features" style="padding:0px 3rem;">
+
+            <div class="EmptyBox80"></div>
+
+            <h1 class="FontVoltRegular Fs30 Leaden TexAlCenter">Características</h1>
+            <div class="EmptyBox30"></div>
+
+            <div class="Wid90 MarAuto">
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-settings Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">HTML5 &amp; CSS3</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">
+                            Integración de toda la organziación. Basta de planillas de excel y de una contabilidad no integrada con la gestión comercial.
+                            Termine con la información dispersa que trae sólo problemas y errores.
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-world Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Cross-Browser</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">
+                            Sin inversión inicial. BS Gestión es una solución Cloud que no requiere inversión en compra de hardware costos ni de licencias.
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-phone-landscape Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Responsive</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">
+                            Soluciones inmediatas. Un sistema de gestión completo y con una puesta en marcha eficiente.
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-heart Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Handcrafted</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">
+                            Implementación rápida y efectiva. Empezar un nuevo sistema siempre había sido difícil, porque
+                            los usuarios debían explicarle a un consultor qué necesitaban para una configuración inicial,
+                            y luego aprender a operar, entender cómo funcionaba el nuevo sistema.
+                            Con BS Gestión, es mucho más fácil empezar a usar su nuevo sistema. Acceso 100% web a través de un navegador.
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-atom Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Rock-Solid</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">
+                            Independencia de la Plataforma del sistema operativo (Windows, Linux, Mac, etc).
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-settings Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">HTML5 &amp; CSS3</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">
+                            Soluciones para cada negocio. La plataforma de gestión está preconfigurada para cada tipo de negocio, por eso son simples de implementar y usar, y tienen todo lo que una organziación necesita.
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-world Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Cross-Browser</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">
+                            Estar en la nube ya no significa estar en la nada. Ahora es tener tecnología siempre actualizada y segura sin necesidad de inversión en equipamiento y personal especializado.
+                        </div>
+                        <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                    </div>
+                </div>
+
+
+                <div class="Container20 Responsive TexAlCenter">
+                    <div class="Container100">
+                        <i class="icon-phone-landscape Green Wid100" style="font-size:5rem;"></i>
+                        <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                        <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Responsive</div>
+                        <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                        <div class="FontVoltRegular Leaden Fs14">Lorem ipsum dolor sit ametconsetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            Nuestra plataforma de gestión le permite operar en la nube de inmediato,
+                            sin hardware ni instalaciones ni dolores de cabeza innecesarios.
+                            Por lo que también le quita las complicaciones de invertir en licencias y en costoso equipamiento.
+                            <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        </div>
+                    </div>
+
+                    <div class="Container20 Responsive TexAlCenter">
+                        <div class="Container100">
+                            <i class="icon-heart Green Wid100" style="font-size:5rem;"></i>
+                            <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                            <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Handcrafted</div>
+                            <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                            <div class="FontVoltRegular Leaden Fs14">
+                                BS Gestión siempre se adapta al cliente, es por eso que garantizamos que nuestra solución
+                                está abierta a modificaciones futuras por parte de nuestros clientes
+                            </div>
+                            <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        </div>
+                    </div>
+
+                    <div class="Container20 Responsive TexAlCenter">
+                        <div class="Container100">
+                            <i class="icon-atom Green Wid100" style="font-size:5rem;"></i>
+                            <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                            <div class="FontVoltSemiBold Red" style="font-size:1.6rem;">Rock-Solid</div>
+                            <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                            <div class="FontVoltRegular Leaden Fs14">
+                                Solución diseñada en módulos altamente escalables que se integran entre sí.
+                                Puesta en marcha en 3 pasos. Configuración inicial-capacitación-puesta en marcha.
+                            </div>
+                            <div class="Wid100 OvHidden" style="height:3rem;"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="EmptyBox50"></div>
+
+
+
+        </div>
+
+
+        <!-- CLIENTES -->
+        <div class="Container100 NoIndent" id="volt-customers" style="background-color:#F0F2F5; padding:0px 3rem;">
+
+            <div class="EmptyBox80"></div>
+
+            <h1 class="FontVoltRegular Fs30 Leaden TexAlCenter">Empreas que utilizan nuestra plataforma</h1>
+            <div class="EmptyBox30"></div>
+            <div class="Wid80 MarAuto">
+
+                <div class="Container25 Responsive50">
+                    <div class="Container100 TexAlCenter">
+                        <div class="EmptyBox20"></div>
+                        <h:graphicImage name="images/avatar1.svg" library="volt-layout" style="width:150px; height:150px;"/>
+                        <div class="EmptyBox20"></div>
+                        <span class="DispBlock Leaden FontVoltRegular"></span>
+                        <div class="EmptyBox20"></div>
+                        <span class="FontVoltSemiBold DispBlock">Expreso Kon-Mar</span>
+                    </div>
+                </div>
+                <div class="Container25 Responsive50">
+                    <div class="Container100 TexAlCenter">
+                        <div class="EmptyBox20"></div>
+                        <h:graphicImage name="images/avatar2.svg" library="volt-layout" style="width:150px; height:150px;"/>
+                        <div class="EmptyBox20"></div>
+                        <span class="DispBlock Leaden FontVoltRegular"></span>
+                        <div class="EmptyBox20"></div>
+                        <span class="FontVoltSemiBold DispBlock">Expreso Movitierra</span>
+                    </div>
+                </div>
+                <div class="Container25 Responsive50">
+                    <div class="Container100 TexAlCenter">
+                        <div class="EmptyBox20"></div>
+                        <h:graphicImage name="images/avatar1.svg" library="volt-layout" style="width:150px; height:150px;"/>
+                        <div class="EmptyBox20"></div>
+                        <span class="DispBlock Leaden FontVoltRegular"></span>
+                        <div class="EmptyBox20"></div>
+                        <span class="FontVoltSemiBold DispBlock">Metalurgica Avellaneda</span>
+                    </div>
+                </div>
+
+                <div class="Container25 Responsive50">
+                    <div class="Container100 TexAlCenter">
+                        <div class="EmptyBox20"></div>
+                        <h:graphicImage name="images/avatar1.svg" library="volt-layout" style="width:150px; height:150px;"/>
+                        <div class="EmptyBox20"></div>
+                        <span class="DispBlock Leaden FontVoltRegular"></span>
+                        <div class="EmptyBox20"></div>
+                        <span class="FontVoltSemiBold DispBlock">Distribuidora Santo Domingo</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="EmptyBox50"></div>
+
+        </div>
+
+        <!-- -->
+
+        <h:form>
+            <div class="Container100 NoIndent" id="volt-customers" style="background-color:#F0F2F5; padding:0px 3rem;">
+
+                <div class="EmptyBox80"></div>
+
+                <h1 class="FontVoltRegular Fs30 Leaden TexAlCenter"></h1>
+                <div class="EmptyBox30"></div>
+
+
+                <div class="Wid90 MarAuto ui-fluid">
+
+                    <div class="Container30 Responsive50">
+                        <div class="Container100 TexAlLeft">
+                            <div class="EmptyBox20"></div>
+                            <span class="FontVoltSemiBold DispBlock">Conocenos</span>
+                            <div class="EmptyBox20"></div>
+                            <span class="DispBlock Leaden FontVoltRegular">
+                                <i class="fa fa-phone fa-2x" /> +54 3482 440227
+                            </span>
+                            <div class="EmptyBox20" />
+                            <span class="DispBlock Leaden FontVoltRegular">
+                                <i class="fa fa-at fa-2x" /> info@beansoft.com.ar
+                            </span>
+                            <div class="EmptyBox20" />
+                            <span class="DispBlock Leaden FontVoltRegular">
+                                <i class="fa fa-map-marker fa-2x" /> Avellaneda - Santa Fe - Argentina
+                            </span>
+
+                        </div>
+                    </div>
+                    <div class="Container40 Responsive50">
+                        <div class="Container100 TexAlLeft">
+                            <div class="EmptyBox20"></div>
+                            <span class="FontVoltSemiBold DispBlock">Escribinos</span>
+                            <div class="EmptyBox20"></div>
+                            <p:panelGrid columns="1" layout="grid" style="border:0px !important; background:none;" styleClass="ui-panelgrid-blank">
+
+                                <p:inputText placeholder="Nombre"
+                                             value="#{contactoBean.contacto}"
+                                             required="true"
+                                             requiredMessage="Ingrese su nombre"/>
+
+                                <p:inputText placeholder="Telefono"
+                                             value="#{contactoBean.telefono}"
+                                             required="true"
+                                             requiredMessage="Ingrese el teléfono"/>
+                                <p:inputText placeholder="Correo electrónico"
+                                             value="#{contactoBean.email}"
+                                             required="true"
+                                             requiredMessage="Ingrese el correo electrónico"/>
+                                <p:inputTextarea value="#{contactoBean.mensaje}" rows="5" placeholder="Mensaje"
+                                                 required="true"
+                                                 requiredMessage="Ingrese su consulta"/>
+                                <p:commandButton value="Consultar" styleClass="GreenButton"
+                                                 actionListener="#{contactoBean.enviarConsulta()}"
+                                                 process="@form"
+                                                 update="@form" />
+                            </p:panelGrid>
+                        </div>
+                    </div>
+
+                    <div class="Container30 Responsive50">
+                        <div class="Container100 TexAlLeft">
+                            <div class="EmptyBox20"></div>
+                            <span class="FontVoltSemiBold DispBlock">Seguinos</span>
+                            <div class="EmptyBox20"></div>
+                            <span class="DispBlock Leaden FontVoltRegular">
+                                <a href="https://www.facebook.com/beansoftar/" target="_blank">
+                                    <i class="fa fa-facebook fa-2x" />
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="EmptyBox50"></div>
+
+
+            </div>
+        </h:form>
+
+        <!-- MAPA -->
+        <!--
+        <div class="Container100 NoIndent TealBack" id="volt-contact">
+
+            <p:gmap center="-29.117561, -59.658698" zoom="14" type="ROADMAP" style="width:100%;height:600px;"/>
+
+            <div class="Wid100 PosRelative MarAuto OvHidden" style="background-color:rgba(255,255,255,0.7); margin-top:-245px;">
+                <div class="Container100 TexAlCenter">
+                    <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                    <div class="Wid100 MarAuto DispBlock OvHidden FontVoltSemiBold Blue" style="font-size:2.0rem;">Estamos aqui !</div>
+                    <div class="Wid100 OvHidden" style="height:0.5rem;"></div>
+                    <div class="Wid100 MarAuto DispBlock OvHidden FontVoltRegular Fs20 Leaden">Avellaneda - Santa Fe - Argentina</div>
+                    <div class="Wid100 OvHidden" style="height:1rem;"></div>
+                    <div class="Container100 ui-fluid"> <p:button value="Contactanos" styleClass="BlueButton MarAuto" style="max-width:250px;"/> </div>
+                    <div class="Wid100 OvHidden" style="height:2rem;"></div>
+                </div>
+            </div>
+        </div>
+        -->
+
+        <!-- FOOTER -->
+        <div class="Container100 NoIndent LeadenBack">
+            <div class="Container100" style="border-bottom:solid 1px #5B616B;" id="footerlinks">
+                <a href="#" class="DispInlBlock FontVoltLight White Fs12 Fleft HoverEffect">TERMINOS Y CONDICIONES</a>
+                <span class="DispInlBlock Fleft Fs11 White" style="padding:0px 5px;">|</span>
+                <a href="#" class="DispInlBlock FontVoltLight White Fs12 Fleft HoverEffect">MAPA DEL SITIO</a>
+                <span class="DispInlBlock Fleft Fs11 White" style="padding:0px 5px;">|</span>
+                <a href="#" class="DispInlBlock FontVoltLight White Fs12 Fleft HoverEffect">PRIVACIDAD</a>
+                <span class="DispInlBlock Fleft Fs11 White" style="padding:0px 5px;">|</span>
+                <a href="#" class="DispInlBlock FontVoltLight White Fs12 Fleft HoverEffect">LINKING POLICY</a>
+
+                <div class="EmptyBox10 ShowOnMobile"></div>
+                <span class="DispInlBlock FontVoltLight White Fs12 Fright HoverEffect TexAlRight FloatNoneOnMobile">
+                    Beansoft - BS Gestión
+                </span>
+            </div>
+
+            <div class="Container100">
+                <h:graphicImage name="images/logo-white.svg" styleClass="Fleft" library="volt-layout" style="height:20px;"/>
+                <span class="DispInlBlock FontVoltLight White Fs12 Fright HoverEffect TexAlRight">+54 3482 (15)633426 <br/> info@beansoft.com.ar
+                    <br/><br/> Copyright © 2016 <i class="icon-primitive-dot Fs10 White"></i> Todos los derechos reservados.</span>
+            </div>
+
+            <div class="EmptyBox30"></div>
+        </div>
+
+        <h:outputStylesheet name="css/core-layout.css" library="volt-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="volt-layout" />
+        <h:outputStylesheet name="css/animate.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-layout.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-font.css" library="volt-layout" />
+
+        <script>
+            // FNC for detecting for click outside of any elements ==============
+            $.fn.clickOff = function (callback, selfDestroy) {
+                var clicked = false;
+                var parent = this;
+                var destroy = selfDestroy || true;
+
+                parent.click(function () {
+                    clicked = true;
+                });
+
+                $(document).click(function (event) {
+                    if (!clicked) {
+                        callback(parent, event);
+                    }
+                    if (destroy) {
+                    }
+                    ;
+                    clicked = false;
+                });
+            };
+
+            var menubtn = $(document.getElementById("menubutton")),
+                    menubody = $(document.getElementById("menubody")),
+                    menustatus = true,
+                    menuButtonClick = false;
+
+            menubtn.on("click", function () {
+                menuButtonClick = true;
+
+                if (menustatus) {
+                    menubody.addClass('active');
+                    menustatus = false;
+                } else {
+                    menubody.removeClass('active');
+                    menustatus = true;
+                }
+            });
+
+            menubody.clickOff(function (e) {
+                if (menuButtonClick) {
+                    menuButtonClick = false;
+                } else {
+                    menubody.removeClass('active');
+                    menustatus = true;
+                }
+            });
+        </script>
+    </h:body>
+
+</html>

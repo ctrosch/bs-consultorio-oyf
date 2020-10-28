@@ -1,0 +1,104 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorTurno" header="Turnos" position="top"
+              widgetVar="dlgTurno" draggable="false" modal="true"
+              minHeight="400" style="width: 100%; min-width: 100px !important; max-width: 700px;"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaTur"/>
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaTur" value="#{gestionReservaTurnoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,fechaMov" update="tablaTurno" listener="#{gestionReservaTurnoBean.buscar}"/>
+                </p:inputText>
+
+                <p:calendar id="fechaMov" value="#{gestionReservaTurnoBean.fechaMovimientoDesde}"
+                            pattern="EEEEEEE dd MMMMMMM yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true">
+                    <p:ajax process="@this,txtBusquedaTur" update="tablaTurno" event="dateSelect" listener="#{gestionReservaTurnoBean.buscar}" />
+                </p:calendar>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaTurno" value="#{gestionReservaTurnoBean.lista}" var="i"
+                         emptyMessage="No se encontraron resultados"
+                         scrollable="true" scrollHeight="250" reflow="true"
+                         selectionMode="single"
+                         selection="#{gestionReservaTurnoBean.reservaTurno}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{gestionReservaTurnoBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgTurno').hide(), procesarTurno()" />
+
+                <p:column headerText="" width="50" style="text-align: center;">
+
+                    <p:commandButton icon="fa fa-trash" styleClass="RedBack"
+                                     title="Anular turno"
+                                     actionListener="#{gestionReservaTurnoBean.deshabilitar(i)}"
+                                     process="@this"
+                                     update="@form"  >
+                        <p:confirm header="Confirmacion" message="¿Está seguro? No podrá deshacer esta acción" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>
+
+                <p:column headerText="Profesional" width="200"  >
+                    <h:outputText value="#{i.profesional.nombreComplete}" />
+                </p:column>
+
+                <p:column headerText="Paciente" width="200"  >
+                    <h:outputText value="#{i.paciente.nombreComplete}" />
+                </p:column>
+
+                <p:column headerText="Fecha" width="100" >
+                    <h:outputText value="#{i.fechaMovimiento}"  >
+                        <f:convertDateTime pattern="EEEEEEE dd MMMMMMM yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Hora" width="100" >
+                    <h:outputText value="#{i.horaMovimiento}"  >
+                        <f:convertDateTime pattern="HH:mm" />
+                    </h:outputText>
+                </p:column>
+
+
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{gestionReservaTurnoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaTurno" listener="#{gestionReservaTurnoBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistroTurno" value="#{gestionReservaTurnoBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{gestionReservaTurnoBean.buscar}"
+                                     process="@this,cantRegistroTurno" update="tablaTurno" />
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

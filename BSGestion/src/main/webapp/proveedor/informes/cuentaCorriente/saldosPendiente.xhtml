@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{saldosPendienteProveedor.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{saldosPendienteProveedor.titulo}"/>
+            <f:viewParam name="CODREP" value="#{saldosPendienteProveedor.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{saldosPendienteProveedor.nombreArchivo}"/>
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Saldos pendientes en cuenta corriente
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:panelGrid id="informePanelGrid" columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank informePanelGrid500"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup id="pgProveedor" layout="block">
+                    <h:outputText value="Proveedor" />
+                    <p:remoteCommand name="procesarEntidad"  process="@this" update="@form" actionListener="#{saldosPendienteProveedor.procesarProveedor()}" />
+                    <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                     actionListener="#{proveedorBean.buscar()}"
+                                     update="buscadorEntidadComercial"
+                                     oncomplete="PF('dlgEntidadComercial').show()" process="@this" />
+                </h:panelGroup>
+                <p:inputText value="#{saldosPendienteProveedor.proveedor.nrocta} - #{saldosPendienteProveedor.proveedor.razonSocial}"
+                             readonly="true" />
+
+                <h:outputText value="Moneda de Registración" />
+                <p:selectOneMenu value="#{saldosPendienteProveedor.codigoMonedaRegistracion}"  >
+                    <f:selectItems value="#{monedaBean.lista}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i.codigo}"/>
+                    <p:ajax process="@this"  />
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                 actionListener="#{saldosPendienteProveedor.verReporte}"
+                                 update="@form" />
+
+                <p:commandButton value="A Excel" icon="fa fa-file-excel-o"
+                                 actionListener="#{saldosPendienteProveedor.reporteToXls}"
+                                 update="@form"
+                                 ajax="false" />
+
+                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" process="@this"
+                                 actionListener="#{saldosPendienteProveedor.resetParametros}"
+                                 update="@form" />
+            </p:panelGrid>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{saldosPendienteProveedor.muestraReporte}"
+                               nombreArchivo="#{saldosPendienteProveedor.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/entidad/busqueda/buscadorEntidadComercial.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{subCuentaBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{subCuentaBean.titulo}"/>
+            <f:viewParam name="CODIGO"  value="#{subCuentaBean.codigo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+
+            <f:event type="preRenderView" listener="#{subCuentaBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{subCuentaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{subCuentaBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{subCuentaBean.modoVista eq 'B'}">
+                <ui:include src="subCuentaBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{subCuentaBean.modoVista eq 'D'}">
+                <ui:include src="subCuentaMenu.xhtml" />
+                <ui:include src="subCuentaDatos.xhtml" />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

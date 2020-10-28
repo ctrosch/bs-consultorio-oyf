@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{aplicacionCuentaCorrienteBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{aplicacionCuentaCorrienteBean.titulo}"/>
+            <f:viewParam name="SUCVT"  value="#{aplicacionCuentaCorrienteBean.SUCVT}"/>
+            <f:viewParam name="MODVT"  value="#{aplicacionCuentaCorrienteBean.MODVT}"/>
+            <f:viewParam name="CODVT"  value="#{aplicacionCuentaCorrienteBean.CODVT}"/>
+
+            <f:event type="preRenderView" listener="#{aplicacionCuentaCorrienteBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{aplicacionCuentaCorrienteBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{aplicacionCuentaCorrienteBean.nuevaBusqueda}"
+                            immediate="true"
+                            update="@form" />
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{aplicacionCuentaCorrienteBean.nuevoMovimiento}"
+                            process="@this" immediate="true"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            action="#{aplicacionCuentaCorrienteBean.guardar(false)}"
+                            rendered="#{empty aplicacionCuentaCorrienteBean.m.id}"
+                            update="@form" />
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            actionListener="#{aplicacionCuentaCorrienteBean.imprimir}"
+                            rendered="#{not empty aplicacionCuentaCorrienteBean.m.id }"
+                            process="@this"
+                            update="@form"
+                            oncomplete="PF('dlg_reporte').show()" >
+                </p:menuitem>
+
+
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{aplicacionCuentaCorrienteBean.buscaMovimiento}" >
+                <ui:include src="aplicacionCuentaCorrienteBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment  >
+                <ui:include src="aplicacionCuentaCorrienteDatos.xhtml" />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{aplicacionCuentaCorrienteBean.muestraReporte}"
+                               nombreArchivo="#{aplicacionCuentaCorrienteBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/entidad/busqueda/buscadorEntidadComercial.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>

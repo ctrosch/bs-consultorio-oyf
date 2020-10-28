@@ -1,0 +1,50 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{tareaBean.nuevaBusqueda}"
+                    immediate="true"
+                    update="@form" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    action="#{tareaBean.nuevoMovimientoMantenimiento()}"
+                    process="@this"
+                    update="@form" >
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    action="#{tareaBean.guardar(false)}"
+                    rendered="#{not empty tareaBean.tarea}"
+                    update="@form" />
+
+        <!--
+        <p:menuitem value="Corregir" icon="fa fa-copy"
+                    action="#{tareaBean.copiar(tareaBean.tarea)}"
+                    rendered="#{not empty tareaBean.tarea}"
+                    update="@form" >
+            <p:confirm header="Confirmación" message="Se generará una nueva tarea y se anulará la tarea actual ¿Está seguro de continuar? Esta acción no se puede deshacer." icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Anular" icon="fa fa-close"
+                    action="#{tareaBean.copiar(tareaBean.tarea)}"
+                    rendered="#{not empty tareaBean.tarea and tareaBean.tarea.estado eq 'Z'}"
+                    update="@form" >
+
+            <p:confirm header="Confirmación" message="¿Está seguro de anular #{tareaBean.tarea.formulario.descripcion}  #{tareaBean.tarea.sucursal.codigo} #{tareaBean.tarea.numeroFormulario}? Esta acción no se puede deshacer." icon="ui-icon-alert" />
+        </p:menuitem>
+        -->
+
+    </p:menubar>
+
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

@@ -1,0 +1,1340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PR - ANALISIS CARTERA DETALLE" pageWidth="595" pageHeight="842" columnWidth="585" leftMargin="5" rightMargin="5" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" isBold="true"/>
+	<style name="Detail" fontName="Arial"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Resumen_Financiador" uuid="faad15db-23fa-4cf5-ab84-0c63c51e1347">
+		<parameter name="USUARIO" class="java.lang.String"/>
+		<parameter name="FECHA" class="java.util.Date">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="LOGO" class="java.io.InputStream"/>
+		<parameter name="NROCTA" class="java.lang.String"/>
+		<parameter name="CODLIN" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="INCEST" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CODPRO" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="COMINT" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CODFIN" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CODEST" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="REPROG" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CODSUC" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CLAS01" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CLAS02" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="CLAS03" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+f.DESCRP as FINANCIADOR__DESCRIPCION,
+(select count(distinct p1.ID)
+from pr_prestamo p1
+inner join pr_linea_credito l1 on p1.CODLIN = l1.ID
+inner join pr_financiador f1 on p1.CODFIN = f1.ID
+inner join pr_promotor pr1 on p1.CODPRO = pr1.id
+inner join gr_sucursal s on p1.CODSUC = s.CODIGO
+where p1.ESTADO IN('C','D','E','R','Z')
+and f1.ID = f.ID
+and  exists(select SUM(c1.IMPNAC) from pr_cuenta_corriente c1 where c1.ID_PRES = p1.ID and c1.FCHMOV <= $P{FECHA} group by c1.ID_PRES having ROUND(SUM(c1.IMPNAC),2)<>0)
+order by f1.ID) AS CANT_PRESTAMO,
+IFNULL(SUM(c.IMPCAP),0) AS CAPITAL,
+IFNULL(SUM(c.IMPINT),0) AS INTERES,
+SUM(c.IMPGOT) AS GASTOS,
+SUM(c.IMPMCS) AS MICROSEGURO,
+IFNULL(SUM(c.IMPNAC),0) AS TOTAL,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) <= 0 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_OK,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) > 0 AND DATEDIFF($P{FECHA},c.FCHVNC) <= 30 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_HASTA_30,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) > 30 AND DATEDIFF($P{FECHA},c.FCHVNC) <= 60 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_HASTA_60,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) > 60 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_MAS_60,
+IFNULL(SUM(CASE WHEN c.FCHVNC >= $P{FECHA} THEN c.IMPNAC ELSE 0 END),0) AS TOTAL_OK,
+IFNULL(SUM(CASE WHEN c.FCHVNC < $P{FECHA} THEN c.IMPNAC ELSE 0 END),0) AS TOTAL_VENCIDO
+from pr_prestamo p
+inner join pr_prestamo_item i on p.id = i.ID_PRES
+inner join pr_cuenta_corriente c on c.ID_IPR = i.ID
+inner join pr_estado e on p.ESTADO = e.CODIGO
+inner join pr_linea_credito l on p.CODLIN = l.ID
+inner join pr_financiador f on p.CODFIN = f.ID
+inner join pr_promotor pr on p.CODPRO = pr.id
+inner join gr_sucursal s on p.CODSUC = s.CODIGO
+Where c.FCHMOV <= $P{FECHA}
+AND IF(LENGTH($P{NROCTA}) > 0, p.NROCTA = $P{NROCTA},1=1)
+AND IF(LENGTH($P{CODEST}) > 0, p.ESTADO = $P{CODEST},1=1)
+AND IF(LENGTH($P{REPROG}) > 0, p.REPROG = $P{REPROG},1=1)
+AND IF(LENGTH($P{CODLIN}) > 0, p.CODLIN = $P{CODLIN},1=1)
+AND IF(LENGTH($P{CODFIN}) > 0, p.CODFIN = $P{CODFIN},1=1)
+AND IF(LENGTH($P{CODPRO}) > 0, p.CODPRO = $P{CODPRO},1=1)
+AND IF(LENGTH($P{CODSUC}) > 0, p.CODSUC = $P{CODSUC},1=1)
+AND IF(LENGTH($P{CLAS01}) > 0, p.CLAS01 = $P{CLAS01},1=1)
+AND IF(LENGTH($P{CLAS02}) > 0, p.CLAS02 = $P{CLAS02},1=1)
+AND IF(LENGTH($P{CLAS03}) > 0, p.CLAS03 = $P{CLAS03},1=1)
+AND p.CODSUC IN(SELECT n.CODSUC FROM sg_usuario_sucursal n inner join sg_usuario u on n.CODUSU = u.ID WHERE u.USUARIO = $P{USUARIO})
+AND p.ESTADO IN('C','D','E','R','Z')
+GROUP BY f.ID
+HAVING ROUND(SUM(c.IMPNAC),2)<>0
+order by f.ID]]>
+		</queryString>
+		<field name="FINANCIADOR__DESCRIPCION" class="java.lang.String"/>
+		<field name="CANT_PRESTAMO" class="java.lang.Long"/>
+		<field name="CAPITAL" class="java.math.BigDecimal"/>
+		<field name="INTERES" class="java.math.BigDecimal"/>
+		<field name="GASTOS" class="java.math.BigDecimal"/>
+		<field name="MICROSEGURO" class="java.math.BigDecimal"/>
+		<field name="TOTAL" class="java.math.BigDecimal"/>
+		<field name="CAPITAL_OK" class="java.math.BigDecimal"/>
+		<field name="CAPITAL_HASTA_30" class="java.math.BigDecimal"/>
+		<field name="CAPITAL_HASTA_60" class="java.math.BigDecimal"/>
+		<field name="CAPITAL_MAS_60" class="java.math.BigDecimal"/>
+		<field name="TOTAL_OK" class="java.math.BigDecimal"/>
+		<field name="TOTAL_VENCIDO" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="FECHA" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="NROCTA" class="java.lang.String"/>
+	<parameter name="CODLIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="INCEST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODPRO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMINT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODFIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODEST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPROG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<parameter name="CLAS02" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CLAS01" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CLAS03" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+p.CODIGO,
+p.DESTIN,
+p.CODSUC,
+s.NOMBRE AS SUCURSAL_NOMBRE,
+f.DESCRP as FINANCIADOR__DESCRIPCION,
+COUNT(DISTINCT p.ID) AS CANT_PRESTAMO,
+IFNULL(SUM(c.IMPCAP),0) AS CAPITAL,
+IFNULL(SUM(c.IMPINT),0) AS INTERES,
+SUM(c.IMPGOT) AS GASTOS,
+SUM(c.IMPMCS) AS MICROSEGURO,
+IFNULL(SUM(c.IMPNAC),0) AS TOTAL,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) <= 0 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_OK,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) > 0 AND DATEDIFF($P{FECHA},c.FCHVNC) <= 30 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_HASTA_30,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) > 30 AND DATEDIFF($P{FECHA},c.FCHVNC) <= 60 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_HASTA_60,
+IFNULL(SUM(CASE WHEN DATEDIFF($P{FECHA},c.FCHVNC) > 60 THEN c.IMPCAP ELSE 0 END),0) AS CAPITAL_MAS_60,
+IFNULL(SUM(CASE WHEN c.FCHVNC >= $P{FECHA} THEN c.IMPNAC ELSE 0 END),0) AS TOTAL_OK,
+IFNULL(SUM(CASE WHEN c.FCHVNC < $P{FECHA} THEN c.IMPNAC ELSE 0 END),0) AS TOTAL_VENCIDO
+from pr_prestamo p
+inner join pr_prestamo_item i on p.id = i.ID_PRES
+inner join pr_cuenta_corriente c on c.ID_IPR = i.ID
+inner join pr_estado e on p.ESTADO = e.CODIGO
+inner join pr_linea_credito l on p.CODLIN = l.ID
+inner join pr_financiador f on p.CODFIN = f.ID
+inner join pr_promotor pr on p.CODPRO = pr.id
+inner join gr_sucursal s on p.CODSUC = s.CODIGO
+Where c.FCHMOV <= $P{FECHA}
+AND IF(LENGTH($P{NROCTA}) > 0, p.NROCTA = $P{NROCTA},1=1)
+AND IF(LENGTH($P{CODEST}) > 0, p.ESTADO = $P{CODEST},1=1)
+AND IF(LENGTH($P{REPROG}) > 0, p.REPROG = $P{REPROG},1=1)
+AND IF(LENGTH($P{CODLIN}) > 0, p.CODLIN = $P{CODLIN},1=1)
+AND IF(LENGTH($P{CODFIN}) > 0, p.CODFIN = $P{CODFIN},1=1)
+AND IF(LENGTH($P{CODPRO}) > 0, p.CODPRO = $P{CODPRO},1=1)
+AND IF(LENGTH($P{CODSUC}) > 0, p.CODSUC = $P{CODSUC},1=1)
+AND IF(LENGTH($P{CLAS01}) > 0, p.CLAS01 = $P{CLAS01},1=1)
+AND IF(LENGTH($P{CLAS02}) > 0, p.CLAS02 = $P{CLAS02},1=1)
+AND IF(LENGTH($P{CLAS03}) > 0, p.CLAS03 = $P{CLAS03},1=1)
+AND p.CODSUC IN(SELECT n.CODSUC FROM sg_usuario_sucursal n inner join sg_usuario u on n.CODUSU = u.ID WHERE u.USUARIO = $P{USUARIO})
+AND p.ESTADO IN('C','D','E','R','Z')
+GROUP BY p.CODSUC, f.ID,p.ID
+HAVING  ROUND(SUM(c.IMPNAC),2)<>0
+order by p.CODSUC,f.ID]]>
+	</queryString>
+	<field name="CODIGO" class="java.lang.String">
+		<fieldDescription><![CDATA[Código]]></fieldDescription>
+	</field>
+	<field name="DESTIN" class="java.lang.String">
+		<fieldDescription><![CDATA[Destinatario]]></fieldDescription>
+	</field>
+	<field name="CODSUC" class="java.lang.String">
+		<fieldDescription><![CDATA[Sucursal]]></fieldDescription>
+	</field>
+	<field name="SUCURSAL_NOMBRE" class="java.lang.String"/>
+	<field name="FINANCIADOR__DESCRIPCION" class="java.lang.String"/>
+	<field name="CANT_PRESTAMO" class="java.lang.Long"/>
+	<field name="CAPITAL" class="java.math.BigDecimal"/>
+	<field name="INTERES" class="java.math.BigDecimal"/>
+	<field name="GASTOS" class="java.math.BigDecimal"/>
+	<field name="MICROSEGURO" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="CAPITAL_OK" class="java.math.BigDecimal"/>
+	<field name="CAPITAL_HASTA_30" class="java.math.BigDecimal"/>
+	<field name="CAPITAL_HASTA_60" class="java.math.BigDecimal"/>
+	<field name="CAPITAL_MAS_60" class="java.math.BigDecimal"/>
+	<field name="TOTAL_OK" class="java.math.BigDecimal"/>
+	<field name="TOTAL_VENCIDO" class="java.math.BigDecimal"/>
+	<variable name="SUM_CANTIDAD_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PRESTAMO}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_INTERESES_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERES}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CANTIDAD" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PRESTAMO}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_INTERESES" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERES}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_OK_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_OK}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_30_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_HASTA_30}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_60_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_HASTA_60}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_90_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_MAS_60}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_OK" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_OK}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_30" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_HASTA_30}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_60" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_HASTA_60}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_90" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_MAS_60}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CANTIDAD_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANT_PRESTAMO}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_INTERESES_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{INTERES}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_GASTO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{GASTOS}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_GASTO_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{GASTOS}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_GASTO_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{GASTOS}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_OK_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_OK}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_30_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_HASTA_30}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_60_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_HASTA_60}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CAPITAL_90_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{CAPITAL_MAS_60}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_MICROSEGURO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MICROSEGURO}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_MICROSEGURO_FIN" class="java.math.BigDecimal" resetType="Group" resetGroup="CODFIN" calculation="Sum">
+		<variableExpression><![CDATA[$F{MICROSEGURO}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_MICROSEGURO_UNI" class="java.math.BigDecimal" resetType="Group" resetGroup="CODSUC" calculation="Sum">
+		<variableExpression><![CDATA[$F{MICROSEGURO}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="CODSUC">
+		<groupExpression><![CDATA[$F{CODSUC}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<rectangle>
+					<reportElement mode="Opaque" x="0" y="10" width="585" height="15" backcolor="#99CCFF" uuid="71c14d3c-4fba-44b0-9058-02ec38839cd4"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="0" y="11" width="114" height="14" uuid="65ee1e2d-471c-4409-927a-cfa86a75dd7e"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUCURSAL_NOMBRE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="33">
+				<line>
+					<reportElement x="0" y="0" width="585" height="2" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="10254e10-eb33-4a84-ae34-b9181eab768b"/>
+				</line>
+				<textField pattern="#,##0.00">
+					<reportElement x="169" y="2" width="55" height="16" uuid="bdc691f8-501d-4630-bbb5-e654d1de56f6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_INTERESES_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="224" y="2" width="45" height="16" uuid="2d7c4605-c5a0-4983-a62f-56b186531f41"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_GASTO_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="525" y="2" width="60" height="16" uuid="2c4c12c7-a225-4423-8247-f6b240666729"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="114" y="2" width="55" height="16" uuid="d2e9ed24-a8eb-4441-8aa6-53f4272c2a06"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="315" y="2" width="55" height="16" backcolor="#CCFFCC" uuid="88d6108e-113a-4d21-bdcc-85bd7097412b"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_OK_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="370" y="2" width="55" height="16" backcolor="#FFFF99" uuid="dcbac839-817f-4ff5-82b4-03cdbd4ef062"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_30_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="425" y="2" width="50" height="16" backcolor="#FF9966" uuid="e87d0923-b240-459e-b90e-2083bcf0afe9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_60_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="475" y="2" width="50" height="16" backcolor="#FF0000" uuid="17cc605c-b789-4bf8-88ae-449ed586ab40"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_90_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 %">
+					<reportElement mode="Opaque" x="370" y="18" width="55" height="13" backcolor="#FFFF99" uuid="4a7a0aca-4ce6-43ba-a9c1-0e176219ae00"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_30_UNI}.divide( $V{SUM_CAPITAL_UNI},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 %">
+					<reportElement mode="Opaque" x="315" y="18" width="55" height="13" backcolor="#CCFFCC" uuid="e9c17cd0-64b4-4eb5-a958-da63457a9c69"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_OK_UNI}.divide( $V{SUM_CAPITAL_UNI},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 %">
+					<reportElement mode="Opaque" x="425" y="18" width="50" height="13" backcolor="#FF9966" uuid="80962984-eb06-448a-a8b6-4b50a79a9cd5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_60_UNI}.divide( $V{SUM_CAPITAL_UNI},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 %">
+					<reportElement mode="Opaque" x="475" y="18" width="50" height="13" backcolor="#FF0000" uuid="425a2950-d8ed-4917-81aa-a0a74ff96f28"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_90_UNI}.divide( $V{SUM_CAPITAL_UNI},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="90" y="2" width="25" height="16" uuid="f99a7e38-0274-4cc5-9f97-ef06cd85a5be"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CANTIDAD_UNI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="269" y="2" width="45" height="16" uuid="6c7dc0e1-1fcd-4244-9b56-1dcf1fdaff3b"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_MICROSEGURO_UNI}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="CODFIN">
+		<groupExpression><![CDATA[$F{FINANCIADOR__DESCRIPCION}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="585" height="15" backcolor="#CCCCCC" uuid="5fb57ea3-de29-49fb-bdcf-778015d06023"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+						<paragraph leftIndent="25"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FINANCIADOR__DESCRIPCION}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<textField pattern="#,##0.00">
+					<reportElement x="169" y="0" width="55" height="16" uuid="96d8b2f1-4499-403f-b794-cfd413c282b0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_INTERESES_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="425" y="0" width="50" height="16" backcolor="#FF9966" uuid="a2852383-f490-4114-b238-8e08d4d4d422"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_60_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="315" y="0" width="55" height="16" backcolor="#CCFFCC" uuid="a6faf562-c68c-482a-aac6-7ea226a9e2a8"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_OK_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="224" y="0" width="45" height="16" uuid="56536b03-1044-4f96-9926-57bdcbf6bb35"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_GASTO_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="114" y="0" width="55" height="16" uuid="16942f9e-9ccb-4b38-b4ab-99665e6c1da5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="475" y="0" width="50" height="16" backcolor="#FF0000" uuid="fe31cab8-b4f0-4d96-b416-89238b1a0db8"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_90_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="90" y="0" width="25" height="16" uuid="2b28a501-fde7-4546-af91-f5859e5f27d6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CANTIDAD_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="370" y="0" width="55" height="16" backcolor="#FFFF99" uuid="d88f61d9-77d9-45f2-ba5f-50c302e28b79"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CAPITAL_30_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="525" y="0" width="60" height="15" uuid="faecc6ac-fd9a-435d-8d6f-fb059d5a39b8"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL_FIN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="270" y="0" width="45" height="16" uuid="633bd5fc-d8e1-4242-855b-eeae08911403"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_MICROSEGURO_FIN}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="145" y="0" width="273" height="30" uuid="a2170831-50a6-4035-a08e-f5d766cf6464"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Análisis de Cartera Detallado]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="5" width="114" height="13" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="19" width="114" height="11" uuid="0427b782-8e84-49fb-8bce-824533e57710"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="0" y="0" width="83" height="30" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="30" width="575" height="1" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="417" y="0" width="1" height="30" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="169" y="14" width="55" height="14" uuid="161c8cb8-638b-47cb-b603-c13bdca60f56"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Intereses]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="14" width="60" height="14" uuid="54124891-ca2b-4348-8cf2-3d305827885f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="14" width="55" height="14" uuid="98c402ad-fd27-4f39-9b39-49fc0ad554ff"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capital]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="14" width="45" height="14" uuid="41fe799b-99ab-4669-a90c-d8c0a5c81c52"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Gasto Ot.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="315" y="14" width="55" height="14" backcolor="#CCFFCC" uuid="225c4896-c893-463a-a4bc-c3fd963b90b5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Vencido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="370" y="14" width="55" height="14" backcolor="#FFFF99" uuid="81558981-7735-421f-bf14-3fec22f87e8a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mora 30 días]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="425" y="14" width="50" height="14" backcolor="#FF9966" uuid="40483369-da08-49ec-a3ec-d0c028725c5c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mora 60 días]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="475" y="14" width="50" height="14" backcolor="#FF0000" uuid="8ffa7fc9-2bd9-439e-831a-300aa26b8c7e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mora +90 días]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="315" y="1" width="210" height="13" backcolor="#CCCCCC" uuid="08032417-cabb-48ad-b1f9-052e7c9035f2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detalle de Capital Adeudado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="14" width="25" height="14" uuid="493f633e-ee3e-42d7-aa54-afabb1afea8f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="269" y="14" width="45" height="14" uuid="9d9bbcf9-f9d2-4909-8fe6-1b9b25e97c38"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Microseg.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<textField pattern="#,##0.00">
+				<reportElement x="114" y="0" width="55" height="15" uuid="17044a3f-f76d-4923-ad2b-9f1fcdfd07a2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="525" y="0" width="60" height="15" uuid="a91b1508-7e2a-4836-8aba-d3fbe84a90af"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="169" y="0" width="55" height="15" uuid="023487f3-198b-4106-b0e7-8b882ff02cf9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INTERES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="224" y="0" width="45" height="15" uuid="ac413d11-4869-42ec-9b5f-734c355fb1dc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GASTOS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="315" y="0" width="55" height="15" backcolor="#CCFFCC" uuid="f42ff81e-90d5-4fa5-a2dd-dfdc6a81590b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL_OK}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="370" y="0" width="55" height="15" backcolor="#FFFF99" uuid="948f50db-3499-4468-922a-0c2757a103b2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL_HASTA_30}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="425" y="0" width="50" height="15" backcolor="#FF9966" uuid="10817072-6ef0-4d8b-825a-3eaf3f991184"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL_HASTA_60}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="475" y="0" width="50" height="15" backcolor="#FF0000" uuid="709d5d99-2e6e-49cc-99b2-6816ae341d71"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPITAL_MAS_60}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="121" height="15" uuid="70bc1614-66f2-4473-86f1-60c080bba774"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESTIN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="270" y="0" width="45" height="15" uuid="ec694b2a-8356-4159-9eaf-39d419b042f6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MICROSEGURO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="14" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="10" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="441" y="0" width="114" height="10" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="114" height="10" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="135">
+			<staticText>
+				<reportElement x="-1" y="119" width="100" height="14" uuid="2aec9209-b5bf-4106-b738-47639d28da58"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de Cartera]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="99" y="119" width="57" height="14" uuid="4fa8a073-81ad-4db8-bd98-6eed41477c96"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="table 4" style="table 4" x="0" y="37" width="585" height="81" uuid="4cab6abe-5ddd-40de-ae45-1a92c3287993"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Resumen_Financiador" uuid="2fe8e5cc-5fce-470d-a657-bb18cacf3ae9">
+						<datasetParameter name="USUARIO">
+							<datasetParameterExpression><![CDATA[$P{USUARIO}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="FECHA">
+							<datasetParameterExpression><![CDATA[$P{FECHA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="NROCTA">
+							<datasetParameterExpression><![CDATA[$P{NROCTA}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CODLIN">
+							<datasetParameterExpression><![CDATA[$P{CODLIN}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CODPRO">
+							<datasetParameterExpression><![CDATA[$P{CODPRO}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CODFIN">
+							<datasetParameterExpression><![CDATA[$P{CODFIN}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CODEST">
+							<datasetParameterExpression><![CDATA[$P{CODEST}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="REPROG">
+							<datasetParameterExpression><![CDATA[$P{REPROG}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CODSUC">
+							<datasetParameterExpression><![CDATA[$P{CODSUC}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CLAS01">
+							<datasetParameterExpression><![CDATA[$P{CLAS01}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CLAS02">
+							<datasetParameterExpression><![CDATA[$P{CLAS02}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="CLAS03">
+							<datasetParameterExpression><![CDATA[$P{CLAS03}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="559ff708-d7ff-400c-a834-414fcd7f50b6">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="2912de6c-8135-4a8f-8000-2eadbe3068a3"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<text><![CDATA[Financiador]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="15" uuid="0b74faa7-63a8-49b6-9ffd-28cfac06d571"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{FINANCIADOR__DESCRIPCION}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="25" uuid="378f83e0-3a06-4071-abf7-2414f479e2f5">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="25" height="15" uuid="d3efceab-6b83-482f-8286-9c69344dfce1"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Cant]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0">
+								<reportElement x="0" y="0" width="25" height="15" uuid="1743758d-c80a-432b-9a0c-6483b6bb6e5e"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CANT_PRESTAMO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="55" uuid="87fbf0fb-b93c-4aaa-aab1-c7a0ce62fe63">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="55" height="15" uuid="e5c0a83a-2939-4ae6-bd71-ec37b5357f40"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Capital]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="55" height="15" uuid="4cf9bbf0-ece9-447d-b039-b053c4df0a64"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CAPITAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="55" uuid="332ef01b-5bb1-4318-9d18-71639b0b5e6c">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="55" height="15" uuid="ff5e1bdc-c0f6-4180-bd4c-3164aac8b82e"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Intereses]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="55" height="15" uuid="d24037eb-25da-45a5-ab9c-cad2127b2d81"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{INTERES}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="45" uuid="e230eb5f-015e-49d3-aa66-ff7f63c35446">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="45" height="15" uuid="45f7cc9c-7c3e-4050-8bde-9eff6fac9a6a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Gastos Ot.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="45" height="15" uuid="e68b8d83-e560-43ad-90f9-6d300a93019f"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{GASTOS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="45" uuid="4ed350e8-7d3d-4d0d-9dac-0bf7e52af8a9">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="45" height="15" uuid="2305df56-c079-47a6-a6a6-ddfa1a560f61"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Microseg]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="45" height="15" uuid="eb51c76a-0d9e-43dd-9124-08442fb7d674"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{GASTOS}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="55" uuid="1879217c-4fe6-41f2-9aba-34031146cc00">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="55" height="15" uuid="a0ba80d0-4522-463a-bfd5-354834cce8ae"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[No Vencido]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="55" height="15" uuid="cd9b89c2-68ef-4bc3-8632-543bc5ff2ead"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CAPITAL_OK}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="55" uuid="e2dff6f9-cb4e-4c55-accb-1f67dff46dae">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="55" height="15" uuid="5f1f500f-6ee6-4436-b163-5ea19e34fb6b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Mora 30 días]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="55" height="15" uuid="1712584d-fe28-4020-a861-e817df08c56e"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CAPITAL_HASTA_30}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="1163debd-9206-44e5-a7dc-f695bf09b99d">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="50" height="15" uuid="b6ff73ef-e045-4037-af42-b27cc6b7a24c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Mora 60 días]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="50" height="15" uuid="c99033ab-f62b-4eca-bed7-287d35c574e1"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CAPITAL_HASTA_60}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="ba92cf2d-232c-444c-8e6b-524092b8b00d">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="50" height="15" uuid="9fad4323-76a3-4208-a52d-280068abc660"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Mora +90 días]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="50" height="15" uuid="7b5590c2-73c1-43d9-95c4-64e59919947d"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{CAPITAL_MAS_60}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="2ed0dba9-4ed7-4ed0-81f6-afda825852fb">
+						<jr:columnHeader style="table 4_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="15" uuid="3c7c6b95-0d9b-4811-b114-10ab308d926a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Total]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 4_TD" height="15" rowSpan="1">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="60" height="15" uuid="a472b7a0-b91c-4187-992a-ca34c79f85c5"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="114" y="0" width="55" height="16" backcolor="#FFFFFF" uuid="1dee095a-a99c-4658-98ce-0f1cc29024fe"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="525" y="0" width="60" height="16" backcolor="#FFFFFF" uuid="4a65d4b7-32ff-4d7d-ade5-86ceda0e6dd3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="90" height="16" uuid="b5512acd-6d6f-4352-aef5-ec82b9c9e5b7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL GENERAL "]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="169" y="0" width="55" height="16" uuid="da7df85b-5a21-4655-b2d7-c7ddb8815f1e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_INTERESES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="224" y="0" width="45" height="16" uuid="7066c1d0-c406-4b3b-a4fb-0e0f470b2afc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_GASTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="370" y="0" width="55" height="16" uuid="7c7ccb15-1544-41c9-b697-1afb38bf41e7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_30}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="315" y="0" width="55" height="16" uuid="b3da6bbe-b1f8-4cf7-bfa3-96487e355464"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_OK}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="0" width="50" height="16" uuid="8ed3322c-184a-4ea3-a639-71f1223229f4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_60}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="475" y="0" width="50" height="16" uuid="77b4b67c-34d9-4be9-a698-e1cd63522342"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_90}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement mode="Opaque" x="370" y="16" width="55" height="16" backcolor="#FFFF99" uuid="93a2b675-9193-4010-9986-e93fd7428b39"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_30}.divide( $V{SUM_CAPITAL},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement mode="Opaque" x="314" y="16" width="55" height="16" backcolor="#CCFFCC" uuid="f3b5d5d1-bdd8-4fa5-8cea-e5d027a9faf6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_OK}.divide( $V{SUM_CAPITAL},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement mode="Opaque" x="475" y="16" width="50" height="16" backcolor="#FF0000" uuid="69b01d76-2103-4dfb-8d9e-0606bc34efc4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_90}.divide( $V{SUM_CAPITAL},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement mode="Opaque" x="425" y="16" width="50" height="16" backcolor="#FF9966" uuid="8f7721e4-481e-44b9-90d5-363b99567585"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CAPITAL_60}.divide( $V{SUM_CAPITAL},4, RoundingMode.HALF_UP)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement mode="Transparent" x="90" y="0" width="25" height="16" backcolor="#FFFFFF" uuid="fa646521-51a2-4888-ba09-1922d2f32a8a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="269" y="0" width="45" height="16" uuid="11992f10-acb0-4724-9bb2-4ef172f4b0d4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_MICROSEGURO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

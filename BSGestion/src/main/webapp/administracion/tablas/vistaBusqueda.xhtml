@@ -1,0 +1,130 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6 Fleft, ui-g-12 ui-md-6 Fright"  >
+
+        <p:panelGrid id="filtro" columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:inputText id="txtBusqueda"
+                         value="#{vistaBean.txtBusqueda}"
+                         autocomplete="false" placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{vistaBean.buscar}"/>
+            </p:inputText>
+
+            <p:selectOneMenu id="selectModuloVista" value="#{vistaBean.modulo}" filter="true"
+                             converter="#{conversoresGeneral.modulo}"  >
+                <f:selectItem itemLabel="Seleccionar Módulo" itemValue="" />
+                <f:selectItems value="#{moduloBean.lista}"
+                               var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                <p:ajax event="itemSelect" process="@this,filtro" update="tabla" listener="#{vistaBean.buscar}"/>
+            </p:selectOneMenu>
+
+            <p:selectOneMenu id="selectOrigenVista" value="#{vistaBean.origen}"  >
+                <f:selectItem itemLabel="Seleccionar Origen" itemValue="" />
+                <f:selectItem itemLabel="Sistema" itemValue="SIS" />
+                <f:selectItem itemLabel="Usuario" itemValue="USR" />
+                <p:ajax event="itemSelect" process="@this,filtro" update="tabla" listener="#{vistaBean.buscar}"/>
+            </p:selectOneMenu>
+
+
+
+        </p:panelGrid>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{vistaBean.limpiarFiltroBusqueda()}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{vistaBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{vistaBean.lista}" var="i"
+                 emptyMessage="No se encontraron datos"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{vistaBean.vista}" rowKey="#{i}"
+                 rowStyleClass="#{i.origen eq 'USR'  ? 'origenUsuario' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{vistaBean.onSelect}" update="@form" />
+
+        <p:column headerText="Código" width="100" styleClass="TexAlCenter"  >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Nombre" sortBy="#{i.nombre}"  >
+            <h:outputText value="#{i.nombre}" />
+        </p:column>
+
+        <p:column headerText="Path" sortBy="#{i.path}"   >
+            <h:outputText value="#{i.path}" />
+        </p:column>
+
+        <p:column headerText="Módulo" sortBy="#{i.modulo.descripcion}" >
+            <h:outputText value="#{i.modulo.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Origen" >
+            <h:outputText value="Sistema" rendered="#{i.origen eq 'SIS'}" />
+            <h:outputText value="Usuario" rendered="#{i.origen eq 'USR'}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+    <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistroVista" value="#{vistaBean.cantidadRegistros}" style="max-width: 80px;"/>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{vistaBean.buscar}"
+                             process="@this,cantRegistroVista" update="tabla" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+            <p:selectBooleanCheckbox value="#{vistaBean.mostrarDebaja}" >
+                <p:ajax process="@this" update="tabla" listener="#{vistaBean.buscar}" />
+            </p:selectBooleanCheckbox>
+            <h:outputText value="Mostrar registros deshabilitados" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form" />
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false" />
+        </h:panelGroup>
+    </p:panelGrid>
+
+</ui:composition>

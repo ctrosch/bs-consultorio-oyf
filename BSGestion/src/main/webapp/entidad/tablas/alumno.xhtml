@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{alumnoBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{alumnoBean.titulo}"/>
+            <f:viewParam name="NROCTA"  value="#{alumnoBean.nrocta}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{alumnoBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="head">
+            <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyD2vKx_XSG5-9wXYO0P-6MHn1HoK6z9M_M"></script>
+        </ui:define>
+
+        <ui:define name="titulo" >
+            #{alumnoBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{alumnoBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarLocalidad" process="@this" update="localidad"
+                             actionListener="#{alumnoBean.procesarLocalidadDlg()}" />
+
+
+            <p:remoteCommand name="procesarLocalidadFactura" process="@this" update="tbDatosAsociados:local"
+                             actionListener="#{alumnoBean.procesarLocalidadDlgFactura()}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{alumnoBean.modoVista eq 'B'}">
+                <ui:include src="alumnoBusqueda.xhtml"  />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{alumnoBean.modoVista eq 'D'}">
+                <ui:include src="alumnoMenu.xhtml"  />
+                <ui:include src="alumnoDatos.xhtml"  />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            
+            <ui:include src="/global/busqueda/buscadorLocalidad.xhtml" />
+            <ui:include src="/global/busqueda/buscadorLocalidadFactura.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

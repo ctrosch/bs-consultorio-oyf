@@ -1,0 +1,107 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorCircuitoFacturacion" header="Circuito de Facturación" modal="true" 
+              widgetVar="dlgCircuitoFacturacion"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              style="max-width: 900px;" responsive="true" 
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+
+            <p:panelGrid columns="1" layout="grid"
+                     style="max-width: 400px;"
+                     styleClass="ui-panelgrid-blank" >
+            
+                <p:inputText id="txtBusquedaCircuitoFacturacion"  value="#{circuitoFacturacionBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaCircuitoFacturacion" listener="#{circuitoFacturacionBean.buscar}"/>
+                </p:inputText>
+            </p:panelGrid>       
+
+            <p:dataTable id="tablaCircuitoFacturacion" value="#{circuitoFacturacionBean.lista}" var="e"                           
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" rows="10" 
+                         paginator="true" 
+                         selectionMode="single"                          
+                         selection="#{circuitoFacturacionBean.circuito}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{circuitoFacturacionBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgCircuitoFacturacion').hide(), procesarCircuitoFacturacion()" />
+
+                <p:column headerText="Circuito Inicio" width="10%" style="text-align: center;"
+                          sortBy="#{e.circom}"   >                         
+                    <h:outputText value="#{e.circom}" />
+                </p:column>
+
+                <p:column headerText="Circuito Aplicado" width="10%" style="text-align: center;"
+                          sortBy="#{e.cirapl}"   >                         
+                    <h:outputText value="#{e.cirapl}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+
+                <p:column headerText="Act. Facturación" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaFacturacion}" >                
+                    <h:outputText value="Si" rendered="#{e.actualizaFacturacion eq 'S'}" />  
+                    <h:outputText value="No" rendered="#{e.actualizaFacturacion eq 'N'}" />  
+                </p:column>
+
+                <p:column headerText="Act. Venta" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaVenta}" >
+                    <h:outputText value="Si" rendered="#{e.actualizaVenta eq 'S'}" />  
+                    <h:outputText value="No" rendered="#{e.actualizaVenta eq 'N'}" />                      
+                </p:column>
+
+                <p:column headerText="Act. Tesoreria" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaTesoreria}" >                    
+                    <h:outputText value="Si" rendered="#{e.actualizaTesoreria eq 'S'}" />  
+                    <h:outputText value="No" rendered="#{e.actualizaTesoreria eq 'N'}" />                      
+                    
+                </p:column>
+
+                <p:column headerText="Act. Stock" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaStock}" >
+                    <h:outputText value="Si" rendered="#{e.actualizaStock eq 'S'}" />  
+                    <h:outputText value="No" rendered="#{e.actualizaStock eq 'N'}" />                                          
+                </p:column>
+
+            </p:dataTable>  
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{circuitoFacturacionBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaCircuitoFacturacion" listener="#{circuitoFacturacionBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistrosCircuitoFacturacion" value="#{circuitoFacturacionBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{circuitoFacturacionBean.buscar}"
+                                     process="@this,cantRegistrosCircuitoFacturacion" update="tablaCircuitoFacturacion" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

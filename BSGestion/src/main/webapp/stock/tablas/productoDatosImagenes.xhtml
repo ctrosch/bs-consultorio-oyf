@@ -1,0 +1,131 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4,ui-g-8" >
+
+        <h:form prependId="false" enctype="multipart/form-data"
+                rendered="#{not empty productoBean.producto.codigo}" >
+
+            <div class="EmptyBox10" />
+            <p:fileUpload fileUploadListener="#{productoBean.upload}"
+                          mode="advanced"
+                          label="Buscar imagen" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                          invalidFileMessage="Formato inválido"
+                          invalidSizeMessage="El tamaño del archivo es muy grande, debe ser menor a 1 MB"
+                          fileLimit="5" multiple="true"
+                          update=":formulario,@form"
+                          auto="true" dragDropSupport="true"
+                          sizeLimit="1000000" allowTypes="/(\.|\/)(png|jpg|jpeg)$/" />
+
+        </h:form>
+
+        <p:dataTable id="tablaImagenes" var="i" style="max-width: 1200px;"
+                     value="#{productoBean.producto.imagenes}"
+                     emptyMessage="No se encontraron resultados"
+                     resizableColumns="true" resizeMode="expand" liveResize="true"  >
+
+            <f:facet name="footer" >
+                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                 actionListener="#{productoBean.nuevoItemImagen()}"
+                                 value="Agregar imagen"
+                                 process="tablaImagenes"
+                                 update="tablaImagenes" />
+            </f:facet>
+
+            <p:column headerText="" width="65" >
+
+                <h:outputLink value="#{i.urlImagen}"
+                              rendered="#{not empty i.urlImagen}" target="_blank" >
+
+                    <h:graphicImage value="#{i.urlImagen}"
+                                    width="100%" />
+                </h:outputLink>
+
+                <h:graphicImage name="image/noimage.png" styleClass="TexAlCenter MarAuto" width="100%"
+                                rendered="#{empty i.urlImagen}" />
+
+            </p:column>
+
+            <!--
+            <p:column headerText="Nombre" width="150" >
+                <p:inputText value="#{i.nombre}"
+                             required="true" requiredMessage="Debe identificar el item con un nombre"/>
+            </p:column>
+            -->
+
+            <p:column headerText="Clasificación" width="150"  >
+
+                <p:selectOneMenu value="#{i.clasificacion}"
+                                 required="true" requiredMessage="Seleccione una clasificación"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Interna"      itemValue="I" />
+                    <f:selectItem itemLabel="Mercadolibre" itemValue="M" />
+                    <f:selectItem itemLabel="Dropshipping" itemValue="D" />
+                </p:selectOneMenu>
+
+            </p:column>
+
+            <p:column headerText="Link Externo" width="80" >
+
+                <p:selectOneMenu value="#{i.linkExterno}" style="width: 50px !important;"
+                                 title="Si es un link externo, deberá copiar la url completa en el campo path imagen, de lo contrario deberá subir un archivo"
+                                 required="true" requiredMessage="Seleccione si es un link externo o interno"  >
+                    <p:ajax process="@this" update="tablaImagenes" />
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneMenu>
+
+            </p:column>
+
+            <!--
+            <p:column headerText="Url Base "  >
+
+                <p:inputText value="#{i.urlBase }"
+                             readonly="#{i.linkExterno eq 'N'}"
+                             required="#{i.linkExterno eq 'N'}" requiredMessage="La url base de la imagen es obligatoria"  />
+            </p:column>
+            -->
+
+            <p:column headerText="Archivo/Link"  >
+
+                <p:inputText value="#{i.archivo }"
+                             readonly="#{i.linkExterno eq 'N'}"
+                             required="true" requiredMessage="El nombre del archivo de imagen es obligatorio"  />
+            </p:column>
+
+
+            <p:column headerText="" width="50" style="text-align: center;" >
+
+                <!--
+                <p:commandLink title="Subir archivo de imagen al servidor"
+                               rendered="#{i.linkExterno eq 'N'}"
+                               process="@this"
+                               update="dlgProductoImagen,message,messageg"
+                               oncomplete="PF('dlg_producto_imagen').show()" >
+                    <f:setPropertyActionListener value="#{i}" target="#{productoBean.imagenProducto}" />
+                    <i class="fa fa-upload fa-2x Green" ></i>
+                </p:commandLink>
+                -->
+
+                <p:commandLink process="tablaImagenes" update="tablaImagenes,message,messageg"
+                               actionListener="#{productoBean.eliminarItemImagen(i)}" >
+                    <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                    <i class="fa fa-close fa-2x Red" ></i>
+                </p:commandLink>
+
+            </p:column>
+
+
+        </p:dataTable>
+
+    </p:panelGrid>
+
+</ui:composition>
+

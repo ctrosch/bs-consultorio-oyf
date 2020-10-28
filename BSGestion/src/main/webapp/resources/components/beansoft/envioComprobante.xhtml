@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+
+        <title></title>
+
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="Ingrese valor de mostrar reporte y nombre de archivo" >
+            <composite:attribute name="solicitaEmail"  required="true" default="false" />
+            <composite:attribute name="email" required="true" />
+            <composite:attribute name="informacionAdicional"  />
+            <composite:attribute name="actionListener" required="true"
+                                 method-signature="java.lang.String action()"/>
+
+        </composite:interface>
+
+        <composite:implementation>
+
+            <p:dialog header="Envio de comprobantes" modal="true" styleClass="dialogo"
+                      widgetVar="dlgEnvioComprobante"
+                      resizable="false"
+                      draggable="false"
+                      minHeight="400"
+                      width="650"
+                      responsive="true"
+                      showEffect="fade" hideEffect="fade">
+
+                <h:form prependId="false" >
+
+                    <div style="padding-left: 30px; padding-right: 30px; padding-top: 5px; padding-bottom: 15px; ">
+
+                        <p:panelGrid  columns="1" layout="grid" styleClass="ui-panelgrid-blank"  >
+
+                            <p:messages id="dlgMessage" showDetail="true" /><p:growl id="dlgMessageg" showDetail="true" life="7000" />
+
+                            <p:inputText id="txtEmail" value="#{cc.attrs.email}"
+                                         required="true"
+                                         requiredMessage="Es obligatorio ingresar una dirección de correo para enviar el email"
+                                         placeholder="Ingrese la dirección de correo" />
+
+                            <p:inputTextarea style="width: 100%" rows="3" placeholder="Ingrese información adicional si lo desea"
+                                             value="#{cc.attrs.informacionAdicional}" >
+                                <p:ajax event="blur" process="@this" />
+                            </p:inputTextarea>
+
+                            <!--
+                            <h:panelGroup layout="block" >
+                                <p:selectBooleanCheckbox value="#{cc.attrs.enviaCopia}"  >
+                                    <p:ajax process="@this"  />
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Enviarme copia del email" />
+                            </h:panelGroup>
+                            -->
+
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="2" layout="grid"
+                                     styleClass="ui-panelgrid-blank" >
+
+                            <p:commandButton value="Enviar" icon="fa fa-send-o" styleClass="GreenBack"
+                                             process="@this,txtEmail"
+                                             update="@form"
+                                             actionListener="#{cc.attrs.actionListener}"  />
+
+
+                            <p:commandButton value="Cancelar" icon="fa fa-close" styleClass="RedBack"
+                                             immediate="true"
+                                             oncomplete="PF('dlgEnvioComprobante').hide()" >
+                            </p:commandButton>
+
+                        </p:panelGrid>
+
+                    </div>
+                </h:form>
+                <div class="EmptyBox10" />
+
+            </p:dialog>
+
+
+
+        </composite:implementation>
+
+    </h:body>
+
+</html>

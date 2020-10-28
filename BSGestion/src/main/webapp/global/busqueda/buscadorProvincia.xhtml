@@ -1,0 +1,63 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorProvincia" header="Provincia" modal="true"
+              widgetVar="dlgProvincia"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 700px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaProvincia"/>
+            
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+                
+                <p:selectOneMenu id="pais" value="#{provinciaBean.pais}" filter="true"
+                                 converter="#{conversoresGeneral.pais}"  >
+                    <f:selectItem itemLabel="Todos" itemValue="" />
+                    <f:selectItems value="#{provinciaBean.paises}"  var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaProvincia" update="tablaProvincia" listener="#{provinciaBean.buscar}"/>
+                </p:selectOneMenu>
+                
+                <p:inputText id="txtBusquedaProvincia" value="#{provinciaBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,pais" update="tablaProvincia" listener="#{provinciaBean.buscar}"/>
+                </p:inputText>
+                
+
+            </p:panelGrid>
+            
+            <p:dataTable id="tablaProvincia" value="#{provinciaBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" 
+                         selection="#{provinciaBean.provincia}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+                
+                <p:ajax event="rowSelect" listener="#{provinciaBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgProvincia').hide(), procesarProvincia()" />
+                    
+                <p:column headerText="Código" width="20%" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >                         
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nombre" width="40%" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+
+            </p:dataTable>      
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

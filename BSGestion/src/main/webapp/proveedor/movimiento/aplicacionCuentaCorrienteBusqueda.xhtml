@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:panel id="panelBusqueda" header="Busqueda" rendered="#{aplicacionCuentaCorrienteProveedorBean.buscaMovimiento}" >
+
+        <p:panelGrid columns="4" layout="grid" style="max-width: 900px;"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+            <h:outputText value="Formulario" />
+            <p:inputText value="#{aplicacionCuentaCorrienteProveedorBean.formulario.descripcion}" readonly="true" />
+
+            <h:outputText value="" />
+            <h:outputText value="" />
+
+            <h:outputText value="Fecha formulario" />
+            <h:panelGroup layout="block">
+
+                <div class="Wid50 Fleft">
+                    <p:calendar value="#{aplicacionCuentaCorrienteProveedorBean.fechaMovimientoDesde}"
+                                placeholder="Desde"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"  >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </div>
+                <div class="Wid50 Fright">
+                    <p:calendar value="#{aplicacionCuentaCorrienteProveedorBean.fechaMovimientoHasta}"
+                                placeholder="Hasta"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </div>
+            </h:panelGroup>
+
+            <h:outputText value="" />
+            <h:outputText value="" />
+
+            <h:outputText value="Número formulario" />
+            <h:panelGroup layout="block" >
+
+                <div class="Wid50 Fleft">
+                    <p:inputText value="#{aplicacionCuentaCorrienteProveedorBean.numeroFormularioDesde}"  placeholder="Desde"/>
+                </div>
+
+                <div class="Wid50 Fright">
+                    <p:inputText value="#{aplicacionCuentaCorrienteProveedorBean.numeroFormularioHasta}"  placeholder="Hasta"/>
+                </div>
+
+            </h:panelGroup>
+
+            <h:outputText value="" />
+            <h:outputText value="" />
+
+            <h:outputText value="Cliente" />
+            <p:autoComplete value="#{aplicacionCuentaCorrienteProveedorBean.proveedor}" dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{proveedorBean.complete}"
+                            var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                            converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                <p:column headerText="Nro cuenta" width="100">
+                    <h:outputText value="#{e.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Razón social">
+                    <h:outputText value="#{e.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Nombre Fantasía">
+                    <h:outputText value="#{e.nombreFantasia}" />
+                </p:column>
+
+            </p:autoComplete>
+
+            <h:outputText value="" />
+            <h:outputText value="" />
+
+        </p:panelGrid>
+
+        <div class="EmptyBox10" />
+
+        <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Buscar" icon="fa fa-search" styleClass="BlueBack"
+                             process="panelBusqueda"
+                             update="@form"
+                             actionListener="#{aplicacionCuentaCorrienteProveedorBean.buscarMovimiento()}"   />
+
+            <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="OrangeBack"
+                             process="panelBusqueda"
+                             update="@form"
+                             actionListener="#{aplicacionCuentaCorrienteProveedorBean.resetParametros}"   />
+
+            <p:commandButton value="Cancelar" icon="fa fa-close" styleClass="RedBack"
+                             immediate="true"
+                             update="@form" >
+                <f:setPropertyActionListener target="#{aplicacionCuentaCorrienteProveedorBean.buscaMovimiento}" value="#{false}" />
+            </p:commandButton>
+
+        </p:panelGrid>
+
+        <div class="EmptyBox10" />
+
+        <p:dataTable id="detalle" value="#{aplicacionCuentaCorrienteProveedorBean.movimientos}" var="i"
+                     resizableColumns="true" resizeMode="expand" liveResize="true"
+                     paginator="true" rows="15"
+                     rendered="#{not empty aplicacionCuentaCorrienteProveedorBean.movimientos}"  >
+
+            <f:facet name="header">
+                Movimientos encontrados
+            </f:facet>
+
+            <p:column headerText="Formulario" >
+                <h:outputText value="#{i.formulario.codigo}" />
+            </p:column>
+
+            <p:column headerText="Número" >
+                <h:outputText value="#{i.numeroFormulario}" >
+                    <f:convertNumber pattern="00000000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Fecha" >
+                <h:outputText value="#{i.fechaMovimiento}"  >
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Nro Cuenta"  >
+                <h:outputText value="#{i.proveedor.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social" width="40%"  >
+                <h:outputText value="#{i.proveedor.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="" width="10%" style="text-align: center;">
+
+                <p:commandLink title="Seleccionar movimiento"
+                               actionListener="#{aplicacionCuentaCorrienteProveedorBean.seleccionarMovimiento(i)}"
+                               process="@this"
+                               update="@form"  >
+                    <i class="fa fa-check fa-2x Green" ></i>
+                </p:commandLink>
+            </p:column>
+
+        </p:dataTable>
+    </p:panel>
+    <p:spacer width="100%" height="1em" rendered="#{aplicacionCuentaCorrienteProveedorBean.buscaMovimiento}" />
+
+    <div class="EmptyBox10" />
+
+</ui:composition>

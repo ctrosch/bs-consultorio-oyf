@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{cuentaContableBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{cuentaContableBean.titulo}"/>
+            <f:viewParam name="NROCTA"  value="#{cuentaContableBean.NROCTA}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{cuentaContableBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{cuentaContableBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{cuentaContableBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <div class="EmptyBox10" />
+
+            <h:panelGroup layout="block" >
+                <ui:include src="cuentaContableMenu.xhtml" />
+            </h:panelGroup>
+            <!--DATOS-->
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-12 ui-md-7,ui-g-12 ui-md-5" >
+
+                <h:panelGroup layout="block" >
+                    <ui:include src="cuentaContableBusqueda.xhtml" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <ui:include src="cuentaContableDatos.xhtml" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

@@ -1,0 +1,50 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid id="datos" columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+        <h:outputText value="Código *" />
+        <p:inputText value="#{estadoContratoBean.estadoContrato.codigo}" maxlength="6"
+                     required="true" requiredMessage="El código es obligatorio" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{estadoContratoBean.estadoContrato.descripcion}" maxlength="60"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+
+        <h:outputText value="Color *" />
+        <p:selectOneMenu value="#{estadoContratoBean.estadoContrato.color}"
+                         required="true" requiredMessage="Seleccione color para el estado"  >
+            <p:ajax process="@this" />
+
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Verde" itemValue="Green" />
+            <f:selectItem itemLabel="Azul" itemValue="Blue" />
+            <f:selectItem itemLabel="Amarillo" itemValue="Yellow" />
+            <f:selectItem itemLabel="Naranja" itemValue="Orange" />
+            <f:selectItem itemLabel="Rojo" itemValue="Red" />
+            <f:selectItem itemLabel="Gris" itemValue="LightGray" />
+            <f:selectItem itemLabel="Blanco" itemValue="White" />
+            <f:selectItem itemLabel="Negro" itemValue="Black" />
+
+        </p:selectOneMenu>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

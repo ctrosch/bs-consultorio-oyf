@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata> 
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Mensajería
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank" >
+
+                <p:tabView activeIndex="#{mensajeBean.indexTab1}">
+
+                    <p:ajax event="tabChange" listener="#{mensajeBean.onTab1Change}" />
+
+                    <p:tab id="t0" title="Mensajes Recibidos" >
+                        <p:dataTable value="#{mensajeBean.mensajesRecibidos}"                                                             
+                                     var="i" scrollable="true" scrollHeight="400"                                 
+                                     emptyMessage="No se encontraron mensajes"
+                                     selectionMode="single" 
+                                     selection="#{mensajeBean.mensaje}" rowKey="#{i}" 
+                                     rowStyleClass="#{i.leido eq 'N'? 'mensajeSinLeer':null}">
+
+                            <p:ajax event="rowSelect" update="@form" listener="#{mensajeBean.onSelect}"  />
+
+                            <p:column headerText="Fecha" width="80" styleClass="TexAlCenter" >
+                                <h:outputText value="#{i.fecha}" >                                            
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                                            
+                            </p:column>
+
+                            <p:column headerText="Leido" width="30" styleClass="TexAlCenter"  >
+                                <h:outputText value="Si" rendered="#{i.leido eq 'S'}" />
+                                <h:outputText value="No" rendered="#{i.leido eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="De" width="150" filterBy="#{i.remitente.nombre}" >
+                                <h:outputText value="#{i.remitente.nombre}" />                                            
+                            </p:column>
+
+                            <p:column headerText="Mensaje" filterBy="#{i.mensaje}" >
+                                <h:outputText value="#{i.mensaje}" />                                            
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:tab>
+
+                    <p:tab id="t1" title="Mensajes Enviados" >
+                        <p:dataTable value="#{mensajeBean.mensajesEnviados}"                                                             
+                                     var="i" scrollable="true" scrollHeight="400"                                 
+                                     emptyMessage="No se encontraron mensajes" 
+                                     selectionMode="single" 
+                                     selection="#{mensajeBean.mensaje}" rowKey="#{i}"
+                                     rowStyleClass="#{i.leido eq 'N'? 'mensajeSinLeer':null}" >
+
+                            <p:ajax event="rowSelect" update="@form"  />
+
+                            <p:column headerText="Fecha" width="80" styleClass="TexAlCenter" >
+                                <h:outputText value="#{i.fecha}" >                                            
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Leido" width="30" styleClass="TexAlCenter" >
+                                <h:outputText value="Si" rendered="#{i.leido eq 'S'}" />
+                                <h:outputText value="No" rendered="#{i.leido eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="Para" width="150" filterBy="#{i.destinatario.nombre}" >
+                                <h:outputText value="#{i.destinatario.nombre}" />                                            
+                            </p:column>
+
+                            <p:column headerText="Mensaje" filterBy="#{i.mensaje}" >
+                                <h:outputText value="#{i.mensaje}" />                                            
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:tab>
+
+                </p:tabView>
+
+                <p:panel id="datosMensaje" header="Mensaje" >
+
+                    <p:panelGrid columns="2" layout="grid"                               
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60 ui-datafield" >
+
+                        <h:outputText value="Para " />
+                        <p:selectOneMenu value="#{mensajeBean.mensaje.destinatario}"                                    
+                                         required="false" requiredMessage="Seleccione el destinatario del mensaje"
+                                         converter="#{conversoresSeguridad.usuario}"                                      
+                                         effect="fade" filter="true" >  
+                            <p:ajax process="@this" />
+                            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                            <f:selectItems value="#{usuarioBean.lista}" var="a" itemLabel="#{a.nombre}" itemValue="#{a}" />                                    
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Mensaje" />                                                  
+                        <p:inputTextarea style="width: 100%" rows="10" value="#{mensajeBean.mensaje.mensaje}" >
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputTextarea>
+
+                    </p:panelGrid>
+
+                    <p:commandButton icon="fa fa-share" value="Enviar" actionListener="#{mensajeBean.enviarMensaje()}"
+                                     rendered="#{mensajeBean.mensaje.estado eq 'A'}"
+                                     process="datosMensaje" update="@form"/>
+
+                    <p:commandButton icon="fa fa-blank" value="Nuevo mensaje" actionListener="#{mensajeBean.nuevo()}"
+                                     rendered="#{mensajeBean.mensaje.estado ne 'A'}"
+                                     process="datosMensaje" update="@form"/>
+
+                </p:panel> 
+            </p:panelGrid>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

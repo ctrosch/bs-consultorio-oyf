@@ -1,0 +1,458 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <bs:outputTexWhitLink value="Tipo de producto *"
+                              url="#{productoBean.obtenerUrlMenu('SIS_00139','CODIGO',productoBean.producto.tipoProducto.codigo)}" />
+
+        <p:inputText value="#{productoBean.producto.tipoProducto.descripcion}" readonly="true"
+                     rendered="#{not productoBean.esNuevo and  productoBean.parametroStock.utilizaTipoProductoGeneracionCodigo eq 'S'}" />
+        <p:selectOneMenu id="tipoProductoP" value="#{productoBean.producto.tipoProducto}"
+                         rendered="#{productoBean.esNuevo or productoBean.parametroStock.utilizaTipoProductoGeneracionCodigo eq 'N'}"
+                         converter="#{conversoresStock.tipoProducto}"
+                         required="true" filter="true" filterMatchMode="startsWith"
+                         requiredMessage="Seleccione el tipo de producto" >
+            <p:ajax update="rubro01, rubro02,rubro03, codigo,tbDatosAdicionales" process="@this" listener="#{productoBean.limpiarCodigo}" />
+            <f:selectItem itemLabel="Selecccionar" itemValue="" />
+            <f:selectItems value="#{tipoProductoBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Rubro *" />
+        <p:inputText value="#{productoBean.producto.rubr01.descripcion}" readonly="true"
+                     rendered="#{not productoBean.esNuevo and productoBean.parametroStock.utilizaRubro1GeneracionCodigo eq 'S'}" />
+        <p:selectOneMenu id="rubro01" filter="true" filterMatchMode="startsWith"
+                         value="#{productoBean.producto.rubr01}"
+                         rendered="#{productoBean.esNuevo or productoBean.parametroStock.utilizaRubro1GeneracionCodigo eq 'N'}"
+                         converter="#{conversoresStock.rubro01}"
+                         required="true"
+                         requiredMessage="Seleccione el rubro" >
+            <p:ajax  listener="#{productoBean.asignarCodigoProducto}" process="@this" update="codigo"  />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{productoBean.rubros1}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="Sub-Rubro *" />
+        <p:inputText value="#{productoBean.producto.rubr02.descripcion}" readonly="true"
+                     rendered="#{not productoBean.esNuevo and productoBean.parametroStock.utilizaRubro2GeneracionCodigo eq 'S'}" />
+
+        <p:selectOneMenu id="rubro02" filter="true" filterMatchMode="startsWith"
+                         value="#{productoBean.producto.rubr02}"
+                         rendered="#{productoBean.esNuevo or productoBean.parametroStock.utilizaRubro2GeneracionCodigo eq 'N'}"
+                         converter="#{conversoresStock.rubro02}"
+                         required="true"
+                         requiredMessage="Seleccione el sub-rubro" >
+            <p:ajax listener="#{productoBean.asignarCodigoProducto}" process="@this" update="codigo,message" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{productoBean.rubros2}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="Familia *" />
+        <p:inputText value="#{productoBean.producto.rubr03.descripcion}" readonly="true"
+                     rendered="#{not productoBean.esNuevo and productoBean.parametroStock.utilizaRubro3GeneracionCodigo eq 'S'}" />
+
+        <p:selectOneMenu id="rubro03" filter="true" filterMatchMode="startsWith"
+                         value="#{productoBean.producto.rubr03}"
+                         rendered="#{productoBean.esNuevo or productoBean.parametroStock.utilizaRubro3GeneracionCodigo eq 'N'}"
+                         converter="#{conversoresStock.rubro03}"
+                         required="true"
+                         requiredMessage="Seleccione la familia" >
+            <p:ajax listener="#{productoBean.asignarCodigoProducto}" process="@this" update="codigo,message" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{productoBean.rubros3}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox20" />
+
+    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-6 ui-lg-2,ui-g-7 ui-md-6 ui-lg-4,ui-g-5 ui-md-6 ui-lg-2,ui-g-7 ui-md-6 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText id="codigo" value="#{productoBean.producto.codigo}" style="max-width: 150px;"
+                     readonly="#{productoBean.parametroStock.codigoManual eq 'N'}" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{productoBean.producto.descripcion}" maxlength="250"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <bs:outputTexWhitLink value="Unidad de medida *"
+                              url="#{productoBean.obtenerUrlMenu('SIS_00141','CODIGO',productoBean.producto.unidadDeMedida.codigo)}" />
+        <p:selectOneMenu value="#{productoBean.producto.unidadDeMedida}"
+                         required="true" requiredMessage="Seleccione la unidad de medida"
+                         converter="#{conversoresStock.unidadMedida}" filter="true"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{unidadMedidaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:tabView id="tbDatosAdicionales"
+               activeIndex="#{productoBean.indexTab2}" >
+
+        <p:ajax event="tabChange" listener="#{productoBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Datos adicionales" >
+
+            <ui:include src="productoDatosAdicionales.xhtml"  />
+
+        </p:tab>
+
+        <p:tab id="t1" title="Datos asociados al stock" >
+
+            <ui:include src="productoDatosStock.xhtml"  />
+
+        </p:tab>
+
+        <p:tab id="t2" title="Datos asociados a compras" >
+
+            <ui:include src="productoDatosCompra.xhtml"  />
+
+        </p:tab>
+
+        <p:tab id="t3" title="Datos asociados a ventas" >
+
+            <ui:include src="productoDatosVenta.xhtml"  />
+
+        </p:tab>
+
+        <p:tab id="t4" title="Imágenes"  >
+
+            <ui:include src="productoDatosImagenes.xhtml"  />
+
+        </p:tab>
+
+        <p:tab id="t5" title="Atributos"  >
+
+            <p:dataTable id="tablaAT" var="a" style="max-width: 700px;"
+                         value="#{productoBean.producto.atributos}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" >
+
+                <f:facet name="footer" >
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{productoBean.nuevoItemAtributo()}"
+                                     value="Agregar atributo"
+                                     process="tablaAT"
+                                     update="tablaAT" />
+                </f:facet>
+
+                <p:column headerText="Nombre"
+                          sortBy="#{a.nombre}" filterBy="#{a.nombre}" >
+                    <p:inputText value="#{a.nombre}" />
+                </p:column>
+
+                <p:column headerText="Valor"
+                          sortBy="#{a.valor}" filterBy="#{a.valor}" >
+
+                    <p:selectOneMenu value="#{a.valor}"
+                                     rendered="#{not empty productoBean.atributoLista(a.nombre)}"
+                                     required="true" requiredMessage="Seleccione el valor del atributo #{a.nombre}"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="#{a.valor}" itemValue="#{a.valor}" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="-" />
+                        <f:selectItems value="#{productoBean.atributoLista(a.nombre)}" var="i" itemLabel="#{i}" itemValue="#{i}"/>
+                    </p:selectOneMenu>
+
+                    <p:inputText value="#{a.valor}" rendered="#{empty productoBean.atributoLista(a.nombre)}" />
+
+
+                    <!--
+                                                <p:autoComplete value="#{a.valor}" dropdown="true"
+                                                                completeMethod="#{productoBean.atributoComplete()}"
+                                                                var="e" itemLabel="#{e.valor}" itemValue="#{e.valor}" >
+
+                                                    <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                                                </p:autoComplete>
+                    -->
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaAT" update="tablaAT,message,messageg"
+                                   actionListener="#{productoBean.eliminarItemAtributo(a)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t6" title="Grupos"  >
+
+            <p:dataTable id="tablaGrupo" var="i" style="max-width: 700px;"
+                         value="#{productoBean.producto.grupos}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"  >
+
+                <f:facet name="footer" >
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{productoBean.nuevoItemGrupo()}"
+                                     value="Agregar grupo"
+                                     process="tablaGrupo"
+                                     update="tablaGrupo" />
+                </f:facet>
+
+                <p:column headerText="Grupo"  >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.grupo}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{grupoStockBean.complete}"
+                                        var="f" itemLabel="#{f.descripcion}" itemValue="#{f}"
+                                        converter="#{conversoresStock.grupo}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" update="tablaGrupo" listener="#{productoBean.onGrupoSelect}"  />
+
+                            <p:column>
+                                <h:outputText value="#{f.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Grupo"
+                                                url="#{productoBean.obtenerUrlMenu('SIS_00366','CODIGO',i.grupo.id)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaGrupo" update="tablaGrupo,message,messageg"
+                                   actionListener="#{productoBean.eliminarItemGrupo(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t7" title="Sustitutos"  >
+
+            <p:dataTable id="tablaSUS" var="a" style="max-width: 700px;"
+                         value="#{productoBean.producto.sustitutos}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" >
+
+                <f:facet name="footer" >
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{productoBean.nuevoItemSustituto()}"
+                                     value="Agregar producto sustituto"
+                                     process="tablaSUS"
+                                     update="tablaSUS" />
+
+                </f:facet>
+
+                <p:column headerText="Producto Sustituto" >
+
+                    <p:autoComplete value="#{a.productoSustituto}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{productoBean.complete}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}" >
+
+                        <p:ajax event="itemSelect" update="tablaSUS" listener="#{productoBean.onSustitutoSelect}"  />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaSUS" update="tablaSUS,message,messageg"
+                                   actionListener="#{productoBean.eliminarItemSustituto(a)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t8" title="Sugeridos"  >
+
+            <p:dataTable id="tablaSUG" var="a" style="max-width: 700px;"
+                         value="#{productoBean.producto.sugeridos}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" >
+
+                <f:facet name="footer" >
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{productoBean.nuevoItemSugerido()}"
+                                     value="Agregar producto sugerido"
+                                     process="tablaSUG"
+                                     update="tablaSUG" />
+
+                </f:facet>
+
+                <p:column headerText="Producto Sugerido" >
+
+                    <p:autoComplete value="#{a.productoSugerido}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{productoBean.complete}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}" >
+
+                        <p:ajax event="itemSelect" update="tablaSUG" listener="#{productoBean.onSugeridoSelect}"  />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaSUG" update="tablaSUG,message,messageg"
+                                   actionListener="#{productoBean.eliminarItemSugerido(a)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t9" title="Aplicaciones"  >
+
+            <p:dataTable id="tablaAP" var="a"
+                         value="#{productoBean.producto.aplicaciones}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{productoBean.nuevoItemAplicacion()}"
+                                     value="Agregar aplicación"
+                                     process="tablaAP"
+                                     update="tablaAP" />
+                </f:facet>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion1}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion1}"
+                          sortBy="#{a.campo1}" filterBy="#{a.campo1}" >
+                    <p:inputText value="#{a.campo1}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion2}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion2}"
+                          sortBy="#{a.campo2}" filterBy="#{a.campo2}" >
+                    <p:inputText value="#{a.campo2}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion3}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion3}"
+                          sortBy="#{a.campo3}" filterBy="#{a.campo3}" >
+                    <p:inputText value="#{a.campo3}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion4}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion4}"
+                          sortBy="#{a.campo4}" filterBy="#{a.campo4}" >
+                    <p:inputText value="#{a.campo4}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion5}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion5}"
+                          sortBy="#{a.campo5}" filterBy="#{a.campo5}" >
+                    <p:inputText value="#{a.campo5}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion6}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion6}"
+                          sortBy="#{a.campo6}" filterBy="#{a.campo6}" >
+                    <p:inputText value="#{a.campo6}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion7}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion7}"
+                          sortBy="#{a.campo7}" filterBy="#{a.campo7}" >
+                    <p:inputText value="#{a.campo7}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion8}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion8}"
+                          sortBy="#{a.campo8}" filterBy="#{a.campo8}" >
+                    <p:inputText value="#{a.campo8}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion9}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion9}"
+                          sortBy="#{a.campo9}" filterBy="#{a.campo9}" >
+                    <p:inputText value="#{a.campo9}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion10}"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion10}"
+                          sortBy="#{a.campo10}" filterBy="#{a.campo10}" >
+                    <p:inputText value="#{a.campo10}" />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaAP" update="tablaAP,message,messageg"
+                                   actionListener="#{productoBean.eliminarItemAplicacion(a)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+</ui:composition>
+

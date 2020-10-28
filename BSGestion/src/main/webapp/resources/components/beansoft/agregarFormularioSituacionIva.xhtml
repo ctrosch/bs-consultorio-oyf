@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+
+        <title></title>
+
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="Formulario por situación de iva" >
+            <composite:attribute name="accionFinalizar" required="true" method-signature="java.lang.String action()"/>
+        </composite:interface>
+
+        <composite:implementation>
+
+            <h:form id="formFormularioSituacionIva" prependId="false" >
+
+                <p:dialog  header="Agregar Formulario por Situación de Iva" id="formularioSituacionIva" modal="true"
+                           closable="false"
+                           widgetVar="dlgFormularioSituacionIva"
+                           dynamic="true"
+                           width="820" >
+
+                    <!-- MENU -->
+                    <p:menubar id="menuBarDE">
+
+                        <p:menuitem value="Nuevo" icon="fa fa-plus"
+                                    actionListener="#{formularioSituacionIVABean.nuevo()}"
+                                    process="@form"
+                                    immediate="true"
+                                    update="pgDatos, messagede,menuBarDE,messagegde" />
+
+                        <p:menuitem value="Guardar" icon="fa fa-save"
+                                    actionListener="#{formularioSituacionIVABean.guardar(false)}"
+                                    process="@form"
+                                    update="pgDatos, messagede,menuBarDE,messagegde" />
+
+                        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                                    actionListener="#{formularioSituacionIVABean.habilitaDeshabilita('S')}"
+                                    rendered="#{not empty formularioSituacionIVABean.formularioPorSituacionIva and not formularioSituacionIVABean.esNuevo and formularioSituacionIVABean.formularioPorSituacionIva.auditoria.debaja eq 'N'}"
+                                    process="@this"
+                                    update="pgDatos, messagede,messagegde"/>
+
+                        <p:menuitem value="Habilitar" icon="fa fa-check"
+                                    actionListener="#{formularioSituacionIVABean.habilitaDeshabilita('N')}"
+                                    rendered="#{not empty formularioSituacionIVABean.formularioPorSituacionIva and not formularioSituacionIVABean.esNuevo and formularioSituacionIVABean.formularioPorSituacionIva.auditoria.debaja eq 'S'}"
+                                    process="@this"
+                                    update="pgDatos, messagede,messagegde" />
+
+                        <p:menuitem icon="fa fa-refresh"
+                                    value="Finalizar"
+                                    rendered="#{not formularioSituacionIVABean.esNuevo}"
+                                    actionListener="#{cc.attrs.accionFinalizar}"
+                                    process="@this"
+                                    update="@form, :formulario"
+                                    oncomplete="PF('dlgFormularioSituacionIva').hide()" />
+                        <p:menuitem icon="fa fa-close"
+                                    value="Cancelar"
+                                    rendered="#{formularioSituacionIVABean.esNuevo}"
+                                    process="@this"
+                                    update="@form, :formulario"
+                                    oncomplete="PF('dlgFormularioSituacionIva').hide()" />
+
+                    </p:menubar>
+
+                    <p:messages id="messagede" showDetail="true" /><p:growl id="messagegde" showDetail="true" life="4000" />
+
+                    <div class="EmptyBox10" />
+
+                    <!-- DATOS -->
+                    <p:panelGrid id="pgDatos" columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60"  >
+
+                        <h:outputText value="Comprobante" />
+                        <p:inputText value="#{formularioSituacionIVABean.formularioPorSituacionIva.comprobante.descripcion}" readonly="true" />
+
+                        <h:outputText value="Condición de Iva" />
+                        <p:selectOneMenu value="#{formularioSituacionIVABean.formularioPorSituacionIva.condicionDeIva}"
+                                         rendered="#{not empty condicionDeIvaBean.lista}"
+                                         required="true" requiredMessage="Seleccione la condición de Iva"
+                                         converter="#{conversoresGeneral.condicionDeIva}"
+
+                                         effect="fade" filter="true" >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                            <f:selectItems value="#{condicionDeIvaBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Pto. Venta" />
+                        <p:selectOneMenu value="#{formularioSituacionIVABean.formularioPorSituacionIva.puntoVenta}"
+                                         rendered="#{not empty puntoVentaBean.lista}"
+                                         required="true" requiredMessage="Seleccione El punto de venta"
+                                         converter="#{conversoresGeneral.puntoVenta}"
+                                         effect="fade" filter="true" filterMatchMode="contains" >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                            <f:selectItems value="#{puntoVentaBean.lista}" var="s" itemLabel="#{s.descripcion}" itemValue="#{s}" />
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Formulario" />
+                        <p:selectOneMenu value="#{formularioSituacionIVABean.formularioPorSituacionIva.formulario}"
+                                         rendered="#{not empty formularioSituacionIVABean.formularios}"
+                                         required="true" requiredMessage="Seleccione el formulario"
+                                         converter="#{conversoresGeneral.formulario}"
+                                         effect="fade"  filter="true" >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                            <f:selectItems value="#{formularioSituacionIVABean.formularios}" var="f" itemLabel="#{f.descripcion}" itemValue="#{f}" />
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Código Impositivo" />
+                        <p:inputText value="#{formularioSituacionIVABean.formularioPorSituacionIva.codigoDGI}" />
+
+                        <h:outputText value="Nombre Reporte" />
+                        <p:inputText value="#{formularioSituacionIVABean.formularioPorSituacionIva.nombreReporte}"  />
+
+
+                    </p:panelGrid>
+
+
+                </p:dialog>
+
+            </h:form>
+        </composite:implementation>
+
+    </h:body>
+
+</html>

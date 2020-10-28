@@ -1,0 +1,67 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- DATOS -->
+    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Moneda" />
+        <p:inputText value="#{monedaValoresBean.monedaValores.codcof}"
+                     readonly="true"
+                     rendered="#{not monedaValoresBean.esNuevo}" />
+
+        <h:outputText value="" rendered="#{not monedaValoresBean.esNuevo}" />
+
+        <h:outputText value="" rendered="#{not monedaValoresBean.esNuevo}" />
+
+        <p:selectOneMenu value="#{monedaValoresBean.monedaValores.codcof}" rendered="#{monedaValoresBean.esNuevo}"
+                         required="true" requiredMessage="Seleccione la moneda"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" listener="#{monedaValoresBean.cargaUltimoValor}" update="@form" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{monedaBean.lista}" var="m" itemLabel="#{m.descripcion}" itemValue="#{m.codigo}" />
+        </p:selectOneMenu>
+
+
+        <h:outputText value="" rendered="#{monedaValoresBean.esNuevo}" />
+
+        <h:outputText value="" rendered="#{monedaValoresBean.esNuevo}" />
+
+        <h:outputText value="Fecha de Alta" />
+        <p:inputText value="#{monedaValoresBean.monedaValores.fecha}"
+                     readonly="true"
+                     rendered="#{not monedaValoresBean.esNuevo}">
+            <f:convertDateTime pattern="dd/MM/yyyy" />
+        </p:inputText>
+        <p:calendar value="#{monedaValoresBean.monedaValores.fecha}"  rendered="#{monedaValoresBean.esNuevo}"
+                    required="true"
+                    requiredMessage="Seleccione una fecha por favor"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax event="dateSelect" listener="#{monedaValoresBean.onDateSelect}" />
+        </p:calendar>
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Cotización" />
+        <p:inputText value="#{monedaValoresBean.monedaValores.cotizacion}"
+                     required="true"
+                     requiredMessage="La cotización es necesaria" >
+            <f:convertNumber pattern="#,##0.00" />
+        </p:inputText>
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

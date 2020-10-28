@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="TITULO"  value="#{organizacionBean.titulo}"/>
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{organizacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{organizacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <p:menubar id="menuBar">
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            action="#{organizacionBean.guardar}"
+                            update="@form" />
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+            <div class="EmptyBox10" />
+
+            <!-- DATOS -->
+            <p:panel header="Datos" >
+                <p:panelGrid columns="4" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:outputText value="Código" />
+                    <h:outputText value="#{organizacionBean.organizacion.codigo}"  />
+
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <h:outputText value="Nombre Fantasía" />
+                    <p:inputText value="#{organizacionBean.organizacion.nombreFantasia}"  />
+
+                    <h:outputText value="E-mail"  />
+                    <p:inputText value="#{organizacionBean.organizacion.email}"
+                                 validatorMessage="Ingrese un correo válido">
+                        <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                    </p:inputText>
+
+                    <h:outputText value="Teléfono"  />
+                    <p:inputText value="#{organizacionBean.organizacion.telefono}"  />
+
+                    <h:outputText value="Path logo"  />
+                    <p:inputTextarea rows="3" cols="100"
+                                     value="#{organizacionBean.organizacion.logo}" title="Path Logo" />
+
+                </p:panelGrid>
+            </p:panel>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+
+

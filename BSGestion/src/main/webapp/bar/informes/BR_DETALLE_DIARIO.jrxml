@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BR_DETALLE_DIARIO" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="FECHA" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select r.*, s.DESCRP as DESCRP_SALON
+from br_reserva r
+inner join br_salon s on r.CODSAL = s.CODIGO
+where r.fchmov = $P{FECHA}
+and r.debaja = 'N'
+order by r.FCHMOV, r.CODSAL, NOMCON]]>
+	</queryString>
+	<field name="ID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Id]]></fieldDescription>
+	</field>
+	<field name="MODCOM" class="java.lang.String">
+		<fieldDescription><![CDATA[Módulo de comprobante]]></fieldDescription>
+	</field>
+	<field name="CODCOM" class="java.lang.String">
+		<fieldDescription><![CDATA[Código de comprobante]]></fieldDescription>
+	</field>
+	<field name="MODFOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Módulo Formulario]]></fieldDescription>
+	</field>
+	<field name="CODFOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Código Formulario]]></fieldDescription>
+	</field>
+	<field name="SUCURS" class="java.lang.String">
+		<fieldDescription><![CDATA[Punto de Venta]]></fieldDescription>
+	</field>
+	<field name="NROFOR" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Número Formulario]]></fieldDescription>
+	</field>
+	<field name="FCHMOV" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fecha Movimiento]]></fieldDescription>
+	</field>
+	<field name="CODSAL" class="java.lang.String">
+		<fieldDescription><![CDATA[Salón]]></fieldDescription>
+	</field>
+	<field name="NROCTA" class="java.lang.String">
+		<fieldDescription><![CDATA[Entidad Comercial]]></fieldDescription>
+	</field>
+	<field name="CONTAC" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Contacto]]></fieldDescription>
+	</field>
+	<field name="NOMCON" class="java.lang.String">
+		<fieldDescription><![CDATA[Nombre Contacto]]></fieldDescription>
+	</field>
+	<field name="TELEFON" class="java.lang.String">
+		<fieldDescription><![CDATA[Teléfono]]></fieldDescription>
+	</field>
+	<field name="EMAIL" class="java.lang.String">
+		<fieldDescription><![CDATA[Email]]></fieldDescription>
+	</field>
+	<field name="CNTPER" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Cantidad Personas]]></fieldDescription>
+	</field>
+	<field name="OBSERV" class="java.lang.String">
+		<fieldDescription><![CDATA[Observaciones]]></fieldDescription>
+	</field>
+	<field name="DEBAJA" class="java.lang.String">
+		<fieldDescription><![CDATA[Deshabilitado]]></fieldDescription>
+	</field>
+	<field name="FECALT" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Fecha Alta]]></fieldDescription>
+	</field>
+	<field name="FECMOD" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Fecha Modificación]]></fieldDescription>
+	</field>
+	<field name="ULTOPR" class="java.lang.String">
+		<fieldDescription><![CDATA[Ultima Operación]]></fieldDescription>
+	</field>
+	<field name="USERID" class="java.lang.String">
+		<fieldDescription><![CDATA[Usuario]]></fieldDescription>
+	</field>
+	<field name="DESCRP_SALON" class="java.lang.String"/>
+	<variable name="SUM_RES" class="java.lang.Integer" resetType="Group" resetGroup="TIPPRO" calculation="Sum">
+		<variableExpression><![CDATA[$F{CNTPER}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="COUNT_RES" class="java.lang.Integer" resetType="Group" resetGroup="TIPPRO" calculation="Count">
+		<variableExpression><![CDATA[$F{CNTPER}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_SAL" class="java.lang.Integer" resetType="Group" resetGroup="CODSAL" calculation="Sum">
+		<variableExpression><![CDATA[$F{CNTPER}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="TIPPRO">
+		<groupExpression><![CDATA[$F{FCHMOV}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#99CCFF" uuid="02a95a47-2308-4e51-b920-63a7257e8d7e"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="25"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="99" y="0" width="105" height="15" uuid="fb580ea8-7c3e-4e90-8478-decab6030aeb"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FCHMOV}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="2" y="0" width="97" height="15" uuid="b6de6be3-470b-461a-88f5-940f241ef34b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha de reserva]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<textField pattern="###0">
+					<reportElement x="414" y="0" width="41" height="18" uuid="592f642e-d28e-4be2-8e78-98ff0e8d9ee4"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_RES}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0">
+					<reportElement x="285" y="0" width="47" height="18" uuid="3918bd34-9a1c-4927-8c2d-c60891cd7d3d"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TIPPRO_COUNT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="455" y="0" width="81" height="18" uuid="55c91ea3-307e-45ad-bb73-d1db4d13f948"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<text><![CDATA[Personas]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="332" y="0" width="82" height="18" uuid="4d84968a-1dbf-42e9-9079-243015e16e48"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<text><![CDATA[Reservas]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="CODSAL">
+		<groupExpression><![CDATA[$F{CODSAL}]]></groupExpression>
+		<groupHeader>
+			<band height="26">
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="13" backcolor="#CCCCCC" uuid="770d1246-b502-4f0d-92ee-3d0af8cc639f"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="46" y="0" width="200" height="15" uuid="1cb00f5b-a4e1-434f-8ade-c448b7628dee"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCRP_SALON}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="2" y="0" width="44" height="15" uuid="9a76e477-ad4f-44c0-88c5-67ee39479584"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Salón]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="13" width="294" height="13" uuid="94c1a56b-f23b-434a-ab5e-7f800dc987a6"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nombre]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="295" y="13" width="119" height="13" uuid="7951de5d-875d-4c8f-adb6-758988c35a0b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Teléfono]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="414" y="13" width="41" height="13" uuid="3a78df7b-1d85-451a-becc-a305480210e2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cant.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="455" y="13" width="100" height="13" uuid="d699c2db-c9aa-4716-a473-346d7f888f27"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Observaciones]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<textField pattern="###0">
+					<reportElement x="414" y="0" width="41" height="18" uuid="e643ad7d-3fe1-4bc4-b841-17076e92e7d0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_SAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="455" y="0" width="81" height="18" uuid="bb4e49e7-a9a0-4f41-9133-b9ce4615b886"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<text><![CDATA[Personas]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="332" y="0" width="82" height="18" uuid="a6e51a5a-52bb-42b5-b4ec-97ac2ed0a7c5"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<text><![CDATA[Reservas]]></text>
+				</staticText>
+				<textField pattern="###0">
+					<reportElement x="285" y="0" width="47" height="18" uuid="9a1c168f-d8db-4594-b523-0071860c13d5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CODSAL_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="83" y="0" width="200" height="18" uuid="6a559a2e-4748-4e33-a6ce-7f01e3d41447"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCRP_SALON}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="145" y="0" width="273" height="30" uuid="a2170831-50a6-4035-a08e-f5d766cf6464"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Detalle diario de reservas]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="5" width="114" height="13" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="19" width="114" height="11" uuid="0427b782-8e84-49fb-8bce-824533e57710"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="0" y="0" width="83" height="30" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="30" width="555" height="1" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="417" y="0" width="1" height="30" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<textField isBlankWhenNull="true">
+				<reportElement x="294" y="0" width="120" height="12" uuid="e24c80c2-5a97-4c8d-9d0d-57c6bf46fcc3"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TELEFON}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="0" width="292" height="12" uuid="a36b24ca-b06b-4b9a-94a3-771f08add99f"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMCON}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="455" y="0" width="100" height="12" uuid="09fe3181-96a8-4f57-add2-77054cc8476e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OBSERV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="414" y="0" width="41" height="12" uuid="6aeb4e22-3a3b-49c9-a3ea-5884813c7ce8"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CNTPER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="2" y="11" width="553" height="1" forecolor="#999999" uuid="09f82495-474e-4d30-ac4d-7897c6298736"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="441" y="0" width="114" height="10" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="114" height="10" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,622 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- DATOS -->
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Origen " />
+        <p:inputText value="SISTEMA"  readonly="true" rendered="#{vistaBean.vista.origen eq 'SIS' }" />
+        <p:inputText value="USUARIO"  readonly="true" rendered="#{vistaBean.vista.origen eq 'USR' }" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText id="codigo" value="#{vistaBean.vista.codigo}"
+                     required="true" readonly="true"
+                     requiredMessage="El codigo es necesario" />
+
+        <bs:outputTexWhitLink value="Módulo"
+                              url="#{vistaBean.obtenerUrlMenu('SIS_00217','CODIGO',vistaBean.vista.modulo.codigo)}" />
+        <p:selectOneMenu value="#{vistaBean.vista.modulo}"
+                         required="true" requiredMessage="Seleccione el módulo"
+                         converter="#{conversoresGeneral.modulo}"
+
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{moduloBean.lista}" var="m" itemLabel="#{m.descripcion}" itemValue="#{m}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Vista de referencia" />
+        <p:autoComplete value="#{vistaBean.vista.vistaReferencia}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{vistaBean.complete}"
+                        var="p" itemLabel="#{p.origen}-#{p.nombre}" itemValue="#{p}"
+                        converter="#{conversoresAdministracion.vista}" forceSelection="true" >
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Módulo">
+                <h:outputText value="#{p.modulo.codigo}" />
+            </p:column>
+
+            <p:column headerText="Código">
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{p.nombre}" />
+            </p:column>
+
+            <p:column headerText="Origen">
+                <h:outputText value="#{p.origen}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Nombre" />
+        <p:inputText value="#{vistaBean.vista.nombre}"
+                     required="true"
+                     requiredMessage="El nombre es necesario" />
+
+        <h:outputText value="Path" />
+        <p:inputText value="#{vistaBean.vista.path}"
+                     required="true"
+                     requiredMessage="El Path es necesario" />
+
+
+
+    </p:panelGrid>
+
+    <div class="EmptyBox20" />
+
+    <p:tabView>
+        <p:tab title="Cabecera">
+
+            <p:dataTable id="tablaDetalleCabecera"  widgetVar="tDetalle"
+                         value="#{vistaBean.vista.detalleCabecera}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="100" paginator="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{vistaBean.nuevoItem('C')}"
+                                     process="tablaDetalleCabecera"
+                                     update="tablaDetalleCabecera,message,messageg" />
+                </f:facet>
+
+                <p:column headerText="Código"  width="100">
+                    <p:inputText id="codigo" value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nro Item"  width="50">
+                    <p:inputText id="nroitm" value="#{i.nroitm}" />
+                </p:column>
+
+                <!--
+                <p:column headerText="Tipo" filterBy="#{i.tipo}" filterMatchMode="exact" sortBy="#{i.tipo}" width="200"  >
+
+                    <p:selectOneMenu value="#{i.tipo}"     >
+                        <f:selectItem itemLabel="Encabezado"  itemValue="C"  />
+                        <f:selectItem itemLabel="Detalle"     itemValue="D"  />
+                        <f:selectItem itemLabel="Sub Detalle" itemValue="K"  />
+                        <f:selectItem itemLabel="Busqueda"    itemValue="B"  />
+                        <f:selectItem itemLabel="Pendiente"    itemValue="P"  />
+                    </p:selectOneMenu>
+
+                </p:column>
+                -->
+
+                <p:column headerText="Nombre"
+                          filterMatchMode="contains" filterBy="#{i.nombre}">
+                    <p:inputText value="#{i.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre es necesario" />
+                </p:column>
+
+                <p:column headerText="Campo" width="150"
+                          filterMatchMode="contains" filterBy="#{i.campo}" >
+
+                    <p:inputText value="#{i.campo}"
+                                 required="true"
+                                 requiredMessage="El campo es necesario" />
+                </p:column>
+
+                <p:column headerText="Visible" sortBy="#{i.visible}"  style="text-align: center; " >
+
+                    <f:facet name="header">
+                        Visible
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoVisible}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('visible')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.visible}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+
+                </p:column>
+
+                <p:column headerText="Solo Lectura" sortBy="#{i.soloLectura}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Solo Lectura
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoSoloLectura}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('soloLectura')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.soloLectura}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Requerido" sortBy="#{i.requerido}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Requerido
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoRequerido}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('requerido')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.requerido}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaDetalleCabecera" update="tablaDetalleCabecera,message,messageg"
+                                   actionListener="#{vistaBean.eliminarItemDetalle(i)}"  >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{i.codigo}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Detalle">
+
+            <p:dataTable id="tablaDetalleDetalle"  widgetVar="tDetalle"
+                         value="#{vistaBean.vista.detalleDetalle}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="100" paginator="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{vistaBean.nuevoItem('D')}"
+                                     process="tablaDetalleDetalle"
+                                     update="tablaDetalleDetalle,message,messageg" />
+                </f:facet>
+
+                <p:column headerText="Código"  width="100">
+                    <p:inputText id="codigo" value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nro Item"  width="50">
+                    <p:inputText id="nroitm" value="#{i.nroitm}" />
+                </p:column>
+
+                <p:column headerText="Nombre"
+                          filterMatchMode="contains" filterBy="#{i.nombre}">
+                    <p:inputText value="#{i.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre es necesario" />
+                </p:column>
+
+                <p:column headerText="Campo" width="150"
+                          filterMatchMode="contains" filterBy="#{i.campo}" >
+
+                    <p:inputText value="#{i.campo}"
+                                 required="true"
+                                 requiredMessage="El campo es necesario" />
+                </p:column>
+
+                <p:column headerText="Visible" sortBy="#{i.visible}"  style="text-align: center; " >
+
+                    <f:facet name="header">
+                        Visible
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoVisible}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('visible')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.visible}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+
+                </p:column>
+
+                <p:column headerText="Solo Lectura" sortBy="#{i.soloLectura}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Solo Lectura
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoSoloLectura}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('soloLectura')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.soloLectura}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Requerido" sortBy="#{i.requerido}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Requerido
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoRequerido}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('requerido')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.requerido}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaDetalleDetalle" update="tablaDetalleDetalle,message,messageg"
+                                   actionListener="#{vistaBean.eliminarItemDetalle(i)}"  >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{i.codigo}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Sub Detalle">
+
+            <p:dataTable id="detalleSubDetalle"  widgetVar="tDetalle"
+                         value="#{vistaBean.vista.detalleSubDetalle}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="100" paginator="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{vistaBean.nuevoItem('K')}"
+                                     process="detalleSubDetalle"
+                                     update="detalleSubDetalle,message,messageg" />
+                </f:facet>
+
+                <p:column headerText="Código"  width="100">
+                    <p:inputText id="codigo" value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nro Item"  width="50">
+                    <p:inputText id="nroitm" value="#{i.nroitm}" />
+                </p:column>
+
+                <p:column headerText="Nombre"
+                          filterMatchMode="contains" filterBy="#{i.nombre}">
+                    <p:inputText value="#{i.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre es necesario" />
+                </p:column>
+
+                <p:column headerText="Campo" width="150"
+                          filterMatchMode="contains" filterBy="#{i.campo}" >
+
+                    <p:inputText value="#{i.campo}"
+                                 required="true"
+                                 requiredMessage="El campo es necesario" />
+                </p:column>
+
+                <p:column headerText="Visible" sortBy="#{i.visible}"  style="text-align: center; " >
+
+                    <f:facet name="header">
+                        Visible
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoVisible}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('visible')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.visible}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+
+                </p:column>
+
+                <p:column headerText="Solo Lectura" sortBy="#{i.soloLectura}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Solo Lectura
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoSoloLectura}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('soloLectura')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.soloLectura}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Requerido" sortBy="#{i.requerido}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Requerido
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoRequerido}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('requerido')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.requerido}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="detalleSubDetalle" update="detalleSubDetalle,message,messageg"
+                                   actionListener="#{vistaBean.eliminarItemDetalle(i)}"  >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{i.codigo}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Busqueda">
+
+            <p:dataTable id="tablaDetalleBusqueda"  widgetVar="tDetalle"
+                         value="#{vistaBean.vista.detalleBusqueda}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="100" paginator="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{vistaBean.nuevoItem('B')}"
+                                     process="tablaDetalleBusqueda"
+                                     update="tablaDetalleBusqueda,message,messageg" />
+                </f:facet>
+
+                <p:column headerText="Código"  width="100">
+                    <p:inputText id="codigo" value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nro Item"  width="50">
+                    <p:inputText id="nroitm" value="#{i.nroitm}" />
+                </p:column>
+
+                <p:column headerText="Nombre"
+                          filterMatchMode="contains" filterBy="#{i.nombre}">
+                    <p:inputText value="#{i.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre es necesario" />
+                </p:column>
+
+                <p:column headerText="Campo" width="150"
+                          filterMatchMode="contains" filterBy="#{i.campo}" >
+
+                    <p:inputText value="#{i.campo}"
+                                 required="true"
+                                 requiredMessage="El campo es necesario" />
+                </p:column>
+
+                <p:column headerText="Visible" sortBy="#{i.visible}"  style="text-align: center; " >
+
+                    <f:facet name="header">
+                        Visible
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoVisible}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('visible')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.visible}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+
+                </p:column>
+
+                <p:column headerText="Solo Lectura" sortBy="#{i.soloLectura}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Solo Lectura
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoSoloLectura}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('soloLectura')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.soloLectura}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Requerido" sortBy="#{i.requerido}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Requerido
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoRequerido}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('requerido')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.requerido}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaDetalleBusqueda" update="tablaDetalleBusqueda,message,messageg"
+                                   actionListener="#{vistaBean.eliminarItemDetalle(i)}"  >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{i.codigo}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Pendientes">
+
+            <p:dataTable id="tablaDetallePendiente"  widgetVar="tDetalle"
+                         value="#{vistaBean.vista.detallePendiente}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="100" paginator="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{vistaBean.nuevoItem('P')}"
+                                     process="tablaDetallePendiente"
+                                     update="tablaDetallePendiente,message,messageg" />
+                </f:facet>
+
+                <p:column headerText="Código"  width="100">
+                    <p:inputText id="codigo" value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nro Item"  width="50">
+                    <p:inputText id="nroitm" value="#{i.nroitm}" />
+                </p:column>
+
+                <p:column headerText="Nombre"
+                          filterMatchMode="contains" filterBy="#{i.nombre}">
+                    <p:inputText value="#{i.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre es necesario" />
+                </p:column>
+
+                <p:column headerText="Campo" width="150"
+                          filterMatchMode="contains" filterBy="#{i.campo}" >
+
+                    <p:inputText value="#{i.campo}"
+                                 required="true"
+                                 requiredMessage="El campo es necesario" />
+                </p:column>
+
+                <p:column headerText="Visible" sortBy="#{i.visible}"  style="text-align: center; " >
+
+                    <f:facet name="header">
+                        Visible
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoVisible}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('visible')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.visible}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+
+                </p:column>
+
+                <p:column headerText="Solo Lectura" sortBy="#{i.soloLectura}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Solo Lectura
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoSoloLectura}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('soloLectura')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.soloLectura}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Requerido" sortBy="#{i.requerido}" style="text-align: center; " >
+
+                    <f:facet name="header">
+
+                        Requerido
+
+                        <p:selectBooleanCheckbox value="#{vistaBean.seleccionaTodoRequerido}" >
+                            <p:ajax event="change" listener="#{vistaBean.seleccionarTodo('requerido')}"
+                                    update="@form" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox value="#{i.requerido}">
+                        <p:ajax process="@this" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaDetallePendiente" update="tablaDetallePendiente,message,messageg"
+                                   actionListener="#{vistaBean.eliminarItemDetalle(i)}"  >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{i.codigo}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+    </p:tabView>
+
+
+
+</ui:composition>
+

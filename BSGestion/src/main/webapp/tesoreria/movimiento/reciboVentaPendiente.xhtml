@@ -1,0 +1,104 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- SALDOS PENDIENTES -->
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="Container20 Fright, Container30 ,Container20 Fright, Container30" >
+
+        <h:outputText value="Ingresar el cobro como anticipo:  "  />
+        <p:selectBooleanCheckbox value="#{reciboBean.m.esAnticipo}" >
+            <p:ajax update="tb, :formulario:totales"  />
+        </p:selectBooleanCheckbox>
+
+        <h:outputText value="Moneda de Registración" />
+        <p:inputText value="#{reciboBean.m.monedaRegistracion.descripcion}" readonly="true" />
+
+    </p:panelGrid>
+
+    <p:dataTable id="tDebitos" value="#{reciboBean.debitos}" var="d"
+                 rendered="#{not empty reciboBean.m.entidad and not reciboBean.m.esAnticipo and empty reciboBean.m.id}"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado débitos pendientes">
+
+        <f:facet name="header">
+            <div class="headerTable">
+                Saldos pendientes
+            </div>
+        </f:facet>
+
+        <p:column headerText="Documento" style="text-align: center;" >
+            <h:outputText value="#{d.comprobante} " />
+            <h:outputText value="#{d.puntoVenta  }" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+            <h:outputText value="#{d.numeroFormulario}" >
+                <f:convertNumber pattern="-00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Vencimiento" width="100" style="text-align: center;" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Cuota" style="text-align: center;" width="80" >
+            <h:outputText value="#{d.cuotas}" />
+        </p:column>
+
+        <p:column headerText="Cotización Orig." width="100" style="text-align: right !important;"
+                  rendered="#{reciboBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+
+            <h:outputText value="#{d.cotizacion}"  >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+        <p:column headerText="Imp. Pendiente" width="160" style="text-align: right !important;"  >
+
+            <h:outputText value="#{d.pendiente}" rendered="#{reciboBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+            <h:outputText value="#{d.pendienteSecundario}" rendered="#{reciboBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+        <p:column headerText="Imp. Aplicar" width="160" >
+
+            <p:inputText value="#{d.importeAplicar}" rendered="#{reciboBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+                <p:ajax listener="#{reciboBean.modificaDebito(d)}" event="keyup" delay="500"
+                        update=":formulario:totales,message, messageg" />
+            </p:inputText>
+
+            <p:inputText value="#{d.importeAplicarSecundario}" rendered="#{reciboBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+                <p:ajax listener="#{reciboBean.modificaDebito(d)}" event="keyup" delay="500"
+                        update=":formulario:totales,message, messageg" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Seleccionar" width="100" style="text-align: center;" >
+            <p:selectBooleanCheckbox  value="#{d.seleccionado}" >
+                <p:ajax update="@form" listener="#{reciboBean.marcarDebito(d)}" />
+            </p:selectBooleanCheckbox>
+        </p:column>
+
+    </p:dataTable>
+
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

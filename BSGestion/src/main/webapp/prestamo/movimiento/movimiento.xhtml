@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"     value="#{movimientoPrestamoBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoPrestamoBean.titulo}"/>
+            <f:viewParam name="SUCPR"  value="#{movimientoPrestamoBean.SUCPR}"/>
+            <f:viewParam name="CODPR"  value="#{movimientoPrestamoBean.CODPR}"/>
+            <f:viewParam name="SUCCJ"  value="#{movimientoPrestamoBean.SUCCJ}"/>
+            <f:viewParam name="CODCJ"  value="#{movimientoPrestamoBean.CODCJ}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoPrestamoBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoPrestamoBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <ui:include src="movimientoMenu.xhtml"   />
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{movimientoPrestamoBean.modoVista eq 'B'}" >
+                <ui:include src="movimientoBusqueda.xhtml"   />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{movimientoPrestamoBean.modoVista eq 'D'}" >
+                <ui:include src="movimientoDatos.xhtml"  />
+            </ui:fragment>
+
+
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoPrestamoBean.muestraReporte}"
+                               nombreArchivo="#{movimientoPrestamoBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/prestamo/busqueda/buscadorPrestamo.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

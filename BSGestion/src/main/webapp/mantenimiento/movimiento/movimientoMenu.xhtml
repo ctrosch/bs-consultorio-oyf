@@ -1,0 +1,53 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{movimientoMantenimientoBean.buscar()}"
+                    immediate="true"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoMantenimientoBean.modoVista eq 'B' or empty movimientoMantenimientoBean.m.itemsMovimientoActividad }"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{movimientoMantenimientoBean.nuevo}"
+                    process="@this"
+                    update="@form" >
+            <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{movimientoMantenimientoBean.guardar(false)}"
+                    rendered="#{empty movimientoMantenimientoBean.m.id }"
+                    update="@form" />
+
+        <p:menuitem value="Imprimir" icon="fa fa-print"
+                    actionListener="#{movimientoMantenimientoBean.imprimir()}"
+                    rendered="#{movimientoMantenimientoBean.m.comprobante.modulo eq 'MT'}"
+                    process="@this" >
+        </p:menuitem>
+
+        <p:menuitem value="Pendientes" icon="fa fa-list-alt"
+                    actionListener="#{movimientoMantenimientoBean.buscarPendientes() }"
+                    rendered="#{empty movimientoMantenimientoBean.m.id and movimientoMantenimientoBean.modoVista eq 'D'
+                                and movimientoMantenimientoBean.m.comprobante.tipoComprobante ne 'SM' }"
+                    oncomplete="PF('dlgPendiente').show()"
+                    process="@this" update="buscadorPendiente" >
+        </p:menuitem>
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

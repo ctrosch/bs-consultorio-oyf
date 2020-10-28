@@ -1,0 +1,30 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="consultaAtributos" header="Consulta Atributos" modal="true"
+              widgetVar="dlgConsultaAtributos"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              responsive="true" 
+              style="max-width: 500px;"
+              showEffect="fade" hideEffect="fade"> 
+
+        <p:dataTable id="tablaConsultaAtributos" value="#{consultaAtributosBean.producto.atributos}" 
+                     emptyMessage="No se encontraron datos" 
+                     var="a" rows="15" paginator="false">
+            <p:column headerText="Nombre">
+                <h:outputText value="#{a.nombre}" />
+            </p:column>
+            <p:column headerText="Valor">
+                <h:outputText value="#{a.valor}" />
+            </p:column>
+        </p:dataTable>
+
+    </p:dialog>
+
+</ui:composition>

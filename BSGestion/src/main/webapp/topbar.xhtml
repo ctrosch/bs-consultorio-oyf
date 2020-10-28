@@ -1,0 +1,143 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="fCabecera">
+        <!-- TOPBAR START -->
+        <div id="layout-topbar">
+            <div id="layout-topbar-indent">
+
+                <a id="menu-button"><i class="icon-th-menu"></i></a>
+
+                <p:graphicImage value="#{aplicacionBean.organizacion.logo}"
+                                styleClass="Fleft"
+                                style="max-width: 200px; max-height: 50px; padding: 5px;"
+                                onclick="Volt.clearMenuState()"/>
+
+                <span class="DispInlBlock Fright ShowOnDesktop" style="margin:10px 10px 0px 0px;" >
+
+                    <ui:insert name="buscador"></ui:insert>
+
+                    <div class="Blue"   style="float:left; border:none; padding-right: 10px;">
+
+                        <a href="#" style="display: block;color: rgba(68, 77, 88, 0.7);" >
+
+                            <h:panelGroup layout="block" rendered="#{aplicacionBean.parametro.muestroCotizacionMonedaSecundaria eq 'S'}" >
+                                <i class="icon-graph Opac80" style="font-size: 34px;  float: left; margin-right: 10px;"></i>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="datosCotizacion"
+                                          rendered="#{aplicacionBean.parametro.muestroCotizacionMonedaSecundaria eq 'S'}" >
+                                <span class="Fs16 Orange">
+                                    Cotización
+                                    <h:outputText value="#{aplicacionBean.moneda.cotizacion}" styleClass="Leaden">
+                                        <f:convertNumber pattern=" $ ##0.00" />
+                                    </h:outputText>
+                                </span>
+                                <br/>
+                                <span class="Opac50 Leaden Fs12">
+
+                                    Fecha:
+                                    <h:outputText value="#{aplicacionBean.moneda.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+
+                                </span>
+                            </h:panelGroup>
+                        </a>
+                    </div>
+
+                    <h:panelGroup id="usuarioCard" layout="block" styleClass="Blue"
+                                  style="float:left; border:none; padding-right: 10px; min-width: 160px;"
+                                  rendered="#{not empty usuarioSessionBean.estaRegistrado}" >
+
+
+                        <h:outputLink id="menu" style="display: block;color: rgba(68, 77, 88, 0.7);"
+                                      value="#{request.contextPath}/mi-perfil"
+                                      target="#{aplicacionBean.parametro.tipoNavegacion eq 'U'? '_self': '_blank'}" >
+
+
+                            <h:panelGroup layout="block" rendered="#{empty usuarioSessionBean.usuario.imagen}">
+                                <i class="icon-vcard Opac80" style="font-size: 34px;  float: left; margin-right: 10px;" ></i>
+                            </h:panelGroup>
+
+                            <h:graphicImage value="../#{aplicacionBean.parametro.nombreCarpetaArchivos}/usuarios/#{usuarioSessionBean.usuario.imagen}"
+                                            width="55px;" styleClass="BordRad15" style="float: left; margin-right: 10px;"
+                                            rendered="#{not empty usuarioSessionBean.usuario.imagen}"/>
+                            <span>
+                                <span class="Fs16">#{usuarioSessionBean.usuario.nombre}</span> <br/>
+                                <span class="Opac50 Fs9">#{principalBean.empresa.nombreFantasia}</span>
+                            </span>
+                        </h:outputLink>
+                    </h:panelGroup>
+
+                    <p:commandLink action="#{usuarioSessionBean.logout}" immediate="true" ajax="false" title="Cerrar Sessión">
+                        <i class="fa fa-sign-out Fs30"></i>
+                    </p:commandLink>
+
+
+                </span>
+            </div>
+        </div>
+
+        <!-- TOPBAR END -->
+
+        <!-- TOPMENU START -->
+        <div id="top-menu" style="padding: 50px 5% 20px;" />
+
+        <!--
+        <ul id="top-menu">
+            <li style="float:left; border:none; display: block;">
+                <a href="#" style="padding: 10px 30px;display: block;"><i class="icon-vcard Opac80"></i>
+                    <span>
+                        <span class="Fs16">#{usuarioSessionBean.usuario.nombre}</span> <br/>
+                        <span class="Opac50 Fs12">#{usuarioSessionBean.usuario.tipo.descripcion}</span>
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="icon-printer2 Opac80"></i>
+                    <span>
+                        <span class="Fs16">Pendientes</span> <br/>
+                        <span class="Opac50 Fs12">0 Notas de pedido</span>
+                    </span>
+                </a>
+            </li>
+            <li>
+
+                <a href="#"><i class="icon-paperclip Opac80"></i>
+                    <span>
+                        <span class="Fs16">Notas</span> <br/>
+                        <span class="Opac50 Fs12">0 Notas</span>
+                    </span>
+                </a>
+
+            </li>
+            <li>
+
+                <a href="#"><i class="icon-stopwatch Opac80"></i>
+                    <span>
+                        <span class="Fs16">Tareas</span> <br/>
+                        <span class="Opac50 Fs12">0 No leídas</span>
+                    </span>
+                </a>
+
+            </li>
+        </ul>
+        -->
+
+        <!-- TOPMENU END -->
+        <!--
+        <p:socket  channel="/cotizacion" rendered="#{aplicacionBean.parametro.muestroCotizacionMonedaSecundaria eq 'S'}" >
+            <p:ajax event="message" update="datosCotizacion" />
+        </p:socket>
+        -->
+
+    </h:form>
+
+</ui:composition>

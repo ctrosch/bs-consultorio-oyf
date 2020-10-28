@@ -1,0 +1,136 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{listaPrecioVentaBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{listaPrecioVentaBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{listaPrecioVentaBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{listaPrecioVentaBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+
+            <p:selectOneMenu value="#{listaPrecioVentaBean.monedaRegistracion}"
+                             converter="#{conversoresGeneral.moneda}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{listaPrecioVentaBean.buscar}"/>
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{listaPrecioVentaBean.priorizaMonedaProducto}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{listaPrecioVentaBean.buscar}"/>
+                <f:selectItem itemLabel="Prioriza moneda producto" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{listaPrecioVentaBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="@form" listener="#{listaPrecioVentaBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{listaPrecioVentaBean.lista}" var="i"
+                 emptyMessage="No se encontraron datos"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{listaPrecioVentaBean.listaDePrecio}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{listaPrecioVentaBean.onSelect}" update="@form"/>
+
+        <p:column headerText="Código" sortBy="#{i.codigo}"  width="25%" style="text-align: center;"  >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción" sortBy="#{i.descripcion}" width="75%"  style="text-align: left;">
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Moneda" width="15%" style="text-align: left;"
+                  sortBy="#{i.monedaRegistracion.descripcion}" >
+            <h:outputText value="#{i.monedaRegistracion.descripcion}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{listaPrecioVentaBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{listaPrecioVentaBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

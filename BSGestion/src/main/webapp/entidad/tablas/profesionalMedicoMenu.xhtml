@@ -1,0 +1,49 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{profesionalMedicoBean.buscar()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{profesionalMedicoBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <!--<p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />-->
+        </p:menuitem>
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{profesionalMedicoBean.guardar(false)}"
+                    rendered="#{not profesionalMedicoBean.buscaMovimiento}"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{profesionalMedicoBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty profesionalMedicoBean.entidad and not profesionalMedicoBean.esNuevo and profesionalMedicoBean.entidad.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{profesionalMedicoBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty profesionalMedicoBean.entidad and not profesionalMedicoBean.esNuevo and profesionalMedicoBean.entidad.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+    </p:menubar>
+
+    <div class="EmptyBox10"> </div>
+
+</ui:composition>
+

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU" value="#{movimientoPrestamoBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoPrestamoBean.titulo}"/>
+            <f:viewParam name="SUCPR" value="#{movimientoPrestamoBean.SUCPR}"/>
+            <f:viewParam name="CODPR"  value="#{movimientoPrestamoBean.CODPR}"/>
+            <f:viewParam name="SUCCJ" value="#{movimientoPrestamoBean.SUCCJ}"/>
+            <f:viewParam name="CODCJ"  value="#{movimientoPrestamoBean.CODCJ}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoPrestamoBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoPrestamoBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{movimientoPrestamoBean.nuevaBusqueda}"
+                            immediate="true"
+                            update="@form" />
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{movimientoPrestamoBean.nuevoMovimiento}"
+                            process="@this"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:menuitem value="Generar Items CC" icon="fa fa-save"
+                            actionListener="#{movimientoPrestamoBean.generarItemsCuentaCoorriente()}"
+                            rendered="#{not empty movimientoPrestamoBean.m.id}"
+                            update="@form" />
+
+                <p:menuitem value="Generar Items Mov" icon="fa fa-save"
+                            actionListener="#{movimientoPrestamoBean.generarItemsMovimiento()}"
+                            rendered="#{not empty movimientoPrestamoBean.m.id}"
+                            update="@form" />
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{movimientoPrestamoBean.guardar(false)}"
+                            rendered="#{empty movimientoPrestamoBean.m.id }"
+                            update="@form" />
+
+
+                <p:menuitem value="Generar liquidaciones" icon="fa fa-search"
+                            actionListener="#{generadorMovimientoBean.generarLiquidacionesPrestamo}"
+                            immediate="true"
+                            update="@form" />
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            actionListener="#{movimientoPrestamoBean.imprimir}"
+                            rendered="#{not empty movimientoPrestamoBean.m.id }"
+                            process="@this"
+                            update="@form"
+                            oncomplete="PF('dlg_reporte').show()">
+                </p:menuitem>
+
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:include src="movimientoBusqueda.xhtml"   />
+
+            <ui:include src="movimientoDatos.xhtml"  />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoPrestamoBean.muestraReporte}"
+                               nombreArchivo="#{movimientoPrestamoBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/prestamo/busqueda/buscadorPrestamo.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

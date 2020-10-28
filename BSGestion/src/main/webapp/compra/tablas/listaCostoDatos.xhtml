@@ -1,0 +1,97 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{listaPrecioCostoBean.listaCosto.codigo}"
+                     readonly="#{not listaPrecioCostoBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{listaPrecioCostoBean.listaCosto.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Toma Precio reposición *" />
+        <p:selectOneRadio value="#{listaPrecioCostoBean.listaCosto.tomaPrecioReposicion}"
+                          required="true" requiredMessage="Seleccione si toma precio reposición del producto" >
+            <f:selectItem itemLabel="Si"  itemValue="S" />
+            <f:selectItem itemLabel="No"  itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Moneda *" />
+        <p:selectOneMenu value="#{listaPrecioCostoBean.listaCosto.moneda}"
+                         required="true" requiredMessage="Seleccione la moneda"
+                         converter="#{conversoresGeneral.moneda}" >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Prioriza moneda producto *" />
+        <p:selectOneRadio value="#{listaPrecioCostoBean.listaCosto.priorizaMonedaProducto}"
+                          required="true" requiredMessage="Seleccione si prioriza moneda producto" >
+            <f:selectItem itemLabel="Si"  itemValue="S" />
+            <f:selectItem itemLabel="No"  itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Incluye impuestos" />
+        <p:selectOneRadio value="#{listaPrecioCostoBean.listaCosto.incluyeImpuestos}"
+                          >
+            <f:selectItem itemLabel="Si"  itemValue="S" />
+            <f:selectItem itemLabel="No"  itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Precio mínimo " />
+        <p:inputText value="#{listaPrecioCostoBean.listaCosto.precioMinimo}"
+                     required="true"
+                     requiredMessage="El precio mínimo es obligatorio" >
+            <f:convertNumber pattern="#,##0.00"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Precio Máximo " />
+        <p:inputText value="#{listaPrecioCostoBean.listaCosto.precioMaximo}"
+                     required="true"
+                     requiredMessage="El precio máximo es obligatorio" >
+            <f:convertNumber pattern="#,##0.00"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

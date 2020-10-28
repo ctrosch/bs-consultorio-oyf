@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{citiVentaBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{citiVentaBean.titulo}"/>
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{citiVentaBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+
+            <script type="text/javascript">
+                function start() {
+                    PF('statusDialog').show();
+                }
+
+                function stop() {
+                    PF('statusDialog').hide();
+                }
+            </script>
+
+            <p:panel header="#{citiVentaBean.titulo}" >
+
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                <div class="EmptyBox10" />
+
+                <p:panelGrid columns="4" layout="grid" style="max-width: 1100px;"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:outputText value="Fechas" />
+                    <h:panelGroup layout="block"  >
+                        <div class="Wid50 Fleft">
+
+                            <p:calendar value="#{citiVentaBean.fechaMovimientoDesde}"
+                                        required="true" requiredMessage="La fecha desde es obligatoria"
+                                        pattern="dd/MM/yyyy"
+                                        showOn="button"
+                                        navigator="true"
+                                        mask="true" >
+                                <p:ajax event="dateSelect"  process="@this" />
+                            </p:calendar>
+                        </div>
+                        <div class="Wid50 Fright">
+                            <p:calendar value="#{citiVentaBean.fechaMovimientoHasta}"
+                                        required="true" requiredMessage="La fecha hasta es obligatoria"
+                                        pattern="dd/MM/yyyy"
+                                        showOn="button"
+                                        navigator="true"
+                                        mask="true" >
+                                <p:ajax event="dateSelect"  process="@this" />
+                            </p:calendar>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                </p:panelGrid>
+
+                <div class="EmptyBox10" />
+
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <p:commandButton value="Generar Archivos" icon="fa fa-print"
+                                     actionListener="#{citiVentaBean.generarArchivos()}"
+                                     update="@form" />
+
+                    <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" process="@this"
+                                     actionListener="#{citiVentaBean.resetParametros}"
+                                     update="@form" />
+                </p:panelGrid>
+
+            </p:panel>
+
+            <div class="EmptyBox10" />
+
+            <p:panel header="Archivos generados" rendered="#{not empty citiVentaBean.archivos}">
+
+                <p:dataTable value="#{citiVentaBean.archivos}" var="a" style="max-width: 500px;">
+                    <p:column headerText="Descripción" >
+                        <h:outputText value="#{a.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Descargar" width="60" style="text-align: center;" >
+                        <p:commandButton ajax="false"  icon="fa fa-download"  >
+                            <p:fileDownload value="#{a.streamedContent}" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <p:dialog modal="true" widgetVar="statusDialog"
+                      header="Status"
+                      draggable="false" closable="false" resizable="false">
+                <p:graphicImage name="/demo/images/ajaxloadingbar.gif" />
+            </p:dialog>
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

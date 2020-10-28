@@ -1,0 +1,83 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- TOTALES -->
+    <h:panelGroup id="totales" layout="block" styleClass="p-grid p-justify-end"
+                  rendered="#{not empty ordenPagoBean.m}" >
+
+        <div class="p-col-12 p-md-4 p-lg-3">
+            <h:panelGroup layout="block" styleClass="Card GreenBack" >
+                <div class="CardTopic White Fs14 ">Total a Cancelar</div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{ordenPagoBean.totalHaber}"
+                                      rendered="#{empty ordenPagoBean.m.id}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <div class="p-col-12 p-md-4 p-lg-3">
+            <h:panelGroup layout="block" styleClass="Card RedBack"  >
+                <div class="CardTopic White Fs14 ">Retenciones</div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{ordenPagoBean.totalRetenciones}"
+                                      rendered="#{empty ordenPagoBean.m.id}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <div class="p-col-12 p-md-4 p-lg-3">
+            <h:panelGroup layout="block" styleClass="Card OrangeBack"  >
+                <div class="CardTopic White Fs14 ">Disponible</div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <!--
+                        <h:outputText value="#{ordenPagoBean.totalHaber - ordenPagoBean.m.importeTotalHaber}"
+                                      rendered="#{empty ordenPagoBean.m.id and ordenPagoBean.m.esAnticipo }"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                        -->
+
+                        <h:outputText value="#{ordenPagoBean.totalHaber - ordenPagoBean.totalRetenciones - ordenPagoBean.m.importeTotalHaber}"
+                                      rendered="#{empty ordenPagoBean.m.id}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <div class="p-col-12 p-md-4 p-lg-3">
+            <h:panelGroup layout="block" styleClass="Card BlueBack" >
+
+                <div class="CardTopic White Fs14 ">Importe Total</div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{ordenPagoBean.m.importeTotalHaber}" styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </h:panelGroup>
+        </div>
+
+    </h:panelGroup>
+
+    <div class="EmptyBox10" />
+</ui:composition>
+

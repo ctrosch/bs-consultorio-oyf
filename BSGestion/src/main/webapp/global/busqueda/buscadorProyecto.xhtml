@@ -1,0 +1,78 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorProyecto" header="Proyecto"
+              widgetVar="dlg_proyecto" resizable="false" draggable="false" modal="true"
+              minHeight="400" style="max-width: 700px;" responsive="true"
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+            
+            <p:focus for="txtBusquedaUni"/>
+            
+            <p:panelGrid columns="1" layout="grid"
+                         style="max-width: 400px;"
+                         styleClass="ui-panelgrid-blank" >
+                               
+                <p:inputText id="txtBusquedaUni" value="#{proyectoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaProyecto" listener="#{proyectoBean.buscar}"/>
+                </p:inputText>
+
+            </p:panelGrid>
+            
+            <p:dataTable id="tablaProyecto" value="#{proyectoBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" 
+                         selection="#{proyectoBean.proyecto}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{proyectoBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlg_proyecto').hide(), procesarProyecto()" />
+
+                <p:column headerText="Código" sortBy="#{i.codigo}"  width="100" style="text-align: center;"  >
+                    <h:outputText value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{i.descripcion}"  >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+                
+                <p:column headerText="Fecha inicio" sortBy="#{i.fechaInicio}" width="100"  >
+                    <h:outputText value="#{i.fechaInicio}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{proyectoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaProyecto" listener="#{proyectoBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroProyecto" value="#{proyectoBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{proyectoBean.buscar}"
+                                     process="@this,cantRegistroProyecto" update="tablaProyecto" />
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>        
+
+    </p:dialog>
+
+</ui:composition>

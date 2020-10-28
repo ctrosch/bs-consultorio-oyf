@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU" value="#{movimientoSaludBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoSaludBean.titulo}"/>
+
+            <f:viewParam name="CODSA"  value="#{movimientoSaludBean.CODSA}"/>
+            <f:viewParam name="SUCSA"  value="#{movimientoSaludBean.PTOSA}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoSaludBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoSaludBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{movimientoSaludBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <ui:fragment rendered="#{movimientoSaludBean.m.comprobante.tipoComprobante ne 'RT'}" >
+                <ui:include src="movimientoMenu.xhtml" />
+            </ui:fragment>
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <ui:fragment rendered="#{movimientoSaludBean.modoVista eq 'B' and movimientoSaludBean.m.comprobante.tipoComprobante ne 'RT'}">
+                <ui:include src="movimientoBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty movimientoSaludBean.m and movimientoSaludBean.modoVista eq 'D' }" >
+
+                <ui:include src="movimientoDatos.xhtml" rendered="#{not empty movimientoSaludBean.m}" />
+
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoSaludBean.muestraReporte}"
+                               nombreArchivo="#{movimientoSaludBean.nombreArchivo}" />
+
+            <ui:include src="movimientoPendiente.xhtml" rendered="#{not empty movimientoSaludBean.m and movimientoSaludBean.m.comprobante.tipoComprobante ne 'RT'}"  />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+
+
+        </ui:define>
+
+    </ui:composition>
+</html>
+

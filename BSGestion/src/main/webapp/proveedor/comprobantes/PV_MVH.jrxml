@@ -1,0 +1,950 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VT_MVH_A" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="21db4006-82c7-4753-bdd2-6f5767781961">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="76"/>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="style1" mode="Opaque" backcolor="#000000">
+		<pen lineWidth="1.0"/>
+	</style>
+	<subDataset name="detalle" uuid="528f0a9f-a722-41b2-beae-6ff7dfb2bc98">
+		<parameter name="ID_MCAB" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="MONREG" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+  c.DESCRP AS CONCEPTO_DESCRIPCION,
+  c.CODIGO AS CONCEPTO_CODIGO,
+  i.`DESCRP` AS pv_movimiento_item_DESCRP,
+  i.ID_MCAB As pv_movimiento_item_ID_MCAB,
+  i.ID As pv_movimiento_item_ID,
+  i.CANTID As pv_movimiento_item_CANTID,
+  i.NROITM As pv_movimiento_item_NROITM,
+  i.PCTBFN As pv_movimiento_item_PCTBFN,
+  i.ARTCOD As pv_movimiento_item_ARTCOD,
+  i.UNIMED As pv_movimiento_item_UNIMED,
+  i.OBSERV As pv_movimiento_item_OBSERV,
+  i.PRECIO As pv_movimiento_item_PRECIO,
+  i.IMPNAC As pv_movimiento_item_IMPNAC,
+  i.PRESEC As pv_movimiento_item_PRESEC,
+  i.IMPSEC As pv_movimiento_item_IMPSEC,
+  IfNull((i.PRECIO*i.PCTBF4/100), 0) AS BONIFICACION4_IMP_UNIT,
+  IfNull((i.CANTID*i.PRECIO*i.PCTBF4/100), 0) AS BONIFICACION4_IMP_TOT,
+  (Case i.CODCPT When 'V000' Then (i.IMPNAC) Else 0 End) As IVA_0000,
+  (Case i.CODCPT When 'V001' Then (i.IMPNAC * 21 / 100) Else 0 End) As IVA_2100,
+  (Case i.CODCPT When 'V002' Then (i.IMPNAC * 10.5 / 100) Else 0 End) As IVA_1050,
+  (Case i.CODCPT When 'V003' Then (i.IMPNAC * 27 / 100) Else 0 End) As IVA_2700,
+  (Case i.CODCPT When 'V000' Then (i.IMPSEC) Else 0 End) As IVA_0000,
+  (Case i.CODCPT When 'V001' Then (i.IMPSEC * 21 / 100) Else 0 End) As IVA_2100,
+  (Case i.CODCPT When 'V002' Then (i.IMPSEC * 10.5 / 100) Else 0 End) As IVA_1050,
+  (Case i.CODCPT When 'V003' Then (i.IMPSEC * 27 / 100) Else 0 End) As IVA_2700
+From pv_movimiento_item i
+Left Join st_producto p On p.CODIGO = i.ARTCOD
+INNER JOIN gr_concepto c ON c.MODULO = i.MODCPT AND c.TIPCPT = i.TIPCPT and c.CODIGO = i.CODCPT
+WHERE i.TIPCPT NOT IN ('T','I')
+AND  i.`ID_MCAB` = $P{ID_MCAB}
+ORDER BY i.TIPCPT, i.NROITM]]>
+		</queryString>
+		<field name="CONCEPTO_DESCRIPCION" class="java.lang.String"/>
+		<field name="CONCEPTO_CODIGO" class="java.lang.String"/>
+		<field name="pv_movimiento_item_DESCRP" class="java.lang.String"/>
+		<field name="pv_movimiento_item_ID_MCAB" class="java.lang.Integer"/>
+		<field name="pv_movimiento_item_ID" class="java.lang.Integer"/>
+		<field name="pv_movimiento_item_CANTID" class="java.math.BigDecimal"/>
+		<field name="pv_movimiento_item_NROITM" class="java.lang.Integer"/>
+		<field name="pv_movimiento_item_PCTBFN" class="java.math.BigDecimal"/>
+		<field name="pv_movimiento_item_ARTCOD" class="java.lang.String"/>
+		<field name="pv_movimiento_item_UNIMED" class="java.lang.String"/>
+		<field name="pv_movimiento_item_OBSERV" class="java.lang.String"/>
+		<field name="pv_movimiento_item_PRECIO" class="java.math.BigDecimal"/>
+		<field name="pv_movimiento_item_IMPNAC" class="java.math.BigDecimal"/>
+		<field name="pv_movimiento_item_PRESEC" class="java.math.BigDecimal"/>
+		<field name="pv_movimiento_item_IMPSEC" class="java.math.BigDecimal"/>
+		<field name="BONIFICACION4_IMP_UNIT" class="java.math.BigDecimal"/>
+		<field name="BONIFICACION4_IMP_TOT" class="java.math.BigDecimal"/>
+		<field name="IVA_0000" class="java.math.BigDecimal"/>
+		<field name="IVA_2100" class="java.math.BigDecimal"/>
+		<field name="IVA_1050" class="java.math.BigDecimal"/>
+		<field name="IVA_2700" class="java.math.BigDecimal"/>
+		<variable name="CANTIDAD" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{pv_movimiento_item_CANTID}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+		<variable name="IMPORTE_GRAVADO" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{pv_movimiento_item_IMPNAC}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+		<variable name="IVA_2100" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{IVA_2100}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+		<variable name="IVA_1050" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{IVA_1050}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+		<variable name="IMPORTE_TOTAL" class="java.math.BigDecimal">
+			<variableExpression><![CDATA[$V{IMPORTE_GRAVADO}.add($V{IVA_2100}).add($V{IVA_1050})]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+		<variable name="IVA_2700" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{IVA_2700}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+	</subDataset>
+	<parameter name="LOGO" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODIGO_BARRA" class="java.lang.String"/>
+	<parameter name="EN_LETRAS" class="java.lang.String"/>
+	<parameter name="CANT_COPIAS" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+  gr_copias.DESCRIPCION AS gr_copias_DESCRIPCION,
+  en_entidad.NROCTA As en_entidad_NROCTA,
+  en_entidad.FNTSIA As en_entidad_FNTSIA,
+  en_entidad.RAZONS As en_entidad_RAZONS,
+  pv_movimiento.ID As pv_movimiento_ID,
+  pv_movimiento.`RAZONS` AS pv_movimiento_RAZONS,
+  pv_movimiento.FCHMOV As pv_movimiento_FCHMOV,
+  pv_movimiento.FCHEMI As pv_movimiento_FCHEMI,
+  pv_movimiento.FCHREC As pv_movimiento_FCHREC,
+  pv_movimiento.NROFOR As pv_movimiento_NROFOR,
+  pv_movimiento.MONREG As pv_movimiento_MONREG,
+  pv_movimiento.FCHVEN As pv_movimiento_FCHVEN,
+  pv_movimiento.OBSERV As pv_movimiento_OBSERV,
+  pv_movimiento.NRODOC As pv_movimiento_NRODOC,
+  pv_movimiento.TIPDOC As pv_movimiento_TIPDOC,
+  pv_movimiento.CODLOC As pv_movimiento_CODPOS,
+  pv_movimiento.CNDIVA As pv_movimiento_CNDIVA,
+  pv_movimiento.CNDPAG As pv_movimiento_CNDPAG,
+  pv_movimiento.MODFOR As pv_movimiento_MODFOR,
+  pv_movimiento.CODFOR As pv_movimiento_CODFOR,
+  pv_movimiento.SUCURS As pv_movimiento_SUCURS,
+  pv_movimiento.SUCORI As pv_movimiento_SUCORI,
+  pv_movimiento.NROORI As pv_movimiento_NROORI,
+  pv_movimiento.USERID As pv_movimiento_USERID,
+  gr_formulario.DESCRP As gr_formulario_DESCRP,
+  gr_formulario.LETRID As gr_formulario_LETRID,
+  gr_provincia.DESCRP As gr_provincia_DESCRP,
+  pv_lista_precio.DESCRP As pv_lista_precio_DESCRP,
+  gr_localidad.DESCRP As gr_localidad_DESCRP,
+  pv_condicion_pago.DESCRP As pv_condicion_pago_DESCRP,
+  gr_condicion_iva.DESCRP As gr_condicion_iva_DESCRP,
+  pv_movimiento.NROCAE,
+  pv_movimiento.VENCAE,
+  pv_movimiento.CODLIS,
+  pv_movimiento.BARRIO,
+  pv_movimiento.DEPTOS,
+  pv_movimiento.DPPISO,
+  pv_movimiento.DIRECC,
+  pv_movimiento.NUMERO,
+  gr_transporte.CODIGO,
+  gr_transporte.DESCRP,
+  gr_transporte.DIRECC As DIRECC1,
+  gr_transporte.RESPON,
+  gr_transporte.TELEFN,
+  IfNull((Select SUM(i1.PCTBF4) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A'), 0) As BONIFICACION4_PORC,
+  IfNull((Select Sum(i1.CANTID*i1.PRECIO*i1.PCTBF4/100) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A'), 0) AS BONIFICACION4_IMP,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And  i1.CODCPT = 'C000'), 0) As GRAVADO_0000,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And i1.CODCPT = 'C002'), 0) As GRAVADO_1050,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And i1.CODCPT = 'C001'), 0) As GRAVADO_2100,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And i1.CODCPT = 'C003'), 0) As GRAVADO_2700,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'P'), 0) As PERCEPCIONES,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'R'), 0) As RETENCIONES,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'I' And i1.CODCPT = 'IVA001'), 0) As IVA_2100,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'I' And i1.CODCPT = 'IVA002'), 0) As IVA_1050,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'I' And i1.CODCPT = 'IVA003'), 0) As IVA_2700,
+  IfNull((Select Sum(i1.IMPNAC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'T'), 0) As TOTAL,
+  IfNull((Select Sum(i1.CANTID*i1.PRESEC*i1.PCTBF4/100) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A'), 0) AS BONIFICACION4_IMP_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And  i1.CODCPT = 'C000'), 0) As GRAVADO_0000_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And i1.CODCPT = 'C002'), 0) As GRAVADO_1050_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And i1.CODCPT = 'C001'), 0) As GRAVADO_2100_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'A' And i1.CODCPT = 'V003'), 0) As GRAVADO_2700_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'P'), 0) As PERCEPCIONES_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'R'), 0) As RETENCIONES_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'I' And i1.CODCPT = 'IVA001'), 0) As IVA_2100_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'I' And i1.CODCPT = 'IVA002'), 0) As IVA_1050_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'I' And i1.CODCPT = 'IVA003'), 0) As IVA_2700_SEC,
+  IfNull((Select Sum(i1.IMPSEC) From pv_movimiento_item i1 Where i1.ID_MCAB = pv_movimiento.ID And i1.TIPCPT = 'T'), 0) As TOTAL_SEC,
+  gr_tipo_documento.DESCRP As gr_tipo_documento_DESCRP,
+  gr_tipo_documento.CODIGO As gr_tipo_documento_CODIGO,
+  gr_formulario.CODDGI As gr_formulario_CODDGI
+From en_entidad en_entidad
+Inner Join pv_movimiento pv_movimiento On en_entidad.NROCTA = pv_movimiento.NROCTA
+Inner Join gr_formulario gr_formulario On pv_movimiento.MODFOR = gr_formulario.MODFOR And gr_formulario.CODFOR = pv_movimiento.CODFOR
+Inner Join gr_provincia gr_provincia On pv_movimiento.CODPRO = gr_provincia.CODIGO And  gr_provincia.CODPAI = pv_movimiento.CODPAI
+Inner Join gr_localidad gr_localidad On pv_movimiento.CODLOC = gr_localidad.ID
+Inner Join pv_condicion_pago pv_condicion_pago On pv_movimiento.CNDPAG = pv_condicion_pago.CODIGO
+Inner Join gr_condicion_iva gr_condicion_iva On pv_movimiento.CNDIVA = gr_condicion_iva.CODIGO
+Inner Join pv_lista_precio pv_lista_precio On pv_movimiento.CODLIS = pv_lista_precio.CODIGO
+Left Join gr_transporte On pv_movimiento.CODTRA = gr_transporte.CODIGO
+Inner Join  gr_tipo_documento On pv_movimiento.TIPDOC = gr_tipo_documento.CODIGO,
+gr_copias gr_copias
+where pv_movimiento.`ID` = $P{ID}
+and gr_copias.ID <= $P{CANT_COPIAS}]]>
+	</queryString>
+	<field name="gr_copias_DESCRIPCION" class="java.lang.String"/>
+	<field name="en_entidad_NROCTA" class="java.lang.String"/>
+	<field name="en_entidad_FNTSIA" class="java.lang.String"/>
+	<field name="en_entidad_RAZONS" class="java.lang.String"/>
+	<field name="pv_movimiento_ID" class="java.lang.Integer"/>
+	<field name="pv_movimiento_RAZONS" class="java.lang.String"/>
+	<field name="pv_movimiento_FCHMOV" class="java.sql.Date"/>
+	<field name="pv_movimiento_FCHEMI" class="java.sql.Date"/>
+	<field name="pv_movimiento_FCHREC" class="java.sql.Date"/>
+	<field name="pv_movimiento_NROFOR" class="java.lang.Integer"/>
+	<field name="pv_movimiento_MONREG" class="java.lang.String"/>
+	<field name="pv_movimiento_FCHVEN" class="java.sql.Date"/>
+	<field name="pv_movimiento_OBSERV" class="java.lang.String"/>
+	<field name="pv_movimiento_NRODOC" class="java.lang.String"/>
+	<field name="pv_movimiento_TIPDOC" class="java.lang.String"/>
+	<field name="pv_movimiento_CODPOS" class="java.lang.Integer"/>
+	<field name="pv_movimiento_CNDIVA" class="java.lang.String"/>
+	<field name="pv_movimiento_CNDPAG" class="java.lang.String"/>
+	<field name="pv_movimiento_MODFOR" class="java.lang.String"/>
+	<field name="pv_movimiento_CODFOR" class="java.lang.String"/>
+	<field name="pv_movimiento_SUCURS" class="java.lang.String"/>
+	<field name="pv_movimiento_SUCORI" class="java.lang.String"/>
+	<field name="pv_movimiento_NROORI" class="java.lang.String"/>
+	<field name="pv_movimiento_USERID" class="java.lang.String"/>
+	<field name="gr_formulario_DESCRP" class="java.lang.String"/>
+	<field name="gr_formulario_LETRID" class="java.lang.String"/>
+	<field name="gr_provincia_DESCRP" class="java.lang.String"/>
+	<field name="pv_lista_precio_DESCRP" class="java.lang.String"/>
+	<field name="gr_localidad_DESCRP" class="java.lang.String"/>
+	<field name="pv_condicion_pago_DESCRP" class="java.lang.String"/>
+	<field name="gr_condicion_iva_DESCRP" class="java.lang.String"/>
+	<field name="NROCAE" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="VENCAE" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CODLIS" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="BARRIO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DEPTOS" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DPPISO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DIRECC" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="NUMERO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CODIGO" class="java.lang.String">
+		<fieldDescription><![CDATA[Código]]></fieldDescription>
+	</field>
+	<field name="DESCRP" class="java.lang.String">
+		<fieldDescription><![CDATA[Descripción]]></fieldDescription>
+	</field>
+	<field name="DIRECC1" class="java.lang.String"/>
+	<field name="RESPON" class="java.lang.String">
+		<fieldDescription><![CDATA[Responsable]]></fieldDescription>
+	</field>
+	<field name="TELEFN" class="java.lang.String">
+		<fieldDescription><![CDATA[Teléfono]]></fieldDescription>
+	</field>
+	<field name="BONIFICACION4_PORC" class="java.math.BigDecimal"/>
+	<field name="BONIFICACION4_IMP" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_0000" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_1050" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_2100" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_2700" class="java.math.BigDecimal"/>
+	<field name="PERCEPCIONES" class="java.math.BigDecimal"/>
+	<field name="RETENCIONES" class="java.math.BigDecimal"/>
+	<field name="IVA_2100" class="java.math.BigDecimal"/>
+	<field name="IVA_1050" class="java.math.BigDecimal"/>
+	<field name="IVA_2700" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="BONIFICACION4_IMP_SEC" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_0000_SEC" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_1050_SEC" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_2100_SEC" class="java.math.BigDecimal"/>
+	<field name="GRAVADO_2700_SEC" class="java.math.BigDecimal"/>
+	<field name="PERCEPCIONES_SEC" class="java.math.BigDecimal"/>
+	<field name="RETENCIONES_SEC" class="java.math.BigDecimal"/>
+	<field name="IVA_2100_SEC" class="java.math.BigDecimal"/>
+	<field name="IVA_1050_SEC" class="java.math.BigDecimal"/>
+	<field name="IVA_2700_SEC" class="java.math.BigDecimal"/>
+	<field name="TOTAL_SEC" class="java.math.BigDecimal"/>
+	<field name="gr_tipo_documento_DESCRP" class="java.lang.String"/>
+	<field name="gr_tipo_documento_CODIGO" class="java.lang.String"/>
+	<field name="gr_formulario_CODDGI" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="115" splitType="Stretch">
+			<line>
+				<reportElement x="276" y="59" width="1" height="55" forecolor="#666666" uuid="b1748535-e078-4f35-a169-21f5cc2b96e3"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="5" y="5" width="250" height="65" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="19" y="70" width="257" height="11" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_RAZON_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="19" y="103" width="257" height="11" uuid="cde29b6f-c09a-4dd8-b1ac-c138522de8dd"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_CONDICION_IVA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="19" y="92" width="257" height="11" uuid="f105f519-4779-438c-84e3-a1ebf5094287"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EMP_TELEFONO}==null?"":$P{EMP_TELEFONO})
++($P{EMP_EMAIL}==null?"":" | "+$P{EMP_EMAIL})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="5" width="140" height="15" uuid="fe387915-ad4d-4dc1-ae12-1c7d159f331f"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_formulario_DESCRP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="303" y="20" width="53" height="14" uuid="1e3a7cb3-8289-4a7a-8533-401e028d3c1a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="19" y="81" width="257" height="11" uuid="ba882b76-c605-41ba-9916-ca4482832282"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_DIRECCION}
++" | "+$P{EMP_CIUDAD}
++" | "+$P{EMP_PROVINCIA}
++" | "+$P{EMP_PAIS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="70" width="165" height="11" uuid="ba882b76-c605-41ba-9916-ca4482832282"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.U.I.T.: " + $P{EMP_CUIT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="396" y="34" width="75" height="14" uuid="0931a391-807e-4c92-82cf-c268493b152b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_FCHMOV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="303" y="34" width="81" height="14" uuid="7847c39c-7f77-46f0-86ad-c33ba0f086c2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Carga]]></text>
+			</staticText>
+			<textField pattern="0000">
+				<reportElement x="356" y="20" width="28" height="14" uuid="c3957ca3-f937-4a65-b686-79713cfe22b0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_SUCURS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="384" y="20" width="5" height="14" uuid="d43b7128-1272-421f-80c6-eae9c179b674"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField pattern="00000000">
+				<reportElement x="389" y="20" width="80" height="14" uuid="c3957ca3-f937-4a65-b686-79713cfe22b0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_NROFOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="103" width="165" height="11" uuid="cde29b6f-c09a-4dd8-b1ac-c138522de8dd"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["INICIO DE ACTIVIDAD: "+$P{EMP_INIACT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="81" width="164" height="11" uuid="f105f519-4779-438c-84e3-a1ebf5094287"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ING. BRUTOS: " + ($P{EMP_IB}==null?"":$P{EMP_IB})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="255" y="0" width="45" height="48" uuid="93a0e4b3-6d10-490b-92bf-0f5e0edd3821"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="38" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_formulario_LETRID}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="114" width="555" height="1" forecolor="#666666" uuid="db1503a0-782e-444c-98ac-a1918987586a"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="255" y="48" width="45" height="8" uuid="51a2273e-0d6e-4fbd-97a8-9a645cfd6b2d"/>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CODIGO "+$F{gr_formulario_CODDGI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="443" y="5" width="100" height="15" backcolor="#CC0000" uuid="ec822420-4433-4ee6-a678-292a5cf535e6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_copias_DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="92" width="164" height="11" uuid="0fb87885-8396-4b9b-bd58-619cccaaa829"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["D.R.e.I.: "+($P{EMP_IMPMUN}==null?"":$P{EMP_IMPMUN})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="303" y="56" width="68" height="14" uuid="3bff3f2b-4e44-464e-8ea8-474dce139895"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comp. Orig]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="397" y="56" width="5" height="14" uuid="9858df00-f212-40d4-8609-25ccc3786103"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField pattern="00000000">
+				<reportElement x="402" y="56" width="80" height="14" uuid="863b7031-6782-4770-ac98-373356c8bfd0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_NROFOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="0000">
+				<reportElement x="369" y="56" width="28" height="14" uuid="1e0bb9af-b9ee-4dbc-a3f2-70864982fbad"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_SUCURS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="105" splitType="Stretch">
+			<staticText>
+				<reportElement x="217" y="55" width="73" height="15" uuid="91dfa5bd-77b3-4875-b864-7bef7c02557f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Provincia]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="86" y="40" width="369" height="15" uuid="46887d98-5c81-48b2-a857-6671ec3abb12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{DIRECC}==null?"":$F{DIRECC})
++($F{NUMERO}==null || $F{NUMERO}.isEmpty() ?"":" N° "+$F{NUMERO})
++($F{DPPISO}==null || $F{DPPISO}.isEmpty() ?"":" Piso "+$F{DPPISO})
++($F{DEPTOS}==null || $F{DEPTOS}.isEmpty() ?"":" Dpto "+$F{DEPTOS})]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="290" y="55" width="165" height="15" uuid="46887d98-5c81-48b2-a857-6671ec3abb12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_provincia_DESCRP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="27" y="55" width="59" height="15" uuid="91dfa5bd-77b3-4875-b864-7bef7c02557f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="10" width="76" height="15" uuid="91dfa5bd-77b3-4875-b864-7bef7c02557f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="86" y="10" width="457" height="15" uuid="46887d98-5c81-48b2-a857-6671ec3abb12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{en_entidad_NROCTA} +"-"+ $F{pv_movimiento_RAZONS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="40" width="76" height="15" uuid="91dfa5bd-77b3-4875-b864-7bef7c02557f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="86" y="55" width="131" height="15" uuid="46887d98-5c81-48b2-a857-6671ec3abb12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_localidad_DESCRP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="27" y="25" width="59" height="15" uuid="97ed50eb-b667-4cfc-9810-e01d02127a6a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Condición IVA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="70" width="73" height="15" uuid="f82c76fd-f72b-434a-a3e1-bbf1946cc736"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cond. Pago]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="250" y="25" width="50" height="15" uuid="fe7908f6-4798-45a9-8e1c-bfc2fa8eed27"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_tipo_documento_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="300" y="25" width="102" height="15" uuid="8208b4ca-0dd4-4c8d-9688-60a07250a276"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_NRODOC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="86" y="25" width="131" height="15" uuid="78e4a9f2-c0f4-41c9-b625-9f01c25cdfd1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_condicion_iva_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="86" y="70" width="164" height="15" uuid="dcbbdd5a-5f91-45f3-89e7-5fbe1a1c5932"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_condicion_pago_DESCRP}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="100" width="555" height="1" forecolor="#666666" uuid="c863d159-67f7-4a52-ab63-d2200c16a016"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="480" splitType="Stretch">
+			<componentElement>
+				<reportElement x="5" y="5" width="545" height="460" isRemoveLineWhenBlank="true" uuid="47186046-a2f4-4b95-82d7-1c8e79167632"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="detalle" uuid="841397bb-8772-461e-b0e2-120196a8a4a0">
+						<datasetParameter name="ID_MCAB">
+							<datasetParameterExpression><![CDATA[$F{pv_movimiento_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="MONREG">
+							<datasetParameterExpression><![CDATA[$F{pv_movimiento_MONREG}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="66" uuid="61d54d6e-97f3-4fe1-9939-4be26d726410">
+						<jr:columnHeader style="table 2_CH" height="19" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="66" height="19" backcolor="#FFFFFF" uuid="15313d22-8951-47ce-8000-dc725bea7b00"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Código]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="17" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="66" height="11" uuid="37203da4-87a6-480e-8b06-6e7b2516433f"/>
+								<textElement verticalAlignment="Top">
+									<font size="8"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{pv_movimiento_item_ARTCOD}!=null && !$F{pv_movimiento_item_ARTCOD}.isEmpty()
+?$F{pv_movimiento_item_ARTCOD}
+:$F{CONCEPTO_CODIGO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="290" uuid="d9615124-07af-4828-8b26-931a49ab1d0c">
+						<jr:columnHeader style="table 2_CH" height="19" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="290" height="19" backcolor="#339900" uuid="bd780a70-9175-4d77-9153-680980f28583"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Descripción]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="17" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement mode="Transparent" x="0" y="3" width="290" height="11" backcolor="#FFFFFF" uuid="ebcf747b-2d59-4d69-83e9-bb9d3da220a6"/>
+								<textElement verticalAlignment="Top">
+									<font size="8"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{pv_movimiento_item_DESCRP}!=null && !$F{pv_movimiento_item_DESCRP}.isEmpty()
+?$F{pv_movimiento_item_DESCRP}
+:$F{CONCEPTO_DESCRIPCION}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="14" width="290" height="0" backcolor="#FFFFFF" uuid="2b73ad15-8c2f-4477-930f-7f8804a60389"/>
+								<textElement verticalAlignment="Middle">
+									<font size="6"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{pv_movimiento_item_OBSERV}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="fe0ca9ba-3f50-4fdd-980f-62fb1c945b60">
+						<jr:columnHeader style="table 2_CH" height="19" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="50" height="19" backcolor="#339900" uuid="d5511dc2-5a4b-4ad6-8e49-5504ab9f7ee9"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Cant.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter height="30" rowSpan="1">
+							<textField pattern="###0">
+								<reportElement x="0" y="0" width="50" height="30" forecolor="#FFFFFF" uuid="0b7672ea-0519-4b71-87c7-0e6bdaffc9bc"/>
+								<textElement>
+									<font size="8" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{CANTIDAD}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell height="17" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="50" height="11" uuid="b290a680-0027-4513-87ec-19cc458e4fc4"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font size="8"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{pv_movimiento_item_CANTID}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="22" uuid="afe7a156-11ef-4918-8a60-2f07421138c3">
+						<jr:columnHeader style="table 2_CH" height="19" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="21" height="19" backcolor="#339900" uuid="d8acbb2f-888c-48b7-ac3f-2033ab39583a"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[U.M.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="17" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="21" height="11" uuid="3261d92b-2016-479b-a7ee-f88bc87b15c1"/>
+								<textElement textAlignment="Center" verticalAlignment="Top">
+									<font size="8"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{pv_movimiento_item_UNIMED}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="55" uuid="09787a31-4c54-4f96-9212-0651482ca904">
+						<jr:columnHeader style="table 2_CH" height="19" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="55" height="19" backcolor="#339900" uuid="0b3b1874-a5ed-44fd-a6a3-f16d3b699f97"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Pcio. Unit. ]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="17" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="55" height="11" uuid="ed9e056d-8543-435b-a162-48c1b79a394b"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{MONREG}.equals("USD")?$F{pv_movimiento_item_PRESEC}:$F{pv_movimiento_item_PRECIO}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="c4ac37b1-16c7-4947-97fa-37d1c06bed63">
+						<jr:columnHeader style="table 2_CH" height="19" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="19" backcolor="#339900" uuid="9dec8ccc-f2e4-4720-8382-9adc61da252d"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Total]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter height="30" rowSpan="1">
+							<textField pattern="###0.00">
+								<reportElement x="0" y="0" width="60" height="18" forecolor="#FFFFFF" uuid="2c80dd56-4a2b-48ab-a577-4f7027e2bd31"/>
+								<textElement>
+									<font isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{IMPORTE_GRAVADO}]]></textFieldExpression>
+							</textField>
+						</jr:columnFooter>
+						<jr:detailCell height="17" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="3" width="60" height="11" uuid="a60aa258-1b1c-4c92-a54e-0312bcae5678"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{MONREG}.equals("USD")?$F{pv_movimiento_item_IMPSEC}:$F{pv_movimiento_item_IMPNAC}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<line>
+				<reportElement x="0" y="475" width="555" height="1" forecolor="#666666" uuid="eb399e28-4ef4-46df-b5f0-935f4c8ba694"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="102" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="5" y="92" width="100" height="10" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="67" y="0" width="317" height="31" uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_OBSERV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="237" y="92" width="100" height="10" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="0" width="62" height="11" uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observaciones:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="478" y="13" width="74" height="13" uuid="ddca01f4-0a72-476f-97b7-191945f586c4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_MONREG}.equals("USD")?$F{IVA_1050_SEC}:$F{IVA_1050}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="478" y="24" width="74" height="13" uuid="6e3cf58e-3b67-4020-80e0-181f1f009a7b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_MONREG}.equals("USD")?$F{IVA_2100_SEC}:$F{IVA_2100}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="393" y="13" width="74" height="13" uuid="a44b3144-8dbc-4f79-9b9e-b881afee7a80"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[I.V.A.      10,5 %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="393" y="24" width="74" height="13" uuid="f5f7da9f-ace3-4b13-92a4-3b2ce6b63128"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[I.V.A.      21 %]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="478" y="55" width="74" height="13" uuid="60b82a4b-745e-4c28-8ac5-439a49b37769"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_MONREG}.equals("USD")?$F{TOTAL_SEC}:$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="393" y="55" width="74" height="13" uuid="cd7f4d96-851e-4e1b-9f82-9dfdba540b3b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="5" y="31" width="379" height="22" uuid="48749ae0-59dc-47b1-90c6-52d124b3de3f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EN_LETRAS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="468" y="24" width="10" height="13" uuid="a3130c5b-25eb-4cb2-9bc2-913c7bc34a7a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[$]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="13" width="10" height="13" uuid="f7219a26-5f61-4c9f-aa4c-222d61baf781"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[$]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="55" width="10" height="13" uuid="755fbd7d-692f-4a85-a16f-0df285da4c42"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[$]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="393" y="0" width="74" height="13" uuid="f3d7ce98-9da3-4be8-8a27-fca8191ba360"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Subtotal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="0" width="10" height="13" uuid="5fedbda5-c54a-478a-bf7f-159fe564e748"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[$]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="478" y="0" width="74" height="13" uuid="d7aac698-1a0e-4f0a-8ed4-74b8ef0fec13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_MONREG}.equals("USD")
+?$F{GRAVADO_0000_SEC}.add($F{GRAVADO_1050_SEC}).add($F{GRAVADO_2100_SEC}).add($F{GRAVADO_2700_SEC})
+:$F{GRAVADO_0000}.add($F{GRAVADO_1050}).add($F{GRAVADO_2100}).add($F{GRAVADO_2700})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="468" y="37" width="10" height="13" uuid="e7ce7a61-d06b-49a3-9e4d-832cc402b521"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[$]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="393" y="37" width="74" height="13" uuid="8341a079-1325-489f-b79f-41fe11eb7579"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[I.V.A.      27 %]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="478" y="37" width="74" height="13" uuid="afa8092a-9315-4d90-959f-3f058ac08707"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_movimiento_MONREG}.equals("USD")?$F{IVA_2700_SEC}:$F{GRAVADO_2700}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

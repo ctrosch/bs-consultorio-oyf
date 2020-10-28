@@ -1,0 +1,54 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{movimientoPrestamoBean.buscar()}"
+                    immediate="true"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoPrestamoBean.modoVista eq 'B' or empty movimientoPrestamoBean.m.destinatario}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{movimientoPrestamoBean.nuevo()}"
+                    process="@this"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoPrestamoBean.modoVista eq 'B' or empty movimientoPrestamoBean.m.destinatario}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    rendered="#{not empty movimientoPrestamoBean.m and movimientoPrestamoBean.modoVista eq 'D'}"
+                    actionListener="#{movimientoPrestamoBean.guardar(false)}"
+                    update="@form" />
+
+
+
+        <!--
+        <p:menuitem value="Generar liquidaciones" icon="fa fa-search"
+                    actionListener="#{generadorMovimientoBean.generarLiquidacionesPrestamo}"
+                    immediate="true"
+                    update="@form" />
+        -->
+
+        <p:menuitem value="Imprimir" icon="fa fa-print"
+                    actionListener="#{movimientoPrestamoBean.imprimir}"
+                    rendered="#{not empty movimientoPrestamoBean.m.id }"
+                    process="@this"
+                    update="@form"
+                    oncomplete="PF('dlg_reporte').show()">
+        </p:menuitem>
+
+    </p:menubar>
+
+</ui:composition>
+

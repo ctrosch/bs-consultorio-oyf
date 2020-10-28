@@ -1,0 +1,219 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda"  value="#{circuitoFacturacionBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500" process="@this,filtro" update="tabla" listener="#{circuitoFacturacionBean.buscar}" />
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{circuitoFacturacionBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{circuitoFacturacionBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+
+            <!-- filtros a agregar -->
+
+            <p:autoComplete value="#{circuitoFacturacionBean.circuitoInicio}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Circuito Inicio"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{codigoCircuitoFacturacionBean.complete}"
+                            converter="#{conversoresFacturacion.codigoCircuito}"
+                            var="a" itemLabel="#{a.descripcionComplete}" itemValue="#{a}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{circuitoFacturacionBean.buscar}" />
+            </p:autoComplete>
+
+            <p:autoComplete value="#{circuitoFacturacionBean.circuitoAplicado}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Circuito Aplicado"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{codigoCircuitoFacturacionBean.complete}"
+                            converter="#{conversoresFacturacion.codigoCircuito}"
+                            var="c" itemLabel="#{c.descripcionComplete}" itemValue="#{c}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{circuitoFacturacionBean.buscar}" />
+            </p:autoComplete>
+
+            <p:selectOneMenu value="#{circuitoFacturacionBean.actualizaFacturacion}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{circuitoFacturacionBean.buscar}"/>
+                <f:selectItem itemLabel="Actualiza Facturación" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{circuitoFacturacionBean.actualizaVenta}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{circuitoFacturacionBean.buscar}"/>
+                <f:selectItem itemLabel="Actualiza Ventas" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{circuitoFacturacionBean.actualizaTesoreria}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{circuitoFacturacionBean.buscar}"/>
+                <f:selectItem itemLabel="Actualiza Tesorería" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{circuitoFacturacionBean.actualizaStock}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{circuitoFacturacionBean.buscar}"/>
+                <f:selectItem itemLabel="Actualiza Stock" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+
+            <p:selectOneMenu value="#{circuitoFacturacionBean.comprometeStock}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{circuitoFacturacionBean.buscar}"/>
+                <f:selectItem itemLabel="Compromete Stock" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{circuitoFacturacionBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="@form" listener="#{circuitoFacturacionBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+            <h:outputText value="" />
+
+            <h:outputText value="" />
+
+            <h:outputText value="" />
+
+            <h:outputText value="" />
+
+
+
+
+
+        </p:panelGrid>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{circuitoFacturacionBean.lista}" var="e"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{circuitoFacturacionBean.circuito}" rowKey="#{e}"
+                 rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{circuitoFacturacionBean.onSelect}" update="@form" />
+
+        <p:column headerText="Circuito Inicio" width="10%" style="text-align: center;"
+                  sortBy="#{e.circom}"   >
+            <h:outputText value="#{e.circom}" />
+        </p:column>
+
+        <p:column headerText="Circuito Aplicado" width="10%" style="text-align: center;"
+                  sortBy="#{e.cirapl}"   >
+            <h:outputText value="#{e.cirapl}" />
+        </p:column>
+
+        <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                  sortBy="#{e.descripcion}" >
+            <h:outputText value="#{e.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Act. Facturación" width="15%" style="text-align: left;"
+                  sortBy="#{e.actualizaFacturacion}" >
+            <h:outputText value="Si" rendered="#{e.actualizaFacturacion eq 'S'}" />
+            <h:outputText value="No" rendered="#{e.actualizaFacturacion eq 'N'}" />
+        </p:column>
+
+        <p:column headerText="Act. Venta" width="15%" style="text-align: left;"
+                  sortBy="#{e.actualizaVenta}" >
+            <h:outputText value="Si" rendered="#{e.actualizaVenta eq 'S'}" />
+            <h:outputText value="No" rendered="#{e.actualizaVenta eq 'N'}" />
+        </p:column>
+
+        <p:column headerText="Act. Tesoreria" width="15%" style="text-align: left;"
+                  sortBy="#{e.actualizaTesoreria}" >
+            <h:outputText value="Si" rendered="#{e.actualizaTesoreria eq 'S'}" />
+            <h:outputText value="No" rendered="#{e.actualizaTesoreria eq 'N'}" />
+
+        </p:column>
+
+        <p:column headerText="Act. Stock" width="15%" style="text-align: left;"
+                  sortBy="#{e.actualizaStock}" >
+            <h:outputText value="Si" rendered="#{e.actualizaStock eq 'S'}" />
+            <h:outputText value="No" rendered="#{e.actualizaStock eq 'N'}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{circuitoFacturacionBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{circuitoFacturacionBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>
+

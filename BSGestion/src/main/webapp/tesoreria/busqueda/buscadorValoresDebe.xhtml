@@ -1,0 +1,77 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorValoresDebe" header="Buscador de cheques" modal="true"
+              widgetVar="dlgValoresDebe"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              position="top"
+              style="max-width: 900px;" responsive="true"
+              showEffect="fade" hideEffect="fade">   
+        
+        <h:form id="fBuscadorChequeDebe" prependId="false" >
+            
+            <div class="CardTopic Opac90 OvHidden">
+                <i class="fa fa-archive Fleft Fs30"></i>                
+                <h:outputText value="#{consultaValoresBean.cuentaTesoreria.codigo} - #{consultaValoresBean.cuentaTesoreria.descripcion}" style="padding-left: 10px;" />     
+            </div>
+            
+            <div class="EmptyBox10" />
+        
+            <p:dataTable id="tablaChequesDebe" value="#{consultaValoresBean.pendientes}" var="p"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"
+                         rows="10" paginator="true" 
+                         selectionMode="single" selection="#{consultaValoresBean.itemPendiente}" rowKey="#{p}" > 
+                
+                <p:ajax event="rowSelect" listener="#{consultaValoresBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgValoresDebe').hide(), procesarValorSeleccionadoDebe()" />
+
+                <p:column headerText="Nro Cheque" width="15%" style="text-align: left;"
+                          sortBy="#{p.cheque}" filterBy="#{p.cheque}" filterMatchMode="contains" >
+                    <h:outputText value="#{p.cheque}" />
+                </p:column>
+                
+                <p:column headerText="Importe" width="10%" style="text-align: right;" 
+                          sortBy="#{p.importe}"  >
+                    <h:outputText value="#{p.importe}" >
+                        <f:convertNumber pattern="#,###.00" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Fecha Vto." width="10%" style="text-align: center;"
+                          sortBy="#{p.fechaVencimiento}" >
+                    <h:outputText value="#{p.fechaVencimiento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Banco" width="20%" style="text-align: left;"
+                          sortBy="#{p.banco.descripcion}"  >
+                    <h:outputText value="#{p.banco.descripcion}" />
+                </p:column>
+                
+                <p:column headerText="Entidad" width="20%" style="text-align: left;"
+                          sortBy="#{p.nombre}" filterBy="#{p.nombre}" filterMatchMode="contains" >
+                    <h:outputText value="#{p.nombre}" />
+                </p:column>
+                
+                <!--                
+                <p:column headerText="Firmante" width="20%" style="text-align: left;"
+                          sortBy="#{p.firmante}" filterBy="#{p.firmante}" filterMatchMode="contains" >
+                    <h:outputText value="#{p.firmante}" />
+                </p:column>
+                -->
+
+            </p:dataTable>  
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

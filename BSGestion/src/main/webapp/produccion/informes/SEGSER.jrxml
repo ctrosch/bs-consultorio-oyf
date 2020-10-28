@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="parteProceso" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="NROSER" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_DIRECION" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_FAX" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_IVA" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="CODPRD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+
+     pdrmvs.`PDRMVS_MODFOR` AS pdrmvs_PDRMVS_MODFOR,
+     pdrmvs.`PDRMVS_CODFOR` AS pdrmvs_PDRMVS_CODFOR,
+     pdrmvs.`PDRMVS_NROFOR` AS pdrmvs_PDRMVS_NROFOR,
+     pdrmvs.`PDRMVS_TIPPRO` AS pdrmvs_PDRMVS_TIPPRO,
+     pdrmvs.`PDRMVS_ARTCOD` AS pdrmvs_PDRMVS_ARTCOD,
+     pdrmvs.`PDRMVS_NSERIE` AS pdrmvs_PDRMVS_NSERIE,
+     pdrmvh.`PDRMVH_FCHINI` AS pdrmvh_PDRMVH_FCHINI,
+     pdrmvh.`PDRMVH_FCHREQ` AS pdrmvh_PDRMVH_FCHREQ,
+     pdrmvh.`PDRMVH_FCHMOV` AS pdrmvh_PDRMVH_FCHMOV,
+     stmpdh.`STMPDH_DESCRP` AS stmpdh_STMPDH_DESCRP,
+     stmpdh.`STMPDH_UNIMED` AS stmpdh_STMPDH_UNIMED,
+     pdrmvi.`PDRMVI_CANTID` AS pdrmvi_PDRMVI_CANTID,
+     pdrmvi.`PDRMVI_MODORI` AS pdrmvi_PDRMVI_MODORI,
+     pdrmvi.`PDRMVI_CODORI` AS pdrmvi_PDRMVI_CODORI,
+     pdrmvi.`PDRMVI_NROORI` AS pdrmvi_PDRMVI_NROORI,
+( SELECT `pdrmvh`.`PDRMVH_FCHMOV` FROM `pdrmvh` WHERE pdrmvh.PDRMVH_MODFOR = pdrmvi_PDRMVI_MODORI AND pdrmvh.PDRMVH_CODFOR = pdrmvi_PDRMVI_CODORI AND pdrmvh.PDRMVH_NROFOR = pdrmvi_PDRMVI_NROORI ) AS FCHORI
+FROM
+     `pdrmvi` pdrmvi INNER JOIN `pdrmvs` pdrmvs ON pdrmvi.`PDRMVI_MODFOR` = pdrmvs.`PDRMVS_MODFOR`
+     AND pdrmvi.`PDRMVI_ITMEXP` = pdrmvs.`PDRMVS_ITMEXP`
+     AND pdrmvi.`PDRMVI_CODFOR` = pdrmvs.`PDRMVS_CODFOR`
+     AND pdrmvi.`PDRMVI_NIVEXP` = pdrmvs.`PDRMVS_NIVEXP`
+     AND pdrmvi.`PDRMVI_NROFOR` = pdrmvs.`PDRMVS_NROFOR`
+     AND pdrmvi.`PDRMVI_NROITM` = pdrmvs.`PDRMVS_NROITM`
+     INNER JOIN `pdrmvh` pdrmvh ON pdrmvi.`PDRMVI_MODAPL` = pdrmvh.`PDRMVH_MODFOR`
+     AND pdrmvh.`PDRMVH_NROFOR` = pdrmvi.`PDRMVI_NROAPL`
+     AND pdrmvh.`PDRMVH_CODFOR` = pdrmvi.`PDRMVI_CODAPL`
+     INNER JOIN `stmpdh` stmpdh ON pdrmvi.`PDRMVI_TIPPRO` = stmpdh.`STMPDH_TIPPRO`
+     AND stmpdh.`STMPDH_ARTCOD` = pdrmvi.`PDRMVI_ARTCOD`
+WHERE
+   pdrmvs.`PDRMVS_NSERIE` = $P{NROSER}
+
+ORDER BY
+     pdrmvs.`PDRMVS_MODFOR` ASC,
+     pdrmvs.`PDRMVS_CODFOR` ASC,
+     pdrmvs.`PDRMVS_NROFOR` ASC,
+     pdrmvs.`PDRMVS_TIPPRO` ASC,
+     pdrmvs.`PDRMVS_ARTCOD` ASC,
+     pdrmvs.`PDRMVS_NSERIE` ASC]]>
+	</queryString>
+	<field name="pdrmvs_PDRMVS_MODFOR" class="java.lang.String"/>
+	<field name="pdrmvs_PDRMVS_CODFOR" class="java.lang.String"/>
+	<field name="pdrmvs_PDRMVS_NROFOR" class="java.lang.Integer"/>
+	<field name="pdrmvs_PDRMVS_TIPPRO" class="java.lang.String"/>
+	<field name="pdrmvs_PDRMVS_ARTCOD" class="java.lang.String"/>
+	<field name="pdrmvs_PDRMVS_NSERIE" class="java.lang.String"/>
+	<field name="pdrmvh_PDRMVH_FCHINI" class="java.sql.Timestamp"/>
+	<field name="pdrmvh_PDRMVH_FCHREQ" class="java.sql.Timestamp"/>
+	<field name="pdrmvh_PDRMVH_FCHMOV" class="java.sql.Timestamp"/>
+	<field name="stmpdh_STMPDH_DESCRP" class="java.lang.String"/>
+	<field name="stmpdh_STMPDH_UNIMED" class="java.lang.String"/>
+	<field name="pdrmvi_PDRMVI_CANTID" class="java.math.BigDecimal"/>
+	<field name="pdrmvi_PDRMVI_MODORI" class="java.lang.String"/>
+	<field name="pdrmvi_PDRMVI_CODORI" class="java.lang.String"/>
+	<field name="pdrmvi_PDRMVI_NROORI" class="java.lang.Integer"/>
+	<field name="FCHORI" class="java.sql.Timestamp"/>
+	<filterExpression><![CDATA[( $P{CODPRD} == "" ? $F{pdrmvs_PDRMVS_ARTCOD}!=null : $F{pdrmvs_PDRMVS_ARTCOD}== $P{CODPRD} )]]></filterExpression>
+	<group name="CODAPL">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="5"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="12"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="60" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b524773c-d3aa-458b-9d7e-5c6549723db1" x="430" y="5" width="114" height="13"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<image onErrorType="Blank">
+				<reportElement uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945" x="6" y="5" width="140" height="50"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8212ba1a-b294-499c-8696-fa465f6759d9" x="430" y="40" width="114" height="12"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a" x="430" y="18" width="114" height="12"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0427b782-8e84-49fb-8bce-824533e57710" x="430" y="29" width="114" height="11"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="24624d49-6ced-443f-849c-11d10cc02327" x="1" y="59" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement uuid="a2170831-50a6-4035-a08e-f5d766cf6464" x="146" y="2" width="273" height="58"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Seguimiento número serie]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="24624d49-6ced-443f-849c-11d10cc02327" x="419" y="0" width="1" height="60"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="75" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="5c967b4e-0bfc-4457-863c-a643b4a8fe34" x="0" y="0" width="555" height="75"/>
+				<graphicElement>
+					<pen lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement uuid="c941f899-6c37-4e97-841a-df204332e3a3" x="84" y="0" width="443" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stmpdh_STMPDH_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="da308700-1205-4410-a6df-f95b3cce69b0" x="84" y="15" width="103" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdrmvs_PDRMVS_NSERIE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a1d4a1f9-e207-44fd-b319-e65d9f411743" x="1" y="15" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Número de serie:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2264da23-c07f-4c91-bd7f-81eb065dad85" x="1" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Producto:]]></text>
+			</staticText>
+			<textField pattern="###0">
+				<reportElement uuid="da308700-1205-4410-a6df-f95b3cce69b0" x="84" y="30" width="44" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdrmvs_PDRMVS_CODFOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a28032b2-0147-4820-9875-b9ad2929fede" x="1" y="30" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Parte Producción:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f289343b-3d28-4e8d-bf17-e6fa40dfb697" x="135" y="30" width="52" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Número]]></text>
+			</staticText>
+			<textField pattern="00000000">
+				<reportElement uuid="da308700-1205-4410-a6df-f95b3cce69b0" x="187" y="30" width="60" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdrmvs_PDRMVS_NROFOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="da308700-1205-4410-a6df-f95b3cce69b0" x="313" y="30" width="77" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdrmvh_PDRMVH_FCHMOV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f289343b-3d28-4e8d-bf17-e6fa40dfb697" x="265" y="30" width="48" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField pattern="00000000">
+				<reportElement uuid="da308700-1205-4410-a6df-f95b3cce69b0" x="187" y="45" width="60" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdrmvi_PDRMVI_NROORI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a28032b2-0147-4820-9875-b9ad2929fede" x="1" y="45" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Hoja de Ruta:]]></text>
+			</staticText>
+			<textField pattern="###0">
+				<reportElement uuid="da308700-1205-4410-a6df-f95b3cce69b0" x="84" y="45" width="44" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdrmvi_PDRMVI_CODORI}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="da308700-1205-4410-a6df-f95b3cce69b0" x="313" y="45" width="77" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FCHORI}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f289343b-3d28-4e8d-bf17-e6fa40dfb697" x="265" y="45" width="48" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f289343b-3d28-4e8d-bf17-e6fa40dfb697" x="135" y="45" width="52" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[Número]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="38" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

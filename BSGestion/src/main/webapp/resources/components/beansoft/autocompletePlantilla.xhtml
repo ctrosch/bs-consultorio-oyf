@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+
+        <title></title>
+
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="Autocomplete para buscar plantillas" >
+            <composite:attribute name="value" required="true" />
+            <composite:attribute name="disabled" default="false" />
+            <composite:attribute name="process" default="@this" />
+            <composite:attribute name="update" default="@this" />
+            <composite:attribute name="listener" default="#" method-signature="java.lang.String action()" />
+            <composite:attribute name="complete" default="#{plantillaBean.complete}" method-signature="java.lang.String action()"/>
+        </composite:interface>
+
+        <composite:implementation>
+
+            <p:autoComplete value="#{cc.attrs.value}" forceSelection="true" dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{plantillaBean.complete}"
+                            disabled="#{cc.attrs.disabled}"
+                            var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                            converter="#{conversoresAdministracion.plantilla}"  >
+
+                <p:ajax event="itemSelect" process="#{cc.attrs.process}" update="#{cc.attrs.update}"
+                        listener="#{cc.attrs.listener}"  />
+
+                <p:column headerText="Módulo">
+                    <h:outputText value="#{p.modulo.codigo}" />
+                </p:column>
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{p.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{p.nombre}" />
+                </p:column>
+
+                <p:column headerText="Origen">
+                    <h:outputText value="#{p.origen}" />
+                </p:column>
+
+            </p:autoComplete>
+
+        </composite:implementation>
+
+    </h:body>
+
+</html>

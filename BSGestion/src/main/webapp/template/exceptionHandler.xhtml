@@ -1,0 +1,53 @@
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+
+    <!--
+    <p:ajaxExceptionHandler type="javax.faces.FacesException"
+                            update="exceptionDialog"
+                            onexception="PF('exceptionDialog').show();" />
+    -->
+
+    <p:ajaxExceptionHandler type="javax.faces.application.ViewExpiredException"
+                            update="expiredDialog"
+                            onexception="PF('expiredDialog').show();" />
+
+
+    <p:dialog id="expiredDialog" header="Su sesión ha expirado" widgetVar="expiredDialog"
+              modal="true" >
+
+        <p>
+            Estimado. Ha pasado un tiempo considerable sin realizar ninguna acción.
+            Por su seguridad, la sessión ha finalizado. Por favor vuelva a ingresar.
+        </p>
+
+        <p style="text-align: center; font-size: 16px; font-weight: bold; color: #93bd22;">
+            <h:outputLink value="#{application.contextPath}/" >
+                Recargar
+            </h:outputLink>
+        </p>
+
+    </p:dialog>
+
+    <p:dialog id="expiredDialogAndClose" header="Su sesión ha expirado" widgetVar="expiredDialogAndClose"
+              closable="false"
+              modal="true" >
+
+        <p>
+            Estimado. Ha pasado un tiempo considerable sin realizar ninguna acción.
+            Por su seguridad, la sessión ha finalizado. Por favor vuelva a ingresar.
+        </p>
+
+        <p style="text-align: center; font-size: 16px; font-weight: bold; color: #93bd22;">
+            <a onclick="javascript:window.close();" href="#">Cerrar la ventana</a>
+        </p>
+
+    </p:dialog>
+
+
+
+</ui:composition>

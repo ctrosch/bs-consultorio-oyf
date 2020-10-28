@@ -1,0 +1,88 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorConceptoPrestamo" header="Conceptos de Préstamo" modal="true"
+              widgetVar="dlgConceptoPrestamo"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 650px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaConceptoPrestamo"/>
+            
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+                
+                <p:inputText id="txtBusquedaConceptoPrestamo" value="#{conceptoPrestamoBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,tipoConceptoPrestamo" update="tablaConceptoPrestamo" listener="#{conceptoPrestamoBean.buscar}"/>
+                </p:inputText>
+
+                <p:selectOneMenu id="tipoConceptoPrestamo" value="#{conceptoPrestamoBean.tipoConcepto}"
+                                 converter="#{conversoresGeneral.tipoConcepto}"  >
+                    <f:selectItem itemLabel="Todos" itemValue="" />
+                    <f:selectItems value="#{conceptoPrestamoBean.tipos}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaConceptoPrestamo" update="tablaConceptoPrestamo" listener="#{conceptoPrestamoBean.buscar}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>        
+
+            <p:dataTable id="tablaConceptoPrestamo" value="#{conceptoPrestamoBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{conceptoPrestamoBean.concepto}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+                
+                <p:ajax event="rowSelect" listener="#{conceptoPrestamoBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgConceptoPrestamo').hide(), procesarConceptoPrestamo()" />
+                    
+                <p:column headerText="Código" width="100" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >                                             
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción"  style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+                
+                 <p:column headerText="Tipo"  >                         
+                    <h:outputText value="#{e.tipoConcepto.descripcion}" />
+                </p:column>
+
+            </p:dataTable> 
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{conceptoPrestamoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaConceptoPrestamo" listener="#{conceptoPrestamoBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistrosConceptoPrestamo" value="#{conceptoPrestamoBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{conceptoPrestamoBean.buscar}"
+                                     process="@this,cantRegistrosConceptoPrestamo" update="tablaConceptoPrestamo" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

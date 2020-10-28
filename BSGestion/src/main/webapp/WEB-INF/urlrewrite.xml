@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+
+<!--
+    Configuration file for UrlRewriteFilter
+    http://www.tuckey.org/urlrewrite/
+-->
+<urlrewrite>
+
+    <rule>
+        <from>^/principal</from>
+        <to>/global/principal.jsf</to>
+    </rule>
+
+    <outbound-rule>
+        <from>^/global/principal.jsf</from>
+        <to type="redirect" >/principal</to>
+    </outbound-rule>
+
+    <rule>
+        <from>^/inicio</from>
+        <to>/global/inicio.jsf</to>
+    </rule>
+
+    <outbound-rule>
+        <from>^/global/inicio.jsf</from>
+        <to type="redirect" >/inicio</to>
+    </outbound-rule>
+
+    <rule>
+        <from>^/correos-electronicos</from>
+        <to>/administracion/correosElectronicos.jsf</to>
+    </rule>
+
+    <outbound-rule>
+        <from>^/administracion/correosElectronicos.jsf</from>
+        <to type="redirect" >/administracion/</to>
+    </outbound-rule>
+
+    <rule>
+        <from>^/gestion-tareas</from>
+        <to>/tarea/movimiento/tareas.jsf</to>
+    </rule>
+
+    <rule>
+        <from>^/mensajes</from>
+        <to>/global/mensajeria.jsf</to>
+    </rule>
+
+
+
+    <!-- COMPRAS -->
+    <rule>
+        <from>^/compra/seguimiento-comprobante/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)</from>
+        <to>/compra/informes/seguimientoComprobante.jsf?MODFOR=$1&amp;CODFOR=$2&amp;NROFOR=$3</to>
+    </rule>
+
+    <rule>
+        <from>^/compra/seguimiento-comprobante</from>
+        <to>/compra/informes/seguimientoComprobante.jsf</to>
+    </rule>
+
+
+    <!-- FACTURACION -->
+    <rule>
+        <from>^/facturacion/seguimiento-comprobante/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)</from>
+        <to>/facturacion/informes/seguimientoComprobante.jsf?MODFOR=$1&amp;CODFOR=$2&amp;NROFOR=$3</to>
+    </rule>
+
+    <rule>
+        <from>^/compra/seguimiento-comprobante</from>
+        <to>/facturacion/informes/seguimientoComprobante.jsf</to>
+    </rule>
+
+
+
+    <!-- stock -->
+    <rule>
+        <from>^/producto/([a-zA-Z0-9]+)</from>
+        <to>/stock/tablas/producto.jsf?idProducto=$1</to>
+    </rule>
+
+    <rule>
+        <from>^/producto</from>
+        <to>/stock/tablas/producto.jsf</to>
+    </rule>
+
+    <rule>
+        <from>^/vendedores/</from>
+        <to>/global/vendedores.jsf</to>
+    </rule>
+
+    <rule>
+        <from>^/ayuda/</from>
+        <to>/global/ayuda.jsf</to>
+    </rule>
+
+    <rule>
+        <from>^/mi-perfil</from>
+        <to>/seguridad/tablas/misDatos.jsf</to>
+    </rule>
+
+    <rule>
+        <from>^/recupero-clave</from>
+        <to>/seguridad/recuperarClave.jsf</to>
+    </rule>
+
+
+    <!-- BAR Y RESTAURANT -->
+    <rule>
+        <from>^/bar/reserva</from>
+        <to>/bar/movimiento/gestionReserva.jsf</to>
+    </rule>
+
+    <!--
+     <rule>
+        <name>Strip URL Session ID's</name>
+        <condition type="requested-session-id-from-url" operator="equal">true</condition>
+        <from>^(.*?)(?:\;jsessionid=[^\?#]*)?(\?[^#]*)?(#.*)?$</from>
+        <to type="permanent-redirect">$1$2$3</to>
+    </rule>
+    -->
+
+    <outbound-rule>
+        <name>Strip URL Session ID's</name>
+        <condition name="user-agent">googlebot</condition>
+        <from>^(.*?)(?:\;jsessionid=[^\?#]*)?(\?[^#]*)?(#.*)?$</from>
+        <to>$1$2$3</to>
+    </outbound-rule>
+
+    <outbound-rule encodefirst="true">
+        <note>Remove jsessionid from embedded urls - for urls WITH query parameters</note>
+        <from>^/(.*);jsessionid=.*[?](.*)$</from>
+        <to encode="false">$1?$2</to>
+    </outbound-rule>
+
+    <outbound-rule encodefirst="true">
+        <note>Remove jsessionid from embedded urls - for urls WITHOUT query parameters</note>
+        <from>^/(.*);jsessionid=.*[^?]$</from>
+        <to encode="false">$1</to>
+    </outbound-rule>
+
+    <rule>
+        <note>
+            The rule means that requests to /test/status/ will be redirected to /rewrite-status
+            the url will be rewritten.
+        </note>
+        <from>/test/status/</from>
+        <to type="redirect">%{context-path}/rewrite-status</to>
+    </rule>
+
+    <outbound-rule>
+        <note>
+            The outbound-rule specifies that when response.encodeURL is called (if you are using JSTL c:url)
+            the url /rewrite-status will be rewritten to /test/status/.
+
+            The above rule and this outbound-rule means that end users should never see the
+            url /rewrite-status only /test/status/ both in thier location bar and in hyperlinks
+            in your pages.
+        </note>
+        <from>/rewrite-status</from>
+        <to>/test/status/</to>
+    </outbound-rule>
+
+
+</urlrewrite>

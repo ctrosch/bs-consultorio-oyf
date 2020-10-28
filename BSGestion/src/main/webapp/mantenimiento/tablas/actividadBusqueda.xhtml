@@ -1,0 +1,121 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{actividadBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{actividadBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{actividadBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{actividadBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{actividadBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="@form" listener="#{actividadBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{actividadBean.lista}" var="i"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{actividadBean.actividad}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{actividadBean.onSelect}" update="@form"  />
+
+        <p:column headerText="Código"
+                  sortBy="#{i.codigo}"  width="100" style="text-align: center;" >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción"  style="text-align: left;"
+                  sortBy="#{i.descripcion}" >
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{actividadBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{actividadBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+
+    </p:panelGrid>
+
+</ui:composition>

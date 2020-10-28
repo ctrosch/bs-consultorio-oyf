@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU" value="#{ordenPagoBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{ordenPagoBean.titulo}"/>
+            <f:viewParam name="SUCURS" value="#{ordenPagoBean.SUCCJ}"/>
+            <f:viewParam name="SUCCJ"  value="#{ordenPagoBean.SUCCJ}"/>
+            <f:viewParam name="CODCJ"  value="#{ordenPagoBean.CODCJ}"/>
+            <f:viewParam name="CODPV"  value="#{ordenPagoBean.CODPV}"/>
+
+            <f:event type="preRenderView" listener="#{ordenPagoBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{ordenPagoBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{ordenPagoBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu-right">
+            <p:commandLink actionListener="#{ordenPagoBean.addFavorito()}"
+                           process="@this"
+                           update="message,messageg"
+                           styleClass="Fs30 Fright" style="color: #0277bd;padding-right: 5px;" >
+                <i class="fa fa-star" ></i>
+            </p:commandLink>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <ui:include src="ordenPagoMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{ordenPagoBean.modoVista eq 'B'}" >
+                <ui:include src="ordenPagoBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{ordenPagoBean.modoVista eq 'D'}" >
+                <ui:include src="ordenPagoDatos.xhtml" />
+
+                <ui:include src="ordenPagoPendiente.xhtml" />
+
+                <ui:include src="ordenPagoRetenciones.xhtml" />
+
+                <ui:include src="ordenPagoConcepto.xhtml" />
+
+                <ui:include src="ordenPagoTotales.xhtml" />
+            </ui:fragment>
+
+
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{ordenPagoBean.muestraReporte}"
+                               nombreArchivo="#{ordenPagoBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <!-- ENVIO COMPROBANTE -->
+            <bs:envioComprobante solicitaEmail="#{ordenPagoBean.solicitaEmail}"
+                                 email="#{ordenPagoBean.emailEnvioComprobante}"
+                                 informacionAdicional ="#{ordenPagoBean.informacionAdicional}"
+                                 actionListener="#{ordenPagoBean.enviarNotificaciones()}"  />
+
+            <ui:include src="/tesoreria/busqueda/buscadorBanco.xhtml" />
+            <ui:include src="/tesoreria/busqueda/buscadorValores.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

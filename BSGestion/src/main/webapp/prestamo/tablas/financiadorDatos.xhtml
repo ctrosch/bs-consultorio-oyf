@@ -1,0 +1,135 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-12 ui-lg-6, ui-g-6 ui-md-12 ui-lg-6" >
+
+        <h:panelGroup layout="block" >
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-6 ui-md-12 ui-lg-6, ui-g-6 ui-md-12 ui-lg-6" >
+
+                <h:outputText value="Descripción" />
+                <p:inputText value="#{financiadorBean.financiador.descripcion}"
+                             required="true"
+                             requiredMessage="La descripción es necesaria" />
+
+            </p:panelGrid>
+
+
+        </h:panelGroup>
+
+        <p:tabView>
+
+            <p:tab title="Cuentas contables asociadas">
+
+                <p:dataTable  id="tablaCuentasContables" var="i"  resizeMode="expand" liveResize="true"
+                              value="#{financiadorBean.financiador.itemsCuentaContable}"
+                              emptyMessage="No se encontraron items. Haga clic en agregar items"
+                              rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                    <f:facet name="header" >
+                        Condiciones de Pago
+                    </f:facet>
+
+                    <f:facet name="footer" >
+
+                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                         actionListener="#{financiadorBean.nuevoItemCuentaContable()}"
+                                         value="Agregar Condición"
+                                         process="tablaCuentasContables"
+                                         update="tablaCuentasContables" />
+
+                    </f:facet>
+
+                    <p:column headerText="Concepto"  >
+
+                        <div class="ui-inputgroup">
+                            <p:autoComplete value="#{i.concepto}"
+                                            required="true" requiredMessage="Seleccione el concepto"
+                                            maxResults="8" queryDelay="1000" dropdown="true"
+                                            completeMethod="#{conceptoPrestamoBean.complete}"
+                                            var="p" itemLabel="#{p.codigo} #{p.descripcion}" itemValue="#{p}"
+                                            converter="#{conversoresGeneral.concepto}" >
+
+                                <p:ajax event="itemSelect" process="@this"  />
+
+                                <p:column headerText="Tipo">
+                                    <h:outputText value="#{p.tipoConcepto.descripcion}" />
+                                </p:column>
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{p.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Descripción">
+                                    <h:outputText value="#{p.descripcion}" />
+                                </p:column>
+
+                            </p:autoComplete>
+                            <span class="ui-inputgroup-addon">
+                                <bs:linkMenuSistema title="Ver concepto"
+                                                    url="#{financiadorBean.obtenerUrlMenu('SIS_00416','CODIGO',i.concepto.codigo,'TCONCEPTO',i.concepto.tipo)}" />
+                            </span>
+                        </div>
+                    </p:column>
+
+                    <p:column headerText="Cuenta contable"  >
+                        <div class="ui-inputgroup">
+                            <p:autoComplete value="#{i.cuentaContable}" dropdown="true"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{cuentaContableBean.completeImputable}"
+                                            var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                            converter="#{conversoresContabilidad.cuentaContable}" >
+
+                                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                                <p:column headerText="Nro cuenta">
+                                    <h:outputText value="#{p.nrocta}" />
+                                </p:column>
+
+                                <p:column headerText="Descripción">
+                                    <h:outputText value="#{p.descripcion}" />
+                                </p:column>
+
+                                <p:column headerText="Imputable">
+                                    <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                                    <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+                                </p:column>
+
+                            </p:autoComplete>
+                            <span class="ui-inputgroup-addon">
+                                <bs:linkMenuSistema title="Ver cuenta contable"
+                                                    url="#{financiadorBean.obtenerUrlMenu('SIS_00420','NROCTA',i.cuentaContable.nrocta)}" />
+                            </span>
+                        </div>
+
+                    </p:column>
+
+                    <p:column headerText="" width="50" style="text-align: center;" >
+
+                        <p:commandLink process="tablaCuentasContables" update="tablaCuentasContables,message,messageg"
+                                       actionListener="#{financiadorBean.eliminarItemCuentaContable(i)}" >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                            <i class="fa fa-close fa-2x Red" ></i>
+                        </p:commandLink>
+
+                    </p:column>
+
+                </p:dataTable>
+
+
+            </p:tab>
+        </p:tabView>
+
+    </p:panelGrid>
+
+</ui:composition>
+

@@ -1,0 +1,66 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorLineaCredito" header="Linea de Creditos" modal="true"
+              widgetVar="dlgLineaCredito"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              style="max-width: 650px;" responsive="true" 
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+
+            <p:inputText value="#{lineaCreditoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this" update="tablaLineaCredito" listener="#{lineaCreditoBean.buscar()}"/>
+            </p:inputText>
+            
+            <div class="EmptyBox10" />
+            
+            <p:dataTable id="tablaLineaCredito" value="#{lineaCreditoBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{lineaCreditoBean.lineaCredito}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{lineaCreditoBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgLineaCredito').hide(), procesarLineaCredito()" />
+
+                <p:column headerText="Descripción" >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+            </p:dataTable>
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{lineaCreditoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaLineaCredito" listener="#{lineaCreditoBean.buscar()}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroLineaCredito" value="#{lineaCreditoBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{lineaCreditoBean.buscar()}"
+                                     process="@this,cantRegistroLineaCredito" update="tablaLineaCredito" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

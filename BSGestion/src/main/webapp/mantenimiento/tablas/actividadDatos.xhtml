@@ -1,0 +1,405 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <p:panelGrid id="datos" columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+        <h:outputText value="Código *" />
+        <p:inputText value="#{actividadBean.actividad.codigo}" maxlength="10"
+                     required="true" requiredMessage="El código es obligatorio" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{actividadBean.actividad.descripcion}" maxlength="120"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <h:outputText value="Tiempo estimado" />
+        <p:inputText value="#{actividadBean.actividad.tiempoEstimado  }" readonly="true" >
+            <f:convertDateTime pattern="HH:mm:ss" />
+        </p:inputText>
+
+        <h:outputText value="Tiempo parada" />
+        <p:inputText value="#{actividadBean.actividad.tiempoParada}" readonly="true" >
+            <f:convertDateTime pattern="HH:mm:ss" />
+        </p:inputText>
+
+    </p:panelGrid>
+
+    <p:tabView activeIndex="#{actividadBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{actividadBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Activadores">
+
+            <p:dataTable id="activador" style="max-width: 900px;" var="e" value="#{actividadBean.actividad.activador}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{actividadBean.nuevoActivador() }"
+                                     value="Agregar"
+                                     process="activador"
+                                     update="activador" />
+
+                </f:facet>
+
+                <p:column headerText="Tipo" width="150"
+                          sortBy="#{e.tipoActivador}"  >
+
+                    <p:selectOneMenu value="#{e.tipoActivador}" >
+
+                        <p:ajax event="itemSelect" process="@this" update="activador"  />
+
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Evento"      itemValue="E" />
+                        <f:selectItem itemLabel="Fecha"       itemValue="F" />
+                    </p:selectOneMenu>
+                </p:column>
+
+                <p:column headerText="Descripción" width="150" >
+                    <p:inputText value="#{e.descripcion}" required="true" requiredMessage="La descripción es obligatoria" />
+                </p:column>
+
+                <p:column headerText="Hacer Cada" width="100"  >
+
+                    <p:inputText value="#{e.cantidad}" styleClass="TexAlRight"
+                                 rendered="#{e.tipoActivador eq 'F'}" >
+                        <f:convertNumber pattern="0" />
+                        <p:ajax event="keyup" delay="500" process="@this" />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="Período/Evento" width="150" >
+
+                    <p:autoComplete value="#{e.periodo}"  dropdown="true" forceSelection="true"
+                                    rendered="#{e.tipoActivador eq 'F'}"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{periodoBean.complete}"
+                                    required="true" requiredMessage="El período es obligatorio"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresGeneral.periodo}" >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+                    </p:autoComplete>
+
+                    <p:autoComplete value="#{e.evento}"  dropdown="true" forceSelection="true"
+                                    rendered="#{e.tipoActivador eq 'E'}"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{eventoMantenimientoBean.complete}"
+                                    required="true" requiredMessage="El evento es obligatorio"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresMantenimiento.evento}" >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+                    </p:autoComplete>
+
+                </p:column>
+
+                <p:column headerText="Repetir" width="120"  >
+
+                    <p:selectOneMenu value="#{e.repite}" >
+                        <f:selectItem itemLabel="Siempre" itemValue="S" />
+                        <f:selectItem itemLabel="Por" itemValue="P" />
+                    </p:selectOneMenu>
+
+                </p:column>
+
+                <p:column headerText="Cant. Repeticiones" width="80"  >
+
+                    <p:inputText value="#{e.cantidadReperticiones}" >
+                        <f:convertNumber pattern="0" />
+                        <p:ajax event="keyup" delay="500" process="@this" />
+                    </p:inputText>
+
+                    Veces
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="activador" update="activador,message,messageg"
+                                   actionListener="#{actividadBean.eliminarActivador(e) }" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t1" title="SubActividades">
+
+            <p:dataTable id="subactividades" style="max-width: 700px;" var="e" value="#{actividadBean.actividad.subactividades}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{actividadBean.nuevoSubActividad()}"
+                                     value="Agregar"
+                                     process="subactividades"
+                                     update="subactividades" />
+
+                </f:facet>
+
+                <p:column headerText="Nro. Orden" width="100"
+                          sortBy="#{e.nroOrden}" >
+                    <p:inputText value="#{e.nroOrden}" styleClass="TexAlRight" >
+                        <f:convertNumber pattern="0" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Descripción"
+                          sortBy="#{e.descripcion}"   >
+                    <p:inputText value="#{e.descripcion}" required="true" requiredMessage="La descripción es obligatoria" />
+                </p:column>
+
+                <p:column headerText="Obligatorio" width="100" styleClass="TexAlRight"
+                          sortBy="#{e.obliga}"  >
+                    <p:selectOneMenu value="#{e.obliga}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneMenu>
+                </p:column>
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="subactividades" update="subactividades,message,messageg"
+                                   actionListener="#{actividadBean.eliminarSubActividad(e)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+
+        <p:tab id="t2" title="Recursos">
+
+            <p:dataTable id="recursos" style="max-width: 700px;" var="e" value="#{actividadBean.actividad.recursos}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{actividadBean.nuevoRecurso()}"
+                                     value="Agregar"
+                                     process="recursos"
+                                     update="recursos" />
+
+                </f:facet>
+
+
+                <p:column headerText="Producto/Servicio"
+                          sortBy="#{e.descripcion}" >
+
+                    <div class="ui-inputgroup">
+
+                        <p:autoComplete value="#{e.producto}" dropdown="true" forceSelection="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="El Producto es obligatorio"
+                                        completeMethod="#{productoBean.complete}"
+                                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresStock.producto}"  >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this,recursos" listener="#{actividadBean.procesarProducto(e)}"/>
+
+                            <p:column headerText="Código" width="100">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción" >
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Producto/Servicio" url="#{actividadBean.obtenerUrlMenu('SIS_00138','CODIGO',e.producto.codigo)}" />
+                        </span>
+
+                    </div>
+
+
+
+                </p:column>
+
+                <p:column headerText="Cantidad" width="100" styleClass="TexAlRight"
+                          sortBy="#{e.cantidad}" >
+                    <p:inputText value="#{e.cantidad}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="U.M." width="50" styleClass="TexAlCenter"
+                          sortBy="#{e.producto.unidadDeMedida.codigo}"   >
+                    <p:inputText value="#{e.producto.unidadDeMedida.codigo}" readonly="true" />
+                </p:column>
+
+
+                <p:column headerText="" width="50"  styleClass="TexAlCenter" >
+
+                    <p:commandLink process="recursos" update="recursos,message,messageg"
+                                   actionListener="#{actividadBean.eliminarRecurso(e)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+
+        <p:tab id="t3" title="Adjuntos"  >
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4,ui-g-8" >
+
+                <h:form prependId="false" enctype="multipart/form-data" >
+
+                    <div class="EmptyBox10" />
+                    <p:fileUpload fileUploadListener="#{actividadBean.upload}"
+                                  mode="advanced"
+                                  label="Buscar Archivo" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                                  invalidFileMessage="Formato inválido"
+                                  invalidSizeMessage="El tamaño del archivo es muy grande, debe ser menor a 1 MB"
+                                  fileLimit="5" multiple="true"
+                                  update=":formulario,@form"
+                                  auto="true" dragDropSupport="true"
+                                  sizeLimit="1000000" allowTypes="/(\.|\/)(png|jpg|jpeg|pdf)$/" />
+
+                </h:form>
+
+                <p:dataTable id="adjuntos" var="i" style="max-width: 1200px;"
+                             value="#{actividadBean.actividad.adjuntos}"
+                             emptyMessage="No se encontraron resultados"
+                             resizableColumns="true" resizeMode="expand" liveResize="true"  >
+
+                    <f:facet name="footer" >
+                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                         actionListener="#{actividadBean.nuevoAdjunto()}"
+                                         value="Agregar"
+                                         process="adjuntos"
+                                         update="adjuntos" />
+                    </f:facet>
+
+
+
+                    <!--                    <p:column headerText="Nombre" width="150" >
+                                            <p:inputText value="#{i.nombre}"
+                                                         required="true" requiredMessage="Debe identificar el item con un nombre"/>
+                                        </p:column>-->
+
+
+                    <p:column headerText="Tipo Archivo" width="150"  >
+
+                        <p:selectOneMenu value="#{i.tipoArchivo}"
+                                         required="true" requiredMessage="Seleccione un Tipo de Archivo"  >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Imagen" itemValue="I" />
+                            <f:selectItem itemLabel="Pdf" itemValue="P" />
+
+                        </p:selectOneMenu>
+
+                    </p:column>
+
+                    <p:column headerText="Link Externo" width="80" >
+
+                        <p:selectOneMenu value="#{i.linkExterno}" style="width: 50px !important;"
+                                         title="Si es un link externo, deberá copiar la url completa en el campo path imagen, de lo contrario deberá subir un archivo"
+                                         required="true" requiredMessage="Seleccione si es un link externo o interno"  >
+                            <p:ajax process="@this" update="adjuntos" />
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneMenu>
+
+                    </p:column>
+
+                    <!--
+                    <p:column headerText="Url Base "  >
+
+                        <p:inputText value="#{i.urlBase }"
+                                     readonly="#{i.linkExterno eq 'N'}"
+                                     required="#{i.linkExterno eq 'N'}" requiredMessage="La url base de la imagen es obligatoria"  />
+                    </p:column>
+                    -->
+
+                    <p:column headerText="Archivo/Link"  >
+
+                        <p:inputText value="#{i.archivo }"
+                                     readonly="#{i.linkExterno eq 'N'}"
+                                     required="true" requiredMessage="El nombre del archivo es obligatorio"  />
+                    </p:column>
+
+                    <p:column headerText="Ver" width="20" >
+
+                        <h:outputLink value="#{i.urlImagen}"
+                                      rendered="#{not empty i.urlImagen}" target="_blank" >
+
+                            <i class="fa fa-external-link" ></i>
+                        </h:outputLink>
+
+
+
+                    </p:column>
+
+
+                    <p:column headerText="" width="50" style="text-align: center;" >
+
+                        <!--
+                        <p:commandLink title="Subir archivo de imagen al servidor"
+                                       rendered="#{i.linkExterno eq 'N'}"
+                                       process="@this"
+                                       update="dlgProductoImagen,message,messageg"
+                                       oncomplete="PF('dlg_producto_imagen').show()" >
+                            <f:setPropertyActionListener value="#{i}" target="#{productoBean.imagenProducto}" />
+                            <i class="fa fa-upload fa-2x Green" ></i>
+                        </p:commandLink>
+                        -->
+
+                        <p:commandLink process="adjuntos" update="adjuntos,message,messageg"
+                                       actionListener="#{actividadBean.eliminarAdjunto(i)}" >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                            <i class="fa fa-close fa-2x Red" ></i>
+                        </p:commandLink>
+
+                    </p:column>
+
+
+                </p:dataTable>
+
+            </p:panelGrid>
+
+        </p:tab>
+
+
+
+
+    </p:tabView>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

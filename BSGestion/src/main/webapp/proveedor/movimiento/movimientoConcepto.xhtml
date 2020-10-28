@@ -1,0 +1,163 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- CONCEPTOS -->
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="Container50, Container50" >
+
+        <p:dataTable id="dCompra"  value="#{movimientoProveedorBean.m.itemProducto}" var="i"
+                     resizeMode="expand" liveResize="true"
+                     rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+            <f:facet name="header" >
+                <h:outputText value="Compras" />
+            </f:facet>
+
+            <p:column headerText="Concepto" >
+                <h:outputText value="#{i.concepto.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Cuenta Contable" >
+
+                <p:autoComplete value="#{i.cuentaContable}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{movimientoProveedorBean.completeCuentaContable}"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresContabilidad.cuentaContable}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+            </p:column>
+
+            <p:column headerText="Importe"  width="100" >
+                <p:inputText id="precio"  value="#{i.importe}"
+                             required="true"
+                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                             style="width: 98%;text-align: right;" >
+                    <f:convertNumber pattern="###,###,##0.00" />
+                    <p:ajax listener="#{movimientoProveedorBean.calcularImportes(true)}" event="keyup" delay="500"
+                            process="@this" update="tb:dImpuesto,tb:dPercepciones,tb:dTotal,tb:tVencimientos" />
+                </p:inputText>
+            </p:column>
+        </p:dataTable>
+
+        <p:dataTable id="dImpuesto" value="#{movimientoProveedorBean.m.itemImpuesto}" var="i"
+                     emptyMessage="No se encontraron conceptos asociados"
+                     resizeMode="expand" liveResize="true"
+                     rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+            <f:facet name="header" >
+                <h:outputText value="Impuestos" />
+            </f:facet>
+
+            <p:column headerText="Concepto" width="70%" >
+                <h:outputText value="#{i.concepto.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Importe"  width="30%" style="text-align: right;" >
+
+                <p:inputText id="precio"  value="#{i.importe}"
+                             readonly="#{i.editaImporte eq 'N'}"
+                             required="true"
+                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                             style="width: 98%;text-align: right;" >
+                    <f:convertNumber pattern="###,###,##0.00" />
+                    <p:ajax listener="#{movimientoProveedorBean.calcularImportes(false)}" event="keyup" delay="500"
+                            process="@this" update="tb:dTotal" />
+                </p:inputText>
+            </p:column>
+        </p:dataTable>
+
+        <p:dataTable id="dPercepciones" value="#{movimientoProveedorBean.m.itemPercepcion}" var="i"
+                     emptyMessage="No se encontraron conceptos asociados"
+                     resizeMode="expand" liveResize="true"
+                     rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+            <f:facet name="header" >
+                <h:outputText value="Percepciones" />
+            </f:facet>
+
+            <p:column headerText="Concepto" width="70%" >
+                <h:outputText value="#{i.concepto.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Importe"  width="30%" >
+                <p:inputText id="precio"  value="#{i.importe}"
+                             required="true"
+                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                             style="width: 98%;text-align: right;" >
+                    <f:convertNumber pattern="###,###,##0.00" />
+                    <p:ajax listener="#{movimientoProveedorBean.calcularImportes(true)}" event="keyup" delay="500"
+                            process="@this" update="tb:dTotal" />
+                </p:inputText>
+            </p:column>
+        </p:dataTable>
+
+        <p:dataTable id="dTotal" value="#{movimientoProveedorBean.m.itemTotal}" var="i"
+                     resizeMode="expand" liveResize="true"
+                     rowStyleClass="#{i.conError  ? 'conError' : null}">
+
+            <f:facet name="header" >
+                <h:outputText value="Totales" />
+            </f:facet>
+
+            <p:column headerText="Concepto" width="70%" >
+                <h:outputText value="#{i.concepto.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Importe"  width="30%" style="text-align: right;" >
+
+                <h:outputText value="#{i.importe}" >
+                    <f:convertNumber pattern="$ ###,###,##0.00" />
+                </h:outputText>
+
+            </p:column>
+        </p:dataTable>
+
+        <p:dataTable id="dRetenciones" value="#{movimientoProveedorBean.m.itemRetencion}" var="i"
+                     emptyMessage="No se encontraron conceptos asociados"
+                     resizeMode="expand" liveResize="true"
+                     rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+            <f:facet name="header" >
+                <h:outputText value="Retenciones" />
+            </f:facet>
+
+            <p:column headerText="Concepto" width="70%" >
+                <h:outputText value="#{i.concepto.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Importe"  width="30%" >
+                <p:inputText id="precio"  value="#{i.importe}"
+                             required="true"
+                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                             style="width: 98%;text-align: right;" >
+                    <f:convertNumber pattern="###,###,##0.00" />
+                    <p:ajax listener="#{movimientoProveedorBean.calcularImportes(true)}" event="keyup" delay="500"
+                            process="@this" update="tb:dTotal" />
+                </p:inputText>
+            </p:column>
+        </p:dataTable>
+
+
+    </p:panelGrid>
+
+
+
+</ui:composition>
+

@@ -1,0 +1,54 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- RETENCIONES -->
+    <p:panel id="panelRetenciones" header="Retenciones generadas"
+             rendered="#{not empty ordenPagoBean.m.entidad and not empty ordenPagoBean.m.retenciones}" >
+
+        <p:dataTable id="tRetenciones" value="#{ordenPagoBean.m.retenciones}" var="r"
+                     resizeMode="expand" liveResize="true"
+                     rendered="#{not empty ordenPagoBean.m.retenciones and (ordenPagoBean.facturasConfirmadas or not empty ordenPagoBean.m.id) }"
+                     emptyMessage="No se han encontrado retenciones ">
+
+            <p:column headerText="Documento" style="text-align: center;" >
+                <h:outputText value="#{r.comprobante.descripcion} " />
+                <h:outputText value="#{r.puntoVenta.codigo}" >
+                    <f:convertNumber pattern="0000" />
+                </h:outputText>
+                <h:outputText value="#{r.numeroFormulario}" >
+                    <f:convertNumber pattern="-00000000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Vencimiento" style="text-align: center;" >
+                <h:outputText value="#{r.fechaMovimiento}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Importe" style="text-align: right;" >
+                <h:outputText value="#{r.importeTotal}" >
+                    <f:convertNumber pattern="$ #,###,##0.00" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Imprimir" style="text-align: right; width: 80px; text-align: center" >
+                <p:commandButton icon="fa fa-print"
+                                 action="#{ordenPagoBean.imprimirRetención(r)}"
+                                 rendered="#{not empty ordenPagoBean.m.id}"
+                                 process="@this"
+                                 update="@form"
+                                 oncomplete="PF('dlg_reporte').show()" />
+            </p:column>
+
+        </p:dataTable>
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

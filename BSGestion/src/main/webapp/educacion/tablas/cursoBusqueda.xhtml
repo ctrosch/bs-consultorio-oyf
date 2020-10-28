@@ -1,0 +1,184 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{cursoBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{cursoBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{cursoBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{cursoBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+            <p:autoComplete value="#{cursoBean.sucursal}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Sucursal"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{sucursalBean.complete}"
+                            converter="#{conversoresGeneral.sucursal}"
+                            var="s" itemLabel="#{s.nombre}" itemValue="#{s}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{cursoBean.buscar}" />
+            </p:autoComplete>
+
+            <p:autoComplete value="#{cursoBean.planEstudio}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Plan de estudio"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{planEstudioBean.complete}"
+                            converter="#{conversoresEducacion.planEstudio}"
+                            var="a" itemLabel="#{a.titulo}" itemValue="#{a}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{cursoBean.buscar}" />
+            </p:autoComplete>
+
+
+            <h:panelGroup layout="block">
+
+                <div class="Wid50 Fleft">
+                    <p:calendar value="#{cursoBean.fechaInicio}"
+                                placeholder="Fecha Inicio"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"  >
+                        <p:ajax event="dateSelect"  process="@this" update="tabla" listener="#{cursoBean.buscar()}" />
+                    </p:calendar>
+                </div>
+                <div class="Wid50 Fright">
+                    <p:calendar value="#{cursoBean.fechaFin}"
+                                placeholder="Fecha Fin"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" update="tabla" listener="#{cursoBean.buscar()}" />
+                    </p:calendar>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{cursoBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="tabla" listener="#{cursoBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+    </p:panel>
+
+    <div class="EmptyBox10" />
+    <p:dataTable id="tabla" value="#{cursoBean.lista}" var="i"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{cursoBean.curso}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{cursoBean.onSelect}" update="@form"  />
+
+        <p:column headerText="Código" width="50" style="text-align: center;"
+                  sortBy="#{i.codigo}"   >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción" width="200" style="text-align: left;"
+                  sortBy="#{i.descripcion}" >
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Plan Estudio" width="100" style="text-align: left;"
+                  sortBy="#{i.planEstudio.titulo}" >
+            <h:outputText value="#{i.planEstudio.titulo}" />
+        </p:column>
+
+        <p:column headerText="Fecha Inicio" width="100" style="text-align: left;"
+                  sortBy="#{i.fechaInicio}" >
+            <h:outputText value="#{i.fechaInicio}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha Fin" width="100" style="text-align: left;"
+                  sortBy="#{i.fechaFinalizacion}" >
+            <h:outputText value="#{i.fechaFinalizacion}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Sucursal" width="100" style="text-align: left;"
+                  sortBy="#{i.sucursal.nombre}" >
+            <h:outputText value="#{i.sucursal.nombre}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{cursoBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{cursoBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

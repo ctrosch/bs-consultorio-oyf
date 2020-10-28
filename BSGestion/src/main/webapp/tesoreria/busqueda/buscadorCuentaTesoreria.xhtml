@@ -1,0 +1,89 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" 
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <p:dialog id="buscadorCuentaTesoreria" header="Cuenta Tesoreria" modal="true"
+              widgetVar="dlg_cuenta_tesoreria"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 700px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaCuentaTesoreria"/>
+            
+            <p:panelGrid columns="2" layout="grid"                 
+                 styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaCuentaTesoreria" value="#{cuentaTesoreriaBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,tipoCuentaTesoreria" update="tablaCuentaTesoreria" listener="#{cuentaTesoreriaBean.buscar}"/>
+                </p:inputText>
+                
+                <p:selectOneMenu id="tipoCuentaTesoreria" value="#{cuentaTesoreriaBean.tipoCuenta}"
+                                 converter="#{conversoresTesoreria.tipoCuentaTesoreria}"  >
+                    <f:selectItem itemLabel="Todos" itemValue="" />
+                    <f:selectItems value="#{tipoCuentaTesoreriaBean.lista}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaCuentaTesoreria" update="tablaCuentaTesoreria" listener="#{cuentaTesoreriaBean.buscar}"/>
+                </p:selectOneMenu>
+            </p:panelGrid>       
+
+            <p:dataTable id="tablaCuentaTesoreria" var="e" value="#{cuentaTesoreriaBean.lista}" 
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{cuentaTesoreriaBean.cuentaTesoreria}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" > 
+                
+                <p:ajax event="rowSelect" listener="#{cuentaTesoreriaBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlg_cuenta_tesoreria').hide(), procesarCuentaTesoreria()" />
+
+                <p:column headerText="Código" width="10%" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >                         
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+
+                <p:column headerText="Tipo de Cuenta" width="15%" style="text-align: left;"
+                          sortBy="#{e.tipoCuenta.codigo}" >
+                    <h:outputText value="#{e.tipoCuenta.descripcion}" />  
+                </p:column>
+
+            </p:dataTable>  
+
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{cuentaTesoreriaBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaCuentaTesoreria" listener="#{cuentaTesoreriaBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistrosCuentaTesoreria" value="#{cuentaTesoreriaBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{cuentaTesoreriaBean.buscar}"
+                                     process="@this,cantRegistrosCuentaTesoreria" update="tablaCuentaTesoreria" />
+                </h:panelGroup>
+            </p:panelGrid> 
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

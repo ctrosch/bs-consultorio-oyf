@@ -1,0 +1,183 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- DATOS -->
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank MaxWid900"
+                 columnClasses="ui-g-4, ui-g-8" >
+
+        <bs:outputTexWhitLink value="Formula"
+                              url="#{composicionFormulaBean.obtenerUrlMenu('SIS_00197','CODIGO',composicionFormulaBean.composicionFormula.formula.codigo)}" />
+
+        <p:selectOneMenu id="formula" value="#{composicionFormulaBean.composicionFormula.formula}"
+                         rendered="#{composicionFormulaBean.esNuevo}"
+                         converter="#{conversoresStock.formula}"
+                         required="true" filter="true" filterMatchMode="startsWith"
+                         requiredMessage="Seleccione formula" >
+            <p:ajax  process="@this" listener="#{composicionFormulaBean.procesarFormula()}" />
+            <f:selectItem itemLabel="Selecccionar" itemValue="" />
+            <f:selectItems value="#{formulaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+        <p:inputText value="#{composicionFormulaBean.composicionFormula.formula.descripcion}" rendered="#{not composicionFormulaBean.esNuevo}" readonly="true"/>
+
+
+        <bs:outputTexWhitLink value="Producto"
+                              url="#{composicionFormulaBean.obtenerUrlMenu('SIS_00138','CODIGO',composicionFormulaBean.composicionFormula.producto.codigo)}" />
+
+        <p:autoComplete value="#{composicionFormulaBean.composicionFormula.producto}"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{productoBean.complete}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+            <p:ajax event="itemSelect" process="@this" update="@this" listener="#{composicionFormulaBean.procesarProducto()}" />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Unidad de Medida" />
+        <p:inputText value="#{composicionFormulaBean.composicionFormula.producto.unidadDeMedida.descripcion}"
+                     readonly="true" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:tabView activeIndex="#{composicionFormulaBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{composicionFormulaBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Componentes">
+
+            <p:dataTable id="tablaComponente" value="#{composicionFormulaBean.composicionFormula.itemsComponente}" var="i"
+                         styleClass="MaxWid900"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items para esta composición">
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{composicionFormulaBean.nuevoItemComponente()}"
+                                     update="@form" process="@form"/>
+                </f:facet>
+
+                <p:column headerText="Producto">
+
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.productoComponente}"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{productoBean.complete}"
+                                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+                            <p:ajax event="itemSelect" process="@this" update="tablaComponente" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver producto"
+                                                url="#{composicionFormulaBean.obtenerUrlMenu('SIS_00138','CODIGO',i.productoComponente.codigo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Cantidad Nominal" width="200">
+                    <p:inputText value="#{i.cantidadNominal}" />
+                </p:column>
+
+                <p:column headerText="U.M." width="100">
+                    <h:outputText value="#{i.productoComponente.unidadDeMedida.codigo}" />
+                </p:column>
+
+                <p:column headerText="" width="50">
+                    <p:commandLink title="Eliminar item"
+                                   actionListener="#{composicionFormulaBean.eliminarItemComponente(i)}"
+                                   update="@form" process="@form"  >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Procesos">
+
+            <p:dataTable id="tablaProceso" value="#{composicionFormulaBean.composicionFormula.itemsProceso}" var="i"
+                         styleClass="MaxWid900"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items para esta composición">
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{composicionFormulaBean.nuevoItemProceso()}"
+                                     update="@form" process="@form"/>
+                </f:facet>
+
+                <p:column headerText="Producto">
+
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.productoComponente}"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{productoBean.complete}"
+                                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+                            <p:ajax event="itemSelect" process="@this" update="tablaProceso" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver producto"
+                                                url="#{composicionFormulaBean.obtenerUrlMenu('SIS_00138','CODIGO',i.productoComponente.codigo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Cantidad Nominal" width="200">
+                    <p:inputText value="#{i.cantidadNominal}" />
+                </p:column>
+
+                <p:column headerText="U.M." width="100">
+                    <h:outputText value="#{i.productoComponente.unidadDeMedida.codigo}" />
+                </p:column>
+
+                <p:column headerText="" width="50">
+                    <p:commandLink title="Eliminar item"
+                                   actionListener="#{composicionFormulaBean.eliminarItemProceso(i)}"
+                                   update="@form" process="@form"  >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+    </p:tabView>
+
+</ui:composition>
+

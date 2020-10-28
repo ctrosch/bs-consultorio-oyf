@@ -1,0 +1,61 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="dlgProductoImagen" header="Carga de imágenes"
+              widgetVar="dlg_producto_imagen" resizable="false" position="top" draggable="false" minHeight="400" modal="true"
+              style="max-width: 400px;" responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" enctype="multipart/form-data"
+                rendered="#{not empty productoBean.producto.codigo}" >
+
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:inputText value="#{productoBean.imagenProducto.nombre}"  />
+
+                <p:inputText value="#{productoBean.imagenProducto.urlImagen}"  />
+
+                <h:outputLink value="#{productoBean.imagenProducto.urlImagen}"
+                              rendered="#{not empty productoBean.imagenProducto.urlImagen}" target="_blank" >
+
+                    <h:graphicImage value="#{productoBean.imagenProducto.urlImagen}"
+                                    width="100%" />
+
+                </h:outputLink>
+
+                <h:graphicImage name="image/noimage.png" styleClass="TexAlCenter MarAuto" width="100%"
+                                rendered="#{empty productoBean.imagenProducto or empty productoBean.imagenProducto.urlImagen}" />
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+            <p:fileUpload fileUploadListener="#{productoBean.upload}"
+                          mode="advanced"
+                          label="Buscar imagen" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                          invalidFileMessage="Formato inválido"
+                          invalidSizeMessage="El tamaño del archivo es muy grande, debe ser menor a 2 MB"
+                          fileLimit="5" multiple="true"
+                          update=":formulario,@form"
+                          auto="true" dragDropSupport="true"
+                          sizeLimit="2000000" allowTypes="/(\.|\/)(png|jpg|jpeg)$/" />
+
+            <h:panelGroup layout="block" styleClass="MarAuto MaxWid300" >
+
+                <p:commandButton value="Cerrar" icon="fa fa-close" styleClass="RedBack MarAuto MaxWid300"
+                                 immediate="true"
+                                 oncomplete="PF('dlg_producto_imagen').hide()"
+                                 update=":formulario,@form" >
+                </p:commandButton>
+
+            </h:panelGroup>
+
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

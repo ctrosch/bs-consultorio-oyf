@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pv="http://primefaces.org/volt"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <ui:composition template="/template2.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredView()}"/>
+        </f:metadata>
+
+        <ui:define name="head">
+            <style>
+                .ui-tabs-panels {
+                    border:none !important;
+                }
+            </style>
+        </ui:define>
+
+
+        <ui:define name="script" >
+
+            <!--
+            <ui:fragment rendered="#{aplicacionBean.parametro.tipoNavegacion eq 'M'}">
+
+                <script type="text/javascript">
+
+                    window.onbeforeunload = function () {
+
+                        return "Al cerrar esta ventana, no podrá continuar trabajando en el sistema";
+                    }
+                </script>
+
+            </ui:fragment>
+            -->
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.js" />
+            <h:outputScript name="js/jquery.countup.js" />
+
+        </ui:define>
+
+        <ui:define name="titulo" >
+            #{aplicacionBean.organizacion.nombreFantasia} - Principal
+        </ui:define>
+
+        <ui:define name="menu">
+            <h:form id="menuform" >
+                <pv:menu model="#{principalBean.modelo}"    />
+            </h:form>
+        </ui:define>
+
+        <ui:define name="buscador" >
+            <h:panelGroup layout="block" styleClass="Fleft"  style="margin:10px 20px 0px 0px; width: 200px;" >
+
+                <div class="ui-inputgroup">
+                    <p:inputText id="txtBusqueda" styleClass="Fs13"
+                                 autocomplete="false" placeholder="Buscador"
+                                 value="#{principalBean.txtBusqueda}"
+                                 rendered="#{usuarioSessionBean.estaRegistrado}" >
+                        <p:ajax event="keyup" delay="500"  process="@this" update=":formulario"  listener="#{principalBean.buscarMenuItem()}"/>
+                    </p:inputText>
+                    <p:commandButton icon="fa fa-trash" styleClass="RedBack Fs13" style="width:auto"
+                                     process="@this" update=":formulario,txtBusqueda" >
+                        <f:setPropertyActionListener value="" target="#{principalBean.txtBusqueda}" />
+                        <f:setPropertyActionListener value="" target="#{principalBean.resultadoBusqueda}" />
+                    </p:commandButton>
+                </div>
+
+            </h:panelGroup>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:poll interval="7250" listener="#{usuarioSessionBean.checkExpiredView()}"  />
+
+            <h:form id="formulario" prependId="false">
+
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="1000" />
+
+                <ui:include src="principalCards.xhtml"  />
+
+                <ui:include src="principalResultado.xhtml"  />
+
+                <div class="p-grid" >
+                    <div class="p-col-12 #{usuarioSessionBean.usuario.historialVisible eq 'S'?'p-md-6':''}" >
+                        <ui:include src="principalFavoritos.xhtml"  />
+                    </div>
+                    <div class="p-col-12 #{usuarioSessionBean.usuario.favoritosVisible eq 'S'?'p-md-6':''}" >
+                        <ui:include src="principalHistorial.xhtml"  />
+                    </div>
+                </div>
+
+            </h:form>
+
+            <h:form id="fDashboard" prependId="false" >
+                <ui:include src="principalDashboard.xhtml" />
+            </h:form>
+
+            <ui:include src="/resources/general/soporte.xhtml" />
+
+            <ui:include src="/resources/general/chat.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+</html>

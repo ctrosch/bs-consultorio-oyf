@@ -1,0 +1,45 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid  columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                  columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{estadoEducacionBean.estado.codigo}"
+                     readonly="#{not estadoEducacionBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{estadoEducacionBean.estado.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="Color *" />
+        <p:selectOneMenu value="#{estadoEducacionBean.estado.color}"
+                         required="true" requiredMessage="Seleccione el signo para el stock"  >
+            <p:ajax process="@this" />
+
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Verde" itemValue="Green" />
+            <f:selectItem itemLabel="Azul" itemValue="Blue" />
+            <f:selectItem itemLabel="Amarillo" itemValue="Yellow" />
+            <f:selectItem itemLabel="Naranja" itemValue="Orange" />
+            <f:selectItem itemLabel="Rojo" itemValue="Red" />
+            <f:selectItem itemLabel="Gris" itemValue="LightGray" />
+            <f:selectItem itemLabel="Blanco" itemValue="White" />
+            <f:selectItem itemLabel="Negro" itemValue="Black" />
+
+        </p:selectOneMenu>
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

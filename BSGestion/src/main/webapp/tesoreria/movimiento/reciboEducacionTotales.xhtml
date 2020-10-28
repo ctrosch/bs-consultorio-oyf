@@ -1,0 +1,117 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- TOTALES -->
+    <h:panelGroup id="totales" layout="block" styleClass="p-grid"
+                  rendered="#{not empty reciboEducacionBean.m.entidad}" >
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 "
+                      rendered="#{empty reciboEducacionBean.m.id and not reciboEducacionBean.m.esAnticipo}" >
+            <div class="Card RedBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Cuotas a cancelar" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{reciboEducacionBean.totalCancelar}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.0000" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12"
+                      rendered="#{empty reciboEducacionBean.m.id and not reciboEducacionBean.m.esAnticipo}" >
+            <div class="Card OrangeBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Intereses" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{reciboEducacionBean.totalIntereses}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.0000" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12"
+                      rendered="#{empty reciboEducacionBean.m.id and not reciboEducacionBean.m.esAnticipo}" >
+            <div class="Card LimeBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Comisiones" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{reciboEducacionBean.totalComision}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.0000" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12"
+                      rendered="#{empty reciboEducacionBean.m.id and not reciboEducacionBean.m.esAnticipo}" >
+            <div class="Card GreenBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Total a Cobrar" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{reciboEducacionBean.totalRecibo}"
+                                      rendered="#{reciboEducacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.0000" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12" >
+            <div class="Card BlueBack" >
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Importe Recibo" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+
+                        <h:outputText value="#{reciboEducacionBean.m.importeTotalDebe}"
+                                      rendered="#{reciboEducacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.0000" />
+                        </h:outputText>
+
+                        <h:outputText value="#{reciboEducacionBean.m.importeTotalDebeSecundario}"
+                                      rendered="#{reciboEducacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.0000" />
+                        </h:outputText>
+
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+
+    </h:panelGroup>
+
+
+</ui:composition>
+

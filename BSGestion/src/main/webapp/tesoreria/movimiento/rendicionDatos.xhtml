@@ -1,0 +1,100 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid" rendered="#{not empty rendicionBean.m}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario"
+                      rendered="#{rendicionBean.muestroCampo('C','CODFOR')}" />
+        <p:inputText value="#{rendicionBean.m.formulario.descripcion}"
+                     rendered="#{rendicionBean.muestroCampo('C','CODFOR')}"
+                     readonly="true" />
+
+        <h:outputText value="Pto. Venta" rendered="#{rendicionBean.muestroCampo('C','SUCURS')}" />
+        <p:inputText value="#{rendicionBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{rendicionBean.muestroCampo('C','SUCURS')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" rendered="#{rendicionBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{rendicionBean.m.numeroFormulario}"
+                     readonly="#{rendicionBean.m.formulario.modificaNumeracion eq 'N'}"
+                     rendered="#{rendicionBean.muestroCampo('C','NROFOR')}" >
+            <p:ajax event="blur"  process="@this" />
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{rendicionBean.muestroCampo('C','FCHMOV')}" />
+
+        <p:calendar value="#{rendicionBean.m.fechaMovimiento}"
+                    disabled="#{rendicionBean.m.formulario.modificaFecha ne 'S'}"
+                    rendered="#{rendicionBean.muestroCampo('C','FCHMOV')}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{rendicionBean.fechaMovimientoMaxima}" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Cobrador *" url="#{rendicionBean.obtenerUrlMenu('SIS_00151','CODIGO',rendicionBean.m.cobrador.codigo)}" />
+        <p:autoComplete value="#{rendicionBean.m.cobrador}" dropdown="true" placeholder="Seleccionar"
+                        disabled="#{not empty rendicionBean.m.id}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Seleccione un cobrador"
+                        completeMethod="#{cobradorBean.complete}"
+                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                        converter="#{conversoresVenta.cobrador}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Cotización" rendered="#{rendicionBean.muestroCampo('C','COTIZA')}" />
+        <h:panelGroup layout="block" rendered="#{rendicionBean.muestroCampo('C','COTIZA')}" >
+            <div class="Wid70 Fleft">
+                <p:inputText value="#{rendicionBean.m.monedaSecundaria.descripcion}" readonly="true" />
+            </div>
+
+            <div class="Wid30 Fright">
+                <p:inputText value="#{rendicionBean.m.cotizacion}" style="text-align: right;"
+                             readonly="#{not empty rendicionBean.m.id}"
+                             required="true"
+                             requiredMessage="La cotización es necesaria" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax process="@this" listener="#{rendicionBean.calcularImportes}" update="@form" />
+                </p:inputText>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="3" value="#{rendicionBean.m.observaciones}" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+    </p:panelGrid>
+
+</ui:composition>

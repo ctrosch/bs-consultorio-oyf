@@ -1,0 +1,328 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Nro. Contrato *" />
+        <p:inputText value="#{contratoBean.contrato.nroContrato}"
+                     required="true" readonly="true" />
+
+        <bs:outputTexWhitLink value="Tipo Contrato *"
+                              url="#{contratoBean.obtenerUrlMenu('SIS_00629','CODIGO',contratoBean.contrato.tipoContrato.codigo)}" />
+        <p:autoComplete value="#{contratoBean.contrato.tipoContrato}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El tipo de Contrato es obligatorio"
+                        completeMethod="#{tipoContratoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresContrato.tipoContrato}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Estado *" />
+        <p:autoComplete value="#{contratoBean.contrato.estado}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El estado del Contrato es obligatorio"
+                        completeMethod="#{estadoContratoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresContrato.estado}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Fecha"  />
+        <p:calendar value="#{contratoBean.contrato.fechaFirma}"
+                    disabled="#{not contratoBean.esNuevo}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Cliente *"
+                              url="#{contratoBean.obtenerUrlMenu('SIS_00083','NROCTA',contratoBean.contrato.cliente.nrocta)}" />
+
+
+        <p:autoComplete value="#{contratoBean.contrato.cliente}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Cliente es obligatorio"
+                        completeMethod="#{clienteBean.complete}"
+                        disabled="#{not contratoBean.esNuevo}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this"   />
+
+            <p:column headerText="Nro Cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razon Social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{contratoBean.contrato.descripcion}" maxlength="60"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Condición de Pago *" />
+
+        <p:autoComplete value="#{contratoBean.contrato.condicionDePago}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="La condicion de Pago es Obligatoria "
+                        completeMethod="#{condicionPagoVentaBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresVenta.condicionDePagoVenta}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this"   />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <h:outputText value="Moneda de Registación" />
+        <p:selectOneMenu value="#{contratoBean.contrato.monedaRegistracion}"
+                         required="true" requiredMessage="Seleccione la moneda"
+                         converter="#{conversoresGeneral.moneda}" >
+            <p:ajax process="@this" update="productos" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <h:outputText value="Fecha Desde"  />
+        <p:calendar value="#{contratoBean.contrato.fechaDesde}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+        <h:outputText value="Fecha Hasta"  />
+        <p:calendar value="#{contratoBean.contrato.fechaHasta}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Fecha primer Factura"  />
+        <p:calendar value="#{contratoBean.contrato.fechaPrimerFactura}"
+                    disabled="true"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+        <h:outputText value="Fecha última Factura"  />
+        <p:calendar value="#{contratoBean.contrato.fechaUltimaFactura}"
+                    disabled="true"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="productos" var="e" value="#{contratoBean.contrato.itemsComtrato}"
+                 resizeMode="expand" liveResize="true"
+                 emptyMessage="No se encontraron resultados" >
+
+        <f:facet name="header" >
+            <h:outputText value="Productos/Servicios" />
+        </f:facet>
+
+        <f:facet name="footer" >
+
+            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                             actionListener="#{contratoBean.nuevoItem()}"
+                             value="Agregar "
+                             process="@this"
+                             update="productos" />
+
+        </f:facet>
+
+        <p:column headerText="Producto/Servicio"
+                  sortBy="#{e.producto.descripcion}" >
+
+            <div class="ui-inputgroup">
+
+                <p:autoComplete value="#{e.producto}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                required="true" requiredMessage="El producto/servicio es obligatorio"
+                                completeMethod="#{productoBean.complete}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                converter="#{conversoresStock.producto}"  >
+
+                    <p:ajax event="itemSelect" process="@this" update="productos" listener="#{contratoBean.procesarProducto(e)}"/>
+
+                    <p:column headerText="Código" width="100">
+                        <h:outputText value="#{p.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{p.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <span class="ui-inputgroup-addon">
+                    <bs:linkMenuSistema title="Ver Producto/Servicio" url="#{contratoBean.obtenerUrlMenu('SIS_00138','CODIGO',e.producto.codigo)}" />
+                </span>
+
+            </div>
+
+        </p:column>
+
+        <p:column headerText="Cantidad" width="100" styleClass="TexAlCenter">
+
+            <p:inputText value="#{e.cantidad}" style="text-align: right;" >
+                <f:convertNumber pattern="##0.00" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Precio" width="100" styleClass="TexAlCenter">
+            <p:inputText value="#{e.precio}" style="text-align: right;"
+                         required="true" requiredMessage="El precio no puede ser nulo"
+                         disabled="#{not empty contratoBean.contrato.monedaRegistracion and contratoBean.contrato.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria }" >
+                <f:convertNumber pattern="##0.00" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Precio Secundario" width="100" styleClass="TexAlCenter">
+            <p:inputText value="#{e.precioSecundario}" style="text-align: right;"
+                         required="true" requiredMessage="El precio no puede ser nulo"
+                         disabled="#{not empty contratoBean.contrato.monedaRegistracion and contratoBean.contrato.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria }" >
+                <f:convertNumber pattern="##0.00" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Fecha Desde" width="120" styleClass="TexAlCenter">
+            <p:calendar value="#{e.fechaDesde}"
+                        pattern="dd/MM/yyyy"
+                        showOn="button"
+                        navigator="true"
+                        mask="true" >
+                <p:ajax process="@this" event="dateSelect" update="@this,message,messageg" listener="#{contratoBean.procesarFechaDesde(e)}" />
+            </p:calendar>
+        </p:column>
+
+        <p:column headerText="Fecha Hasta" width="120" styleClass="TexAlCenter">
+            <p:calendar value="#{e.fechaHasta}"
+                        pattern="dd/MM/yyyy"
+                        showOn="button"
+                        navigator="true"
+                        mask="true" >
+                <p:ajax process="@this" event="dateSelect"   update="@this,message,messageg" listener="#{contratoBean.procesarFechaHasta(e)}"/>
+            </p:calendar>
+        </p:column>
+
+        <p:column headerText="" width="50" styleClass="TexAlCenter" >
+
+            <p:commandLink process="productos" update="productos,message,messageg"
+                           actionListener="#{contratoBean.eliminarItem(e)}" >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid  columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                  columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-10" >
+
+        <h:outputText value="Detalle *" />
+        <p:inputTextarea value="#{contratoBean.contrato.detalle}" rows="3" />
+
+
+        <h:outputText value="Observaciónes " />
+        <p:inputTextarea value="#{contratoBean.contrato.observaciones}" rows="3" />
+
+    </p:panelGrid>
+
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

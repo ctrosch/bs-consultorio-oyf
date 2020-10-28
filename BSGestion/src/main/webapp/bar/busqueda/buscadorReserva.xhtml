@@ -1,0 +1,107 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorReserva" header="Reservas" position="top"
+              widgetVar="dlgReserva" draggable="false" modal="true"
+              minHeight="400" style="width: 100%; min-width: 100px !important; max-width: 700px;"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaUni"/>
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaUni" value="#{gestionReservaBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,fechaMov" update="tablaReserva" listener="#{gestionReservaBean.buscar}"/>
+                </p:inputText>
+
+                <p:calendar id="fechaMov" value="#{gestionReservaBean.fechaMovimientoDesde}"
+                            pattern="EEEEEEE dd MMMMMMM yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true">
+                    <p:ajax process="@this,txtBusquedaUni" update="tablaReserva" event="dateSelect" listener="#{gestionReservaBean.buscar}" />
+                </p:calendar>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaReserva" value="#{gestionReservaBean.lista}" var="i"
+                         emptyMessage="No se encontraron resultados"
+                         scrollable="true" scrollHeight="250" reflow="true"
+                         selectionMode="single"
+                         selection="#{gestionReservaBean.reserva}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{gestionReservaBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgReserva').hide(), procesarReserva()" />
+
+                <p:column headerText="" width="50" style="text-align: center;">
+
+                    <p:commandButton icon="fa fa-trash" styleClass="RedBack"
+                                     title="Anular reserva"
+                                     actionListener="#{gestionReservaBean.deshabilitar(i)}"
+                                     process="@this"
+                                     update="@form"  >
+                        <p:confirm header="Confirmacion" message="¿Está seguro? No podrá deshacer esta acción" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>
+
+                <p:column headerText="Contacto" width="200"  >
+                    <h:outputText value="#{i.nombreContacto}" />
+                </p:column>
+
+                <p:column headerText="Salón" width="150"  >
+                    <h:outputText value="#{i.salon.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Fecha" width="100" >
+                    <h:outputText value="#{i.fechaMovimiento}"  >
+                        <f:convertDateTime pattern="EEEEEEE dd MMMMMMM yyyy" />
+                    </h:outputText>
+                </p:column>
+
+
+
+                <p:column headerText="Personas" width="50"  >
+                    <h:outputText value="#{i.cantidadPersonas}" />
+                </p:column>
+
+                <p:column headerText="Teléfono" width="100"  >
+                    <h:outputText value="#{i.telefono}" />
+                </p:column>
+
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{gestionReservaBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaReserva" listener="#{gestionReservaBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistroReserva" value="#{gestionReservaBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{gestionReservaBean.buscar}"
+                                     process="@this,cantRegistroReserva" update="tablaReserva" />
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

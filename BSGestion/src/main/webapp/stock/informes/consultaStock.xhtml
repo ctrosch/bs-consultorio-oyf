@@ -1,0 +1,61 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="consultaStock" header="Consulta Stock" modal="true"
+              widgetVar="dlgConsultaStock"
+              resizable="false"
+              draggable="false"
+              minHeight="400"
+              responsive="true"
+              style="max-width: 700px;"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:dataTable id="tablaConsultaStock" value="#{consultaStock.stock}" var="i"
+                         emptyMessage="No se encontraron datos"
+                         resizeMode="expand" liveResize="true"
+                         scrollable="true" scrollHeight="200" >
+
+                <p:column headerText="Depósito" sortBy="#{i.codigo}"  width="120"  >
+                    <h:outputText value="#{i.deposito.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Stock" sortBy="#{i.stocks}" width="70"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.stocks}" styleClass="Fright" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="A Ingresar" sortBy="#{i.compra}" width="70"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.compra}" styleClass="Fright" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Comprometido" width="70" >
+                    <h:outputText value="#{i.comprometido}" styleClass="Fright" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Disponible" width="70" >
+                    <h:outputText value="#{i.stockDisponible}" styleClass="Fright #{i.stockDisponible >0?'Green':'Red'}" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+
+    </p:dialog>
+
+</ui:composition>

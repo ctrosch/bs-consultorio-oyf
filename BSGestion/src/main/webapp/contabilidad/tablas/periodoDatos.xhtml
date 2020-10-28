@@ -1,0 +1,71 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank MaxWid1000"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{periodoContableBean.periodo.codigo}" maxlength="20"
+                     required="true" requiredMessage="El código es obligatorio" />
+
+        <h:outputText value="Estado *" />
+        <p:selectOneMenu value="#{periodoContableBean.periodo.estado}"
+                         required="true" requiredMessage="Seleccione estado"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Activo" itemValue="A" />
+            <f:selectItem itemLabel="Inactivo" itemValue="I" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{periodoContableBean.periodo.descripcion}" maxlength="100"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <h:outputText value="Período Interno *" />
+        <p:selectOneMenu value="#{periodoContableBean.periodo.periodoInterno}"
+                         required="true" requiredMessage="Seleccione si es período interno"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+    </p:panelGrid>
+
+    <p:panelGrid id="fechas" columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank MaxWid1000"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+        <h:outputText value="Fecha Inicio *"  />
+        <p:calendar value="#{periodoContableBean.periodo.fechaInicio}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    required="true" requiredMessage="La Fecha Inicio es obligatoria">
+            <p:ajax process="@this" event="dateSelect"  update="fechas" listener="#{periodoContableBean.onFechaDesdeSelect()}"/>
+        </p:calendar>
+
+        <h:outputText value="Fecha Finalización *"  />
+        <p:calendar value="#{periodoContableBean.periodo.fechaFin}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    required="true" requiredMessage="La Fecha Finalización es obligatoria"
+                    >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

@@ -1,0 +1,260 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Productos</title>
+    </h:head>
+    <h:body>
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaProducto"/>
+
+            <div>
+                <div class="Container70 Responsive50 NoPadding" style="padding-right: 10px !important;" >
+
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                        <p:inputText id="txtBusquedaProducto" value="#{productoBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                            <p:ajax event="keyup" delay="500"  process="@this,tipoProducto" update="tablaProductos" listener="#{productoBean.buscar}"/>
+                        </p:inputText>
+
+                        <p:autoComplete id="tipoProducto" value="#{productoBean.tipoProducto}" dropdown="true" forceSelection="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{tipoProductoBean.complete}"
+                                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                        converter="#{conversoresStock.tipoProducto}"  >
+
+                            <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tablaProductos" listener="#{productoBean.buscar}" />
+
+                            <p:column headerText="Código" width="100">
+                                <h:outputText value="#{e.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{e.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                    </p:panelGrid>
+
+                    <p:dataTable id="tablaProductos"  value="#{productoBean.lista}" var="prd"
+                                 resizeMode="expand" liveResize="true"
+                                 emptyMessage="No se encontraron datos"
+                                 rows="10" paginator="true"
+                                 selectionMode="single" selection="#{productoBean.producto}" rowKey="#{prd}"
+                                 rowStyleClass="#{prd.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                        <p:ajax event="rowSelect" listener="#{productoBean.onSelect}" update="@form"
+                                oncomplete="PF('dlgProducto').hide(), procesarProducto()" />
+
+
+                        <p:column headerText="Ver" width="60" style="text-align: center;" >
+                            <p:commandButton icon="fa fa-arrow-right" actionListener="#{productoBean.seleccionarCompleto(prd)}"
+                                             style="font-size: 6px !important;"
+                                             process="@this" update="@form" />
+                        </p:column>
+
+                        <p:column headerText="Código"
+                                  sortBy="#{prd.codigo}"  width="90" style="text-align: center;" >
+                            <h:outputText value="#{prd.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción" width="400"  style="text-align: left;"
+                                  sortBy="#{prd.descripcion}" >
+                            <h:outputText value="#{prd.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Nro Parte"
+                                  sortBy="#{prd.numeroParte}"  width="100" style="text-align: center;" >
+                            <h:outputText value="#{prd.numeroParte}" />
+                        </p:column>
+
+                        <p:column headerText="U.M."
+                                  sortBy="#{prd.unidadDeMedida}"  width="50" style="text-align: center;" >
+                            <h:outputText value="#{prd.unidadDeMedida.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Rubro" width="200"
+                                  sortBy="#{prd.rubr01.descripcion}" >
+                            <h:outputText value="#{prd.rubr01.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Sub Rubro" width="200"
+                                  sortBy="#{prd.rubr02.descripcion}" >
+                            <h:outputText value="#{prd.rubr02.descripcion}" />
+                        </p:column>
+
+
+                    </p:dataTable>
+
+                    <div class="EmptyBox10" />
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:panelGroup layout="block" >
+                            <p:selectBooleanCheckbox value="#{productoBean.mostrarDebaja}" >
+                                <p:ajax process="@this" update="tablaProductos" listener="#{productoBean.buscar}" />
+                            </p:selectBooleanCheckbox>
+                            <h:outputText value="Mostrar registros deshabilitados" />
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="Cantidad de Registros: " />
+                            <p:inputText id="cantRegistroProducto" value="#{productoBean.cantidadRegistros}" style="max-width: 80px;"/>
+                            <p:commandButton value="Aplicar" icon="fa fa-check"
+                                             style="max-width: 100px; margin-left: 1px;"
+                                             actionListener="#{productoBean.buscar}"
+                                             process="@this,cantRegistroProducto" update="tablaProductos" />
+                        </h:panelGroup>
+                    </p:panelGrid>
+
+                </div>
+
+                <div class="Container30 Responsive50 NoPadding" >
+
+                    <p:dataTable id="tablaPrecios"
+                                 value="#{productoBean.precios}" var="i"
+                                 emptyMessage="No se encontraron datos"
+                                 rows="5" paginator="true" paginatorAlwaysVisible="false" >
+
+                        <f:facet name="header" >
+                            Precios
+                        </f:facet>
+
+                        <p:column headerText="Lista">
+                            <h:outputText value="#{i.listaDePrecio.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Moneda" width="50" >
+                            <h:outputText value="#{i.monedaRegistracion}" />
+                        </p:column>
+
+                        <p:column headerText="Precio" width="80" >
+                            <h:outputText value="#{i.precio}" styleClass="Fright" >
+                                <f:convertNumber pattern="#,###,##0.00" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="I.V.A." width="40" >
+                            <h:outputText value=" 0%" styleClass="Fright" rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V000'}" />
+                            <h:outputText value=" 21%" styleClass="Fright" rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V001'}" />
+                            <h:outputText value=" 10.5%" styleClass="Fright" rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V002'}" />
+                            <h:outputText value=" 27%" styleClass="Fright" rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V003'}" />
+                        </p:column>
+
+                        <p:column headerText="Precio Final" width="80" >
+
+                            <h:outputText value="#{i.precio}" styleClass="Fright"
+                                          rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V000'}"  >
+                                <f:convertNumber pattern="#,###,##0.00" />
+                            </h:outputText>
+
+                            <h:outputText value="#{i.precio*1.21}" styleClass="Fright"
+                                          rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V001'}"  >
+                                <f:convertNumber pattern="#,###,##0.00" />
+                            </h:outputText>
+
+                            <h:outputText value="#{i.precio*1.105}" styleClass="Fright"
+                                          rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V002'}"  >
+                                <f:convertNumber pattern="#,###,##0.00" />
+                            </h:outputText>
+
+                            <h:outputText value="#{i.precio*1.27}" styleClass="Fright"
+                                          rendered="#{productoBean.producto.conceptoVenta.codigo eq 'V003'}"  >
+                                <f:convertNumber pattern="#,###,##0.00" />
+                            </h:outputText>
+
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <div class="EmptyBox10" />
+
+                    <p:dataTable id="tablaStocks"
+                                 value="#{productoBean.stock}" var="i"
+                                 emptyMessage="No se encontraron datos"
+                                 rows="5" paginator="true" paginatorAlwaysVisible="false" >
+
+                        <f:facet name="header" >
+                            Stock
+                        </f:facet>
+
+                        <p:column headerText="Deposito">
+                            <h:outputText value="#{i.deposito.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Cantidad" width="100" >
+                            <h:outputText value="#{i.stocks}" styleClass="Fright" />
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <div class="EmptyBox10" />
+
+                    <p:dataTable id="tablaAplicaciones"
+                                 value="#{productoBean.producto.aplicaciones}" var="i"
+                                 emptyMessage="No se encontraron datos"
+                                 rows="5" paginator="true" paginatorAlwaysVisible="false"
+                                 resizeMode="expand" liveResize="true" >
+
+                        <f:facet name="header" >
+                            Aplicaciones
+                        </f:facet>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion1}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion1}">
+                            <h:outputText value="#{i.campo1}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion2}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion2}">
+                            <h:outputText value="#{i.campo2}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion3}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion3}">
+                            <h:outputText value="#{i.campo3}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion4}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion4}">
+                            <h:outputText value="#{i.campo4}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion5}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion5}">
+                            <h:outputText value="#{i.campo5}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion6}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion6}">
+                            <h:outputText value="#{i.campo6}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion7}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion7}">
+                            <h:outputText value="#{i.campo7}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion8}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion8}">
+                            <h:outputText value="#{i.campo8}" />
+                        </p:column>
+
+                        <p:column headerText="#{aplicacionBean.parametroStock.descripcionAplicacion9}"
+                                  rendered="#{not empty aplicacionBean.parametroStock.descripcionAplicacion9}">
+                            <h:outputText value="#{i.campo9}" />
+                        </p:column>
+
+                    </p:dataTable>
+
+                </div>
+
+            </div>
+
+        </h:form>
+    </h:body>
+</html>

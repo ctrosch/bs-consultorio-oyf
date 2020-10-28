@@ -1,0 +1,100 @@
+<ui:composition 
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog  header="Agregar parámetros" id="menuParametros" modal="true"   
+               closable="false"
+               widgetVar="dlgMenuParametro" dynamic="true" 
+               style="width: 600px;" responsive="true" >
+
+        <!-- MENU -->
+        <p:menubar id="menuBarDE">
+
+            <p:menuitem value="Nuevo" icon="fa fa-plus"
+                        actionListener="#{menuParametroBean.nuevo}"
+                        process="@form" 
+                        update="pgDatos, messagede,menuBarDE,messagegde" />
+
+            <p:menuitem value="Guardar" icon="fa fa-save"
+                        actionListener="#{menuParametroBean.guardar(false)}"
+                        process="@form" 
+                        update="pgDatos, messagede,menuBarDE,messagegde" />
+
+            <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                        actionListener="#{menuParametroBean.habilitaDeshabilita('S')}"                          
+                        rendered="#{not empty menuParametroBean.menuParametro and not menuParametroBean.esNuevo and menuParametroBean.menuParametro.auditoria.debaja eq 'N'}"
+                        process="@this"
+                        update="pgDatos, messagede,messagegde"/>
+
+            <p:menuitem value="Habilitar" icon="fa fa-check"
+                        actionListener="#{menuParametroBean.habilitaDeshabilita('N')}"                          
+                        rendered="#{not empty menuParametroBean.menuParametro and not menuParametroBean.esNuevo and menuParametroBean.menuParametro.auditoria.debaja eq 'S'}"
+                        process="@this"
+                        update="pgDatos, messagede, messagegde" />
+
+            <p:menuitem icon="fa fa-refresh"
+                        value="Finalizar"                            
+                        rendered="#{not menuParametroBean.esNuevo}"
+                        actionListener="#{menuBean.sincronizarParametros}"
+                        process="@this"   
+                        update=":formulario:dtParametroMenu"
+                        oncomplete="PF('dlgMenuParametro').hide()" />
+
+            <p:menuitem icon="fa fa-close" 
+                        value="Cancelar"                            
+                        rendered="#{menuParametroBean.esNuevo}"           
+                        actionListener="#{menuBean.sincronizarParametros}"
+                        process="@this"                               
+                        oncomplete="PF('dlgMenuParametro').hide()" /> 
+
+        </p:menubar>
+
+        <p:hotkey bind="ctrl+g" 
+                  actionListener="#{menuParametroBean.nuevo}"
+                  process="@form" 
+                  update="pgDatos, messagede,menuBarDE,messagegde" />
+
+        <p:hotkey bind="ctrl+n" actionListener="#{menuParametroBean.guardar(false)}"
+                  process="@form" 
+                  update="pgDatos, messagede,menuBarDE,messagegde" />
+
+
+        <p:messages id="messagede" showDetail="true" /><p:growl id="messagegde" showDetail="true" life="4000" />
+
+        <p:panelGrid id="pgDatos" columns="2" layout="grid" columnClasses="colLabel ui-g-2, colDato ui-g-10" >
+
+            <h:outputText value="Nombre" />
+            <p:selectOneMenu value="#{menuParametroBean.menuParametro.nombre}" editable="true"
+                             required="true" filter="true"
+                             requiredMessage="El nombre es obligatorio" >
+                <f:selectItem itemLabel="CIRAPL" itemValue="CIRAPL" />
+                <f:selectItem itemLabel="CIRCOM" itemValue="CIRCOM" />
+                <f:selectItem itemLabel="CODCJ" itemValue="CODCJ" />
+                <f:selectItem itemLabel="CODCO" itemValue="CODCO" />
+                <f:selectItem itemLabel="CODFC" itemValue="CODFC" />
+                <f:selectItem itemLabel="CODFOR" itemValue="CODFOR" />
+                <f:selectItem itemLabel="CODPV" itemValue="CODPV" />
+                <f:selectItem itemLabel="CODST" itemValue="CODST" />
+                <f:selectItem itemLabel="CODVT" itemValue="CODVT" />
+                <f:selectItem itemLabel="CTAVAL" itemValue="CTAVAL" />
+                <f:selectItem itemLabel="NROCTA" itemValue="NROCTA" />
+                <f:selectItem itemLabel="SUCST" itemValue="SUCST" />
+                <f:selectItem itemLabel="SUCURS" itemValue="SUCURS" />
+
+            </p:selectOneMenu>
+
+            <h:outputText value="Valor" />
+            <p:inputText value="#{menuParametroBean.menuParametro.valor}"  
+                         required="true"
+                         requiredMessage="El valor es obligatorio" />           
+
+
+        </p:panelGrid>
+
+
+    </p:dialog>           
+
+
+</ui:composition>

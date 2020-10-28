@@ -1,0 +1,55 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{movimientoStockBean.buscar()}"
+                    immediate="true"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoStockBean.modoVista eq 'B' or empty movimientoStockBean.m.itemsProducto}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{movimientoStockBean.nuevo()}"
+                    process="@this"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoStockBean.modoVista eq 'B' or empty movimientoStockBean.m.itemsProducto}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{movimientoStockBean.guardar(false)}"
+                    rendered="#{not empty movimientoStockBean.m and movimientoStockBean.modoVista eq 'D'}"
+                    update="@form" />
+
+        <p:menuitem value="Anular/Revertir" icon="fa fa-close"
+                    actionListener="#{movimientoStockBean.revertirMovimiento(movimientoStockBean.m)}"
+                    rendered="#{not empty movimientoStockBean.m.id and movimientoStockBean.modoVista eq 'D' }"
+                    update="@form" />
+
+        <p:menuitem value="Imprimir" icon="fa fa-print"
+                    actionListener="#{movimientoStockBean.imprimir}"
+                    rendered="#{not empty movimientoStockBean.m.id}"
+                    process="@this"
+                    update="@form"
+                    oncomplete="PF('dlg_reporte').show()">
+        </p:menuitem>
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

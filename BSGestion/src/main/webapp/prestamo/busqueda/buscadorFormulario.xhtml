@@ -1,0 +1,82 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"    
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorFormularioPrestamo" header="Formulario de Facturación" modal="true"
+              widgetVar="dlgFormularioPrestamo"
+              resizable="false"
+              draggable="false"
+              position="top"
+              minHeight="400" 
+              style="max-width: 650px;" responsive="true"
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+            
+            <p:focus for="txtBusquedaFormularioPrestamo"/>
+            
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+                               
+                <p:inputText id="txtBusquedaFormularioPrestamo" value="#{formularioPrestamoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaFormularioPrestamo" listener="#{formularioPrestamoBean.buscar}"/>
+                </p:inputText>
+
+            </p:panelGrid>
+            
+            <p:dataTable id="tablaFormularioPrestamo" value="#{formularioPrestamoBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{formularioPrestamoBean.formulario}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{formularioPrestamoBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgFormularioPrestamo').hide(), procesarFormularioPrestamo()" />
+
+                <p:column headerText="Código" sortBy="#{i.codigo}" style="text-align: center;"  >
+                    <h:outputText value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{i.descripcion}" width="50%" filterBy="#{i.descripcion}"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+                
+                <p:column headerText="Pto. Venta" sortBy="#{i.puntoVenta.codigo}" style="text-align: center;"  >
+                    <h:outputText value="#{i.puntoVenta.codigo}" />
+                </p:column>
+                
+                 <p:column headerText="Letra" style="text-align: center;"  >
+                    <h:outputText value="#{i.letra}" />
+                </p:column>
+                
+            </p:dataTable> 
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{formularioPrestamoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaFormularioPrestamo" listener="#{formularioPrestamoBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroFormularioPrestamo" value="#{formularioPrestamoBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{formularioPrestamoBean.buscar}"
+                                     process="@this,cantRegistroFormularioPrestamo" update="tablaFormularioPrestamo" />
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form> 
+
+    </p:dialog>
+
+</ui:composition>

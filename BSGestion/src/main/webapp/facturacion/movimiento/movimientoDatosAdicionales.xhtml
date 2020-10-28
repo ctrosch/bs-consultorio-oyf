@@ -1,0 +1,177 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS ADICIONALES -->
+    <p:panel header="Datos adicionales" >
+
+        <p:panelGrid columns="2" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="Container40, Container60" >
+
+            <h:outputText value="Observaciones" rendered="#{movimientoFacturacionBean.muestroCampo('C','OBSERV')}"/>
+            <p:inputTextarea style="width: 100%" rows="3"
+                             value="#{movimientoFacturacionBean.m.observaciones}"
+                             rendered="#{movimientoFacturacionBean.muestroCampo('C','OBSERV')}" >
+                <p:ajax event="blur" process="@this" />
+            </p:inputTextarea>
+
+            <!--
+            <h:outputText value="Bien de Uso"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('C','BIENUSO')}" />
+            <p:selectOneRadio value="#{movimientoFacturacionBean.m.bienDeUso}"
+                              rendered="#{movimientoFacturacionBean.muestroCampo('C','BIENUSO')}" >
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+
+                <p:ajax process="@this" update="@form" listener="#{movimientoFacturacionBean.calcularImportes()}" />
+            </p:selectOneRadio>
+            -->
+
+            <h:outputText value="Deposito"
+                          rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}" />
+            <p:selectOneMenu value="#{movimientoFacturacionBean.m.deposito}"
+                             disabled="#{movimientoFacturacionBean.circuito.editaDeposito eq 'N'}"
+                             rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}"
+                             required="false" requiredMessage="Seleccione el depósito"
+                             converter="#{conversoresStock.deposito}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" update="tb:detalle" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+            </p:selectOneMenu>
+
+            <h:outputText value=""
+                          rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}" />
+            <h:outputText value=""
+                          rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}" />
+
+            <h:outputText value="Deposito egreso"
+                          rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}" />
+            <p:selectOneMenu value="#{movimientoFacturacionBean.m.depositoTransferencia}"
+                             disabled="#{movimientoFacturacionBean.circuito.editaDeposito eq 'N'}"
+                             rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                             required="true" requiredMessage="Seleccione el depósito de egreso"
+                             converter="#{conversoresStock.deposito}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" update="tb:detalle" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Deposito ingreso"
+                          rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}" />
+            <p:selectOneMenu value="#{movimientoFacturacionBean.m.deposito}"
+                             disabled="#{movimientoFacturacionBean.circuito.editaDeposito eq 'N'}"
+                             rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                             required="true" requiredMessage="Seleccione el depósito de ingreso"
+                             converter="#{conversoresStock.deposito}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" update="tb:detalle" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+            </p:selectOneMenu>
+
+            <bs:outputTexWhitLink value="Transporte"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','CODTRA')}"
+                                  url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00127')}" />
+
+            <p:autoComplete value="#{movimientoFacturacionBean.m.transporte}"
+                            maxResults="8" queryDelay="1000"
+                            rendered="#{movimientoFacturacionBean.muestroCampo('C','CODTRA')}"
+                            completeMethod="#{transporteBean.complete}"
+                            var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                            converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" dropdown="true" >
+                <p:ajax event="itemSelect" process="@this"
+                        update="#{movimientoFacturacionBean.muestroCampo('C','IDCHOF')?'chofer':''}#{movimientoFacturacionBean.muestroCampo('C','IDCAMI')?',camion':''}" />
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{e.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{e.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Dirección">
+                    <h:outputText value="#{e.direccion}" />
+                </p:column>
+
+                <p:column headerText="Teléfono">
+                    <h:outputText value="#{e.telefono}" />
+                </p:column>
+
+            </p:autoComplete>
+
+            <bs:outputTexWhitLink value="Chofer"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','IDCHOF')}"
+                                  url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00127')}" />
+
+            <p:selectOneMenu id="chofer" value="#{movimientoFacturacionBean.m.chofer}"
+                             rendered="#{movimientoFacturacionBean.muestroCampo('C','IDCHOF')}"
+                             required="#{movimientoFacturacionBean.circuito.transporteObligatorio eq 'S'}" requiredMessage="Seleccione el chofer"
+                             converter="#{conversoresEntidad.chofer}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{movimientoFacturacionBean.m.transporte.choferes}" var="c"
+                               itemLabel="#{c.nombreChofer} #{c.apellidoChofer} - #{c.dniChofer}" itemValue="#{c}" />
+            </p:selectOneMenu>
+
+            <bs:outputTexWhitLink value="Camión"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','IDCAMI')}"
+                                  url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00127')}" />
+
+            <p:selectOneMenu id="camion" value="#{movimientoFacturacionBean.m.camion}"
+                             rendered="#{movimientoFacturacionBean.muestroCampo('C','IDCAMI')}"
+                             required="#{movimientoFacturacionBean.circuito.transporteObligatorio eq 'S'}" requiredMessage="Seleccione el camión"
+                             converter="#{conversoresEntidad.camion}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{movimientoFacturacionBean.m.transporte.camiones}" var="d"
+                               itemLabel="Chasis #{d.dominioChasis} - Acoplado #{d.dominioAcoplado}" itemValue="#{d}" />
+            </p:selectOneMenu>
+
+            <h:outputText value="C.A.E."
+                          rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}" />
+            <h:outputText value="#{movimientoFacturacionBean.m.movimientoVenta.numeroCAE}"
+                          rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}"/>
+
+            <h:outputText value="Vto C.A.E."
+                          rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}" />
+            <h:outputText value="#{movimientoFacturacionBean.m.movimientoVenta.vencimientoCAE}"
+                          rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+
+            <h:outputText value="Producto de refencia"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('C','PRDREF')}" />
+            <p:autoComplete value="#{movimientoFacturacionBean.m.productoReferencia}"
+                            maxResults="8" queryDelay="1000"
+                            rendered="#{movimientoFacturacionBean.muestroCampo('C','PRDREF')}"
+                            completeMethod="#{productoBean.complete}"
+                            var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                            converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{p.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{p.descripcion}" />
+                </p:column>
+            </p:autoComplete>
+
+        </p:panelGrid>
+
+    </p:panel>
+
+
+</ui:composition>
+

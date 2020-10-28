@@ -1,0 +1,344 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panel header="Datos" rendered="#{not empty aplicacionCuentaCorrienteBean.m and not aplicacionCuentaCorrienteBean.buscaMovimiento}" >
+
+        <p:panelGrid columns="8" layout="grid" styleClass="ui-panelgrid-blank"
+                     columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+            <h:outputText value="Formulario"
+                          rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','CODFOR')}" />
+            <p:inputText value="#{aplicacionCuentaCorrienteBean.m.formulario.descripcion} - #{aplicacionCuentaCorrienteBean.m.formulario.letra}"
+                         rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','CODFOR')}"
+                         readonly="true" />
+
+            <h:outputText value="Pto. Venta"
+                          rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','SUCURS')}" />
+            <p:inputText value="#{aplicacionCuentaCorrienteBean.m.puntoVenta.codigo}" readonly="true"
+                         rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','SUCURS')}" >
+                <f:convertNumber pattern="00000" />
+            </p:inputText>
+
+            <h:outputText value="Número" rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','NROFOR')}" />
+            <p:inputText value="#{aplicacionCuentaCorrienteBean.m.numeroFormulario}" readonly="true"
+                         rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','NROFOR')}" >
+                <f:convertNumber pattern="00000000" />
+            </p:inputText>
+
+            <h:outputText value="Fecha"
+                          rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','FCHMOV')}" />
+
+            <p:calendar value="#{aplicacionCuentaCorrienteBean.m.fechaMovimiento}"
+                        disabled="#{aplicacionCuentaCorrienteBean.m.formulario.modificaFecha ne 'S'}"
+                        rendered="#{aplicacionCuentaCorrienteBean.muestroCampo('C','FCHMOV')}"
+                        pattern="dd/MM/yyyy"
+                        showOn="button"
+                        navigator="true"
+                        mask="true"
+                        maxdate="#{aplicacionCuentaCorrienteBean.fechaMovimientoMaxima}" >
+                <p:ajax process="@this" event="dateSelect" listener="#{aplicacionCuentaCorrienteBean.onChageFechaMovimiento}" />
+            </p:calendar>
+
+        </p:panelGrid>
+
+        <p:panelGrid columns="4" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+            <bs:outputTexWhitLink value="Cliente *"
+                                  url="#{aplicacionCuentaCorrienteBean.obtenerUrlMenu('SIS_00083')}" />
+
+            <p:autoComplete value="#{aplicacionCuentaCorrienteBean.m.cliente}" dropdown="true" forceSelection="true"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{clienteBean.complete}"
+                            disabled="#{not empty aplicacionCuentaCorrienteBean.m.id}"
+                            var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                            converter="#{conversoresEntidad.entidadComercial}"  >
+
+                <p:ajax event="itemSelect" process="@this" update="@form" listener="#{aplicacionCuentaCorrienteBean.procesarCliente()}"  />
+
+                <p:column headerText="Nro cuenta" width="100">
+                    <h:outputText value="#{e.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Razón social">
+                    <h:outputText value="#{e.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Nombre Fantasía">
+                    <h:outputText value="#{e.nombreFantasia}" />
+                </p:column>
+
+                <p:column headerText="Nro doc">
+                    <h:outputText value="#{e.nrodoc}" />
+                </p:column>
+            </p:autoComplete>
+
+            <h:outputText value="Moneda de Registración" />
+            <p:inputText value="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.descripcion}" readonly="true" />
+
+            <h:outputText value="Observaciones" />
+            <p:inputTextarea style="width: 100%" rows="3" value="#{aplicacionCuentaCorrienteBean.m.observaciones}" />
+
+            <h:outputText value="" />
+            <h:outputText value="" />
+
+        </p:panelGrid>
+
+    </p:panel>
+    <p:spacer width="100%" height="1em"
+              rendered="#{not empty aplicacionCuentaCorrienteBean.m and not aplicacionCuentaCorrienteBean.buscaMovimiento}" />
+
+    <!-- CREDITOS -->
+    <p:dataTable id="tCreditos" paginator="true" rows="5" value="#{aplicacionCuentaCorrienteBean.creditos}" var="c"
+                 resizeMode="expand" liveResize="true"
+                 rendered="#{not aplicacionCuentaCorrienteBean.m.persistido and not empty aplicacionCuentaCorrienteBean.creditos and not aplicacionCuentaCorrienteBean.buscaMovimiento}"
+                 emptyMessage="No se han encontrado créditos pendientes">
+
+        <f:facet name="header">
+            <div class="headerTable">
+                Créditos pendientes
+            </div>
+        </f:facet>
+
+        <p:column headerText="Documento" style="text-align: center;" >
+            <h:outputText value="#{c.comprobante} " />
+
+            <h:outputText value="#{c.puntoVenta}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+
+            <h:outputText value="#{c.numeroFormulario}" >
+                <f:convertNumber pattern="-00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Vencimiento" style="text-align: center;" >
+            <h:outputText value="#{c.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Cuota" style="text-align: center;" >
+            <h:outputText value="#{c.cuotas}" />
+        </p:column>
+
+        <p:column headerText="Imp. Pendiente" width="160" style="text-align: right !important;"  >
+
+            <h:outputText value="#{c.pendiente}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+            <h:outputText value="#{c.pendienteSecundario}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+        <p:column headerText="Imp. Aplicar" width="160" >
+
+            <p:inputText value="#{c.importeAplicar}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+                <p:ajax listener="#{aplicacionCuentaCorrienteBean.modificaCredito(c)}" event="keyup" delay="500"
+                        update=":formulario:totales,messageg" />
+            </p:inputText>
+
+            <p:inputText value="#{c.importeAplicarSecundario}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+                <p:ajax listener="#{aplicacionCuentaCorrienteBean.modificaCredito(c)}" event="keyup" delay="500"
+                        update=":formulario:totales, messageg" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Seleccionar" style="text-align: center;" >
+            <p:selectBooleanCheckbox  value="#{c.seleccionado}" >
+                <p:ajax update="@form" listener="#{aplicacionCuentaCorrienteBean.marcarCredito(c)}" />
+            </p:selectBooleanCheckbox>
+        </p:column>
+
+        <f:facet name="footer" >
+            <!--
+            <div style="text-align: right;">
+                <h:outputText value="Total:   " />
+                <h:outputText value="#{aplicacionCuentaCorrienteBean.totalHaber}" styleClass="textoImporte"  >
+                    <f:convertNumber pattern="$ ###,###,##0.00" />
+                </h:outputText>
+            </div>
+            -->
+
+        </f:facet>
+    </p:dataTable>
+
+    <p:spacer width="100%" height="1em"
+              rendered="#{not aplicacionCuentaCorrienteBean.m.persistido and not empty aplicacionCuentaCorrienteBean.creditos}" />
+
+    <!-- DEBITOS -->
+    <p:dataTable id="tDebitos" paginator="true" rows="5"  value="#{aplicacionCuentaCorrienteBean.debitos}" var="d"
+                 resizeMode="expand" liveResize="true"
+                 rendered="#{not aplicacionCuentaCorrienteBean.m.persistido and not empty aplicacionCuentaCorrienteBean.debitos and not aplicacionCuentaCorrienteBean.buscaMovimiento}"
+                 emptyMessage="No se han encontrado débitos pendientes">
+
+        <f:facet name="header">
+            <div class="headerTable">
+                Débitos pendientes
+            </div>
+        </f:facet>
+
+        <p:column headerText="Documento" style="text-align: center;" >
+            <h:outputText value="#{d.comprobante} " />
+            <h:outputText value="#{d.puntoVenta}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+            <h:outputText value="#{d.numeroFormulario}" >
+                <f:convertNumber pattern="-00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Vencimiento" style="text-align: center;" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Cuota" style="text-align: center;" >
+            <h:outputText value="#{d.cuotas}" />
+        </p:column>
+
+        <p:column headerText="Imp. Pendiente" width="160" style="text-align: right !important;"  >
+
+            <h:outputText value="#{d.pendiente}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+            <h:outputText value="#{d.pendienteSecundario}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+        <p:column headerText="Imp. Aplicar" width="160" >
+
+            <p:inputText value="#{d.importeAplicar}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+                <p:ajax listener="#{aplicacionCuentaCorrienteBean.modificaDebito(d)}" event="keyup" delay="500"
+                        update=":formulario:totales,messageg" />
+            </p:inputText>
+
+            <p:inputText value="#{d.importeAplicarSecundario}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+                <p:ajax listener="#{aplicacionCuentaCorrienteBean.modificaDebito(d)}" event="keyup" delay="500"
+                        update=":formulario:totales, messageg" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Seleccionar" style="text-align: center;" >
+            <p:selectBooleanCheckbox  value="#{d.seleccionado}" >
+                <p:ajax update="@form" listener="#{aplicacionCuentaCorrienteBean.marcarDebito(d)}" />
+            </p:selectBooleanCheckbox>
+        </p:column>
+
+        <f:facet name="footer" >
+            <div style="text-align: right;">
+                <!--
+                <h:outputText value="Total:   " />
+                <h:outputText id="total" value="#{aplicacionCuentaCorrienteBean.totalDebe}" styleClass="textoImporte"  >
+                    <f:convertNumber pattern="$ ###,###,##0.00" />
+                </h:outputText>
+                -->
+            </div>
+        </f:facet>
+    </p:dataTable>
+
+    <p:spacer width="100%" height="1em"
+              rendered="#{not aplicacionCuentaCorrienteBean.m.persistido and not empty aplicacionCuentaCorrienteBean.debitos and not aplicacionCuentaCorrienteBean.buscaMovimiento}"/>
+
+    <!-- APLICACIONES -->
+    <p:dataTable id="tAplicaciones" paginator="true" rows="20" value="#{aplicacionCuentaCorrienteBean.m.itemCuentaCorriente}" var="d"
+                 resizeMode="expand" liveResize="true"
+                 rendered="#{not empty aplicacionCuentaCorrienteBean.m.itemCuentaCorriente and not aplicacionCuentaCorrienteBean.buscaMovimiento}"
+                 emptyMessage="No se han encontrado aplicaciones">
+
+        <f:facet name="header">
+            <div class="headerTable">
+                Aplicaciones de cuenta corriente
+            </div>
+        </f:facet>
+
+        <p:column headerText="Documento" style="text-align: center;" >
+            <h:outputText value="#{d.movimientoAplicacion.formulario.codigo} " />
+            <h:outputText value="#{d.movimientoAplicacion.puntoVenta.codigo}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+            <h:outputText value="#{d.movimientoAplicacion.numeroFormulario}" >
+                <f:convertNumber pattern="-00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Vencimiento" style="text-align: center;" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Cuota" style="text-align: center;" >
+            <h:outputText value="#{d.cuota}" />
+        </p:column>
+
+        <p:column headerText="Importe Aplicado" style="text-align: right;" >
+            <h:outputText value="#{d.importe}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                          style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+            </h:outputText>
+
+            <h:outputText value="#{d.importeSecundario}" rendered="#{aplicacionCuentaCorrienteBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                          style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.00" />
+            </h:outputText>
+        </p:column>
+
+    </p:dataTable>
+
+    <p:spacer width="100%" height="1em"
+              rendered="#{not empty aplicacionCuentaCorrienteBean.m.itemCuentaCorriente and not aplicacionCuentaCorrienteBean.buscaMovimiento}" />
+
+    <!-- TOTALES -->
+    <p:panel id="totales" header="Importes " rendered="#{empty aplicacionCuentaCorrienteBean.m.id and not empty aplicacionCuentaCorrienteBean.m.cliente and not aplicacionCuentaCorrienteBean.buscaMovimiento}">
+
+        <div class="Flex FlexWrap">
+
+            <div class="Container75 Responsive50 Flex">
+
+            </div>
+
+            <div class="Container25 Responsive50 Flex">
+
+                <div class="Card BlueBack">
+                    <div class="EmptyBox5"></div>
+                    <div class="CardTopic White Fs14">Disponible</div>
+                    <div class="EmptyBox5"></div>
+                    <div class="DispBlock Opac50">
+                        <span class="Fs20 White FontVoltSemiBold">
+                            <h:outputText value="#{aplicacionCuentaCorrienteBean.totalHaber - aplicacionCuentaCorrienteBean.totalDebe}" >
+                                <f:convertNumber pattern="$ ###,###,##0.00" />
+                            </h:outputText>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </p:panel>
+
+
+
+</ui:composition>

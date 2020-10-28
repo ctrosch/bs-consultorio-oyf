@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{categoriaBean.codMenu}"/>
+            <f:viewParam name="CODIGO"  value="#{categoriaBean.codigo}"/>
+            <f:viewParam name="TITULO"  value="#{categoriaBean.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{categoriaBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{categoriaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{categoriaBean.titulo}
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarCategoria" process="@this" update="@form" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{categoriaBean.modoVista eq 'B'}">
+                <ui:include src="categoriaBusqueda.xhtml"  />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{categoriaBean.modoVista eq 'D'}">
+                <ui:include src="categoriaMenu.xhtml"  />
+                <ui:include src="categoriaDatos.xhtml"  />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

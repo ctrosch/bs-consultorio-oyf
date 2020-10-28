@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{reciboPrestamoBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{reciboPrestamoBean.titulo}"/>
+
+            <f:viewParam name="SUCCJ" value="#{reciboPrestamoBean.SUCCJ}"/>
+            <f:viewParam name="CODCJ"  value="#{reciboPrestamoBean.CODCJ}"/>
+            <f:viewParam name="CODPR"  value="#{reciboPrestamoBean.CODPR}"/>
+            <f:viewParam name="MODDE"  value="#{reciboPrestamoBean.modoVista}"/>
+
+            <f:event type="preRenderView" listener="#{reciboPrestamoBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{reciboPrestamoBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{reciboPrestamoBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu-right">
+            <p:commandLink actionListener="#{reciboPrestamoBean.addFavorito()}"
+                           process="@this"
+                           update="message,messageg"
+                           styleClass="Fs30 Fright" style="color: #0277bd;padding-right: 5px;" >
+                <i class="fa fa-star" ></i>
+            </p:commandLink>
+        </ui:define>
+
+
+        <ui:define name="contenido" >
+
+            <ui:include src="reciboPrestamoMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{reciboPrestamoBean.modoVista eq 'B'}" >
+                <ui:include src="reciboPrestamoBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{reciboPrestamoBean.modoVista eq 'D'}" >
+
+                <ui:include src="reciboPrestamoDatos.xhtml" />
+
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-12 ui-lg-10,ui-g-12 ui-lg-2"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <p:tabView activeIndex="#{reciboPrestamoBean.indexTab1}"
+                               rendered="#{not empty reciboPrestamoBean.m and not empty reciboPrestamoBean.m.entidad}"  >
+
+                        <p:ajax event="tabChange" listener="#{reciboPrestamoBean.onTab1Change}" />
+
+                        <p:tab id="t0" title="Cuotas" >
+
+                            <ui:include src="reciboPrestamoPendiente.xhtml" />
+
+                            <ui:include src="reciboPrestamoAplicaciones.xhtml" />
+
+                        </p:tab>
+
+                        <p:tab id="t1" title="Conceptos de Cobro" >
+                            <ui:include src="reciboPrestamoConcepto.xhtml" />
+                        </p:tab>
+                    </p:tabView>
+
+                    <ui:include src="reciboPrestamoTotales.xhtml" />
+
+                </p:panelGrid>
+
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reciboPrestamoBean.muestraReporte}"
+                               nombreArchivo="#{reciboPrestamoBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <!-- ENVIO COMPROBANTE -->
+            <bs:envioComprobante solicitaEmail="#{reciboPrestamoBean.solicitaEmail}"
+                                 email="#{reciboPrestamoBean.emailEnvioComprobante}"
+                                 informacionAdicional ="#{reciboPrestamoBean.informacionAdicional}"
+                                 actionListener="#{reciboPrestamoBean.enviarNotificaciones()}"  />
+
+            <ui:include src="/tesoreria/busqueda/buscadorBanco.xhtml" />
+            <ui:include src="/tesoreria/busqueda/buscadorFormulario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

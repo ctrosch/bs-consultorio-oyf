@@ -1,0 +1,32 @@
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+
+    <h:form>
+
+        <div class="footer-ajax" >
+
+            <p:ajaxStatus widgetVar="ajaxStatus" >
+                <f:facet name="default" />
+                <f:facet name="start">
+
+                    <div class="ajaxImagen">
+                        <p:graphicImage value="/resources/ajax/ajax02.GIF"
+                                        />
+                    </div>
+
+                    <div class="ajaxTexto" style="font-size:14px;">
+
+                        Aguarde por favor...
+
+                    </div>
+                </f:facet>
+                <f:facet name="complete" />
+            </p:ajaxStatus>
+
+        </div>
+    </h:form>
+
+</ui:composition>

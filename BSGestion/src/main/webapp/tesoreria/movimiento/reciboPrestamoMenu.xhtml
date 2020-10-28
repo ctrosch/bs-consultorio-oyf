@@ -1,0 +1,61 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{reciboPrestamoBean.buscar()}"
+                    immediate="true"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{reciboPrestamoBean.modoVista eq 'B' or not empty reciboPrestamoBean.m.id or empty reciboPrestamoBean.m.entidad}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{reciboPrestamoBean.nuevo()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{reciboPrestamoBean.modoVista eq 'B' or not empty reciboPrestamoBean.m.id or empty reciboPrestamoBean.m.entidad}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{reciboPrestamoBean.guardar(false)}"
+                    rendered="#{empty reciboPrestamoBean.m.id }"
+                    update="@form" />
+
+        <p:menuitem value="Anular/Revertir" icon="fa fa-close"
+                    actionListener="#{reciboPrestamoBean.revertirMovimiento(reciboPrestamoBean.m)}"
+                    rendered="#{not empty reciboPrestamoBean.m.id and reciboPrestamoBean.modoVista eq 'D' }"
+                    update="@form" />
+
+        <p:menuitem value="Imprimir" icon="fa fa-print"
+                    actionListener="#{reciboPrestamoBean.imprimir}"
+                    rendered="#{not empty reciboPrestamoBean.m.id }"
+                    process="@this"
+                    update="@form"
+                    oncomplete="PF('dlg_reporte').show()">
+        </p:menuitem>
+
+        <p:menuitem value="Enviar E-mail" icon="fa fa-envelope"
+                    actionListener="#{reciboPrestamoBean.preparoEnvioNotificaciones}"
+                    rendered="#{not empty reciboPrestamoBean.m.id}"
+                    process="@this"
+                    update="dialogos"
+                    oncomplete="PF('dlgEnvioComprobante').show()" >
+        </p:menuitem>
+
+
+    </p:menubar>
+
+
+</ui:composition>
+

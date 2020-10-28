@@ -1,0 +1,361 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid"
+                 rendered="#{not empty movimientoPrestamoBean.m}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario"
+                      rendered="#{movimientoPrestamoBean.muestroCampo('C','CODFOR')}" />
+        <p:inputText value="#{movimientoPrestamoBean.m.formulario.descripcion}"
+                     rendered="#{movimientoPrestamoBean.muestroCampo('C','CODFOR')}"
+                     readonly="true" />
+
+        <h:outputText value="Pto. Venta" rendered="#{movimientoPrestamoBean.muestroCampo('C','SUCURS')}" />
+        <p:inputText value="#{movimientoPrestamoBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{movimientoPrestamoBean.muestroCampo('C','SUCURS')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" rendered="#{movimientoPrestamoBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{movimientoPrestamoBean.m.numeroFormulario}" readonly="true"
+                     rendered="#{movimientoPrestamoBean.muestroCampo('C','NROFOR')}" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{movimientoPrestamoBean.muestroCampo('C','FCHMOV')}" />
+        <p:calendar value="#{movimientoPrestamoBean.m.fechaMovimiento}"
+                    disabled="#{movimientoPrestamoBean.m.formulario.modificaFecha ne 'S' or not empty movimientoPrestamoBean.m.prestamo}"
+                    rendered="#{movimientoPrestamoBean.muestroCampo('C','FCHMOV')}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{movimientoPrestamoBean.fechaMovimientoMaxima}" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"
+                 rendered="#{not empty movimientoPrestamoBean.m and not movimientoPrestamoBean.buscaMovimiento}" >
+
+        <bs:outputTexWhitLink value="Prestamo *"
+                              url="#{movimientoPrestamoBean.obtenerUrlMenu('SIS_00392','ID_PRES',movimientoPrestamoBean.m.prestamo.id)}" />
+
+        <p:autoComplete value="#{movimientoPrestamoBean.m.prestamo}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        emptyMessage="No se encontraros préstamos"
+                        disabled="#{not empty movimientoPrestamoBean.m.id}"
+                        completeMethod="#{movimientoPrestamoBean.completePrestamo}"
+                        var="i" itemLabel="#{i.codigo}" itemValue="#{i}"
+                        converter="#{conversoresPrestamo.prestamo}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoPrestamoBean.procesarPrestamo()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{i.codigo}" />
+            </p:column>
+
+            <p:column headerText="Destinatario" width="200">
+                <h:outputText value="#{i.nombreDestinatario}" />
+            </p:column>
+
+            <p:column headerText="Línea de crédito" width="200">
+                <h:outputText value="#{i.lineaCredito.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Fecha Entrega">
+                <h:outputText value="#{i.fechaEntrega }" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Capital">
+                <h:outputText value="#{i.importeCapital}" />
+            </p:column>
+
+            <p:column headerText="Interés">
+                <h:outputText value="#{i.importeInteres}" />
+            </p:column>
+
+            <p:column headerText="Total">
+                <h:outputText value="#{i.importeTotal}" />
+            </p:column>
+
+            <p:column headerText="Sucursal" width="200">
+                <h:outputText value="#{i.sucursal.nombre}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Línea de Crédito" />
+        <p:inputText value="#{movimientoPrestamoBean.m.prestamo.lineaCredito.descripcion}" readonly="true" />
+
+        <bs:outputTexWhitLink value="Destinatario *"
+                              url="#{movimientoPrestamoBean.obtenerUrlMenu('SIS_00393')}" />
+        <p:inputText value="#{movimientoPrestamoBean.m.destinatario.razonSocial}"
+                     readonly="true" />
+
+        <h:outputText value="Financiador" />
+        <p:inputText value="#{movimientoPrestamoBean.m.prestamo.financiador.descripcion}" readonly="true" />
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoPrestamoBean.m.observaciones}" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <p:tabView activeIndex="#{movimientoPrestamoBean.indexTab1}"
+               rendered="#{not empty movimientoPrestamoBean.m and not empty movimientoPrestamoBean.m.prestamo}">
+
+        <p:ajax event="tabChange" listener="#{movimientoPrestamoBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Detalle de cuotas" rendered="#{not empty movimientoPrestamoBean.m.prestamo}" >
+            <ui:include src="movimientoPendiente.xhtml"  />
+        </p:tab>
+
+        <p:tab id="t1" title="Conceptos de pago"
+               rendered="#{not empty movimientoPrestamoBean.m.movimientoTesoreria}" >
+
+            <!-- TOTALES -->
+            <h:panelGroup id="totales2" layout="block"
+                          styleClass="p-grid"
+                          rendered="#{not empty movimientoPrestamoBean.m.prestamo}" >
+
+                <h:panelGroup layout="block"
+                              styleClass="p-col-12 p-md-6 p-lg-12"  >
+                    <div class="Card GreenBack">
+                        <div class="CardTopic White Fs14 ">
+                            <h:outputText value="Importe a liquidar" />
+                        </div>
+                        <div class="DispBlock Opac50 ">
+                            <span class="Fs20 White FontVoltSemiBold ">
+                                <h:outputText value="#{movimientoPrestamoBean.m.prestamo.importeCapital}"
+                                              styleClass="textoImporte"  >
+                                    <f:convertNumber pattern="$ ###,###,##0.00" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </h:panelGroup>
+
+            <div class="EmptyBox10" />
+
+            <ui:include src="movimientoConceptos.xhtml"  />
+
+        </p:tab>
+
+        <p:tab id="t2" title="Totales">
+
+            <p:dataTable id="detalleCapital" value="#{movimientoPrestamoBean.m.itemCapital}" var="i" style="max-width: 500px;"
+                         rendered="#{not empty movimientoPrestamoBean.m.itemCapital}"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         paginator="true" paginatorAlwaysVisible="false" rows="50" >
+
+                <p:column headerText="Concepto" width="250" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Importe" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.importe}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+
+            <p:dataTable id="detalleInteres" value="#{movimientoPrestamoBean.m.itemIntereses}" var="i" style="max-width: 500px;"
+                         rendered="#{not empty movimientoPrestamoBean.m.itemIntereses}"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         paginator="true" paginatorAlwaysVisible="false" rows="50" >
+
+                <p:column headerText="Concepto" width="250" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Importe" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.importe}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+
+            <p:dataTable id="detalleGastos" value="#{movimientoPrestamoBean.m.itemGastoOtorgamiento}" var="i" style="max-width: 500px;"
+                         rendered="#{not empty movimientoPrestamoBean.m.itemGastoOtorgamiento}"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         paginator="true" paginatorAlwaysVisible="false" rows="50" >
+
+                <p:column headerText="Concepto" width="250" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Importe" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.importe}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+
+            <p:dataTable id="detalleMicroseguro" value="#{movimientoPrestamoBean.m.itemMicroseguro}" var="i" style="max-width: 500px;"
+                         rendered="#{not empty movimientoPrestamoBean.m.itemMicroseguro}"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         paginator="true" paginatorAlwaysVisible="false" rows="50" >
+
+                <p:column headerText="Concepto" width="250" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Importe" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.importe}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+
+            <p:dataTable id="detalleTotal" value="#{movimientoPrestamoBean.m.itemTotal}" var="i" style="max-width: 500px;"
+                         rendered="#{not empty movimientoPrestamoBean.m.itemTotal}"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         paginator="true" paginatorAlwaysVisible="false" rows="50" >
+
+                <p:column headerText="Concepto" width="250" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Importe" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.importe}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+    <div class="EmptyBox10" />
+
+    <!-- TOTALES -->
+    <h:panelGroup id="totales" layout="block" styleClass="p-grid"
+                  rendered="#{not empty movimientoPrestamoBean.m}" >
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2"
+                      rendered="#{movimientoPrestamoBean.m.importeCapital > 0}">
+            <div class="Card GreenBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Capital Pendiente" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{movimientoPrestamoBean.m.importeCapital}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2"
+                      rendered="#{movimientoPrestamoBean.m.importeInteres > 0}" >
+            <div class="Card OrangeBack Fright">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Intereses Pendiente" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright ">
+                        <h:outputText value="#{movimientoPrestamoBean.m.importeInteres}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2"
+                      rendered="#{movimientoPrestamoBean.m.importeGastos > 0}" >
+            <div class="Card LimeBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Gastos Otorgamiento" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright ">
+                        <h:outputText value="#{movimientoPrestamoBean.m.importeGastos}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2"
+                      rendered="#{movimientoPrestamoBean.m.importeMicroseguro > 0}" >
+            <div class="Card PinkBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Microseguro" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright ">
+                        <h:outputText value="#{movimientoPrestamoBean.m.importeMicroseguro}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-3 p-lg-2"
+                      rendered="#{movimientoPrestamoBean.m.importeTotal > 0}" >
+            <div class="Card BlueBack" >
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Importe Total" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+
+                        <h:outputText value="#{movimientoPrestamoBean.m.importeTotal}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+    </h:panelGroup>
+
+</ui:composition>
+

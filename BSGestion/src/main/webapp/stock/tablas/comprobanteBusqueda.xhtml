@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{comprobanteStockBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this, filtro" update="tabla" listener="#{comprobanteStockBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{comprobanteStockBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{comprobanteStockBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+            <p:selectOneMenu value="#{comprobanteStockBean.tipoMovimiento}" >
+                <p:ajax process="@this" update="tabla" listener="#{comprobanteStockBean.buscar()}" />
+                <f:selectItem itemLabel="Seleccionar Tipo de movimiento " itemValue="" />
+                <f:selectItem itemLabel="Ajuste" itemValue="A" />
+                <f:selectItem itemLabel="Igreso" itemValue="I" />
+                <f:selectItem itemLabel="Egreso" itemValue="E" />
+                <f:selectItem itemLabel="Transferencia" itemValue="T" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{comprobanteStockBean.deposito}"
+                             converter="#{conversoresStock.deposito}"
+                             effect="fade"  filter="true" >
+                <p:ajax process="@this" update="tabla" listener="#{comprobanteStockBean.buscar()}" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar Deposito Ingreso" />
+                <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{comprobanteStockBean.depositoTransferencia}"
+                             converter="#{conversoresStock.deposito}"
+                             effect="fade"  filter="true" >
+                <p:ajax process="@this" update="tabla" listener="#{comprobanteStockBean.buscar()}" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar Deposito Egreso" />
+                <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+            </p:selectOneMenu>
+
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{comprobanteStockBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="tabla" listener="#{comprobanteStockBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{comprobanteStockBean.lista}"  var="i"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{comprobanteStockBean.comprobante}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{comprobanteStockBean.onSelect}" update="@form" />
+
+        <p:column headerText="Código" width="10%" style="text-align: center;"
+                  sortBy="#{i.codigo}"   >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                  sortBy="#{i.descripcion}" >
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+
+        <h:panelGroup layout="block" >
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{comprobanteStockBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{comprobanteStockBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{xxxxxBean.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{xxxxxBean.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</html>
+

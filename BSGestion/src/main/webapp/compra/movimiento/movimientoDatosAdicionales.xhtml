@@ -1,0 +1,95 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS ADICIONALES -->
+    <p:panel  header="Adicionales" rendered="#{not empty movimientoCompraBean.m and not movimientoCompraBean.buscaMovimiento}">
+
+        <p:panelGrid columns="2" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="ui-g-5,ui-g-7" >
+
+            <h:outputText value="Observaciones" rendered="#{movimientoCompraBean.muestroCampo('C','OBSERV')}" />
+            <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoCompraBean.m.observaciones}"
+                             rendered="#{movimientoCompraBean.muestroCampo('C','OBSERV')}" >
+                <p:ajax event="blur" process="@this" />
+            </p:inputTextarea>
+
+
+            <bs:outputTexWhitLink value="Transporte"
+                                  rendered="#{movimientoCompraBean.muestroCampo('C','CODTRA')}"
+                                  url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00127','NROCTA',movimientoCompraBean.m.transporte.nrocta)}" />
+
+            <p:autoComplete value="#{movimientoCompraBean.m.transporte}"
+                            maxResults="8" queryDelay="1000"
+                            rendered="#{movimientoCompraBean.muestroCampo('C','CODTRA')}"
+                            completeMethod="#{transporteBean.complete}"
+                            var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                            converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" dropdown="true" >
+                <p:ajax event="itemSelect" process="@this"
+                        update="#{movimientoCompraBean.muestroCampo('C','IDCHOF')?'chofer':''}#{movimientoCompraBean.muestroCampo('C','IDCAMI')?',camion':''}" />
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{e.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{e.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Dirección">
+                    <h:outputText value="#{e.direccion}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{e.telefono}" />
+                </p:column>
+
+            </p:autoComplete>
+
+
+            <bs:outputTexWhitLink value="Chofer"
+                                  rendered="#{movimientoCompraBean.muestroCampo('C','IDCHOF')}"
+                                  url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00127')}" />
+
+            <p:selectOneMenu id="chofer" value="#{movimientoCompraBean.m.chofer}"
+                             rendered="#{movimientoCompraBean.muestroCampo('C','IDCHOF')}"
+                             required="true" requiredMessage="Seleccione el chofer"
+                             converter="#{conversoresEntidad.chofer}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{movimientoCompraBean.m.transporte.choferes}" var="c"
+                               itemLabel="#{c.nombreChofer} #{c.apellidoChofer} - #{c.dniChofer}" itemValue="#{c}" />
+            </p:selectOneMenu>
+
+            <bs:outputTexWhitLink value="Camión"
+                                  rendered="#{movimientoCompraBean.muestroCampo('C','IDCAMI')}"
+                                  url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00127')}" />
+
+            <p:selectOneMenu id="camion" value="#{movimientoCompraBean.m.camion}"
+                             rendered="#{movimientoCompraBean.muestroCampo('C','IDCAMI')}"
+                             required="true" requiredMessage="Seleccione el camión"
+                             converter="#{conversoresEntidad.camion}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{movimientoCompraBean.m.transporte.camiones}" var="d"
+                               itemLabel="Chasis #{d.dominioChasis} - Acoplado #{d.dominioAcoplado}" itemValue="#{d}" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Moneda de Registación"
+                          rendered="#{movimientoCompraBean.muestroCampo('C','MONREG')}" />
+            <p:inputText value="#{movimientoCompraBean.m.monedaRegistracion.descripcion}" readonly="true"
+                         rendered="#{movimientoCompraBean.muestroCampo('C','MONREG')}"/>
+
+        </p:panelGrid>
+    </p:panel>
+
+
+</ui:composition>
+

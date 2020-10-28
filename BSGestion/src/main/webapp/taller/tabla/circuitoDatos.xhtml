@@ -1,0 +1,487 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:tabView>
+
+        <p:tab title="Datos principales">
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:outputText value="Circuito Inicio*" />
+                <p:inputText value="#{circuitoFacturacionBean.circuito.circuitoComienzo.codigo} - #{circuitoFacturacionBean.circuito.circuitoComienzo.descripcion}"
+                             readonly="true"
+                             rendered="#{not circuitoFacturacionBean.esNuevo}" />
+                <p:selectOneMenu value="#{circuitoFacturacionBean.circuito.circuitoComienzo}"
+                                 required="true" requiredMessage="Seleccione el circuito inicio"
+                                 rendered="#{circuitoFacturacionBean.esNuevo}"
+                                 converter="#{conversoresVenta.codigoCircuito}"
+                                 effect="fade" filter="true" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                    <f:selectItems value="#{codigoCircuitoFacturacionBean.lista}" var="c" itemLabel="#{c.codigo} - #{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Circuito Aplicado*" />
+
+                <p:inputText value="#{circuitoFacturacionBean.circuito.circuitoAplicacion.codigo} - #{circuitoFacturacionBean.circuito.circuitoAplicacion.descripcion}"
+                             readonly="true"
+                             rendered="#{not circuitoFacturacionBean.esNuevo}" />
+
+                <p:selectOneMenu value="#{circuitoFacturacionBean.circuito.circuitoAplicacion}"
+                                 required="true" requiredMessage="Seleccione el circuito aplicado"
+                                 rendered="#{circuitoFacturacionBean.esNuevo}"
+                                 converter="#{conversoresVenta.codigoCircuito}"
+                                 effect="fade" filter="true" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                    <f:selectItems value="#{codigoCircuitoFacturacionBean.lista}" var="c" itemLabel="#{c.codigo} - #{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Descripción" />
+                <p:inputText value="#{circuitoFacturacionBean.circuito.descripcion}"
+                             required="true"
+                             requiredMessage="La descripción es necesaria" />
+
+                <p:fieldset legend="Actualización de módulos">
+
+                    <p:panelGrid columns="4" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                        <h:outputText value="Actualiza Facturación " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.actualizaFacturacion}" >
+                            <p:ajax process="@this" update="@form" listener="#{circuitoFacturacionBean.validarModulosActualizar()}" />
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Actualiza Ventas " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.actualizaVenta}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Actualiza Tesoreria " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.actualizaTesoreria}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Actualiza Stock " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.actualizaStock}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                    </p:panelGrid>
+
+                </p:fieldset>
+
+                <p:fieldset legend="Configuraciones generales">
+
+                    <p:panelGrid columns="4" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container30, Container20,Container30, Container20" >
+
+                        <h:outputText value="Edita Descripción del producto " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaDescripcion}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Edita Precio " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaImporte}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Edita Cantidad " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaCantidad}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Edita Unidad de Medida " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaUnidadMedida}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Edita Lista de Precio " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaListaPrecio}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Edita Observaciones del producto " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaObservacionesDetalle}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Edita Bonificaciones " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaBonificacion}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Edita Cliente " />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.editaEntidad}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Picking detalle" />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.pickingDetalle}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Permite productos con precio cero" />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.permiteProductosConPrecioCero}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Permite productos con cantidad cero" />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.permiteCantidadCero}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Permite productos duplicados" />
+                        <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.permiteProductosDuplicados}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                    </p:panelGrid>
+
+
+                </p:fieldset>
+
+            </p:panelGrid>
+
+        </p:tab>
+
+        <p:tab title="Atributos de stock">
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <p:fieldset legend="Gestión de atributos">
+
+                    <h:outputText value="Gestiona atributo 1"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo1 ne 'S'}" />
+                    <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo1}"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo1 eq 'S'}"/>
+                    <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.administraAtributo1}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Gestiona atributo 2"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo2 ne 'S'}" />
+                    <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo2}"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo2 eq 'S'}"/>
+                    <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.administraAtributo2}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Gestiona atributo 3"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo3 ne 'S'}" />
+                    <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo3}"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo3 eq 'S'}"/>
+                    <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.administraAtributo3}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Gestiona atributo 4"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo4 ne 'S'}" />
+                    <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo4}"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo4 eq 'S'}"/>
+                    <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.administraAtributo4}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Gestiona atributo 5"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo5 ne 'S'}" />
+                    <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo5}"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo5 eq 'S'}"/>
+                    <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.administraAtributo5}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Gestiona atributo 6"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo6 ne 'S'}" />
+                    <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo6}"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo6 eq 'S'}"/>
+                    <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.administraAtributo6}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Gestiona atributo 7"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo7 ne 'S'}" />
+                    <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo7}"
+                                  rendered="#{aplicacionBean.parametroStock.administraAtributo7 eq 'S'}"/>
+                    <p:selectOneRadio value="#{circuitoFacturacionBean.circuito.administraAtributo7}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneRadio>
+
+                </p:fieldset>
+
+                <h:outputText value="" />
+
+
+
+            </p:panelGrid>
+
+        </p:tab>
+
+    </p:tabView>
+
+    <p:tabView>
+        <p:tab title="Comprobantes de Facturación">
+
+            <p:dataTable id="tablaCFC" var="f"  value="#{circuitoFacturacionBean.circuito.itemCircuitoFacturacion}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoFacturacionBean.nuevoItemCircuitoFacturacion()}"
+                                     value="Agregar Comprobante"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoFacturacion').show()"/>
+
+                </f:facet>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+                    <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                     title="Modificar item"
+                                     actionListener="#{circuitoFacturacionBean.seleccionarItemCircuitoFacturacion(f)}"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoFacturacion').show()"/>
+
+                </p:column>
+
+                <p:column headerText="Código" width="100" style="text-align: center;" sortBy="#{f.comprobante.codigo}" >
+                    <h:outputText value="#{f.comprobante.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{f.comprobante.descripcion}" >
+                    <h:outputText value="#{f.comprobante.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Observaciones" >
+                    <h:outputText value="#{f.observaciones}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <p:panelGrid layout="grid" columns="1"  >
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{circuitoFacturacionBean.mostrarItemCircuitoFacturacionDeBaja}" >
+                        <p:ajax process="@this" update="tablaCFC"
+                                listener="#{circuitoFacturacionBean.sincronizarItemCircuitoFacturacion()}" />
+                    </p:selectBooleanCheckbox>
+                    Mostrar registros deshabilitados
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </p:tab>
+
+        <p:tab title="Comprobantes de Venta">
+
+            <p:dataTable id="tablaCVT" var="f"  value="#{circuitoFacturacionBean.circuito.itemCircuitoVenta}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoFacturacionBean.nuevoItemCircuitoVenta()}"
+                                     value="Agregar Comprobante"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoVenta').show()"/>
+
+                </f:facet>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+                    <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                     title="Modificar item"
+                                     actionListener="#{circuitoFacturacionBean.seleccionarItemCircuitoVenta(f)}"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoVenta').show()"/>
+
+                </p:column>
+
+                <p:column headerText="Código" width="100" style="text-align: center;" sortBy="#{f.comprobante.codigo}" >
+                    <h:outputText value="#{f.comprobante.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{f.comprobante.descripcion}" >
+                    <h:outputText value="#{f.comprobante.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Observaciones" >
+                    <h:outputText value="#{f.observaciones}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <p:panelGrid layout="grid" columns="1"  >
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{circuitoFacturacionBean.mostrarItemCircuitoVentaDeBaja}" >
+                        <p:ajax process="@this" update="tablaCVT"
+                                listener="#{circuitoFacturacionBean.sincronizarItemCircuitoVenta()}" />
+                    </p:selectBooleanCheckbox>
+                    Mostrar registros deshabilitados
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </p:tab>
+
+        <p:tab title="Comprobantes de Tesoreria">
+
+            <p:dataTable id="tablaCCJ" var="f"  value="#{circuitoFacturacionBean.circuito.itemCircuitoTesoreria}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoFacturacionBean.nuevoItemCircuitoTesoreria()}"
+                                     value="Agregar Comprobante"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoTesoreria').show()"/>
+
+                </f:facet>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+                    <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                     title="Modificar item"
+                                     actionListener="#{circuitoFacturacionBean.seleccionarItemCircuitoTesoreria(f)}"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoTesoreria').show()"/>
+
+                </p:column>
+
+                <p:column headerText="Código" width="100" style="text-align: center;" sortBy="#{f.comprobante.codigo}" >
+                    <h:outputText value="#{f.comprobante.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{f.comprobante.descripcion}" >
+                    <h:outputText value="#{f.comprobante.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Observaciones" >
+                    <h:outputText value="#{f.observaciones}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <p:panelGrid layout="grid" columns="1"  >
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{circuitoFacturacionBean.mostrarItemCircuitoTesoreriaDeBaja}" >
+                        <p:ajax process="@this" update="tablaCCJ"
+                                listener="#{circuitoFacturacionBean.sincronizarItemCircuitoTesoreria()}" />
+                    </p:selectBooleanCheckbox>
+                    Mostrar registros deshabilitados
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </p:tab>
+
+        <p:tab title="Comprobantes de Stock">
+
+            <p:dataTable id="tablaCST" var="f"  value="#{circuitoFacturacionBean.circuito.itemCircuitoStock}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron comprobantes"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{circuitoFacturacionBean.nuevoItemCircuitoStock()}"
+                                     value="Agregar Comprobante"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoStock').show()"/>
+
+                </f:facet>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+                    <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                     title="Modificar item"
+                                     actionListener="#{circuitoFacturacionBean.seleccionarItemCircuitoStock(f)}"
+                                     process="@this"
+                                     oncomplete="PF('dlgItemCircuitoStock').show()"/>
+
+                </p:column>
+
+                <p:column headerText="Código" width="100" style="text-align: center;" sortBy="#{f.comprobante.codigo}" >
+                    <h:outputText value="#{f.comprobante.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{f.comprobante.descripcion}" >
+                    <h:outputText value="#{f.comprobante.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Observaciones" >
+                    <h:outputText value="#{f.observaciones}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <p:panelGrid layout="grid" columns="1"  >
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{circuitoFacturacionBean.mostrarItemCircuitoStockDeBaja}" >
+                        <p:ajax process="@this" update="tablaCST"
+                                listener="#{circuitoFacturacionBean.sincronizarItemCircuitoTesoreria()}" />
+                    </p:selectBooleanCheckbox>
+                    Mostrar registros deshabilitados
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+    <p:diagram value="#{circuitoFacturacionBean.diagrama}"
+               style="height:400px"
+               styleClass="ui-widget-content" />
+
+
+    <style type="text/css">
+        .ui-diagram-element {
+            border:0.1em dotted #d4e06b;
+            width:14em;
+            height:4em;
+            line-height:4em;
+            text-align: center;
+        }
+    </style>
+
+
+</ui:composition>
+

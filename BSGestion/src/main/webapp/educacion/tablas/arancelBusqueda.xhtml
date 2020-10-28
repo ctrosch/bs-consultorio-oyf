@@ -1,0 +1,206 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{arancelBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{arancelBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{arancelBean.nuevo()}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{arancelBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+            <p:inputText value="#{arancelBean.anioLectivo}" placeholder="Año Lectivo" >
+                <p:ajax event="keyup" delay="500" process="@this" update="@form" listener="#{arancelBean.buscar()}"/>
+            </p:inputText>
+
+            <p:calendar value="#{arancelBean.fechaMovimientoDesde}"
+                        placeholder="Fecha disponible desde"
+                        pattern="dd/MM/yyyy"
+                        showOn="button"
+                        navigator="true"
+                        mask="true"  >
+                <p:ajax event="dateSelect"  process="@this" listener="#{arancelBean.buscar()}"  />
+            </p:calendar>
+
+            <p:calendar value="#{arancelBean.fechaMovimientoHasta}"
+                        placeholder="Fecha disponible hasta"
+                        pattern="dd/MM/yyyy"
+                        showOn="button"
+                        navigator="true"
+                        mask="true"  >
+                <p:ajax event="dateSelect"  process="@this" listener="#{arancelBean.buscar()}" />
+            </p:calendar>
+
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{arancelBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="@form" listener="#{arancelBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+
+    <div class="p-grid">
+
+        <div class="p-col-12 p-md-4 p-lg-3" >
+
+            <p:dataTable id="carreras" value="#{arancelBean.carreras}" var="c"
+                         emptyMessage="No se encontraron resultados"
+                         scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                         selectionMode="single" selection="#{arancelBean.carrera}" rowKey="#{c}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{arancelBean.buscar()}" update="@form"  />
+
+                <p:column headerText="Carrera"  style="text-align: left;"
+                          filterBy="#{c.titulo}" filterMatchMode="contains"
+                          sortBy="#{c.titulo}" >
+                    <h:outputText value="#{c.titulo}" />
+                </p:column>
+
+            </p:dataTable>
+
+        </div>
+
+        <div class="p-col-12 p-md-8 p-lg-9" >
+
+            <p:dataTable id="tabla" value="#{arancelBean.lista}" var="i"
+                         emptyMessage="No se encontraron resultados"
+                         scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                         selectionMode="single" selection="#{arancelBean.arancel}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{arancelBean.onSelect}" update="@form"  />
+
+                <!--
+                <p:column headerText="Carrera"  style="text-align: left;"
+                          sortBy="#{i.carrera.titulo}" >
+                    <h:outputText value="#{i.carrera.titulo}" />
+                </p:column>
+                -->
+
+
+                <!--
+                <p:column headerText="" width="50" style="text-align: center; min-width: 60px;" >
+                    <i class="fa fa-circle fa-2x #{i.sincronizacionPendiente eq 'S'?'Red':'Green'}" ></i>
+                </p:column>
+                -->
+
+                <p:column headerText="Código" width="100"  styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Referencia" width="80" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.referencia}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="400" >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+
+
+                <p:column headerText="Año Lectivo" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.anioLectivo}" />
+                </p:column>
+
+                <p:column headerText="Fecha Desde"  width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.fechaDesde}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Fecha Hasta" width="100" styleClass="TexAlCenter"  >
+                    <h:outputText value="#{i.fechaHasta}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <h:panelGroup layout="block" >
+
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistro" value="#{arancelBean.cantidadRegistros}" style="max-width: 80px;">
+                        <f:convertNumber pattern="0" />
+                    </p:inputText>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{arancelBean.buscar}"
+                                     process="@this,cantRegistro" update="@form" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="Fright" >
+
+                    <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                                     actionListener="#{reporteService.verReporte}"
+                                     immediate="true"
+                                     process="@this"
+                                     update="@form">
+                    </p:commandButton>
+
+                    <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                                     actionListener="#{reporteService.reporteToXls}"
+                                     immediate="true"
+                                     process="@this"
+                                     update="@form"
+                                     ajax="false">
+                    </p:commandButton>
+
+                </h:panelGroup>
+
+
+            </p:panelGrid>
+
+        </div>
+
+    </div>
+
+
+
+</ui:composition>

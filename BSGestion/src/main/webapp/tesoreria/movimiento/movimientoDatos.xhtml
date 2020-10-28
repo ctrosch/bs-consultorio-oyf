@@ -1,0 +1,100 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid"
+                 rendered="#{not empty movimientoTesoreriaBean.m}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario"
+                      rendered="#{movimientoTesoreriaBean.muestroCampo('C','CODFOR')}" />
+        <p:inputText value="#{movimientoTesoreriaBean.m.formulario.descripcion}"
+                     rendered="#{movimientoTesoreriaBean.muestroCampo('C','CODFOR')}"
+                     readonly="true" />
+
+        <h:outputText value="Pto. Venta" rendered="#{movimientoTesoreriaBean.muestroCampo('C','SUCURS')}" />
+        <p:inputText value="#{movimientoTesoreriaBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{movimientoTesoreriaBean.muestroCampo('C','SUCURS')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" rendered="#{movimientoTesoreriaBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{movimientoTesoreriaBean.m.numeroFormulario}"
+                     readonly="#{movimientoTesoreriaBean.m.formulario.modificaNumeracion eq 'N'}"
+                     rendered="#{movimientoTesoreriaBean.muestroCampo('C','NROFOR')}" >
+            <p:ajax event="blur"  process="@this" />
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{movimientoTesoreriaBean.muestroCampo('C','FCHMOV')}" />
+
+        <p:calendar value="#{movimientoTesoreriaBean.m.fechaMovimiento}"
+                    disabled="#{movimientoTesoreriaBean.m.formulario.modificaFecha ne 'S'}"
+                    rendered="#{movimientoTesoreriaBean.muestroCampo('C','FCHMOV')}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{movimientoTesoreriaBean.fechaMovimientoMaxima}" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:panelGroup layout="block"
+                      rendered="#{not empty movimientoTesoreriaBean.m.comprobanteVenta or not empty movimientoTesoreriaBean.m.comprobanteProveedor}" >
+            <p:commandButton icon="fa fa-search"
+                             actionListener="#{entidadComercialBean.buscar()}"
+                             update="buscadorEntidadComercial"
+                             oncomplete="PF('dlgEntidadComercial').show()" process="@this" />
+            <h:outputText value="#{movimientoTesoreriaBean.m.entidad.razonSocial}" style="width: 80%;"  />
+        </h:panelGroup>
+
+        <h:outputText value=""
+                      rendered="#{not empty movimientoTesoreriaBean.m.comprobanteVenta or not empty movimientoTesoreriaBean.m.comprobanteProveedor}"/>
+        <h:outputText value=""
+                      rendered="#{not empty movimientoTesoreriaBean.m.comprobanteVenta or not empty movimientoTesoreriaBean.m.comprobanteProveedor}"/>
+
+
+        <h:outputText value="Referencia" />
+        <p:inputText value="#{movimientoTesoreriaBean.m.referencia}"
+                     required="true" requiredMessage="Ingrese una nota de referencia para el movimiento" />
+
+
+        <h:outputText value="Cotización" rendered="#{movimientoTesoreriaBean.muestroCampo('C','COTIZA')}" />
+        <h:panelGroup layout="block" rendered="#{movimientoTesoreriaBean.muestroCampo('C','COTIZA')}" >
+            <div class="Wid70 Fleft">
+                <p:inputText value="#{movimientoTesoreriaBean.m.monedaSecundaria.descripcion}" readonly="true" />
+            </div>
+
+            <div class="Wid30 Fright">
+                <p:inputText value="#{movimientoTesoreriaBean.m.cotizacion}" style="text-align: right;"
+                             readonly="#{not empty movimientoTesoreriaBean.m.id}"
+                             required="true"
+                             requiredMessage="La cotización es necesaria" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax process="@this" listener="#{movimientoTesoreriaBean.calcularImportes}" update="@form" />
+                </p:inputText>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoTesoreriaBean.m.observaciones}" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+    </p:panelGrid>
+
+</ui:composition>
+

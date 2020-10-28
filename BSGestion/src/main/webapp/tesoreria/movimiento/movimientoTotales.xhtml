@@ -1,0 +1,68 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- TOTALES -->
+    <h:panelGroup id="totales" layout="block" styleClass="p-grid p-justify-end"
+                  rendered="#{not empty movimientoTesoreriaBean.m}" >
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-4 p-lg-3"
+                      rendered="#{empty movimientoTesoreriaBean.m.id}" >
+
+            <div class="Card GreenBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Total debe" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{movimientoTesoreriaBean.m.importeTotalDebe}" styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-4 p-lg-3"
+                      rendered="#{empty movimientoTesoreriaBean.m.id}" >
+            <div class="Card OrangeBack Fright">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Total haber" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{movimientoTesoreriaBean.m.importeTotalHaber}" styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 p-md-4 p-lg-3"   >
+            <div class="Card BlueBack" >
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Diferencia" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{movimientoTesoreriaBean.m.importeTotalHaber - movimientoTesoreriaBean.m.importeTotalDebe}" styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+
+    </h:panelGroup>
+
+</ui:composition>
+

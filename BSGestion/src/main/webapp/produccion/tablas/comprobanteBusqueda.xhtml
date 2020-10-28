@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <p:panelGrid columns="1" layout="grid"
+                 style="max-width: 400px;"
+                 styleClass="ui-panelgrid-blank" >
+        <p:inputText value="#{comprobanteProduccionBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+            <p:ajax event="keyup" delay="500"  process="@this" update="tabla" listener="#{comprobanteProduccionBean.buscar}"/>
+        </p:inputText>
+    </p:panelGrid> 
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{comprobanteProduccionBean.lista}"  var="i"                 
+                 emptyMessage="No se encontraron resultados"
+                 resizableColumns="true" resizeMode="expand" liveResize="true"
+                 paginator="true" paginatorAlwaysVisible="false" rows="30"                             
+                 selectionMode="single" selection="#{comprobanteProduccionBean.comprobante}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{comprobanteProduccionBean.onSelect}" update="@form" />
+
+        <p:column headerText="Código" width="10%" style="text-align: center;"
+                  sortBy="#{i.codigo}"   >                         
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                  sortBy="#{i.descripcion}" >                    
+            <h:outputText value="#{i.descripcion}" />                                        
+        </p:column>
+
+    </p:dataTable>  
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >                       
+            <p:selectBooleanCheckbox value="#{comprobanteProduccionBean.mostrarDebaja}" >
+                <p:ajax process="@this" update="@form" listener="#{comprobanteProduccionBean.buscar}" />
+            </p:selectBooleanCheckbox>                    
+            <h:outputText value="Mostrar registros deshabilitados" />                    
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >                                                        
+            <h:outputText value="Cantidad de Registros: " />                    
+            <p:inputText id="cantRegistro" value="#{comprobanteProduccionBean.cantidadRegistros}" style="max-width: 80px;">                    
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{comprobanteProduccionBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+    </p:panelGrid>
+
+</html>
+

@@ -1,0 +1,227 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:tabView rendered="#{not empty movimientoCompraBean.m}" >
+
+        <p:tab title="Datos principales" >
+
+            <!-- DATOS -->
+            <p:panelGrid columns="8" layout="grid" styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+                <h:outputText value="Formulario" />
+                <p:inputText value="#{movimientoCompraBean.m.formulario.descripcion} - #{movimientoCompraBean.m.formulario.letra}" readonly="true" />
+
+                <h:outputText value="Pto. Venta"
+                              rendered="#{movimientoCompraBean.muestroCampo('C','SUCURS')}" />
+                <p:inputText value="#{movimientoCompraBean.m.puntoVenta.codigo}" readonly="true"
+                             rendered="#{movimientoCompraBean.muestroCampo('C','SUCURS')}" >
+                    <f:convertNumber pattern="00000" />
+                </p:inputText>
+
+                <h:outputText value="Número" rendered="#{empty movimientoCompraBean.CODPV}" />
+                <h:outputText value="Nro de Carga" rendered="#{not empty movimientoCompraBean.CODPV}" />
+                <p:inputText value="#{movimientoCompraBean.m.numeroFormulario}" readonly="true" >
+                    <f:convertNumber pattern="00000000" />
+                </p:inputText>
+
+                <h:outputText value="Fecha" rendered="#{empty movimientoCompraBean.CODPV}" />
+                <h:outputText value="Fecha de Contabilización" rendered="#{not empty movimientoCompraBean.CODPV}" />
+                <p:calendar value="#{movimientoCompraBean.m.fechaMovimiento}"
+                            disabled="#{movimientoCompraBean.m.formulario.modificaFecha ne 'S'}"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true" >
+                    <p:ajax process="@this" event="dateSelect" />
+                </p:calendar>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+
+                <h:outputText value="Solicitante *" />
+                <p:autoComplete value="#{movimientoCompraBean.m.proveedor}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                required="true" requiredMessage="El proveedor es obligatorio"
+                                completeMethod="#{proveedorBean.complete}"
+                                disabled="#{not empty movimientoCompraBean.m.id or not movimientoCompraBean.detalleVacio}"
+                                var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                    <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoCompraBean.procesarProveedor()}"  />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+
+                    <p:column headerText="Nro doc">
+                        <h:outputText value="#{e.nrodoc}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="" />
+                <h:outputText value="" />
+
+                <bs:outputTexWhitLink value="Deposito"
+                                      rendered="#{(not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento ne 'T') or movimientoCompraBean.circuito.depositoObligatorio eq 'S'}"
+                                      url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00140','CODIGO',movimientoCompraBean.m.deposito.codigo)}" />
+
+                <p:selectOneMenu value="#{movimientoCompraBean.m.deposito}"
+                                 rendered="#{(not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento ne 'T') or movimientoCompraBean.circuito.depositoObligatorio eq 'S'}"
+                                 required="#{movimientoCompraBean.circuito.depositoObligatorio eq 'S'}"
+                                 disabled="#{not empty movimientoCompraBean.m.id}"
+                                 requiredMessage="El deposito es obligatorio"
+                                 converter="#{conversoresStock.deposito}"
+                                 effect="fade" filter="true" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                    <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+                </p:selectOneMenu>
+
+                <h:outputText value=""
+                              rendered="#{(not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento ne 'T') or movimientoCompraBean.circuito.depositoObligatorio eq 'S'}" />
+                <h:outputText value=""
+                              rendered="#{(not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento ne 'T') or movimientoCompraBean.circuito.depositoObligatorio eq 'S'}" />
+
+
+                <bs:outputTexWhitLink value="Deposito egreso"
+                                      rendered="#{not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                                      url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00140','CODIGO',movimientoCompraBean.m.depositoTransferencia.codigo)}" />
+
+                <p:selectOneMenu value="#{movimientoCompraBean.m.depositoTransferencia}"
+                                 rendered="#{not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                                 required="true" requiredMessage="Seleccione el depósito de egreso"
+                                 disabled="#{not empty movimientoCompraBean.m.id}"
+                                 converter="#{conversoresStock.deposito}"
+                                 effect="fade" filter="true" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                    <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+                </p:selectOneMenu>
+
+
+                <bs:outputTexWhitLink value="Deposito ingreso"
+                                      rendered="#{not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                                      url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00140','CODIGO',movimientoCompraBean.m.deposito.codigo)}" />
+
+                <p:selectOneMenu value="#{movimientoCompraBean.m.deposito}"
+                                 rendered="#{not empty movimientoCompraBean.m.comprobanteStock and movimientoCompraBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                                 required="true" requiredMessage="Seleccione el depósito de ingreso"
+                                 disabled="#{not empty movimientoCompraBean.m.id}"
+                                 converter="#{conversoresStock.deposito}"
+                                 effect="fade" filter="true" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                    <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <h:panelGroup layout="block" styleClass="EmptyBox20"
+                          rendered="#{movimientoCompraBean.circuito.administraAtributo1 eq 'S' or movimientoCompraBean.circuito.administraAtributo2 eq 'S' or movimientoCompraBean.circuito.administraAtributo3 eq 'S' or movimientoCompraBean.circuito.administraAtributo4 eq 'S'or movimientoCompraBean.circuito.administraAtributo5 eq 'S'}" >
+            </h:panelGroup>
+
+            <!-- DATOS
+            <p:fieldset legend="Ingreso de atributos"
+                        rendered="#{movimientoCompraBean.circuito.administraAtributo1 eq 'S' or movimientoCompraBean.circuito.administraAtributo2 eq 'S' or movimientoCompraBean.circuito.administraAtributo3 eq 'S' or movimientoCompraBean.circuito.administraAtributo4 eq 'S'or movimientoCompraBean.circuito.administraAtributo5 eq 'S'}" >
+
+                <p:panelGrid columns="12" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                    <h:outputText value="#{aplicacionBean.parametroStock.descripcionAtributo1}"
+                                  rendered="#{movimientoCompraBean.muestroCampo('C','NATRI1') and movimientoCompraBean.circuito.administraAtributo1 eq 'S'}" />
+
+                    <p:inputText value="#{movimientoCompraBean.m.atributo1}"
+                                 rendered="#{movimientoCompraBean.muestroCampo('C','NATRI1') and movimientoCompraBean.circuito.administraAtributo1 eq 'S'}" >
+
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo()}" event="keyup" delay="500" update="tb:detalle" />
+                    </p:inputText>
+
+                    <h:outputText value="#{aplicacionBean.parametroStock.descripcionAtributo2}"
+                                  rendered="#{movimientoCompraBean.muestroCampo('C','NATRI2') and movimientoCompraBean.circuito.administraAtributo2 eq 'S'}" />
+
+                    <p:inputText value="#{movimientoCompraBean.m.atributo2}"
+                                 rendered="#{movimientoCompraBean.muestroCampo('C','NATRI2') and movimientoCompraBean.circuito.administraAtributo2 eq 'S'}" >
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo()}" event="keyup" delay="500" update="tb:detalle" />
+                    </p:inputText>
+
+                    <h:outputText value="#{aplicacionBean.parametroStock.descripcionAtributo3}"
+                                  rendered="#{movimientoCompraBean.muestroCampo('C','NATRI3') and movimientoCompraBean.circuito.administraAtributo3 eq 'S'}" />
+
+                    <p:inputText value="#{movimientoCompraBean.m.atributo3}"
+                                 rendered="#{movimientoCompraBean.muestroCampo('C','NATRI3') and movimientoCompraBean.circuito.administraAtributo3 eq 'S'}" >
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo()}" event="keyup" delay="500" update="tb:detalle" />
+                    </p:inputText>
+
+                    <h:outputText value="#{aplicacionBean.parametroStock.descripcionAtributo4}"
+                                  rendered="#{movimientoCompraBean.muestroCampo('C','NATRI4') and movimientoCompraBean.circuito.administraAtributo4 eq 'S'}" />
+
+                    <p:inputText value="#{movimientoCompraBean.m.atributo4}"
+                                 rendered="#{movimientoCompraBean.muestroCampo('C','NATRI4') and movimientoCompraBean.circuito.administraAtributo4 eq 'S'}" >
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo()}" event="keyup" delay="500" update="tb:detalle" />
+                    </p:inputText>
+
+                </p:panelGrid>
+
+            </p:fieldset>
+            -->
+
+        </p:tab>
+
+        <p:tab title="Otros Datos" >
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <bs:outputTexWhitLink value="Circuito *"
+                                      rendered="#{movimientoCompraBean.muestroCampo('C','CIRCUI')}"
+                                      url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00247','CIRCOM',movimientoCompraBean.circuito.circom,'CIRAPL',movimientoCompraBean.circuito.cirapl)}" />
+
+                <p:inputText readonly="true" value="#{movimientoCompraBean.circuito.circom}-#{movimientoCompraBean.circuito.cirapl}-#{movimientoCompraBean.circuito.descripcion}" />
+
+                <h:outputText value="" />
+                <h:outputText value="" />
+
+                <h:outputText value="Comprobante Compra" />
+                <p:inputText value="#{movimientoCompraBean.m.comprobante.codigo} - #{movimientoCompraBean.m.comprobante.descripcion}" readonly="true" />
+
+
+                <h:outputText value="Comprobante proveedor" />
+                <p:inputText value="#{movimientoCompraBean.m.comprobanteProveedor.codigo} - #{movimientoCompraBean.m.comprobanteProveedor.descripcion}" readonly="true" />
+
+                <h:outputText value="Comprobante Tesorería" />
+                <p:inputText value="#{movimientoCompraBean.m.comprobanteTesoreria.codigo} - #{movimientoCompraBean.m.comprobanteTesoreria.descripcion}" readonly="true" />
+
+                <h:outputText value="Comprobante Stock" />
+                <p:inputText value="#{movimientoCompraBean.m.comprobanteStock.codigo} - #{movimientoCompraBean.m.comprobanteStock.descripcion}" readonly="true" />
+
+                <h:outputText value="Moneda de Registración" />
+                <p:inputText value="#{movimientoCompraBean.m.monedaRegistracion.descripcion}"
+                             readonly="true" />
+
+            </p:panelGrid>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+</ui:composition>
+

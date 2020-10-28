@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Alumnos" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<parameter name="CODCUR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FCHDES" class="java.util.Date"/>
+	<parameter name="FCHHAS" class="java.util.Date"/>
+	<parameter name="ESTADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODCAR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+m.*,
+s.nombre AS 'Sucursal',
+m.PTOVTA AS 'Punto de Venta',
+m.NROFOR AS 'Nro Inscripcion',
+m.FCHMOV AS 'Fecha',
+g.DESCRP AS 'Curso',
+g.FCHINI AS 'Fecha Inicio',
+g.FCHFIN AS 'Fecha Fin',
+c.CODIGO AS 'Codigo Carrera',
+c.TITULO AS 'Carrera',
+es.DESCRP AS 'Estado',
+(SELECT COUNT(*) FROM ed_movimiento mr WHERE mr.ID_MED = m.ID) AS  CANT_REINSCRIPCIONES
+
+
+FROM ed_movimiento m
+
+INNER JOIN ed_carrera c ON m.CODCAR = c.CODIGO
+INNER JOIN ed_curso g ON m.CODCUR = g.CODIGO
+INNER JOIN en_entidad e ON m.NROCTA =  e.NROCTA
+INNER JOIN gr_sucursal s ON m.CODSUC = s.CODIGO
+INNER JOIN ed_estado es ON m.CODEST = es.CODIGO
+
+
+WHERE 1=1
+AND m.CODCOM IN(SELECT a.CODCOM FROM gr_comprobante a INNER JOIN gr_tipo_comprobante t ON a.TIPCOM = t.CODIGO WHERE t.CODIGO = 'IN' AND t.modulo = m.MODCOM)
+AND m.ID_MREV IS NULL
+AND IF(LENGTH($P{CODSUC}) > 0, m.CODSUC = $P{CODSUC},1=1)
+AND IF(LENGTH($P{CODCUR}) > 0, m.CODCUR = $P{CODCUR},1=1)
+AND IF(LENGTH($P{CODCAR}) > 0, m.CODCAR = $P{CODCAR},1=1)
+AND IF(LENGTH($P{ESTADO}) > 0, m.CODEST = $P{ESTADO},1=1)
+AND IF(LENGTH($P{FCHDES}) > 0, g.FCHINI >= $P{FCHDES},1=1)
+AND IF(LENGTH($P{FCHHAS}) > 0, g.FCHINI <= $P{FCHHAS},1=1)
+AND m.CODSUC IN(SELECT n.CODSUC FROM sg_usuario_sucursal n INNER JOIN sg_usuario u ON n.CODUSU = u.ID WHERE u.USUARIO = $P{USUARIO})
+ORDER BY m.CODSUC,m.CODCAR,m.CODCUR]]>
+	</queryString>
+	<field name="ID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Id]]></fieldDescription>
+	</field>
+	<field name="CODEST" class="java.lang.String">
+		<fieldDescription><![CDATA[Estado]]></fieldDescription>
+	</field>
+	<field name="MODCOM" class="java.lang.String">
+		<fieldDescription><![CDATA[Módulo comprobante]]></fieldDescription>
+	</field>
+	<field name="CODCOM" class="java.lang.String">
+		<fieldDescription><![CDATA[Código comprobante]]></fieldDescription>
+	</field>
+	<field name="MODFOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Módulo formulario]]></fieldDescription>
+	</field>
+	<field name="CODFOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Código formulario]]></fieldDescription>
+	</field>
+	<field name="NROFOR" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Número formulario]]></fieldDescription>
+	</field>
+	<field name="PTOVTA" class="java.lang.String">
+		<fieldDescription><![CDATA[Punto de Venta]]></fieldDescription>
+	</field>
+	<field name="FCHMOV" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fecha movimiento]]></fieldDescription>
+	</field>
+	<field name="CODCAR" class="java.lang.String">
+		<fieldDescription><![CDATA[Carrera]]></fieldDescription>
+	</field>
+	<field name="CODARA" class="java.lang.String">
+		<fieldDescription><![CDATA[Arancel]]></fieldDescription>
+	</field>
+	<field name="CODCUR" class="java.lang.String">
+		<fieldDescription><![CDATA[Curso]]></fieldDescription>
+	</field>
+	<field name="CODPLA" class="java.lang.String">
+		<fieldDescription><![CDATA[Plan de Estudio]]></fieldDescription>
+	</field>
+	<field name="NROCTA" class="java.lang.String">
+		<fieldDescription><![CDATA[Entidad]]></fieldDescription>
+	</field>
+	<field name="NOMBRE" class="java.lang.String">
+		<fieldDescription><![CDATA[Nombre Completo Alumno]]></fieldDescription>
+	</field>
+	<field name="TIPDOC" class="java.lang.String">
+		<fieldDescription><![CDATA[Tipo documento]]></fieldDescription>
+	</field>
+	<field name="NRODOC" class="java.lang.String">
+		<fieldDescription><![CDATA[Número documento]]></fieldDescription>
+	</field>
+	<field name="CODPAI" class="java.lang.String">
+		<fieldDescription><![CDATA[Código de país]]></fieldDescription>
+	</field>
+	<field name="CODPRO" class="java.lang.String">
+		<fieldDescription><![CDATA[Código de provincia]]></fieldDescription>
+	</field>
+	<field name="CODLOC" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Código localidad]]></fieldDescription>
+	</field>
+	<field name="DIRECC" class="java.lang.String">
+		<fieldDescription><![CDATA[Calle]]></fieldDescription>
+	</field>
+	<field name="OBSERV" class="java.lang.String">
+		<fieldDescription><![CDATA[Observaciones]]></fieldDescription>
+	</field>
+	<field name="MONREG" class="java.lang.String">
+		<fieldDescription><![CDATA[Moneda de registración]]></fieldDescription>
+	</field>
+	<field name="MONSEC" class="java.lang.String">
+		<fieldDescription><![CDATA[Moneda Secundaria]]></fieldDescription>
+	</field>
+	<field name="COTIZA" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Cotización]]></fieldDescription>
+	</field>
+	<field name="ID_MREV" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Movimiento de Reversión]]></fieldDescription>
+	</field>
+	<field name="ID_MED" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Movimiento Principal]]></fieldDescription>
+	</field>
+	<field name="CODEMP" class="java.lang.String">
+		<fieldDescription><![CDATA[Empresa]]></fieldDescription>
+	</field>
+	<field name="CODSUC" class="java.lang.String">
+		<fieldDescription><![CDATA[Sucursal]]></fieldDescription>
+	</field>
+	<field name="DEBAJA" class="java.lang.String">
+		<fieldDescription><![CDATA[De baja]]></fieldDescription>
+	</field>
+	<field name="FECALT" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Fecha Alta]]></fieldDescription>
+	</field>
+	<field name="FECMOD" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[Fecha Modificación]]></fieldDescription>
+	</field>
+	<field name="ULTOPR" class="java.lang.String">
+		<fieldDescription><![CDATA[Ultima operación]]></fieldDescription>
+	</field>
+	<field name="USERID" class="java.lang.String">
+		<fieldDescription><![CDATA[Usuario]]></fieldDescription>
+	</field>
+	<field name="ID_MVT" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Movimiento Venta]]></fieldDescription>
+	</field>
+	<field name="ID_MAPL" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Movimiento Aplicado]]></fieldDescription>
+	</field>
+	<field name="Sucursal" class="java.lang.String"/>
+	<field name="Punto de Venta" class="java.lang.String"/>
+	<field name="Nro Inscripcion" class="java.lang.Integer"/>
+	<field name="Fecha" class="java.sql.Date"/>
+	<field name="Curso" class="java.lang.String"/>
+	<field name="Fecha Inicio" class="java.sql.Date"/>
+	<field name="Fecha Fin" class="java.sql.Date"/>
+	<field name="Codigo Carrera" class="java.lang.String"/>
+	<field name="Carrera" class="java.lang.String"/>
+	<field name="Estado" class="java.lang.String"/>
+	<field name="CANT_REINSCRIPCIONES" class="java.lang.Long"/>
+	<group name="CODSUC">
+		<groupExpression><![CDATA[$F{CODSUC}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#99CCFF" uuid="407fb7d3-b9ef-4c16-bf5e-365265035508"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="25"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="2" y="0" width="43" height="13" uuid="312bdb97-9e90-4fe0-8366-809a63796a1a"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sucursal : ]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="45" y="0" width="293" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="7f1d08a2-65ed-491a-8905-e47913458825"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Sucursal}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="CODCAR">
+		<groupExpression><![CDATA[$F{Carrera}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#CAE5FF" uuid="aeaf32d0-ea89-41fc-beb6-21794f5e767a"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="25"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="45" y="0" width="373" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="650f1b26-6cd8-4aa2-91aa-323f34ffc8e0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Carrera}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="2" y="0" width="43" height="13" uuid="0f6a18ba-0d9b-4028-8648-72b89b23fdb8"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Carrera :]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="CODCUR">
+		<groupExpression><![CDATA[$F{Curso}]]></groupExpression>
+		<groupHeader>
+			<band height="28">
+				<staticText>
+					<reportElement x="2" y="14" width="29" height="13" uuid="e80ff80d-a613-4627-8f40-4d8f41f9d82f"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Legajo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="37" y="14" width="148" height="13" uuid="40130b8b-f2f0-4d19-8d74-a2354e346029"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Alumno]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="330" y="14" width="50" height="13" uuid="52cc4ea8-85b8-44a0-99f1-cd3d5155aa40"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DNI]]></text>
+				</staticText>
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="13" backcolor="#CCCCCC" uuid="26f68c7a-4122-482b-b3f2-e43ad40edd3a"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="434" y="14" width="52" height="13" uuid="e805ffdb-9583-439a-a49a-d9a41391129b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Estado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="486" y="14" width="69" height="13" uuid="bd436243-fe43-4dbc-ac1b-67f7da0c1990"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cant. Reinscrip.]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="45" y="0" width="350" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="9f38263b-97c6-4768-a44a-3f2e6a4d734a"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Curso}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="3" y="0" width="43" height="13" uuid="921ecb31-e102-4f51-b32f-ddef539a11b4"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Curso:]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="422" y="0" width="40" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="2daaa9be-3dc8-4b5c-aee7-b8841913f24d"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Fecha Inicio}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="515" y="0" width="40" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="c63685be-1f99-4705-861c-c5c2932b4dfa"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Fecha Fin}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="395" y="0" width="29" height="13" uuid="4fc2f8fc-41de-430e-b793-97d8c9c22dd0"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Inicio :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="465" y="0" width="52" height="13" uuid="c475a3d7-5192-4fd4-9184-ed1873b4257a"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Finalización:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="145" y="0" width="273" height="30" uuid="a2170831-50a6-4035-a08e-f5d766cf6464"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Listado de Alumnos]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="5" width="114" height="13" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="19" width="114" height="11" uuid="0427b782-8e84-49fb-8bce-824533e57710"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="0" y="0" width="83" height="30" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="30" width="555" height="1" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="417" y="0" width="1" height="30" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="2" y="2" width="29" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8574bdbc-a71a-4b9e-98f2-b167cdc177f8"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NROCTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="340" y="2" width="47" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="901f3c83-f496-491d-80b4-c6ad79601a46"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRODOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="53" y="2" width="283" height="12" uuid="e24c80c2-5a97-4c8d-9d0d-57c6bf46fcc3"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="529" y="2" width="26" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7312986f-07fa-4bfc-a16b-245798a09273"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_REINSCRIPCIONES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="446" y="0" width="49" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="52e59685-6a62-4372-a2c3-35abbdd8a453"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Estado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="441" y="0" width="114" height="10" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="114" height="10" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

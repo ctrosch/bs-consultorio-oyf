@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{condicionPagoVentaBean.codMenu}"/>
+            <f:viewParam name="CODIGO"  value="#{condicionPagoVentaBean.codigo}"/>
+            <f:viewParam name="TITULO"  value="#{condicionPagoVentaBean.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{condicionPagoVentaBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{condicionPagoVentaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{condicionPagoVentaBean.titulo}
+        </ui:define>
+
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{condicionPagoVentaBean.modoVista eq 'B'}">
+                <ui:include src="condicionPagoBusqueda.xhtml"  />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{condicionPagoVentaBean.modoVista eq 'D'}">
+                <ui:include src="condicionPagoMenu.xhtml"  />
+                <ui:include src="condicionPagoDatos.xhtml"  />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

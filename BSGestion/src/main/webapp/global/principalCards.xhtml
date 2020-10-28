@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pv="http://primefaces.org/volt"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <div class="p-grid" >
+
+        <div class="p-col-fixed Flex" >
+            <p:commandButton value="Favoritos" icon="fa fa-star Fs20" styleClass="Wid100 GreenBack" title="Mostrar/Ocultar Favoritos"
+                             actionListener="#{usuarioSessionBean.toggleFavoritos()}"
+                             update="@form"
+                             oncomplete="PF('pFavoritos').toggle()" >
+            </p:commandButton>
+            <p:commandButton value="Historial" icon="fa fa-history Fs20" styleClass="Wid100" title="Mostrar/Ocultar Historial"
+                             actionListener="#{usuarioSessionBean.toggleHistorial()}"
+                             update="@form"
+                             oncomplete="PF('pHistorial').toggle()" >
+            </p:commandButton>
+        </div>
+
+        <bs:card title="Productos" value="#{dashboardBean.cantProductos}"
+                 rendered="#{dashboardBean.cantProductos > 1 and dashboardBean.isActiveModulo('ST') }"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00138')}" />
+
+        <bs:card title="Tareas Activas" value="#{dashboardBean.tareasActivas.size()}"
+                 rendered="#{not empty dashboardBean.tareasActivas and dashboardBean.isActiveModulo('TA') }"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00602')}" />
+
+        <bs:card title="OP Pendientes" value="#{dashboardBean.ordenesPendientes.size()}"
+                 rendered="#{not empty dashboardBean.ordenesPendientes and dashboardBean.isActiveModulo('PD') }"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00324')}" />
+
+        <bs:card title="Carreras" value="#{dashboardBean.cantCarreras}"
+                 rendered="#{dashboardBean.cantCarreras > 0 and dashboardBean.isActiveModulo('ED')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00582')}" />
+
+        <bs:card title="Cursos" value="#{dashboardBean.cantCursos}"
+                 rendered="#{dashboardBean.cantCursos > 0 and dashboardBean.isActiveModulo('ED')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00589')}" />
+
+        <bs:card title="Préstamos Act." value="#{dashboardBean.cantPrestamos}"
+                 rendered="#{dashboardBean.cantPrestamos > 0 and dashboardBean.isActiveModulo('PR')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00392')}"  />
+
+        <bs:card title="Clientes" value="#{dashboardBean.cantClientes}"
+                 rendered="#{dashboardBean.cantClientes > 1 and dashboardBean.isActiveModulo('VT')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00083')}" />
+
+        <bs:card title="Proveedores" value="#{dashboardBean.cantProveedores}"
+                 rendered="#{dashboardBean.cantProveedores > 1 and dashboardBean.isActiveModulo('PV')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00161')}" />
+
+        <bs:card title="Destinatarios" value="#{dashboardBean.cantBeneficiarios}"
+                 rendered="#{dashboardBean.cantBeneficiarios > 0 and dashboardBean.isActiveModulo('PR')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00393')}" />
+
+        <bs:card title="Alumnos" value="#{dashboardBean.cantAlumnos}"
+                 rendered="#{dashboardBean.cantAlumnos > 0 and dashboardBean.isActiveModulo('ED')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00577')}"  />
+
+        <bs:card title="Profesores" value="#{dashboardBean.cantProfesores}"
+                 rendered="#{dashboardBean.cantProfesores > 0 and dashboardBean.isActiveModulo('ED')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00588')}"  />
+
+        <bs:card title="Cuentas Contables" value="#{dashboardBean.cantCuentasContables}"
+                 rendered="#{dashboardBean.cantCuentasContables > 0 and dashboardBean.isActiveModulo('CG')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00420')}"  />
+
+    </div>
+
+
+</html>

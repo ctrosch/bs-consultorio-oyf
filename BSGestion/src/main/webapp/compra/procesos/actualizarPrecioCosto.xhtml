@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Actualizar Precios de Costo
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Actualizar Precios de Costo
+        </ui:define>
+
+
+        <ui:define name="contenido" >
+
+            <p:wizard id="veWizard" flowListener="#{actualizarPreciosCostoBean.onFlowProcess}"
+                      backLabel="Atrás" nextLabel="Siguiente" >
+
+                <p:tab id="inicio" title="Datos iniciales" >
+
+                    <p:outputPanel style="max-width: 600px;" styleClass="MarAuto" >
+
+                        <p:messages showDetail="true" />
+
+                        <div class="EmptyBox20" />
+
+                        <p:panelGrid columns="2" layout="grid" style="max-width: 600px;"
+                                     styleClass="ui-panelgrid-blank MarAuto"
+                                     columnClasses="ui-g-12 ui-md-4, ui-g-12 ui-md-8" >
+
+                            <h:outputText value="Lista de costo que desea actualizar" />
+                            <p:autoComplete value="#{actualizarPreciosCostoBean.listaCostoActualizar}"
+                                            dropdown="true" placeholder="Seleccionar"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{listaPrecioCostoBean.complete}"
+                                            var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                            converter="#{conversoresProveedor.listaCosto}"  forceSelection="true" >
+
+                                <p:ajax event="itemSelect" process="@this" update="@form" />
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{l.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{l.descripcion}" />
+                                </p:column>
+
+                            </p:autoComplete>
+
+                            <h:outputText value="Traer datos de"
+                                          rendered="#{not empty actualizarPreciosCostoBean.listaCostoActualizar}" />
+                            <p:selectOneMenu value="#{actualizarPreciosCostoBean.parteDe}"
+                                             rendered="#{not empty actualizarPreciosCostoBean.listaCostoActualizar}"
+                                             requiredMessage="Debe seleccionar desde donde se obtienen los datos iniciales">
+                                <p:ajax event="itemSelect" process="@this" update="@form" />
+                                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                <f:selectItem itemLabel="Lista de Costo" itemValue="A" />
+                                <f:selectItem itemLabel="Productos" itemValue="B" />
+                                <f:selectItem itemLabel="Desde archivo excel" itemValue="C" />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Lista de Costo"
+                                          rendered="#{not empty actualizarPreciosCostoBean.listaCostoActualizar and actualizarPreciosCostoBean.parteDe eq 'A'}" />
+                            <p:autoComplete value="#{actualizarPreciosCostoBean.listaCostoPartida}"
+                                            required="true" requiredMessage="La lista de costo es obligatoria"
+                                            rendered="#{not empty actualizarPreciosCostoBean.listaCostoActualizar and actualizarPreciosCostoBean.parteDe eq 'A'}"
+                                            dropdown="true" placeholder="Seleccionar"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{listaPrecioCostoBean.complete}"
+                                            var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                            converter="#{conversoresProveedor.listaCosto}"  forceSelection="true" >
+
+                                <p:ajax event="itemSelect" process="@this" update="@form" />
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{l.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{l.descripcion}" />
+                                </p:column>
+
+                            </p:autoComplete>
+
+                        </p:panelGrid>
+
+                        <ui:fragment rendered="#{not empty actualizarPreciosCostoBean.listaCostoActualizar}" >
+
+                            <div class="EmptyBox10" />
+
+                            <h:outputText value="Estructurá necesaria de archivo excel"
+                                          rendered="#{actualizarPreciosCostoBean.parteDe eq 'C'}" />
+
+                            <div class="EmptyBox10" />
+
+                            <h:panelGrid columns="2"
+                                         rendered="#{actualizarPreciosCostoBean.parteDe eq 'C'}" >
+
+                                <h:outputText value="Column A - " />
+                                <h:outputText value="Código de producto" />
+
+                                <h:outputText value="Column B - " />
+                                <h:outputText value="Descripción" />
+
+                                <h:outputText value="Column C - " />
+                                <h:outputText value="Precio" />
+
+                            </h:panelGrid>
+
+                            <div class="EmptyBox10" />
+
+
+                            <h:form prependId="false" enctype="multipart/form-data"
+                                    rendered="#{actualizarPreciosCostoBean.parteDe eq 'C'}" >
+
+                                <div class="EmptyBox10" />
+                                <p:fileUpload fileUploadListener="#{actualizarPreciosCostoBean.upload}"
+                                              mode="advanced"
+                                              label="Buscar" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                                              invalidFileMessage="Formato inválido"
+                                              invalidSizeMessage="El tamaño del archivo es muy grande"
+                                              fileLimit="2"
+                                              update="@all"
+                                              auto="true" dragDropSupport="true"
+                                              sizeLimit="9000000" allowTypes="/(\.|\/)(xls|xlsx|png)$/" />
+
+                            </h:form>
+
+                            <p:fieldset id="fldSet" legend="Filtro de productos"
+                                        rendered="#{not empty actualizarPreciosCostoBean.parteDe and actualizarPreciosCostoBean.parteDe ne 'C'}" >
+
+                                <h:outputText value="Tipo de Producto" />
+                                <p:selectOneMenu id="tipoProducto" value="#{actualizarPreciosCostoBean.tipoProducto}"
+                                                 converter="#{conversoresStock.tipoProducto}"  >
+                                    <f:selectItem itemLabel="Todos" itemValue="" />
+                                    <f:selectItems value="#{tipoProductoBean.lista}"
+                                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                                    <p:ajax process="@this" update="fldSet" />
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Rubro desde" />
+                                <p:selectOneMenu id="rubro01d" filter="true" filterMatchMode="contains"
+                                                 value="#{actualizarPreciosCostoBean.rubro01Desde}"
+                                                 converter="#{conversoresStock.rubro01}"  >
+                                    <p:ajax process="@this" />
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                    <f:selectItems value="#{actualizarPreciosCostoBean.tipoProducto.rubro01}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Rubro hasta" />
+                                <p:selectOneMenu id="rubro01h" filter="true" filterMatchMode="contains"
+                                                 value="#{actualizarPreciosCostoBean.rubro01Hasta}"
+                                                 converter="#{conversoresStock.rubro01}"  >
+                                    <p:ajax process="@this" />
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                    <f:selectItems value="#{actualizarPreciosCostoBean.tipoProducto.rubro01}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Sub-Rubro desde" />
+                                <p:selectOneMenu id="rubro02d" filter="true" filterMatchMode="contains"
+                                                 value="#{actualizarPreciosCostoBean.rubro02Desde}"
+                                                 converter="#{conversoresStock.rubro02}"  >
+                                    <p:ajax process="@this" />
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                    <f:selectItems value="#{actualizarPreciosCostoBean.tipoProducto.rubro02}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Sub-Rubro hasta" />
+                                <p:selectOneMenu id="rubro02h" filter="true" filterMatchMode="contains"
+                                                 value="#{actualizarPreciosCostoBean.rubro02Hasta}"
+                                                 converter="#{conversoresStock.rubro02}"  >
+                                    <p:ajax process="@this" />
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                    <f:selectItems value="#{actualizarPreciosCostoBean.tipoProducto.rubro02}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Proveedor habitual" />
+                                <p:autoComplete value="#{actualizarPreciosCostoBean.proveedorHabitual}" dropdown="true" forceSelection="true"
+                                                maxResults="8" queryDelay="1000"
+                                                completeMethod="#{proveedorBean.complete}"
+                                                var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                                    <p:ajax event="itemSelect" process="@this" />
+
+                                    <p:column headerText="Nro cuenta" width="100">
+                                        <h:outputText value="#{e.nrocta}" />
+                                    </p:column>
+
+                                    <p:column headerText="Razón social">
+                                        <h:outputText value="#{e.razonSocial}" />
+                                    </p:column>
+
+                                    <p:column headerText="Nombre Fantasía">
+                                        <h:outputText value="#{e.nombreFantasia}" />
+                                    </p:column>
+                                </p:autoComplete>
+                            </p:fieldset>
+
+                        </ui:fragment>
+
+                        <div class="EmptyBox20" />
+
+                    </p:outputPanel>
+
+                </p:tab>
+
+
+                <p:tab id="precios" title="Detalle de precios" >
+
+                    <p:messages showDetail="true" />
+
+                    <!-- FUNCIONES -->
+                    <p:panel id="func" header="Herramientas de actualización"
+                             rendered="#{not actualizarPreciosCostoBean.actualizoPrecios}" >
+
+                        <p:panelGrid columns="4" layout="grid" style="max-width: 1100px;"
+                                     styleClass="ui-panelgrid-blank"
+                                     columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                            <h:outputText value="Fecha de vigencia" />
+                            <h:panelGroup>
+                                <p:calendar id="fechaVigencia" value="#{actualizarPreciosCostoBean.fechaVigencia}"
+                                            placeholder="Fecha Vigencia"
+                                            pattern="dd/MM/yyyy"
+                                            showOn="button"
+                                            navigator="true"
+                                            mask="true" >
+                                    <p:ajax event="dateSelect" listener="#{actualizarPreciosCostoBean.actualizarFechaVigencia()}" update="tablaProductos" />
+                                </p:calendar>
+                            </h:panelGroup>
+
+                            <h:outputText value="" />
+                            <h:outputText value="" />
+
+                            <h:outputText value="Porcentaje variación" />
+                            <h:panelGroup>
+                                <p:inputText id="porVar" value="#{actualizarPreciosCostoBean.porcentajeFijo}" placeholder="0.0" style="max-width: 100px; text-align: right;">
+                                    <f:convertNumber pattern="#,###,##0.00" maxFractionDigits="2" maxIntegerDigits="2"  />
+                                </p:inputText>
+                                <p:commandButton icon="fa fa-check" value="Aplicar" style="max-width: 100px; margin-left: 1px;"
+                                                 actionListener="#{actualizarPreciosCostoBean.calcularPorcentaje}"
+                                                 process="@this,porVar"
+                                                 update="tablaProductos" />
+                            </h:panelGroup>
+
+                            <h:outputText value="Importe fijo de variación" />
+                            <h:panelGroup>
+                                <p:inputText id="impVar" value="#{actualizarPreciosCostoBean.valorFijo}" placeholder="0.0" style="max-width: 100px; text-align: right;" >
+                                    <f:convertNumber pattern="#,###,##0.00" maxFractionDigits="2" />
+                                </p:inputText>
+                                <p:commandButton icon="fa fa-check" value="Aplicar" style="max-width: 100px; margin-left: 1px;"
+                                                 actionListener="#{actualizarPreciosCostoBean.calcularImporte()}"
+                                                 process="@this,impVar"
+                                                 update="tablaProductos" />
+                            </h:panelGroup>
+
+                            <h:outputText value="Actualiza Precios Reposición" />
+                            <p:selectBooleanCheckbox  value="#{actualizarPreciosCostoBean.actualizaPrecioReposicion}" required="true" >
+                                <p:ajax process="@this" />
+                            </p:selectBooleanCheckbox>
+
+                        </p:panelGrid>
+
+                        <p:tooltip for="fechaVigencia"
+                                   value="Ingrese la fecha de vigencia común a todos los productos. La fecha de vigencia es la fecha a partir de la cual estarán disponible el precio actualizado"
+                                   style="max-width: 400px;"/>
+                        <p:tooltip for="porVar"
+                                   value="Utilice este valor para incrementar/decrementar los precios en forma porcentual uniforme. Valores negativos decrementan, valores positivos incrementan. Ej. -5 para rebajar un 5% los precios"
+                                   style="max-width: 400px;"/>
+                        <p:tooltip for="impVar"
+                                   value="Utilice este valor para incrementar/decrementar los precios en forma uniforme asignando un importe fijo. Valores negativos decrementan, valores positivos incrementan. Ej ingrese 140, para incrementar en 140 todo los precios seleccionados."
+                                   style="max-width: 400px;"/>
+
+                    </p:panel>
+
+                    <div class="EmptyBox10" />
+
+                    <p:panel header="Detalle de precios" rendered="#{not actualizarPreciosVentaBean.actualizoPrecios}" >
+
+                        <p:dataTable id="tablaProductos" var="e"
+                                     resizeMode="expand" liveResize="true"
+                                     value="#{actualizarPreciosCostoBean.precios}"
+                                     emptyMessage="No se encontraron resultados"
+                                     scrollable="true" scrollHeight="300"
+                                     rowStyleClass="#{e.modificado? 'modificado' : null}">
+
+                            <f:facet name="header">
+                                Precios encontrados
+                            </f:facet>
+
+                            <p:column headerText="Código" width="100" style="text-align: center;"
+                                      sortBy="#{e.producto.codigo}"
+                                      filterBy="#{e.producto.codigo}"
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{e.producto.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción"  width="30%" style="text-align: left;"
+                                      sortBy="#{e.producto.descripcion}"
+                                      filterBy="#{e.producto.descripcion}"
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{e.producto.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Fecha Vigencia" width="120"  style="text-align: center;" >
+
+                                <h:outputText  value="#{e.fechaVigencia}" style="text-align: center;" >
+                                    <f:convertDateTime  pattern="dd/MM/yyyy" />
+                                </h:outputText>
+
+                            </p:column>
+
+                            <p:column headerText="Precio Base"  width="120"
+                                      rendered="#{actualizarPreciosCostoBean.parteDe ne 'C'}"
+                                      sortBy="#{e.precioBase}" >
+
+                                <h:outputText  value="#{e.precioBase}" styleClass="Fright" >
+                                    <f:convertNumber pattern="##0.00" />
+                                </h:outputText>
+
+                            </p:column>
+
+                            <p:column headerText="Precio Actual"  width="120"
+                                      sortBy="#{e.precioActual}" >
+
+                                <h:outputText  value="#{e.precioActual}" styleClass="Fright"  >
+                                    <f:convertNumber pattern="##0.00" />
+                                </h:outputText>
+
+                            </p:column>
+
+                            <p:column headerText="Precio nuevo"  width="120" style="text-align: right;"
+                                      sortBy="#{e.precio}" >
+                                <p:inputText id="precio" value="#{e.precio}" style="text-align: right;"
+                                             rendered="#{not actualizarPreciosCostoBean.actualizoPrecios}">
+                                    <f:convertNumber pattern="##0.00" />
+                                    <p:ajax event="change"
+                                            listener="#{actualizarPreciosCostoBean.marcarModificado(e)}"
+                                            update="variacion,porceVar" />
+                                </p:inputText>
+
+                                <h:outputText id="precioA" value="#{e.precio}" style="text-align: right;"
+                                              rendered="#{actualizarPreciosCostoBean.actualizoPrecios}">
+                                    <f:convertNumber pattern="##0.00" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Mon." width="30" style="text-align: center;">
+
+                                <h:outputText value="#{actualizarPreciosCostoBean.listaCostoActualizar.moneda.codigo}"
+                                              rendered="#{actualizarPreciosCostoBean.listaCostoActualizar.priorizaMonedaProducto eq 'N'}"
+                                              style="text-align: right; padding-left: 1px;" />
+
+                                <h:outputText value="#{e.producto.monedaReposicion.codigo}"
+                                              rendered="#{actualizarPreciosCostoBean.listaCostoActualizar.priorizaMonedaProducto eq 'S'}"
+                                              style="text-align: right; padding-left: 1px;" />
+
+                            </p:column>
+
+                            <p:column headerText="% Var."  width="120"
+                                      sortBy="#{e.precio}" >
+
+
+                                <h:panelGroup id="variacion" styleClass="Fright"  >
+
+                                    <h:panelGroup rendered="#{e.precio eq e.precioActual}" >
+                                        <i class="icon-minus Blue"></i>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup rendered="#{e.precio > e.precioActual}" >
+                                        <i class="icon-arrow-up Green"></i>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup rendered="#{e.precioActual > e.precio }" >
+                                        <i class="icon-arrow-down Red"></i>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+
+                                <h:outputText id="porceVar" value="#{(e.precio/e.precioActual-1)*100}" styleClass="Fright"
+                                              rendered="#{e.precioActual>0}">
+                                    <f:convertNumber pattern="#,###,##0.00" />
+                                </h:outputText>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <div class="EmptyBox20" />
+                        <div class="MarAuto MarTop30 MaxWid300" >
+                            <p:commandButton value="Actualizar precios" icon="fa fa-gears" styleClass="RedBack"
+                                             actionListener="#{actualizarPreciosCostoBean.actualizarDatos}"
+                                             process="@this"
+                                             update="@form" >
+                                <p:confirm header="Actualización de precios" message="Esta acción no podrá deshacer. Debe estar seguro que los precios a modificar sean los correctos. ¿Continua?" />
+                            </p:commandButton>
+                        </div>
+                        <div class="EmptyBox20" />
+
+                    </p:panel>
+
+                    <div class="EmptyBox20" />
+                    <div class="MarAuto MarTop30 MaxWid300" >
+                        <p:commandButton value="Reiniciar Proceso" styleClass="RedBack"
+                                         oncomplete="PF('veWizard').loadStep('inicio', false)" >
+                            <p:resetInput target="@form" />
+                        </p:commandButton>
+                    </div>
+
+                </p:tab>
+            </p:wizard>
+
+        </ui:define>
+
+        <ui:define name="dialogos">
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

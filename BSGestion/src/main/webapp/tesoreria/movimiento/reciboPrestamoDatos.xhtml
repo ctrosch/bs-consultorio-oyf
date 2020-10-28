@@ -1,0 +1,123 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid"
+                 rendered="#{not empty reciboPrestamoBean.m}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario"
+                      rendered="#{reciboPrestamoBean.muestroCampo('C','CODFOR')}" />
+        <p:inputText value="#{reciboPrestamoBean.m.formulario.descripcion}"
+                     rendered="#{reciboPrestamoBean.muestroCampo('C','CODFOR')}"
+                     readonly="true" />
+
+        <h:outputText value="Pto. Venta" rendered="#{reciboPrestamoBean.muestroCampo('C','SUCURS')}" />
+        <p:inputText value="#{reciboPrestamoBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{reciboPrestamoBean.muestroCampo('C','SUCURS')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" rendered="#{reciboPrestamoBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{reciboPrestamoBean.m.numeroFormulario}"
+                     readonly="#{reciboPrestamoBean.m.formulario.modificaNumeracion eq 'N'}"
+                     rendered="#{reciboPrestamoBean.muestroCampo('C','NROFOR')}" >
+            <p:ajax event="blur"  process="@this" />
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{reciboPrestamoBean.muestroCampo('C','FCHMOV')}" />
+        <p:calendar value="#{reciboPrestamoBean.m.fechaMovimiento}"
+                    disabled="#{reciboPrestamoBean.m.formulario.modificaFecha ne 'S' or not empty reciboPrestamoBean.m.prestamo }"
+                    rendered="#{reciboPrestamoBean.muestroCampo('C','FCHMOV')}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{reciboPrestamoBean.fechaMovimientoMaxima}" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,
+                 ui-g-6 ui-md-4 ui-lg-5,
+                 ui-g-6 ui-md-2 ui-lg-1,
+                 ui-g-6 ui-md-4 ui-lg-5" >
+
+        <bs:outputTexWhitLink value="Prestamo *"
+                              url="#{reciboPrestamoBean.obtenerUrlMenu('SIS_00392','ID_PRES',reciboPrestamoBean.m.prestamo.id)}" />
+
+        <p:autoComplete value="#{reciboPrestamoBean.m.prestamo}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        disabled="#{not empty reciboPrestamoBean.m.id}"
+                        completeMethod="#{reciboPrestamoBean.completePrestamo}"
+                        var="i" itemLabel="#{i.codigo}" itemValue="#{i}"
+                        converter="#{conversoresPrestamo.prestamo}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{reciboPrestamoBean.procesarPrestamo()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{i.codigo}" />
+            </p:column>
+
+            <p:column headerText="Destinatario" width="200">
+                <h:outputText value="#{i.nombreDestinatario}" />
+            </p:column>
+
+            <p:column headerText="Línea de crédito" width="200" styleClass="hidden-sm-down" >
+                <h:outputText value="#{i.lineaCredito.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Fecha" styleClass="hidden-sm-down" >
+                <h:outputText value="#{i.fechaCredito}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Capital" styleClass="hidden-sm-down" >
+                <h:outputText value="#{i.importeCapital}" />
+            </p:column>
+
+            <p:column headerText="Interés"  styleClass="hidden-sm-down" >
+                <h:outputText value="#{i.importeInteres}" />
+            </p:column>
+
+            <p:column headerText="Total" >
+                <h:outputText value="#{i.importeTotal}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <h:outputText value="Línea de Crédito" />
+        <p:inputText value="#{reciboPrestamoBean.m.prestamo.lineaCredito.descripcion}" readonly="true" />
+
+        <bs:outputTexWhitLink value="Destinatario *"
+                              url="#{reciboPrestamoBean.obtenerUrlMenu('SIS_00393','NROCTA',reciboPrestamoBean.m.entidad.nrocta)}" />
+        <p:inputText value="#{reciboPrestamoBean.m.entidad.razonSocial}" readonly="true" />
+
+        <h:outputText value="Financiador" />
+        <p:inputText value="#{reciboPrestamoBean.m.prestamo.financiador.descripcion}" readonly="true" />
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="2" value="#{reciboPrestamoBean.m.observaciones}" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

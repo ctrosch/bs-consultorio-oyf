@@ -1,0 +1,474 @@
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario"  rendered="#{movimientoSaludBean.muestroCampo('C','DESFOR')}" />
+        <p:inputText value="#{movimientoSaludBean.m.formulario.descripcion} - #{movimientoSaludBean.m.formulario.letra}" readonly="true"
+                     rendered="#{movimientoSaludBean.muestroCampo('C','DESFOR')}" />
+
+        <h:outputText value="Punto de Venta"  rendered="#{movimientoSaludBean.muestroCampo('C','PTOVTA')}" />
+        <p:inputText value="#{movimientoSaludBean.m.puntoVenta.codigo}" readonly="true"  rendered="#{movimientoSaludBean.muestroCampo('C','PTOVTA')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número"   rendered="#{movimientoSaludBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{movimientoSaludBean.m.numeroFormulario}" readonly="true"  rendered="#{movimientoSaludBean.muestroCampo('C','NROFOR')}" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"   rendered="#{movimientoSaludBean.muestroCampo('C','FCHMOV')}" />
+        <p:calendar value="#{movimientoSaludBean.m.fechaMovimiento}"
+                    rendered="#{movimientoSaludBean.muestroCampo('C','FCHMOV')}"
+                    disabled="#{movimientoSaludBean.m.formulario.modificaFecha ne 'S'}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" update="horaTurno" event="dateSelect"  listener="#{movimientoSaludBean.completeHorario()}"  />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:panelGrid id="calendario" columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Profesional *"  rendered="#{movimientoSaludBean.muestroCampo('C','CODPRF') and movimientoSaludBean.m.comprobante.filtraPorProfesional ne 'S'}"
+                              url="#{movimientoSaludBean.obtenerUrlMenu('SIS_00696','NROCTA',movimientoSaludBean.m.profesional.nrocta)}" />
+
+        <p:autoComplete value="#{movimientoSaludBean.m.profesional}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoSaludBean.muestroCampo('C','CODPRF') and movimientoSaludBean.m.comprobante.filtraPorProfesional ne 'S'}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Profesional es obligatorio"
+                        completeMethod="#{profesionalMedicoBean.complete}"
+                        disabled="#{not movimientoSaludBean.esNuevo}"
+                        var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@this,horaTurno" listener="#{movimientoSaludBean.procesarProfesional()}" />
+
+            <p:column headerText="Nro Legajo" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Nombre Completo">
+                <h:outputText value="#{e.apellido} #{e.nombre}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="" rendered="#{movimientoSaludBean.muestroCampo('C','CODPRF')and movimientoSaludBean.m.comprobante.filtraPorProfesional ne 'S'}" />
+        <h:outputText value="" rendered="#{movimientoSaludBean.muestroCampo('C','CODPRF')and movimientoSaludBean.m.comprobante.filtraPorProfesional ne 'S'}" />
+
+        <bs:outputTexWhitLink value="Paciente *"  rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}"
+                              url="#{movimientoSaludBean.obtenerUrlMenu('SIS_00695','NROCTA',movimientoSaludBean.m.paciente.nrocta)}" />
+
+        <p:autoComplete value="#{movimientoSaludBean.m.paciente}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Paciente es obligatorio"
+                        completeMethod="#{movimientoSaludBean.completePaciente}"
+                        disabled="#{not movimientoSaludBean.esNuevo}"
+                        var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form,listaObrasSociales" listener="#{movimientoSaludBean.procesarPaciente()}"  />
+
+            <p:column headerText="Nro Legajo" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Nombre Completo">
+                <h:outputText value="#{e.apellido} #{e.nombre}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Nro Documento"  rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}" />
+        <h:panelGroup layout="block"  rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}" >
+            <p:inputText value="#{movimientoSaludBean.m.tipoDocumento.descripcion}" style="max-width: 30%"
+                         readonly="true" />
+            <p:inputMask value="#{movimientoSaludBean.m.nrodoc}" style="max-width: 70%"
+                         mask="#{movimientoSaludBean.m.tipoDocumento.mascara}"
+                         required="true"
+                         requiredMessage="El número de documento del Paciente es obligatorio"  />
+
+        </h:panelGroup>
+        <h:outputText value="Dirección "   rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}" />
+        <p:inputText value="#{movimientoSaludBean.m.direccion}"
+                     rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+        <h:outputText value="Localidad*"   rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}"/>
+        <p:autoComplete value="#{movimientoSaludBean.m.localidad}"   rendered="#{movimientoSaludBean.muestroCampo('C','CODPAC')}"
+                        dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        disabled="#{not movimientoSaludBean.esNuevo}"
+                        required="true" requiredMessage="La Localidad es necesaria"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{movimientoSaludBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Obra Social *"
+                              rendered="#{movimientoSaludBean.muestroCampo('C','CODOSC')}"
+                              url="#{movimientoSaludBean.obtenerUrlMenu('SIS_00697','NROCTA',movimientoSaludBean.m.obraSocial)}" />
+
+
+        <p:selectOneMenu id="listaObrasSociales" value="#{movimientoSaludBean.m.obraSocial}"
+                         rendered="#{movimientoSaludBean.muestroCampo('C','CODOSC')}"
+                         converter="#{conversoresEntidad.entidadComercial}"  >
+            <f:selectItem itemLabel="Seleccionar Obra Social" itemValue="" />
+            <f:selectItems value="#{movimientoSaludBean.m.paciente.obraSociales}" var="p" itemLabel="#{p.obraSocial.razonSocial}" itemValue="#{p.obraSocial}" />
+            <p:ajax event="itemSelect" process="@this" update="nroAfiliado" listener="#{movimientoSaludBean.procesarObraSocial()}"   />
+        </p:selectOneMenu>
+
+        <h:outputText value="Nro. Afiliado "  rendered="#{movimientoSaludBean.muestroCampo('C','CODOSC')}" />
+        <p:inputText id="nroAfiliado" value="#{movimientoSaludBean.m.numeroAfiliado}" readonly="true"
+                     rendered="#{movimientoSaludBean.muestroCampo('C','CODOSC')}" />
+
+        <h:outputText value="Hora Turno *"  rendered="#{movimientoSaludBean.muestroCampo('C','HORTUR')}" />
+        <p:selectOneMenu id="horaTurno" value="#{movimientoSaludBean.m.horaMovimiento}"
+                         rendered="#{movimientoSaludBean.esNuevo and (movimientoSaludBean.muestroCampo('C','HORTUR'))}" >
+            <f:convertDateTime pattern="HH:mm" />
+            <f:selectItem itemLabel="Seleccionar turno" itemValue="" />
+            <f:selectItems value="#{movimientoSaludBean.listaDeTurnos}" var="h" itemLabel="#{movimientoSaludBean.formatHora(h, 'HH:mm')}" itemValue="#{h}"  />
+            <p:ajax event="itemSelect" process="@this" />
+        </p:selectOneMenu>
+
+        <p:inputText  value="#{movimientoSaludBean.m.horaMovimiento}" readonly="true"
+                      rendered="#{not movimientoSaludBean.esNuevo and movimientoSaludBean.muestroCampo('C','HORTUR') }" >
+            <f:convertDateTime pattern="HH:mm" />
+
+        </p:inputText>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-2 ui-md-3 ui-lg-2, ui-g-10 ui-md-9 ui-lg-10" >
+        <h:outputText value="Descripción " rendered="#{movimientoSaludBean.muestroCampo('C','DESCRP')}" />
+        <p:inputTextarea rows="1" value="#{movimientoSaludBean.m.descripcion}" style="width: 100%"
+                         rendered="#{movimientoSaludBean.muestroCampo('C','DESCRP')}"/>
+
+        <h:outputText value="Detalle Consulta " rendered="#{movimientoSaludBean.muestroCampo('C','DETCSA')}" />
+        <p:inputTextarea rows="5" value="#{movimientoSaludBean.m.detalleConsulta}" style="width: 100%"
+                         required="true"
+                         rendered="#{movimientoSaludBean.muestroCampo('C','DETCSA')}"/>
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-2 ui-md-3 ui-lg-2, ui-g-10 ui-md-9 ui-lg-10" >
+        <h:outputText value="Observaciones" rendered="#{movimientoSaludBean.muestroCampo('C','OBSERV')}" />
+        <p:inputTextarea rows="2" value="#{movimientoSaludBean.m.observaciones}" style="width: 100%"
+                         rendered="#{movimientoSaludBean.muestroCampo('C','OBSERV')}"/>
+
+    </p:panelGrid>
+
+
+
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+        <h:outputText value="Profesional"  rendered="#{movimientoSaludBean.muestroCampo('C','PRFCAL')}" />
+
+        <p:autoComplete value="#{movimientoSaludBean.profesional}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoSaludBean.muestroCampo('C','PRFCAL')}"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{profesionalMedicoBean.complete}"
+                        var="p" itemLabel="#{p.nombreComplete}" itemValue="#{p}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this"  update="@this,schedule" listener="#{movimientoSaludBean.procesarProfesionalCalendario()}" />
+
+            <p:column headerText="Apellido">
+                <h:outputText value="#{p.apellido}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{p.nombre}" />
+            </p:column>
+
+
+        </p:autoComplete>
+
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="1" styleClass="ui-panelgrid-blank informePanelGrid900"
+                 columnClasses="ui-g-12" >
+
+        <p:schedule id="schedule"  value="#{movimientoSaludBean.eventModel}"
+                    rendered="#{movimientoSaludBean.muestroCampo('C','PRFCAL') }"
+                    widgetVar="myschedule"
+                    showWeekends="true"
+                    leftHeaderTemplate="next,prev"
+                    centerHeaderTemplate="title"
+                    clientTimeZone="local" timeZone="America/Buenos_Aires" timeFormat="HH:mm">
+
+            <p:ajax event="dateSelect" listener="#{movimientoSaludBean.onDateSelect}" update="registrarTurno,horaTurnoCalendario,medico" oncomplete="PF('dlgTurno').show()" />
+            <p:ajax event="eventSelect" listener="#{movimientoSaludBean.onEventSelect}" update="registrarTurno,horaTurnoCalendario2" oncomplete="PF('dlgTurno').show()" />
+
+        </p:schedule>
+
+    </p:panelGrid>
+
+    <p:dialog id="registrarTurno" header="Turnos" width="500"
+              widgetVar="dlgTurno"  responsive="true" modal="true" rendered="#{movimientoSaludBean.muestroCampo('C','PRFCAL') }"  >
+
+        <!-- DATOS -->
+        <p:panelGrid  columns="2" layout="grid"
+                      styleClass="ui-panelgrid-blank"
+                      columnClasses="ui-g-5,ui-g-7" >
+
+            <h:outputText value="Fecha"  />
+            <p:calendar value="#{movimientoSaludBean.m.fechaMovimiento}"
+                        disabled="#{movimientoSaludBean.m.estado.codigo eq 'E'}"
+                        disabledWeekends="true"
+                        pattern="dd/MM/yyyy"
+                        showOn="button"
+                        navigator="true"
+                        mask="true"  >
+                <p:ajax process="@this" update="horaTurnoCalendario" event="dateSelect"  listener="#{movimientoSaludBean.completeHorario()}"   />
+            </p:calendar>
+
+            <h:outputText value="Profesional *"  />
+
+            <p:autoComplete id="medico" value="#{movimientoSaludBean.m.profesional}" dropdown="true" forceSelection="true"
+                            maxResults="8" queryDelay="1000"
+                            required="true" requiredMessage="El profesional es obligatorio"
+                            completeMethod="#{profesionalMedicoBean.complete}"
+                            var="p" itemLabel="#{p.nombreComplete}" itemValue="#{p}"
+                            converter="#{conversoresEntidad.entidadComercial}"
+                            disabled="true">
+
+                <p:ajax event="itemSelect" process="@this" />
+
+                <p:column headerText="Apellido">
+                    <h:outputText value="#{p.apellido}" />
+                </p:column>
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{p.nombre}" />
+                </p:column>
+
+
+            </p:autoComplete>
+            <bs:outputTexWhitLink value="Paciente * "
+                                  url="#{movimientoSaludBean.obtenerUrlMenu('SIS_00695','NROCTA',movimientoSaludBean.m.paciente.nrocta)}" />
+
+            <p:autoComplete value="#{movimientoSaludBean.m.paciente}" dropdown="true" forceSelection="true"
+                            maxResults="8" queryDelay="1000"
+                            required="true" requiredMessage="El paciente es obligatorio"
+                            completeMethod="#{pacienteBean.complete}"
+                            var="q" itemLabel="#{q.nombreComplete}" itemValue="#{q}"
+                            converter="#{conversoresEntidad.entidadComercial}"
+                            disabled="#{movimientoSaludBean.m.estado.codigo eq 'E'}">
+
+
+                <p:ajax event="itemSelect" process="@this" update="@this"  listener="#{movimientoSaludBean.procesarPaciente()}" />
+
+                <p:column headerText="Nro legajo" width="100">
+                    <h:outputText value="#{q.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Apellido">
+                    <h:outputText value="#{q.apellido}" />
+                </p:column>
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{q.nombre}" />
+                </p:column>
+
+                <p:column headerText="Nro doc">
+                    <h:outputText value="#{q.nrodoc}" />
+                </p:column>
+            </p:autoComplete>
+
+            <h:outputText value="Hora Turno *" rendered="#{empty movimientoSaludBean.m.id }" />
+            <p:selectOneMenu id="horaTurnoCalendario" value="#{movimientoSaludBean.m.horaMovimiento}"
+                             rendered="#{empty movimientoSaludBean.m.id }"  required="true" requiredMessage="Seleccione la hora del turno" >
+                <f:convertDateTime pattern="HH:mm" />
+                <f:selectItem itemLabel="Seleccionar turno" itemValue=""  />
+                <f:selectItems value="#{movimientoSaludBean.listaDeTurnos}" var="h" itemLabel="#{movimientoSaludBean.formatHora(h, 'HH:mm')}" itemValue="#{h}"  />
+                <p:ajax event="itemSelect" process="@this" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Hora Turno " rendered="#{not empty movimientoSaludBean.m.id }"  />
+            <p:selectOneMenu id="horaTurnoCalendario2" value="#{movimientoSaludBean.horaMovimiento}"
+                             rendered="#{not empty movimientoSaludBean.m.id }" disabled="#{movimientoSaludBean.m.estado.codigo eq 'E'}"  >
+                <f:convertDateTime pattern="HH:mm" />
+                <f:selectItem itemLabel="Seleccionar turno" itemValue=""  />
+                <f:selectItems value="#{movimientoSaludBean.listaDeTurnos}" var="h" itemLabel="#{movimientoSaludBean.formatHora(h, 'HH:mm')}" itemValue="#{h}"  />
+                <p:ajax event="itemSelect" process="@this" update="turnoEntregado " listener="#{movimientoSaludBean.procesarHora()}"  />
+            </p:selectOneMenu>
+
+            <h:outputText value="Turno Entregado " rendered="#{not empty movimientoSaludBean.m.id }"  />
+            <p:inputText id="turnoEntregado" value="#{movimientoSaludBean.m.horaMovimiento}" readonly="true"
+                         rendered="#{not empty  movimientoSaludBean.m.id}" >
+                <f:convertDateTime pattern="HH:mm" />
+
+            </p:inputText>
+
+
+            <h:outputText value="Observaciones" />
+            <p:inputTextarea style="width: 100%" rows="1"
+                             value="#{movimientoSaludBean.m.observaciones}" readonly="#{movimientoSaludBean.m.estado.codigo eq 'E'}" >
+                <p:ajax event="blur" process="@this"  />
+            </p:inputTextarea>
+
+        </p:panelGrid>
+
+        <div class="EmptyBox10" />
+
+        <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank MaxWid700 MarAuto NoPadding" >
+
+            <p:commandButton value="Guardar Turno" styleClass="GreenBack" icon="fa fa-check" update="messageg"
+                             actionListener="#{movimientoSaludBean.guardar(false)}"
+                             rendered="#{not empty movimientoSaludBean.m and movimientoSaludBean.esNuevo }"
+                             oncomplete="PF('dlgTurno').hide(); PF('myschedule').update();" >
+            </p:commandButton>
+
+            <p:commandButton value="Actualizar Turno" icon="fa fa-save" update="messageg"
+                             actionListener="#{movimientoSaludBean.guardar(false)}"
+                             rendered="#{not empty movimientoSaludBean.m and not movimientoSaludBean.esNuevo and movimientoSaludBean.m.comprobante.tipoComprobante eq 'RT'}"
+                             oncomplete="PF('dlgTurno').hide(); PF('myschedule').update();" >
+            </p:commandButton>
+
+            <p:commandButton value="Anular" styleClass="RedBack" icon="fa fa-trash" update="messageg"
+                             actionListener="#{movimientoSaludBean.revertirMovimiento(movimientoSaludBean.m)}"
+                             rendered="#{not empty movimientoSaludBean.m and not movimientoSaludBean.esNuevo and movimientoSaludBean.m.comprobante.tipoComprobante eq 'RT' }"
+                             oncomplete="PF('dlgTurno').hide(); PF('myschedule').update();" >
+                <p:confirm header="Confirmacion" message="¿Está seguro? No podrá deshacer esta acción" icon="ui-icon-alert" />
+            </p:commandButton>
+
+
+        </p:panelGrid>
+
+        <p:panelGrid columns="2" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="ui-g-2 ui-md-3 ui-lg-2, ui-g-10 ui-md-9 ui-lg-10" >
+
+            <h:outputText value="" rendered="#{movimientoSaludBean.m.comprobante.tipoComprobante ne 'RT'}"/>
+
+            <bs:outputTexWhitLink value="Anular desde Solicitud de Atención" rendered="#{movimientoSaludBean.m.comprobante.tipoComprobante ne 'RT'}"
+                                  url="#{movimientoSaludBean.obtenerUrlMenu('SIS_00705')}"  />
+
+
+        </p:panelGrid>
+
+    </p:dialog>
+
+    <p:tabView id="tbDatosAdicionales"
+               activeIndex="#{movimientoSaludBean.indexTab2}"  rendered="#{movimientoSaludBean.muestroCampo('C','ADJUNT')}">
+
+        <p:ajax event="tabChange" listener="#{movimientoSaludBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Archivos Adjuntos" >
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4,ui-g-8" >
+
+                <h:form prependId="false" enctype="multipart/form-data" >
+
+                    <div class="EmptyBox10" />
+                    <p:fileUpload fileUploadListener="#{movimientoSaludBean.upload}"
+                                  mode="advanced"
+                                  label="Buscar archivo" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                                  invalidFileMessage="Formato inválido"
+                                  invalidSizeMessage="El tamaño del archivo es muy grande, debe ser menor a 2 MB"
+                                  fileLimit="5" multiple="true"
+                                  update=":formulario,@form"
+                                  auto="true" dragDropSupport="true"
+                                  sizeLimit="2000000" allowTypes="/(\.|\/)(png|jpg|jpeg|pdf|avi|mp4|wmv|mov|flv|mkv|docx|xls)$/" />
+
+                </h:form>
+
+                <p:dataTable id="tablaArchivos" var="i" style="max-width: 1200px;"
+                             value="#{movimientoSaludBean.m.adjuntos}"
+                             emptyMessage="No se encontraron resultados"
+                             resizableColumns="true" resizeMode="expand" liveResize="true"  >
+
+                    <!--
+                    <f:facet name="footer" >
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             actionListener="#{movimientoSaludBean.nuevoAdjunto()}"
+                                             value="Agregar archivo"
+                                             process="tablaArchivos"
+                                             update="tablaArchivos" />
+                        </f:facet>
+                    -->
+
+
+                    <p:column headerText="Archivo/Link"  >
+
+                        <p:inputText value="#{i.pathArchivo }"
+                                     readonly="true"
+                                     required="true" requiredMessage="El nombre del archivo es obligatorio"  />
+                    </p:column>
+
+                    <p:column headerText="Ver" width="20" >
+
+                        <h:outputLink value="#{i.pathArchivo}"
+                                      rendered="#{not empty i.pathArchivo}" target="_blank" >
+
+                            <i class="fa fa-external-link" ></i>
+                        </h:outputLink>
+
+                    </p:column>
+
+
+                    <p:column headerText="" width="50" style="text-align: center;" >
+
+                        <p:commandLink process="tablaArchivos" update="tablaArchivos,message,messageg"
+                                       actionListener="#{movimientoSaludBean.eliminarAdjunto(i)}" >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                            <i class="fa fa-close fa-2x Red" ></i>
+                        </p:commandLink>
+
+                    </p:column>
+
+
+                </p:dataTable>
+
+            </p:panelGrid>
+
+        </p:tab>
+
+
+    </p:tabView>
+
+</ui:composition>
+

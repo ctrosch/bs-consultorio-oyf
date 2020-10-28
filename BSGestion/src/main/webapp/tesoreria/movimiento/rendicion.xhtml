@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{rendicionBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{rendicionBean.titulo}"/>
+
+            <f:viewParam name="SUCREN" value="#{rendicionBean.SUCREN}"/>
+            <f:viewParam name="CODREN" value="#{rendicionBean.CODREN}"/>
+            <f:viewParam name="SUCURS" value="#{rendicionBean.SUCCJ}"/>
+            <f:viewParam name="SUCCJ" value="#{rendicionBean.SUCCJ}"/>
+            <f:viewParam name="CODCJ"  value="#{rendicionBean.CODCJ}"/>
+            <f:viewParam name="CODVT"  value="#{rendicionBean.CODVT}"/>
+
+            <f:event type="preRenderView" listener="#{rendicionBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{rendicionBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{rendicionBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu-right">
+            <p:commandLink actionListener="#{rendicionBean.addFavorito()}"
+                           process="@this"
+                           update="message,messageg"
+                           styleClass="Fs30 Fright" style="color: #0277bd;padding-right: 5px;" >
+                <i class="fa fa-star" ></i>
+            </p:commandLink>
+        </ui:define>
+
+
+        <ui:define name="contenido" >
+
+            <ui:include src="rendicionMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{rendicionBean.buscaMovimiento}" >
+
+                <ui:include src="rendicionBusqueda.xhtml" />
+
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not rendicionBean.buscaMovimiento}" >
+
+                <ui:include src="rendicionDatos.xhtml" />
+
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-12 ui-lg-9,ui-g-12 ui-lg-3"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <p:tabView activeIndex="#{rendicionBean.indexTab1}"
+                               rendered="#{not empty rendicionBean.m }"  >
+
+                        <p:ajax event="tabChange" listener="#{reciboBean.onTab1Change}" />
+
+                        <p:tab id="t0" title="Saldos Pendientes">
+
+                            <ui:include src="rendicionPendientes.xhtml" />
+
+                        </p:tab>
+                        <p:tab id="t1" title="Medios de Cobro">
+
+                            <ui:include src="rendicionConcepto.xhtml" />
+
+                        </p:tab>
+                    </p:tabView>
+
+
+
+                    <!-- TOTALES -->
+                    <p:panel id="totales" header="Total Rendición " >
+
+                        <div class="Flex FlexWrap">
+
+                            <h:panelGroup layout="block" styleClass="Container100 Responsive50 Flex Fright" rendered="#{empty rendicionBean.m.id and not rendicionBean.m.esAnticipo}" >
+                                <div class="Card GreenBack">
+                                    <div class="CardTopic White Fs14 ">
+                                        <h:outputText value="Total cobrado" />
+                                    </div>
+                                    <div class="DispBlock Opac50 ">
+                                        <span class="Fs20 White FontVoltSemiBold ">
+                                            <h:outputText value="#{rendicionBean.totalDebe}"
+                                                          styleClass="textoImporte"  >
+                                                <f:convertNumber pattern="$ ###,###,##0.00" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                        </div>
+                    </p:panel>
+
+                    <p:sticky target="totales" />
+
+                </p:panelGrid>
+
+
+            </ui:fragment>
+
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{rendicionBean.muestraReporte}"
+                               nombreArchivo="#{rendicionBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/tesoreria/busqueda/buscadorFormulario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

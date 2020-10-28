@@ -1,0 +1,86 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- TOTALES -->
+    <h:panelGroup id="totales" layout="block" styleClass="p-grid"
+                  rendered="#{not empty reciboPrestamoBean.m.entidad}" >
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 "
+                      rendered="#{empty reciboPrestamoBean.m.id and not reciboPrestamoBean.m.esAnticipo}" >
+            <div class="Card GreenBack">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Total a aplicar" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{reciboPrestamoBean.totalDebe}"
+                                      styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 "
+                      rendered="#{empty reciboPrestamoBean.m.id and not reciboPrestamoBean.m.esAnticipo}" >
+            <div class="Card OrangeBack Fright">
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Disponible a aplicar" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+                        <h:outputText value="#{reciboPrestamoBean.m.importeTotalDebe - reciboPrestamoBean.totalDebe}"
+                                      rendered="#{reciboPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+
+                        <h:outputText value="#{reciboPrestamoBean.m.importeTotalDebeSecundario - reciboPrestamoBean.totalDebe}"
+                                      rendered="#{reciboPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="p-col-12 " >
+            <div class="Card BlueBack" >
+                <div class="CardTopic White Fs14 ">
+                    <h:outputText value="Importe Recibo" />
+                </div>
+                <div class="DispBlock Opac50 ">
+                    <span class="Fs20 White FontVoltSemiBold Fright">
+
+                        <h:outputText value="#{reciboPrestamoBean.m.importeTotalDebe}"
+                                      rendered="#{reciboPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+
+                        <h:outputText value="#{reciboPrestamoBean.m.importeTotalDebeSecundario}"
+                                      rendered="#{reciboPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                                      styleClass="textoImporteRed"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+
+                    </span>
+                </div>
+            </div>
+        </h:panelGroup>
+
+
+    </h:panelGroup>
+
+
+</ui:composition>
+

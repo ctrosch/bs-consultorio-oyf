@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"      value="#{movimientoEducacionBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{movimientoEducacionBean.titulo}"/>
+
+            <f:viewParam name="CODED"   value="#{movimientoEducacionBean.CODED}"/>
+            <f:viewParam name="SUCED"   value="#{movimientoEducacionBean.SUCED}"/>
+            <f:event type="preRenderView" listener="#{movimientoEducacionBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoEducacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar" >
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{movimientoEducacionBean.nuevaBusqueda}"
+                            immediate="true"
+                            update="@form" />
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{movimientoEducacionBean.nuevoMovimiento}"
+                            process="@this"
+                            update="@form"
+                            immediate="true" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{movimientoEducacionBean.guardar(false)}"
+                            rendered="#{not empty movimientoEducacionBean.m}"
+                            update="@form" />
+
+                <p:submenu label="Pendientes" icon="fa fa-list-alt"
+                           rendered="#{empty movimientoEducacionBean.m.id and not empty movimientoEducacionBean.circuito.circuitosRelacionados}" >
+
+                    <p:menuitem value="#{movimientoEducacionBean.circuito.circuitosRelacionados[0].circuitoAplicacion.descripcion}"
+                                icon="fa fa-download"
+                                actionListener="#{movimientoEducacionBean.verPendientes(movimientoEducacionBean.circuito.circuitosRelacionados[0])}"
+                                rendered="#{not empty movimientoEducacionBean.circuito.circuitosRelacionados[0]}"
+                                process="@this"
+                                update="@form, buscadorPendiente">
+                    </p:menuitem>
+
+                    <p:menuitem value="#{movimientoEducacionBean.circuito.circuitosRelacionados[1].circuitoAplicacion.descripcion}"
+                                icon="fa fa-download"
+                                actionListener="#{movimientoEducacionBean.verPendientes(movimientoEducacionBean.circuito.circuitosRelacionados[1])}"
+                                rendered="#{not empty movimientoEducacionBean.circuito.circuitosRelacionados[1]}"
+                                process="@this"
+                                update="@form, buscadorPendiente">
+                    </p:menuitem>
+
+                    <p:menuitem value="#{movimientoEducacionBean.circuito.circuitosRelacionados[2].circuitoAplicacion.descripcion}"
+                                icon="fa fa-download"
+                                actionListener="#{movimientoEducacionBean.verPendientes(movimientoEducacionBean.circuito.circuitosRelacionados[2])}"
+                                rendered="#{not empty movimientoEducacionBean.circuito.circuitosRelacionados[2]}"
+                                process="@this"
+                                update="@form, buscadorPendiente">
+                    </p:menuitem>
+
+                    <p:menuitem value="#{movimientoEducacionBean.circuito.circuitosRelacionados[3].circuitoAplicacion.descripcion}"
+                                icon="fa fa-download"
+                                actionListener="#{movimientoEducacionBean.verPendientes(movimientoEducacionBean.circuito.circuitosRelacionados[3])}"
+                                rendered="#{not empty movimientoEducacionBean.circuito.circuitosRelacionados[3]}"
+                                process="@this"
+                                update="@form, buscadorPendiente">
+                    </p:menuitem>
+
+                </p:submenu>
+
+
+                <p:submenu label="Imprimir" icon="fa fa-print" rendered="#{not empty movimientoEducacionBean.m.id}" >
+
+
+                    <p:menuitem value="Comprobante de Taller" icon="fa fa-print"
+                                actionListener="#{movimientoEducacionBean.imprimir('TL')}"
+                                rendered="#{movimientoEducacionBean.m.comprobante.modulo eq 'TL'}"
+                                process="@this" >
+                    </p:menuitem>
+
+                    <p:menuitem value="Comprobante de Facturación" icon="fa fa-print"
+                                actionListener="#{movimientoEducacionBean.imprimir('FC')}"
+                                rendered="#{not empty movimientoEducacionBean.m.movimientoFacturacion}"
+                                process="@this" >
+                    </p:menuitem>
+
+                    <p:menuitem value="Comprobante de Stock" icon="fa fa-print"
+                                actionListener="#{movimientoEducacionBean.imprimir('ST')}"
+                                rendered="#{not empty movimientoEducacionBean.m.movimientoStock}"
+                                process="@this" >
+                    </p:menuitem>
+
+
+                </p:submenu>
+
+                <p:menuitem value="Enviar E-mail" icon="fa fa-envelope"
+                            actionListener="#{movimientoEducacionBean.preparoEnvioNotificaciones}"
+                            rendered="#{not empty movimientoEducacionBean.m.id}"
+                            process="@this"
+                            update="dialogos"
+                            oncomplete="PF('dlgEnvioComprobante').show()" >
+                </p:menuitem>
+
+            </p:menubar>
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarContacto"  process="@this" update="@form"
+                             actionListener="#{movimientoEducacionBean.procesarContacto}" />
+            <p:remoteCommand name="procesarStock"  process="@this" update="tb,message,messageg"
+                             actionListener="#{movimientoEducacionBean.procesarStock}" />
+            <p:remoteCommand name="procesarDireccionEntrega"  process="@this" update="@form"
+                             actionListener="#{movimientoEducacionBean.procesarDireccionEntrega}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:include src="movimientoBusqueda.xhtml" />
+
+            <p:panel header="Datos principales"
+                     rendered="#{not empty movimientoEducacionBean.m and not movimientoEducacionBean.buscaMovimiento}" >
+
+                <p:panelGrid columns="6" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-5 ui-md-6 ui-lg-2,ui-g-7 ui-md-6 ui-lg-4,ui-g-5 ui-md-6 ui-lg-2,ui-g-7 ui-md-6 ui-lg-4" >
+
+                    <h:outputText value="Formulario"
+                                  rendered="#{movimientoEducacionBean.muestroCampo('C','CODFOR')}" />
+
+                    <p:inputText value="#{movimientoEducacionBean.m.formulario.descripcion} - #{movimientoEducacionBean.m.formulario.letra}"
+                                 rendered="#{movimientoEducacionBean.muestroCampo('C','CODFOR')}"
+                                 readonly="true" />
+
+                    <h:outputText value="Número" rendered="#{movimientoEducacionBean.muestroCampo('C','NROFOR')}" />
+                    <p:inputText value="#{movimientoEducacionBean.m.numeroFormulario}" readonly="true"
+                                 rendered="#{movimientoEducacionBean.muestroCampo('C','NROFOR')}" >
+                        <f:convertNumber pattern="00000000" />
+                    </p:inputText>
+
+                    <h:outputText value="Fecha"
+                                  rendered="#{movimientoEducacionBean.muestroCampo('C','FCHMOV')}" />
+                    <p:calendar value="#{movimientoEducacionBean.m.fechaMovimiento}"
+                                disabled="#{movimientoEducacionBean.m.formulario.modificaFecha ne 'S'}"
+                                rendered="#{movimientoEducacionBean.muestroCampo('C','FCHMOV')}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"
+                                maxdate="#{movimientoEducacionBean.fechaMovimientoMaxima}" >
+                        <p:ajax process="@this" event="dateSelect" />
+                    </p:calendar>
+                </p:panelGrid>
+
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-6,ui-g-6" >
+
+                    <!-- PRIMER COLUMNA -->
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="ui-g-4,ui-g-8" >
+
+                        <h:outputText value="Técnico *" />
+                        <p:selectOneMenu value="#{movimientoEducacionBean.m.tecnico}"
+                                         required="true"
+                                         requiredMessage="Debe seleccionar un técnico"
+                                         converter="#{conversoresTaller.tecnico}" >
+
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItems value="#{tecnicoBean.lista}"
+                                           var="i" itemLabel="#{i.nombre}" itemValue="#{i}"/>
+                            <p:ajax process="@this" />
+                        </p:selectOneMenu>
+
+                        <bs:outputTexWhitLink value="Equipo *"
+                                              url="#{reciboBean.obtenerUrlMenu('SIS_00343')}" />
+
+                        <p:autoComplete value="#{movimientoEducacionBean.m.equipo}"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{equipoBean.complete}"
+                                        var="e" itemLabel="#{e.descripcionComplete}" itemValue="#{e}"
+                                        converter="#{conversoresTaller.equipo}" forceSelection="true" dropdown="true" >
+                            <p:ajax event="itemSelect" listener="#{movimientoEducacionBean.procesarEquipo()}"
+                                    process="@this" update="@form" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{e.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{e.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Nro Serie">
+                                <h:outputText value="#{e.nserie}" />
+                            </p:column>
+
+                            <p:column headerText="Marca">
+                                <h:outputText value="#{e.marca.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Modelo">
+                                <h:outputText value="#{e.modelo.descripcion}" />
+                            </p:column>
+                        </p:autoComplete>
+
+                        <bs:outputTexWhitLink value="Cliente *"
+                                              url="#{movimientoEducacionBean.obtenerUrlMenu('SIS_00083')}" />
+
+                        <p:autoComplete value="#{movimientoEducacionBean.m.cliente}" dropdown="true" forceSelection="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{clienteBean.complete}"
+                                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+                            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.procesarCliente()}"  />
+
+                            <p:column headerText="Nro cuenta" width="100">
+                                <h:outputText value="#{e.nrocta}" />
+                            </p:column>
+
+                            <p:column headerText="Razón social">
+                                <h:outputText value="#{e.razonSocial}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre Fantasía">
+                                <h:outputText value="#{e.nombreFantasia}" />
+                            </p:column>
+
+                            <p:column headerText="Nro doc">
+                                <h:outputText value="#{e.nrodoc}" />
+                            </p:column>
+                        </p:autoComplete>
+
+
+                        <h:panelGroup layout="block">
+                            <h:outputText value="Contacto *" />
+                            <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                             update="buscadorContacto"
+                                             oncomplete="PF('dlgContacto').show()"
+                                             process="@this"  />
+                        </h:panelGroup>
+                        <p:inputText value="#{movimientoEducacionBean.m.nombreContacto}"
+                                     required="true"
+                                     requiredMessage="El nombre del contacto es obligatorio"
+                                     readonly="#{not empty movimientoEducacionBean.m.contacto}" />
+
+
+                        <h:panelGroup layout="block">
+                            <h:outputText value="Dirección *" />
+                            <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                             title="Buscar dirección de entrega"
+                                             update="buscadorDireccionEntrega"
+                                             oncomplete="PF('dlg_direccion_entrega').show()"
+                                             rendered="#{not empty movimientoEducacionBean.m.cliente}" process="@this"  />
+
+                        </h:panelGroup>
+
+                        <p:inputText value="#{movimientoEducacionBean.m.direccion}" placeholder="Calle y Nro"
+                                     required="true" requiredMessage="La dirección es obligatoria" />
+
+                        <h:outputText value="Barrio " />
+                        <p:inputText value="#{movimientoEducacionBean.m.barrio}"  />
+
+                        <bs:outputTexWhitLink value="Localidad *"
+                                              url="#{movimientoEducacionBean.obtenerUrlMenu('SIS_00126')}" />
+
+                        <p:autoComplete value="#{movimientoEducacionBean.m.localidad}" dropdown="true" forceSelection="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{localidadBean.complete}"
+                                        required="true" requiredMessage="Seleccione la localidad"
+                                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                        converter="#{conversoresGeneral.localidad}"  >
+
+                            <p:ajax event="itemSelect" process="@this" listener="#{movimientoEducacionBean.procesarLocalidad()}"  />
+
+                            <p:column headerText="C.P." width="100">
+                                <h:outputText value="#{e.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{e.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Provincia">
+                                <h:outputText value="#{e.provincia.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                    </p:panelGrid>
+
+                    <!-- SEGUNDA COLUMNA -->
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="ui-g-4,ui-g-8" >
+
+                        <h:outputText value="Motivo/Problema" />
+                        <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoEducacionBean.m.motivo}"
+                                         required="true" requiredMessage="Debe ingresar un motivo o problema" >
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputTextarea>
+
+                        <h:outputText value="Diganóstico" />
+                        <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoEducacionBean.m.diagnostico}" >
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputTextarea>
+
+                        <h:outputText value="Solución" />
+                        <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoEducacionBean.m.solucion}" >
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputTextarea>
+
+                        <h:outputText value="Observaciones" />
+                        <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoEducacionBean.m.observaciones}" >
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputTextarea>
+
+                    </p:panelGrid>
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <div class="EmptyBox10" />
+
+            <ui:include src="movimientoDetalle.xhtml"  />
+
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoEducacionBean.muestraReporte}"
+                               nombreArchivo="#{movimientoEducacionBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <!-- ENVIO COMPROBANTE -->
+            <bs:envioComprobante solicitaEmail="#{movimientoEducacionBean.solicitaEmail}"
+                                 email="#{movimientoEducacionBean.emailEnvioComprobante}"
+                                 informacionAdicional ="#{movimientoEducacionBean.informacionAdicional}"
+                                 actionListener="#{movimientoEducacionBean.enviarNotificaciones()}"  />
+
+
+            <ui:include src="/taller/busqueda/buscadorFormulario.xhtml" />
+            <ui:include src="/taller/busqueda/buscadorPendiente.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorStock.xhtml" />
+            <ui:include src="/entidad/busqueda/buscadorContacto.xhtml" />
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

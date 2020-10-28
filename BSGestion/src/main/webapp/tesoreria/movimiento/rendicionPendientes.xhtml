@@ -1,0 +1,152 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:outputPanel id="saldosPendientes" >
+
+        <p:panelGrid columns="4" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+            <bs:outputTexWhitLink value="Repartidor *"
+                                  rendered="#{rendicionBean.muestroCampo('C','REPDOR')}"
+                                  url="#{rendicionBean.obtenerUrlMenu('SIS_00579','CODIGO',rendicionBean.repartidor.codigo)}" />
+            <p:autoComplete value="#{rendicionBean.repartidor}"
+                            rendered="#{rendicionBean.muestroCampo('C','REPDOR')}"
+                            required="true" requiredMessage="Seleccione un repartidor"
+                            dropdown="true" placeholder="Seleccionar"  maxResults="8" queryDelay="1000" forceSelection="true"
+                            completeMethod="#{repartidorBean.complete}"
+                            converter="#{conversoresVenta.repartidor}"
+                            var="l" itemLabel="#{l.nombre}" itemValue="#{l}" >
+
+                <p:ajax event="itemSelect" process="@this" listener="#{rendicionBean.buscarPendientes()}" update="saldosPendientes" />
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{l.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{l.nombre}" />
+                </p:column>
+
+            </p:autoComplete>
+
+            <h:outputText value="Clientes:" />
+            <h:outputText  value="#{rendicionBean.clientes.size()}" />
+
+        </p:panelGrid>
+
+        <p:repeat value="#{rendicionBean.clientes}" var="c" >
+
+            <h:panelGroup layout="block" styleClass="MarAuto MarBot10 MarTop30"  style="width: 95%;"
+                          rendered="#{not empty c.saldos}" >
+
+                <h2 class="TexAlCenter">
+                    <h:outputText value="#{c.nrocta}" />
+                    -
+                    <h:outputText value="#{c.razonSocial} " />
+                </h2>
+
+            </h:panelGroup>
+
+            <p:fragment>
+                <p:autoUpdate />
+
+                <p:dataTable id="tDebitos" var="d" value="#{c.saldos}" rendered="#{not empty c.saldos}" style="width: 95%;"
+                             sortBy="#{d.comprobante}" >
+
+                    <p:column headerText="Documento" style="text-align: center;" >
+                        <h:outputText value="#{d.comprobante} " />
+                        <h:outputText value="#{d.puntoVenta }" >
+                            <f:convertNumber pattern="0000" />
+                        </h:outputText>
+                        <h:outputText value="#{d.numeroFormulario}" >
+                            <f:convertNumber pattern="-00000000" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Vencimiento" width="100" style="text-align: center;" >
+                        <h:outputText value="#{d.fechaVencimiento}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Cuota" style="text-align: center;" width="80" >
+                        <h:outputText value="#{d.cuotas}" />
+                    </p:column>
+
+                    <p:column headerText="Imp. Pendiente" width="160" style="text-align: right !important;"  >
+
+                        <h:outputText value="#{d.pendiente}" rendered="#{rendicionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+
+                        <h:outputText value="#{d.pendienteSecundario}" rendered="#{rendicionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+
+                    </p:column>
+
+                    <p:column headerText="Imp. Aplicar" width="160" >
+
+                        <p:inputText id="impAplicar" value="#{d.importeAplicar}" rendered="#{rendicionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                     style="text-align: right;" >
+                            <f:convertNumber pattern="#,##0.00" />
+                            <p:ajax listener="#{rendicionBean.modificaSaldo(d)}" event="keyup" delay="500"
+                                    update=":formulario:totales,message, messageg, totalAplicar" />
+                        </p:inputText>
+
+                        <p:inputText value="#{d.importeAplicarSecundario}" rendered="#{rendicionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                                     style="text-align: right;" >
+                            <f:convertNumber pattern="#,##0.00" />
+                            <p:ajax listener="#{rendicionBean.modificaSaldo(d)}" event="keyup" delay="500"
+                                    update=":formulario:totales,message, messageg" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="Seleccionar" width="100" style="text-align: center;" >
+                        <p:selectBooleanCheckbox  value="#{d.seleccionado}" >
+
+                            <p:ajax process="@this" listener="#{rendicionBean.marcarSaldo(d)}" update="impAplicar, totales,tDebitos" />
+
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+
+                    <p:summaryRow>
+
+                        <p:column colspan="3" style="text-align:right">
+                            <h:outputText value="Totales" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="totalSaldo" value="#{c.importeSaldo}" styleClass="Fright" >
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column>
+
+                            <h:outputText id="totalAplicar" value="#{c.importeAplicar}" styleClass="Fright" >
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
+
+                        </p:column>
+
+                        <p:column>
+
+                        </p:column>
+
+                    </p:summaryRow>
+                </p:dataTable>
+
+            </p:fragment>
+
+        </p:repeat>
+
+    </p:outputPanel>
+
+</ui:composition>

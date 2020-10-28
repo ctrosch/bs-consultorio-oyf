@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+
+    <h:head>
+
+        <f:facet name="first">
+            <link rel="shortcut icon" href="./resources/image/favicon.ico" type="image/x-icon" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+
+            <c:if test="#{not empty aplicacionBean.parametro.pathImagenInicio}" >
+                <style>
+
+                    .body {
+                        background-image: url(#{aplicacionBean.parametro.pathImagenInicio});
+                        background-repeat: no-repeat;
+                        background-position: center top;
+                        background-size: 100%;
+                        background-attachment: fixed;
+                    }
+                </style>
+            </c:if>
+        </f:facet>
+
+        <title>
+            #{aplicacionBean.organizacion.nombreFantasia} - Ingreso al sistema
+        </title>
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkInicio}"/>
+        </f:metadata>
+
+    </h:head>
+
+    <h:body styleClass="#{aplicacionBean.parametro.fondo} body">
+
+        <h:form prependId="false" >
+            <ui:insert name="contenido"></ui:insert>
+        </h:form>
+
+        <h:outputStylesheet name="css/core-layout.css" library="volt-layout" />
+        <h:outputStylesheet name="css/animate.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-font.css" library="volt-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-layout.css" library="volt-layout" />
+
+        <ui:include src="/resources/general/analytics.xhtml" rendered="#{request.contextPath ne '/bs-base'}" />
+
+    </h:body>
+
+</html>

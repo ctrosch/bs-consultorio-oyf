@@ -1,0 +1,270 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid id="datos" columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{arancelBean.arancel.codigo}"
+                     readonly="true" />
+
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <bs:outputTexWhitLink value="Carrera *"
+                              url="#{movimientoEducacionBean.obtenerUrlMenu('SIS_00582','CODIGO',arancelBean.arancel.carrera.codigo)}" />
+
+        <p:autoComplete value="#{arancelBean.arancel.carrera}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="La Carrera es obligatoria"
+                        completeMethod="#{carreraBean.complete}"
+                        disabled="#{not arancelBean.esNuevo}"
+                        var="e" itemLabel="#{e.titulo}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.carrera}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{arancelBean.asignarCodigo()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.titulo}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Año lectivo *" />
+        <p:inputText value="#{arancelBean.arancel.anioLectivo}"
+                     disabled="#{not arancelBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El año el obligatorio" >
+            <p:ajax event="keyup" delay="500"  process="@this" update="@form" listener="#{arancelBean.asignarCodigo()}"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Referencia *" />
+        <p:inputText value="#{arancelBean.arancel.referencia}"
+                     title="Ingrese una refencia para diferenciar un arancel con el mismo año. Ej: A"
+                     required="true"
+                     requiredMessage="La referencia es obligatoria" >
+            <p:ajax event="keyup" delay="500"  process="@this" update="@form" listener="#{arancelBean.asignarCodigo()}"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{arancelBean.arancel.descripcion}" maxlength="250"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Fecha disponible desde *" />
+        <p:calendar value="#{arancelBean.arancel.fechaDesde}"
+                    required="true" requiredMessage="La fecha disponible desde es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+        <h:outputText value="Fecha disponible hasta *" />
+        <p:calendar value="#{arancelBean.arancel.fechaHasta}"
+                    required="true" requiredMessage="La fecha disponible hasta es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+
+    <p:dataTable id="detalleItem" value="#{arancelBean.arancel.items}" var="i"
+                 resizeMode="expand" liveResize="true" >
+
+        <f:facet name="footer">
+            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                             value="Agregar item" process="detalleItem" update="detalleItem,message,messageg"
+                             actionListener="#{arancelBean.nuevoItemArancel()}" />
+        </f:facet>
+
+        <p:column headerText="Concepto"  >
+
+            <p:autoComplete value="#{i.concepto}"
+                            disabled="#{arancelBean.existenRegistros and not empty i.id }"
+                            required="true" requiredMessage="Seleccione el concepto"
+                            maxResults="8" queryDelay="1000" dropdown="true"
+                            completeMethod="#{conceptoEducacionBean.complete}"
+                            var="p" itemLabel="#{p.codigo} #{p.descripcion}" itemValue="#{p}"
+                            converter="#{conversoresGeneral.concepto}" >
+
+                <p:ajax event="itemSelect" process="@this"  />
+
+                <p:column headerText="Tipo">
+                    <h:outputText value="#{p.tipoConcepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{p.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{p.descripcion}" />
+                </p:column>
+
+            </p:autoComplete>
+
+        </p:column>
+
+        <p:column headerText="Importe Unitario"  width="100" >
+            <p:inputText value="#{i.importe}" style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Edita Importe" width="60"  >
+
+            <p:selectOneButton  value="#{i.editaImporte}"
+                                required="true" requiredMessage="Seleccione si ingresa importe manual"
+                                disabled="#{arancelBean.existenRegistros and not empty i.id }"   >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneButton >
+
+        </p:column>
+
+        <p:column headerText="Período"  >
+
+            <p:autoComplete value="#{i.periodo}"  dropdown="true" forceSelection="true"
+                            disabled="#{arancelBean.existenRegistros and not empty i.id }"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{periodoBean.complete}"
+                            required="true" requiredMessage="El período es obligatorio"
+                            var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                            converter="#{conversoresGeneral.periodo}" >
+
+                <p:ajax event="itemSelect" process="@this"  />
+            </p:autoComplete>
+
+        </p:column>
+
+        <p:column headerText="Cant. Cuotas" width="60"  >
+
+            <p:inputText value="#{i.cantidad}" styleClass="TexAlRight"
+                         disabled="#{arancelBean.existenRegistros and not empty i.id }" >
+                <f:convertNumber pattern="0" />
+                <p:ajax event="keyup" delay="500"  process="@this" update="cuotaDesde,cuotaHasta" listener="#{arancelBean.procesarItem(i)}"/>
+            </p:inputText>
+
+        </p:column>
+
+        <p:column headerText="N° Cta Desde" width="60" >
+            <p:inputText id="cuotaDesde" value="#{i.cuotaDesde}" styleClass="TexAlRight"
+                         disabled="#{arancelBean.existenRegistros and not empty i.id }" >
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="N° Cta Hasta" width="60" >
+            <p:inputText id="cuotaHasta" value="#{i.cuotaHasta}" styleClass="TexAlRight"
+                         disabled="#{arancelBean.existenRegistros and not empty i.id }"   >
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Día de Vto" width="60" >
+
+            <p:inputText value="#{i.diaVencimientoSegunPeriodo}" styleClass="TexAlRight"
+                         disabled="#{arancelBean.existenRegistros and not empty i.id }"   >
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+
+        </p:column>
+
+        <p:column headerText="Fecha Cal. Vto"  >
+            <p:selectOneMenu value="#{i.origenFechaCalculoVencimiento}"
+                             required="true" requiredMessage="Seleccione la fecha origen para cálculo de vencimiento"
+                             disabled="#{arancelBean.existenRegistros and not empty i.id }"   >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Fecha de Movimiento" itemValue="M" />
+                <f:selectItem itemLabel="Fecha inicio Cursado" itemValue="I" />
+            </p:selectOneMenu>
+        </p:column>
+
+
+        <p:column headerText="Continua Vto" width="60"  >
+
+            <p:selectOneButton  value="#{i.continuaVencimientoItemAnterior}"
+                                required="true" requiredMessage="Seleccione Continua Vto"
+                                disabled="#{arancelBean.existenRegistros and not empty i.id }"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneButton >
+
+        </p:column>
+
+        <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+            <p:commandLink process="detalleItem" update="detalleItem,message,messageg"
+                           disabled="#{arancelBean.existenRegistros and not empty i.id }"
+                           actionListener="#{arancelBean.eliminarItemArancel(i)}"  >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+    </p:dataTable>
+
+
+    <div class="EmptyBox20" />
+
+    <!--
+    <p:panelGrid id="datosSinc" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <p:commandButton icon="fa fa-refresh" styleClass="RedBack"
+                         rendered="#{arancelBean.arancel.sincronizacionPendiente eq 'S'}"
+                         value="Sincronizar inscripciones" process="@this" update="@form"
+                         actionListener="#{arancelBean.sincronizarImportesInscripciones()}" />
+
+        <h:outputText value="Sincronización Pendiente" />
+        <p:inputText value="Si" readonly="true"
+                     rendered="#{arancelBean.arancel.sincronizacionPendiente eq 'S'}" />
+        <p:inputText value="No" readonly="true"
+                     rendered="#{arancelBean.arancel.sincronizacionPendiente eq 'N'}" />
+
+        <h:outputText value="Fecha última sincronización " />
+        <p:inputText value="#{arancelBean.arancel.fechaSincronizacion}"  readonly="true" >
+            <f:convertDateTime pattern="dd/MM/yyyy" />
+        </p:inputText>
+
+    </p:panelGrid>
+    <div class="EmptyBox10" />
+    -->
+
+
+
+
+</ui:composition>
+

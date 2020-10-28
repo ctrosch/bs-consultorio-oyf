@@ -1,0 +1,34 @@
+<ui:composition 
+xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:p="http://primefaces.org/ui" >
+
+    <p:menubar>
+
+           <p:menuitem value=" #{msgs.nuevo}" icon="blank16" id="btnNew"
+                       action="#{gestionMesasBean.nuevoMovimiento}"
+                       process="@this"
+                       update="@form" />
+
+            <p:menuitem value=" #{msgs.pcc_guardar}" icon="save16"
+                        action="#{gestionMesasBean.guardar(false)}"
+                        rendered="#{not gestionMesasBean.m.persistido }"
+                        update="@form" />
+
+            <p:menuitem value=" #{msgs.guardar_nuevo}" icon="saveNew16"
+                        action="#{gestionMesasBean.guardar(true)}"
+                        rendered="#{not gestionMesasBean.m.persistido }"
+                        oncomplete="btnNew.click()"
+                        update="@form" />
+
+            <p:menuitem value=" #{msgs.imprimir}" icon="print16"
+                        action="#{gestionMesasBean.imprimir}"
+                        rendered="#{gestionMesasBean.m.persistido }"
+                        ajax="false" target="blank" >
+            </p:menuitem>
+
+        </p:menubar>
+
+</ui:composition>

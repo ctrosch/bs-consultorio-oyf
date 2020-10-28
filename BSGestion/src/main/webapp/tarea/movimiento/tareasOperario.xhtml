@@ -1,0 +1,61 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+
+    <p:selectBooleanCheckbox value="#{tareaBean.tarea.iniciaTareaIndividual}"
+                             rendered="#{tareaBean.tarea.estado eq 'A'}" >
+        <p:ajax process="@form" update="@form"  />
+    </p:selectBooleanCheckbox>
+    <h:outputText value="  Inicio esta tarea de forma individual "  rendered="#{tareaBean.tarea.estado eq 'A'}" />
+
+    <h:panelGroup layout="block" styleClass="EmptyBox10" rendered="#{tareaBean.tarea.estado eq 'A'}" />
+
+    <p:panelGrid id="agregarItem" columns="2" layout="grid"
+                 rendered="#{(tareaBean.tarea.estado eq 'A' or tareaBean.tarea.estado eq 'C') and not tarea.iniciaTareaIndividual}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-9,ui-g-3 TexAlCenter" >
+
+        <h:outputText value="Operario" />
+        <h:outputText value="Acción" />
+
+        <p:autoComplete value="#{tareaBean.operarioAgregar}" dropdown="true"
+                        completeMethod="#{operarioBean.complete}"
+                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}"
+                        converter="#{conversoresProduccion.operario}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column>
+                <h:outputText value="#{p.nombre}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <p:commandButton icon="fa fa-plus"
+                         actionListener="#{tareaBean.agregarOperario()}"
+                         rendered="#{tareaBean.tarea.estado eq 'A' or tareaBean.tarea.estado eq 'C'}"
+                         value="Agregar"
+                         process="@form"
+                         update="@form"/>
+    </p:panelGrid>
+
+    <h:panelGroup layout="block" styleClass="EmptyBox10" rendered="#{tareaBean.tarea.estado eq 'A'}" />
+
+    <p:dataTable id="operarios" reflow="true"
+                 value="#{tareaBean.tarea.operarios}" var="i"
+                 emptyMessage="No se encontraron resultados"
+                 rows="50" paginator="false" >
+
+        <p:column headerText="Operarios" >
+            <h:outputText value="#{i.operario.nombre}" />
+        </p:column>
+
+    </p:dataTable>
+
+
+</ui:composition>

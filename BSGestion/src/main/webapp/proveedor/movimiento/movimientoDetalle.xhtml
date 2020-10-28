@@ -1,0 +1,112 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <div class="EmptyBox10" />
+    <!-- CONCEPTOS -->
+    <p:panel header="Conceptos" rendered="#{not empty movimientoProveedorBean.m.itemProducto and not movimientoProveedorBean.buscaMovimiento}" >
+
+        <p:panelGrid columns="2" layout="grid"                               
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="Container50, Container50" >
+
+            <p:dataTable id="dCompra" value="#{movimientoProveedorBean.m.itemProducto}" var="i" 
+                         resizeMode="expand" liveResize="true" >
+
+                <p:column headerText="Concepto" width="70%" >                                                        
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>                        
+
+                <p:column headerText="Importe"  width="30%" >
+                    <p:inputText id="precio"  value="#{i.importe}" 
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                 style="width: 98%;text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoProveedorBean.calcularImportes}" event="keyup" delay="500"  
+                                process="@this" update="dImpuesto,dPercepciones,dTotal" />
+                    </p:inputText>
+                </p:column> 
+            </p:dataTable> 
+
+            <p:dataTable id="dImpuesto" value="#{movimientoProveedorBean.m.itemImpuesto}" var="i" 
+                         resizeMode="expand" liveResize="true" >
+
+                <p:column headerText="Concepto" width="70%" >                                                        
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>                        
+
+                <p:column headerText="Importe"  width="30%" style="text-align: right;" >
+
+                    <h:outputText value="#{i.importe}" >
+                        <f:convertNumber pattern="$ ###,###,##0.00" />
+                    </h:outputText>
+
+                    <!--
+                    <p:inputText id="precio"  value="#{i.importe}" 
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                 style="width: 98%;text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoProveedorBean.calcularImportes}" event="keyup" delay="500"  />
+                    </p:inputText>
+                    -->
+                </p:column> 
+            </p:dataTable>
+
+            <p:dataTable id="dPercepciones" value="#{movimientoProveedorBean.m.itemPercepcion}" var="i" 
+                         resizeMode="expand" liveResize="true" >
+
+                <p:column headerText="Concepto" width="70%" >                                                        
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>                        
+
+                <p:column headerText="Importe"  width="30%" >
+                    <p:inputText id="precio"  value="#{i.importe}" 
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                 style="width: 98%;text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />                                
+                        <p:ajax listener="#{movimientoProveedorBean.calcularImportes}" event="keyup" delay="500"  
+                                process="@this" update="dTotal" />
+                    </p:inputText>
+                </p:column> 
+            </p:dataTable>
+
+            <p:dataTable id="dTotal" value="#{movimientoProveedorBean.m.itemTotal}" var="i" style="max-width: 600px;" 
+                         resizeMode="expand" liveResize="true" >
+
+                <p:column headerText="Concepto" width="70%" >                                                        
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>                        
+
+                <p:column headerText="Importe"  width="30%" style="text-align: right;" > 
+
+                    <h:outputText value="#{i.importe}" >
+                        <f:convertNumber pattern="$ ###,###,##0.00" />
+                    </h:outputText>
+
+                    <!--
+                    <p:inputText id="precio"  value="#{i.importe}" 
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                 style="width: 98%;text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoProveedorBean.calcularImportes}" event="keyup" delay="500"  />
+                    </p:inputText>
+                    -->
+                </p:column> 
+            </p:dataTable>
+
+
+        </p:panelGrid>
+
+
+    </p:panel>
+
+
+</ui:composition>
+

@@ -1,0 +1,204 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- DETALLE -->
+    <p:tabView id="tb" activeIndex="#{movimientoTallerBean.indexTab1}"
+               rendered="#{not empty movimientoTallerBean.m and not movimientoTallerBean.buscaMovimiento}">
+
+        <p:ajax event="tabChange" listener="#{movimientoTallerBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Servicios" >
+
+            <p:dataTable id="detalleServicios" value="#{movimientoTallerBean.m.itemsServicio}" var="i"
+                         emptyMessage="No se encontraron items"
+                         resizeMode="expand" liveResize="true" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{movimientoTallerBean.nuevoItemServicio()}"
+                                     process="tb"
+                                     update="tb,message,messageg"
+                                     rendered="#{movimientoTallerBean.circuito.permiteAgregarItems eq 'S'}"/>
+                </f:facet>
+
+                <!--
+                <p:column headerText="Buscar" width="30" styleClass="TexAlCenter" >
+                    <p:commandButton icon="fa fa-search"
+                                     process="@this"
+                                     oncomplete="PF('dlgProducto').show()" >
+                        <f:setPropertyActionListener value="#{i}" target="#{movimientoTallerBean.itemServicio}" />
+                    </p:commandButton>
+                </p:column>
+                -->
+
+                <p:column headerText="Servicio" width="300" >
+
+                    <p:autoComplete value="#{i.producto}"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{movimientoTallerBean.completeServicio}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+                        <p:ajax event="itemSelect" listener="#{movimientoTallerBean.procesarServicio(i)}"
+                                process="@this" update="detalleServicios" />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                </p:column>
+
+                <p:column headerText="Observaciones/Detalle" width="300"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','OBSERVA')}" >
+                    <p:inputTextarea value="#{i.observaciones}" rows="2"
+                                     rendered="#{not empty i.producto }" />
+                </p:column>
+
+                <p:column headerText="Cantidad" width="70"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','CANTID')}" >
+
+                    <p:inputText value="#{i.cantidad}"
+                                 rendered="#{not empty i.producto}" style="text-align: right;"  >
+                        <f:convertNumber pattern="0" />
+                        <p:ajax listener="#{movimientoTallerBean.calcularImportes(i)}" event="keyup" delay="500"
+                                update="total"  />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="U.M." width="85" style="text-align: center;"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','UNIMED')}">
+
+                    <h:outputText  value="#{i.unidadMedida.codigo}"  />
+
+                </p:column>
+
+                <p:column headerText="Precio" width="90"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','PRECIO')}">
+
+                    <p:inputText id="precio"  value="#{i.precio}" styleClass="TexAlRight"
+                                 rendered="#{not empty i.producto}"
+                                 readonly="#{movimientoTallerBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoTallerBean.calcularImportes(i)}" event="keyup" delay="500"
+                                update="total"  />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="Total" width="90"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','TOTLIN')}" >
+
+                    <h:outputText id="total" value="#{i.totalLinea}" styleClass="Fright"
+                                  rendered="#{not empty i.producto}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Insumos/Productos utilizados" >
+
+            <p:dataTable id="detalleProductos" value="#{movimientoTallerBean.m.itemsProducto}" var="i"
+                         emptyMessage="No se encontraron items"
+                         resizeMode="expand" liveResize="true" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{movimientoTallerBean.nuevoItemProducto()}"
+                                     process="tb"
+                                     update="tb,message,messageg"
+                                     rendered="#{movimientoTallerBean.circuito.permiteAgregarItems eq 'S'}"/>
+                </f:facet>
+
+                <p:column headerText="Producto" width="300" >
+
+                    <p:autoComplete value="#{i.producto}"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{movimientoTallerBean.completeProducto}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+                        <p:ajax event="itemSelect" listener="#{movimientoTallerBean.procesarProducto(i)}"
+                                process="@this" update="detalleProductos" />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                </p:column>
+
+                <p:column headerText="Observaciones/Detalle" width="300"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','OBSERVA')}" >
+                    <p:inputTextarea value="#{i.observaciones}" rows="2"
+                                     rendered="#{not empty i.producto }" />
+                </p:column>
+
+                <p:column headerText="Cantidad" width="70"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','CANTID')}" >
+
+                    <p:inputText value="#{i.cantidad}"
+                                 rendered="#{not empty i.producto}" style="text-align: right;"  >
+                        <f:convertNumber pattern="0" />
+                        <p:ajax listener="#{movimientoTallerBean.calcularImportes(i)}" event="keyup" delay="500"
+                                update="total"  />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="U.M." width="85" style="text-align: center;"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','UNIMED')}">
+
+                    <h:outputText  value="#{i.unidadMedida.codigo}"  />
+
+                </p:column>
+
+                <p:column headerText="Precio" width="90"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','PRECIO')}">
+
+                    <p:inputText id="precio"  value="#{i.precio}" styleClass="TexAlRight"
+                                 rendered="#{not empty i.producto}"
+                                 readonly="#{movimientoTallerBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoTallerBean.calcularImportes(i)}" event="keyup" delay="500"
+                                update="total"  />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="Total" width="90"
+                          rendered="#{movimientoTallerBean.muestroCampo('D','TOTLIN')}" >
+
+                    <h:outputText id="total" value="#{i.totalLinea}" styleClass="Fright"
+                                  rendered="#{not empty i.producto}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+    </p:tabView>
+
+
+</ui:composition>

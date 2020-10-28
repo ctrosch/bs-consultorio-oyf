@@ -1,0 +1,88 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorConceptoCompra" header="Conceptos de Compra" modal="true"
+              widgetVar="dlgConceptoCompra"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 650px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaConceptoCompra"/>
+            
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+                
+                <p:inputText id="txtBusquedaConceptoCompra" value="#{conceptoProveedorBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,tipoConceptoCompra" update="tablaConceptoCompra" listener="#{conceptoProveedorBean.buscar}"/>
+                </p:inputText>
+
+                <p:selectOneMenu id="tipoConceptoCompra" value="#{conceptoProveedorBean.tipoConcepto}"
+                                 converter="#{conversoresGeneral.tipoConcepto}"  >
+                    <f:selectItem itemLabel="Todos" itemValue="" />
+                    <f:selectItems value="#{conceptoProveedorBean.tipos}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaConceptoCompra" update="tablaConceptoCompra" listener="#{conceptoProveedorBean.buscar}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>        
+
+            <p:dataTable id="tablaConceptoCompra" value="#{conceptoProveedorBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{conceptoProveedorBean.concepto}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+                
+                <p:ajax event="rowSelect" listener="#{conceptoProveedorBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgConceptoCompra').hide(), procesarConceptoCompra()" />
+                    
+                <p:column headerText="Código" width="100" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >                         
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción"  style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+                
+                 <p:column headerText="Tipo"  >                         
+                    <h:outputText value="#{e.tipoConcepto.descripcion}" />
+                </p:column>
+
+            </p:dataTable> 
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{conceptoProveedorBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaConceptoCompra" listener="#{conceptoProveedorBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistrosConceptoCompra" value="#{conceptoProveedorBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{conceptoProveedorBean.buscar}"
+                                     process="@this,cantRegistrosConceptoCompra" update="tablaConceptoCompra" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

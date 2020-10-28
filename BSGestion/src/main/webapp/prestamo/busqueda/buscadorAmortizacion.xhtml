@@ -1,0 +1,66 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorAmortizacionPrestamo" header="Amortizaciones" modal="true"
+              widgetVar="dlgAmortizacionPrestamo"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              style="max-width: 650px;" responsive="true" 
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+
+            <p:inputText value="#{amortizacionPrestamoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this" update="tablaAmortizacionPrestamo" listener="#{amortizacionPrestamoBean.buscar()}"/>
+            </p:inputText>
+            
+            <div class="EmptyBox10" />
+            
+            <p:dataTable id="tablaAmortizacionPrestamo" value="#{amortizacionPrestamoBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{amortizacionPrestamoBean.amortizacion}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{amortizacionPrestamoBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgAmortizacionPrestamo').hide(), procesarAmortizacionPrestamo()" />
+
+                <p:column headerText="Descripción" >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+            </p:dataTable>
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{amortizacionPrestamoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaAmortizacionPrestamo" listener="#{amortizacionPrestamoBean.buscar()}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroAmortizacionPrestamo" value="#{amortizacionPrestamoBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{amortizacionPrestamoBean.buscar()}"
+                                     process="@this,cantRegistroAmortizacionPrestamo" update="tablaAmortizacionPrestamo" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,133 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Tipo de retención"
+                              url="#{conceptoRetencionBean.obtenerUrlMenu('SIS_00356','CODIGO',conceptoRetencionBean.concepto.tipoRetencion.codigo)}" />
+        <p:inputText value="#{conceptoRetencionBean.concepto.tipoRetencion.descripcion}"
+                     readonly="true"
+                     rendered="#{not conceptoRetencionBean.esNuevo}" />
+        <p:autoComplete value="#{conceptoRetencionBean.concepto.tipoRetencion}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        rendered="#{conceptoRetencionBean.esNuevo}"
+                        required="true" requiredMessage="El tipo de Retencion es obligatorio"
+                        completeMethod="#{tipoRetencionBean.complete}"
+                        converter="#{conversoresProveedor.tipoRetencion}"
+                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}" >
+            <p:ajax process="@this" update="@this" listener="#{conceptoRetencionBean.onTipoChange()}"/>
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{conceptoRetencionBean.concepto.codigo}"
+                     readonly="#{not conceptoRetencionBean.esNuevo}"
+                     required="true" requiredMessage="El código de concepto es obligatorio" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{conceptoRetencionBean.concepto.descripcion}"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <h:outputText value="Código Impositivo" />
+        <p:inputText value="#{conceptoRetencionBean.concepto.coddgi}"  />
+
+        <h:outputText value="Porcentaje" />
+        <p:inputText value="#{conceptoRetencionBean.concepto.porcentajeRetener}"  >
+            <f:convertNumber pattern="0.00" />
+        </p:inputText>
+
+        <h:outputText value="Sobre Excedente de" />
+        <p:inputText value="#{conceptoRetencionBean.concepto.sobreExedenteDe}"  >
+            <f:convertNumber pattern="0.00" />
+        </p:inputText>
+
+        <h:outputText value="Importe mínimo" />
+        <p:inputText value="#{conceptoRetencionBean.concepto.precioMinimo}"  >
+            <f:convertNumber pattern="0.00" />
+        </p:inputText>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox20"></div>
+
+    <p:dataTable id="tablaValores" var="r" style="max-width: 700px;"
+                 value="#{conceptoRetencionBean.concepto.valores}"
+                 emptyMessage="No se encontraron resultados"
+                 resizableColumns="true" resizeMode="expand" liveResize="true"
+                 rows="10" paginator="true" >
+
+        <f:facet name="footer" >
+
+            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                             actionListener="#{conceptoRetencionBean.nuevoItemValor()}"
+                             immediate="true"
+                             value="Agregar Valor"
+                             process="tablaValores"
+                             update="tablaValores" />
+
+        </f:facet>
+
+        <p:column headerText="Importe Desde"  width="100" >
+            <p:inputText value="#{r.importeDesde}"
+                         required="true"
+                         requiredMessage="Se necesita un valor igual o mayor a cero"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Importe Hasta"  width="100" >
+            <p:inputText value="#{r.importeHasta}"
+                         required="true"
+                         requiredMessage="Se necesita un valor igual o mayor a cero"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Porcentaje"  width="100" >
+            <p:inputText value="#{r.porcentajeRetener}"
+                         required="true"
+                         requiredMessage="Se necesita un valor igual o mayor a cero"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Importe a Retener"  width="100" >
+            <p:inputText value="#{r.importeRetener}"
+                         required="true"
+                         requiredMessage="Se necesita un valor igual o mayor a cero"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </p:inputText>
+        </p:column>
+
+
+        <p:column headerText="" width="50" style="text-align: center;" >
+
+            <p:commandLink process="tablaValores" update="@form"
+                           actionListener="#{conceptoRetencionBean.eliminarItemValor(r)}"
+                           immediate="true" >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+    </p:dataTable>
+
+
+
+
+</ui:composition>
+

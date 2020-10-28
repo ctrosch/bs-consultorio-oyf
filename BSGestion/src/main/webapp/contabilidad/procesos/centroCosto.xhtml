@@ -1,0 +1,165 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- CENTRO COSTO -->
+    <p:dialog id="centroCosto" header="Imputación por Centro de Costo" modal="true"
+              widgetVar="dlgCentroCostoContabilidad"
+              resizable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 900px;" responsive="true" >
+
+
+        <div class="Wid100 Fright" >
+            <div class="ui-g-9 TexAlRight FontBold">
+                Total a imputar
+            </div>
+            <div class="ui-g-3 Fleft FontBold">
+                <h:outputText id="totalDebe" value="#{imputacionContabilidadCentroCostoBean.itemMovimiento.importe }" styleClass="Fright">
+                    <f:convertNumber pattern="$ ###,###,##0.00" />
+                </h:outputText>
+            </div>
+        </div>
+
+        <div class="EmptyBox10" />
+
+        <p:dataTable id="tablaCentroCosto" value="#{imputacionContabilidadCentroCostoBean.itemMovimiento.itemsCentroCosto}" var="d"
+                     resizeMode="expand" liveResize="true"
+                     rowStyleClass="#{d.conError  ? 'conError' : null}"
+                     rowExpandMode="single"
+                     style="max-width: 650px;">
+
+            <p:ajax event="rowToggle" listener="#{imputacionContabilidadCentroCostoBean.onRowToggle}"
+                    update="tablaSubCuentas" />
+
+            <p:column headerText="Código" width="100" styleClass="TexAlCenter"  >
+                <h:outputText value="#{d.centroCosto.codigo}" />
+            </p:column>
+
+            <p:column headerText="Centro Costo" width="170" >
+                <h:outputText value="#{d.centroCosto.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Distribución" width="170" >
+                <h:outputText value="#{d.distribucion.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Detalle" width="60" styleClass="TexAlCenter" >
+                <p:rowToggler  />
+            </p:column>
+
+            <p:rowExpansion>
+
+                <div class="Wid90 Fright MarAuto WidAutoOnMobile">
+
+                    <p:dataTable id="tablaSubCuentas" value="#{d.subCuentas}" var="s"
+                                 resizeMode="expand" liveResize="true"
+                                 rowStyleClass="#{s.conError  ? 'conError' : null}" >
+
+                        <!--
+                        <f:facet name="header">
+                            <h:outputText value="Imputación por Sub-Cuentas" />
+                        </f:facet>
+                        -->
+
+                        <f:facet name="footer" >
+
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             actionListener="#{imputacionContabilidadCentroCostoBean.nuevoItemSubCuenta(d)}"
+                                             immediate="true"
+                                             value="Agregar Sub Cuenta"
+                                             process="tablaSubCuentas"
+                                             update="tablaSubCuentas" />
+
+                        </f:facet>
+
+                        <p:column headerText="Sub Cuenta" width="200" >
+
+                            <p:autoComplete value="#{s.subCuenta}" dropdown="true"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{imputacionContabilidadCentroCostoBean.completeSubCuenta}"
+                                            var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                            converter="#{conversoresContabilidad.subCuenta}" >
+
+                                <p:ajax event="itemSelect" process="@this" update="tablaSubCuentas" />
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{p.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Descripción">
+                                    <h:outputText value="#{p.descripcion}" />
+                                </p:column>
+
+                            </p:autoComplete>
+
+                        </p:column>
+
+                        <p:column headerText="Porcentaje" width="80" >
+
+                            <p:inputText id="porcentaje" value="#{s.porcentaje}" styleClass="TexAlRight"
+                                         rendered="#{not empty s.subCuenta}"  >
+                                <f:convertNumber pattern="##0.00" />
+                                <p:ajax event="keyup" delay="500"
+                                        process="@this"
+                                        update="importe"
+                                        listener="#{imputacionContabilidadCentroCostoBean.calcularImportes}" />
+
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="Asignar" width="50" >
+                            <p:commandLink styleClass="Fright" style="padding-left: 5px;"
+                                           actionListener="#{imputacionContabilidadCentroCostoBean.calcularImportes}"
+                                           process="tablaSubCuentas"
+                                           update="tablaSubCuentas">
+                                <i class="fa fa-arrow-right fa-2x Orange" ></i>
+                                <f:setPropertyActionListener value="100" target="#{s.porcentaje}" />
+                            </p:commandLink>
+                        </p:column>
+
+
+                        <p:column headerText="Importe" width="80" >
+                            <p:inputText id="importe" value="#{s.importe}" required="true" styleClass="TexAlRight"
+                                         rendered="#{not empty s.subCuenta}"  >
+                                <f:convertNumber pattern="###,###,##0.0000" />
+                                <p:ajax event="keyup" delay="500"  process="@this" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="" width="50" style="text-align: center;" >
+
+                            <p:commandLink process="tablaSubCuentas" update="tablaSubCuentas"
+                                           actionListener="#{imputacionContabilidadCentroCostoBean.eliminarItemSubCuenta(d, s)}" >
+                                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                                <i class="fa fa-close fa-2x Red" ></i>
+                            </p:commandLink>
+
+                        </p:column>
+                    </p:dataTable>
+                </div>
+
+            </p:rowExpansion>
+
+        </p:dataTable>
+
+        <div class="EmptyBox20"></div>
+
+        <div class="Wid100">
+
+            <p:commandButton value="Guardar" icon="fa fa-save" styleClass="GreenBack Wid50 MarAuto"
+                             actionListener="#{imputacionContabilidadCentroCostoBean.guardar(false)}"
+                             rendered="#{not empty imputacionContabilidadCentroCostoBean.itemMovimiento}"
+                             update="@form" />
+
+        </div>
+
+    </p:dialog>
+
+
+</ui:composition>
+

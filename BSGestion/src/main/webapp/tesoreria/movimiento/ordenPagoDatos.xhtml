@@ -1,0 +1,106 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid"
+                 rendered="#{not empty ordenPagoBean.m}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario" />
+        <p:inputText value="#{ordenPagoBean.m.formulario.descripcion}"
+                     rendered="#{ordenPagoBean.muestroCampo('C','CODFOR')}"
+                     readonly="true" />
+
+        <h:outputText value="Pto. Venta" rendered="#{ordenPagoBean.muestroCampo('C','SUCURS')}" />
+        <p:inputText value="#{ordenPagoBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{ordenPagoBean.muestroCampo('C','SUCURS')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" rendered="#{ordenPagoBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{ordenPagoBean.m.numeroFormulario}" readonly="true"
+                     rendered="#{ordenPagoBean.muestroCampo('C','NROFOR')}" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{ordenPagoBean.muestroCampo('C','FCHMOV')}" />
+
+        <p:calendar value="#{ordenPagoBean.m.fechaMovimiento}"
+                    disabled="#{ordenPagoBean.m.formulario.modificaFecha ne 'S'}"
+                    rendered="#{ordenPagoBean.muestroCampo('C','FCHMOV')}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{ordenPagoBean.fechaMovimientoMaxima}" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Proveedor *"
+                              url="#{ordenPagoBean.obtenerUrlMenu('SIS_00161','NROCTA',ordenPagoBean.m.entidad.nrocta)}" />
+
+        <p:autoComplete value="#{ordenPagoBean.m.entidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{proveedorBean.complete}"
+                        disabled="#{not empty ordenPagoBean.m.id and ordenPagoBean.facturasConfirmadas}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{ordenPagoBean.procesarProveedor()}"  />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+        </p:autoComplete>
+
+
+        <h:outputText value="Cotización" />
+        <h:panelGroup layout="block">
+            <div class="Wid70 Fleft">
+                <p:inputText value="#{ordenPagoBean.m.monedaSecundaria.descripcion}" readonly="true" />
+            </div>
+
+            <div class="Wid30 Fright">
+                <p:inputText value="#{ordenPagoBean.m.cotizacion}" style="text-align: right;"
+                             readonly="#{not empty ordenPagoBean.m.id}"
+                             required="true"
+                             requiredMessage="La cotización es necesaria" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax process="@this" listener="#{ordenPagoBean.calcularImportes}" update="@form" />
+                </p:inputText>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea rows="3" value="#{ordenPagoBean.m.observaciones}" style="width: 100%" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

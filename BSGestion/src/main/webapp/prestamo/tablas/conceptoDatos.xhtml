@@ -1,0 +1,65 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"  >
+
+        <bs:outputTexWhitLink value="Tipo de concepto"
+                              url="#{conceptoPrestamoBean.obtenerUrlMenu('SIS_00145','CODIGO',conceptoPrestamoBean.concepto.tipoConcepto.codigo,'MODULO',conceptoPrestamoBean.concepto.tipoConcepto.modulo)}" />
+        <p:selectOneMenu value="#{conceptoPrestamoBean.concepto.tipoConcepto}"
+                         disabled="#{not conceptoPrestamoBean.esNuevo}"
+                         converter="#{conversoresGeneral.tipoConcepto}"
+                         required="true"
+                         requiredMessage="Seleccione el tipo de concepto" >
+            <p:ajax process="@this" listener="#{conceptoPrestamoBean.onTipoChange}" />
+            <f:selectItem itemLabel="Selecccionar" itemValue="" />
+            <f:selectItems value="#{conceptoPrestamoBean.tipos}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{conceptoPrestamoBean.concepto.codigo}"
+                     readonly="#{not conceptoPrestamoBean.esNuevo}"
+                     required="true" requiredMessage="El código de concepto es obligatorio" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{conceptoPrestamoBean.concepto.descripcion}"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <bs:outputTexWhitLink value="Cuenta Contable"
+                              url="#{conceptoPrestamoBean.obtenerUrlMenu('SIS_00420','NROCTA',conceptoPrestamoBean.concepto.cuentaContable.nrocta)}" />
+        <p:autoComplete value="#{conceptoPrestamoBean.concepto.cuentaContable}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresContabilidad.cuentaContable}" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Imputable">
+                <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+            </p:column>
+
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+</ui:composition>
+

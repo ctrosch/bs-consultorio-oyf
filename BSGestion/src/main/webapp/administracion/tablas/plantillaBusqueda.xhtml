@@ -1,0 +1,138 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6 Fleft, ui-g-12 ui-md-6 Fright"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{plantillaBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{plantillaBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{plantillaBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{plantillaBean.limpiarFiltroBusqueda()}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+            <p:selectOneMenu id="selectOrigenReporte" value="#{plantillaBean.origen}" >
+                <f:selectItem itemLabel="Origen" itemValue="" />
+                <f:selectItem itemLabel="Sistema" itemValue="SIS" />
+                <f:selectItem itemLabel="Usuario" itemValue="USR" />
+                <p:ajax process="@this,txtBusqueda,selectModuloReporte" update="tabla" listener="#{plantillaBean.buscar}"/>
+            </p:selectOneMenu>
+
+            <p:selectOneMenu id="selectModuloReporte" value="#{plantillaBean.modulo}" filter="true"
+                             converter="#{conversoresGeneral.modulo}"  >
+                <f:selectItem itemLabel="Módulo" itemValue="" />
+                <f:selectItems value="#{moduloBean.lista}"
+                               var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                <p:ajax process="@this,txtBusqueda,selectOrigenReporte" update="tabla" listener="#{plantillaBean.buscar}"/>
+            </p:selectOneMenu>
+
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{plantillaBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="tabla" listener="#{plantillaBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{plantillaBean.lista}" var="i"
+                 resizeMode="expand" liveResize="true"
+                 emptyMessage="No se encontraron datos"
+                 rows="10" paginator="true"
+                 selectionMode="single"
+                 selection="#{plantillaBean.plantilla}" rowKey="#{i}"
+                 rowStyleClass="#{i.origen eq 'USR'  ? 'origenUsuario' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{plantillaBean.onSelect}" update="@form" />
+
+        <p:column headerText="Código" sortBy="#{i.codigo}" >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Nombre" sortBy="#{i.nombre}" >
+            <h:outputText value="#{i.nombre}" />
+        </p:column>
+
+        <p:column headerText="Módulo" sortBy="#{i.modulo.descripcion}" >
+            <h:outputText value="#{i.modulo.descripcion}" />
+        </p:column>
+
+
+        <p:column headerText="Origen" >
+            <h:outputText value="Sistema" rendered="#{i.origen eq 'SIS'}" />
+            <h:outputText value="Usuario" rendered="#{i.origen eq 'USR'}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistroReporte" value="#{plantillaBean.cantidadRegistros}" style="max-width: 80px;"/>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{plantillaBean.buscar}"
+                             process="@this,cantRegistroReporte" update="tabla" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width: auto;"
+                             actionListener="#{plantillaService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form" />
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width: auto;"
+                             actionListener="#{plantillaService.plantillaToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false" />
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

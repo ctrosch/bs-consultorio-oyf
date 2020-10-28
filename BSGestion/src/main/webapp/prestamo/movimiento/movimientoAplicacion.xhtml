@@ -1,0 +1,56 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+<!-- APLICACIONES -->
+    <!--
+    <p:panel header="Aplicaciones de cuenta corriente" 
+             rendered="#{not empty movimientoPrestamoBean.m.movimientoVenta.itemCuentaCorriente and not movimientoPrestamoBean.buscaMovimiento}"  >
+
+        <p:dataTable id="tAplicaciones" paginator="true" rows="20"  
+    resizeMode="expand" liveResize="true"
+                     value="#{movimientoPrestamoBean.m.movimientoVenta.itemCuentaCorriente}" var="d"                 
+                     emptyMessage="No se han encontrado aplicaciones">
+
+            <p:column headerText="Documento" style="text-align: center;" >                        
+                <h:outputText value="#{d.movimientoAplicacion.formulario.codigo} " />
+                <h:outputText value="#{d.movimientoAplicacion.puntoVenta.codigo}" >
+                    <f:convertNumber pattern="0000" />
+                </h:outputText>                                            
+                <h:outputText value="#{d.movimientoAplicacion.numeroFormulario}" >
+                    <f:convertNumber pattern="-00000000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Vencimiento" style="text-align: center;" >
+                <h:outputText value="#{d.fechaVencimiento}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Cuota" style="text-align: center;" >
+                <h:outputText value="#{d.cuota}" />
+            </p:column>
+
+            <p:column headerText="Importe Aplicado" style="text-align: right;" >
+
+                <h:outputText value="#{d.importe}" rendered="#{movimientoPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                </h:outputText>
+
+                <h:outputText value="#{d.importeSecundario}" rendered="#{movimientoPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                </h:outputText>
+
+            </p:column>
+
+        </p:dataTable>
+
+    </p:panel> 
+    -->
+</ui:composition>
+

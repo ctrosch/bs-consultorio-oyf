@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Etiqueta" pageWidth="400" pageHeight="200" columnWidth="390" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="5" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="TIPPRO" class="java.lang.String"/>
+	<parameter name="ARTCOD" class="java.lang.String"/>
+	<parameter name="RUBR01" class="java.lang.String"/>
+	<parameter name="RUBR02" class="java.lang.String"/>
+	<parameter name="RUBR03" class="java.lang.String"/>
+	<parameter name="VATRI1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="VATRI2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="VATRI3" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATRI1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATRI2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATRI3" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PROHAB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+  p.CODIGO As  Codigo,
+  p.CODBAR As `Codigo de barra`,
+  p.TIPPRO As `Codigo tipo de producto`,
+  t.DESCRP As `Tipo de producto`,
+  p.DESCRP As Descripcion,
+  p.UNIMED As `Unidad de Medida`,
+  p.NROPAR As `Numero de Parte`,
+  p.UTILID As Utilidad,
+  p.RUBR01 As `Código Rubro 1`,
+  st_rubro01_A.DESCRP As `Rubro 1`,
+  p.RUBR02 As `Código Rubro 2`,
+  st_rubro02.DESCRP As `Rubro 2`,
+  p.RUBR03 As `Código Rubro 3`,
+  st_rubro03.DESCRP As `Rubro 3`,
+  p.RUBR04 As `Código Rubro 4`,
+  p.RUBR05 As `Código Rubro 5`,
+  p.RUBR06 As `Código Rubro 6`,
+  p.RUBR07 As `Código Rubro 7`,
+  p.RUBR08 As `Código Rubro 8`,
+  p.PROHAB As `Codigo Proveedor Habitual`,
+  en_entidad.RAZONS As Proveedor,
+  p.PREPRD As `Precio Producción`,
+  p.MONPRD As `Moneda Producción`,
+  p.PREREP As `Precio Reposición`,
+  p.MONREP As `Moneda Reposición`,
+  p.FECREP As `Fecha Reposicion`,
+  p.PREUCO As `Precio Ultima compra`,
+  p.MONUCO As `Moneda Ultima compra`,
+  p.FECUCO As `Fecha Ultima Compra`,
+  p.OBSERV As  Observaciones,
+  p.PESONT As `Peso Neto`,
+  p.UNIPES As `Unidad de Peso`,
+  p.PESMIN As `Peso Mínimo`,
+  p.PESMAX As `Peso Máximo`,
+  p.IMGCHI As Imagen,
+  p.PNUEVO As `Es Nuevo`,
+  p.MODCPC As `Modulo concepto de compra`,
+  p.TIPCPC As `Tipo concepto de compra`,
+  p.CODCPC As `Código concepto de compra`,
+  p.MODCPT As `Modulo concepto de venta`,
+  p.TIPCPT As `Tipo concepto de venta`,
+  p.CODCPT As `Código concepto de venta`,
+  c.DESCRP As `Concepto de Venta`,
+  p.STOCKS As `Gestiona Stock`,
+  p.STKMIN As `Stock Mínimo`,
+  p.STKMAX As `Stock Máximo`,
+  p.DIAENT As `Dias de entrega`,
+  p.PTOPED As `Punto de Pedido`,
+  p.GARAN  As Garantia,
+  p.UNIGAR As `Unidad Medida Garantia`,
+  p.CODREF As `Codigo de Referencia`,
+  p.nroser As `Nro Serie`
+
+From
+  st_tipo_producto t
+  Inner Join st_producto p On t.TIPPRO = p.TIPPRO
+  Inner Join st_rubro01 st_rubro01_A On p.TIPPRO = st_rubro01_A.TIPPRO And p.RUBR01 = st_rubro01_A.CODIGO
+  left Join  st_rubro02 st_rubro02 On p.RUBR02 = st_rubro02.CODIGO And p.TIPPRO = st_rubro02.TIPPRO
+  left JOIN  gr_concepto c On p.CODCPT = c.CODIGO And c.MODULO = p.MODCPT And c.TIPCPT =  p.TIPCPT
+  left Join  st_rubro03 On st_rubro03.TIPPRO = p.TIPPRO And st_rubro03.CODIGO =  p.RUBR03
+  left Join  en_entidad On p.PROHAB = en_entidad.NROCTA
+WHERE 1=1
+AND IF(LENGTH($P{ARTCOD}) > 0, p.CODIGO = $P{ARTCOD},1=1)
+AND IF(LENGTH($P{PROHAB}) > 0, p.PROHAB = $P{PROHAB},1=1)
+AND IF(LENGTH($P{TIPPRO}) > 0, p.TIPPRO = $P{TIPPRO},1=1)
+AND IF(LENGTH($P{RUBR01}) > 0, p.RUBR01 = $P{RUBR01},1=1)
+AND IF(LENGTH($P{RUBR02}) > 0, p.RUBR02 = $P{RUBR02},1=1)
+AND IF(LENGTH($P{RUBR03}) > 0, p.RUBR03 = $P{RUBR03},1=1)
+AND IF(LENGTH($P{RUBR03}) > 0, p.RUBR03 = $P{RUBR03},1=1)
+AND IF(LENGTH($P{VATRI1}) > 0, EXISTS(SELECT * FROM st_producto_atributo a WHERE a.NOMBRE = $P{NATRI1} AND a.VALOR LIKE '%$P!{VATRI1}%' AND a.ARTCOD = p.CODIGO),1=1)
+AND IF(LENGTH($P{VATRI2}) > 0, EXISTS(SELECT * FROM st_producto_atributo a WHERE a.NOMBRE = $P{NATRI2} AND a.VALOR LIKE '%$P!{VATRI2}%' AND a.ARTCOD = p.CODIGO),1=1)
+AND IF(LENGTH($P{VATRI3}) > 0, EXISTS(SELECT * FROM st_producto_atributo a WHERE a.NOMBRE = $P{NATRI3} AND a.VALOR LIKE '%$P!{VATRI3}%' AND a.ARTCOD = p.CODIGO),1=1)]]>
+	</queryString>
+	<field name="Codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[Código ]]></fieldDescription>
+	</field>
+	<field name="Codigo de barra" class="java.lang.String"/>
+	<field name="Codigo tipo de producto" class="java.lang.String"/>
+	<field name="Tipo de producto" class="java.lang.String"/>
+	<field name="Descripcion" class="java.lang.String"/>
+	<field name="Unidad de Medida" class="java.lang.String"/>
+	<field name="Numero de Parte" class="java.lang.String"/>
+	<field name="Utilidad" class="java.math.BigDecimal"/>
+	<field name="Código Rubro 1" class="java.lang.String"/>
+	<field name="Rubro 1" class="java.lang.String"/>
+	<field name="Código Rubro 2" class="java.lang.String"/>
+	<field name="Rubro 2" class="java.lang.String"/>
+	<field name="Código Rubro 3" class="java.lang.String"/>
+	<field name="Rubro 3" class="java.lang.String"/>
+	<field name="Código Rubro 4" class="java.lang.String"/>
+	<field name="Código Rubro 5" class="java.lang.String"/>
+	<field name="Código Rubro 6" class="java.lang.String"/>
+	<field name="Código Rubro 7" class="java.lang.String"/>
+	<field name="Código Rubro 8" class="java.lang.String"/>
+	<field name="Codigo Proveedor Habitual" class="java.lang.String"/>
+	<field name="Proveedor" class="java.lang.String"/>
+	<field name="Precio Producción" class="java.math.BigDecimal"/>
+	<field name="Moneda Producción" class="java.lang.String"/>
+	<field name="Precio Reposición" class="java.math.BigDecimal"/>
+	<field name="Moneda Reposición" class="java.lang.String"/>
+	<field name="Fecha Reposicion" class="java.sql.Date"/>
+	<field name="Precio Ultima compra" class="java.math.BigDecimal"/>
+	<field name="Moneda Ultima compra" class="java.lang.String"/>
+	<field name="Fecha Ultima Compra" class="java.sql.Date"/>
+	<field name="Observaciones" class="java.lang.String"/>
+	<field name="Peso Neto" class="java.math.BigDecimal"/>
+	<field name="Unidad de Peso" class="java.lang.String"/>
+	<field name="Peso Mínimo" class="java.math.BigDecimal"/>
+	<field name="Peso Máximo" class="java.math.BigDecimal"/>
+	<field name="Imagen" class="java.lang.String"/>
+	<field name="Es Nuevo" class="java.lang.String"/>
+	<field name="Modulo concepto de compra" class="java.lang.String"/>
+	<field name="Tipo concepto de compra" class="java.lang.String"/>
+	<field name="Código concepto de compra" class="java.lang.String"/>
+	<field name="Modulo concepto de venta" class="java.lang.String"/>
+	<field name="Tipo concepto de venta" class="java.lang.String"/>
+	<field name="Código concepto de venta" class="java.lang.String"/>
+	<field name="Concepto de Venta" class="java.lang.String"/>
+	<field name="Gestiona Stock" class="java.lang.String"/>
+	<field name="Stock Mínimo" class="java.math.BigDecimal"/>
+	<field name="Stock Máximo" class="java.math.BigDecimal"/>
+	<field name="Dias de entrega" class="java.lang.Integer"/>
+	<field name="Punto de Pedido" class="java.math.BigDecimal"/>
+	<field name="Garantia" class="java.lang.Integer"/>
+	<field name="Unidad Medida Garantia" class="java.lang.String"/>
+	<field name="Codigo de Referencia" class="java.lang.String"/>
+	<field name="Nro Serie" class="java.lang.String"/>
+	<filterExpression><![CDATA[($P{TIPPRO} == null || $P{TIPPRO}.isEmpty()?true:$F{Codigo tipo de producto}.equals($P{TIPPRO}))
+&& ($P{RUBR01}==null || $P{RUBR01}.isEmpty()?true:$F{Código Rubro 1}.equals($P{RUBR01}))
+&& ($P{RUBR02}==null || $P{RUBR02}.isEmpty()?true:$F{Código Rubro 2}.equals($P{RUBR02}))
+&& ($P{RUBR03}==null || $P{RUBR03}.isEmpty()?true:$F{Código Rubro 3}.equals($P{RUBR03}))
+&& ($P{ARTCOD}==null || $P{ARTCOD}.isEmpty()?true:$F{Codigo}.equals($P{ARTCOD}))]]></filterExpression>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="190">
+			<textField>
+				<reportElement x="2" y="47" width="388" height="23" uuid="e24c80c2-5a97-4c8d-9d0d-57c6bf46fcc3"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="1" width="388" height="45" uuid="a36b24ca-b06b-4b9a-94a3-771f08add99f"/>
+				<textElement textAlignment="Center">
+					<font size="35" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="70" width="194" height="13" uuid="09fe3181-96a8-4f57-add2-77054cc8476e">
+					<printWhenExpression><![CDATA[$F{Rubro 1}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Rubro: " + $F{Rubro 1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="83" width="194" height="13" uuid="df9c337a-56e7-452b-8f14-0fc3d2370c33">
+					<printWhenExpression><![CDATA[$F{Rubro 2}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Sub -Rubro " + $F{Rubro 2}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="14" y="115" width="358" height="64" uuid="fa5ee2e1-9b62-4347-80e5-0659c6c6268a"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39 (Extended)" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{Codigo de barra}==null || $F{Codigo de barra}.isEmpty()?"1234":$F{Codigo de barra}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="2" y="96" width="194" height="13" uuid="1c88fa5b-e981-47a4-b384-8107636f5457">
+					<printWhenExpression><![CDATA[$F{Rubro 3}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Familia " + $F{Rubro 3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="70" width="194" height="13" uuid="dc502b2b-bed2-446c-a5f5-44cbb53ab5ca">
+					<printWhenExpression><![CDATA[$F{Nro Serie}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nro serie: " + $F{Nro Serie}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

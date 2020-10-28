@@ -1,0 +1,48 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar"/>
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{composicionFormulaBean.buscar()}"
+                    update="@form"
+                    process="@this"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{composicionFormulaBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{composicionFormulaBean.guardar(false)}"
+                    rendered="#{not empty composicionFormulaBean.composicionFormula}"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{composicionFormulaBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty composicionFormulaBean.composicionFormula and not composicionFormulaBean.esNuevo and composicionFormulaBean.composicionFormula.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{composicionFormulaBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty composicionFormulaBean.composicionFormula and not composicionFormulaBean.esNuevo and composicionFormulaBean.composicionFormula.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

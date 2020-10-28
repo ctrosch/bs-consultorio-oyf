@@ -1,0 +1,126 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid" style="max-width: 1400px;"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"  >
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{lineaCreditoBean.lineaCredito.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="Grupo" />
+        <p:selectOneMenu  value="#{lineaCreditoBean.lineaCredito.codigo}"
+                          required="true"
+                          requiredMessage="El grupo es obligatorio" >
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Desarrollo" itemValue="D" />
+            <f:selectItem itemLabel="Especial"   itemValue="E" />
+            <f:selectItem itemLabel="Inicial" itemValue="I" />
+            <f:selectItem itemLabel="Transición" itemValue="T" />
+            <p:ajax process="@this" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Tasa Nominal Anual" />
+        <p:inputText value="#{lineaCreditoBean.lineaCredito.tasaNominalAnual}"
+                     required="true"
+                     requiredMessage="La Tasa Nominal Anual es necesaria" >
+            <f:convertNumber pattern="###,###,##0.00" />
+        </p:inputText>
+
+        <h:outputText value="Tasa Nominal Anual por Mora" />
+        <p:inputText value="#{lineaCreditoBean.lineaCredito.tasaNominalAnualMora}"
+                     required="true"
+                     requiredMessage="La Tasa Nominal Anual por Mora es necesaria" >
+            <f:convertNumber pattern="###,###,##0.00" />
+        </p:inputText>
+
+        <bs:outputTexWhitLink value="Cuenta Contable Capital"
+                              url="#{lineaCreditoBean.obtenerUrlMenu('SIS_00420','NROCTA',lineaCreditoBean.lineaCredito.cuentaContableCapital.nrocta)}" />
+        <p:autoComplete value="#{lineaCreditoBean.lineaCredito.cuentaContableCapital}" forceSelection="true" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        converter="#{conversoresContabilidad.cuentaContable}"
+                        var="p" itemValue="#{p}" itemLabel="#{p.descripcionComplete}" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Cuenta Contable Intereses"
+                              url="#{lineaCreditoBean.obtenerUrlMenu('SIS_00420','NROCTA',lineaCreditoBean.lineaCredito.cuentaContableInteres.nrocta)}" />
+        <p:autoComplete value="#{lineaCreditoBean.lineaCredito.cuentaContableInteres}" forceSelection="true" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        converter="#{conversoresContabilidad.cuentaContable}"
+                        var="p" itemValue="#{p}" itemLabel="#{p.descripcionComplete}" >
+
+            <p:ajax event="itemSelect" process="@this"/>
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Cuenta Contable Intereses Mora"
+                              url="#{lineaCreditoBean.obtenerUrlMenu('SIS_00420','NROCTA',lineaCreditoBean.lineaCredito.cuentaContableInteresMora.nrocta)}" />
+        <p:autoComplete value="#{lineaCreditoBean.lineaCredito.cuentaContableInteresMora}" forceSelection="true" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        converter="#{conversoresContabilidad.cuentaContable}"
+                        var="p" itemValue="#{p}"  itemLabel="#{p.descripcionComplete}" >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Cuenta Contable Descuento Intereses"
+                              url="#{lineaCreditoBean.obtenerUrlMenu('SIS_00420','NROCTA',lineaCreditoBean.lineaCredito.cuentaContableDescuentoInteres.nrocta)}" />
+        <p:autoComplete value="#{lineaCreditoBean.lineaCredito.cuentaContableDescuentoInteres}" forceSelection="true" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        converter="#{conversoresContabilidad.cuentaContable}"
+                        var="p" itemValue="#{p}"  itemLabel="#{p.descripcionComplete}" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

@@ -1,0 +1,56 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+
+    <p:dataTable id="detallePR" value="#{tareaBean.procesosPendientes}"
+                 rendered="#{(tareaBean.tarea.estado eq 'B' or tareaBean.tarea.estado eq 'C') and tareaBean.tarea.area.codigo eq 'PRD'}"
+                 var="i" resizeMode="expand" liveResize="true"                 
+                 emptyMessage="No se encontraron datos" >
+
+        <f:facet name="header" >            
+            <h:outputText value="Procesos" />
+        </f:facet>
+
+        <p:column headerText="Código" width="70" > 
+            <h:outputText value="#{i.producto.codigo}" rendered="#{not empty i.producto}" />
+        </p:column>
+
+        <p:column headerText="Producto" width="300" >                                                            
+            <h:outputText value="#{i.producto.descripcion}"                                   
+                          rendered="#{not empty i.producto}"/>
+        </p:column>
+
+        <p:column headerText="Programado" width="70"  >
+            <h:outputText  value="#{i.cantidad}" styleClass="Fright"
+                           rendered="#{not empty i.producto}" style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00"  />                                
+            </h:outputText>
+        </p:column>                                
+        <p:column headerText="Pendiente" width="70" >        
+            <h:outputText  value="#{i.cantidadPendiente}" styleClass="Fright"
+                           rendered="#{not empty i.producto}" >
+                <f:convertNumber pattern="###,###,##0.00"  />                                
+            </h:outputText>
+        </p:column>
+        <p:column headerText="Realizado" width="70" >        
+            <p:inputText  value="#{i.produccion}" styleClass="Fright"
+                          rendered="#{not empty i.producto}" style="text-align: right;" >
+                <f:convertNumber pattern="###,###,##0.00"  />                                
+                <p:ajax event="keyup" process="@this" /> 
+            </p:inputText>                                    
+        </p:column>
+
+        <p:column headerText="U.M" width="50"  >        
+            <h:outputText  value="#{i.unidadMedida.codigo}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox20" />    
+
+
+</ui:composition>

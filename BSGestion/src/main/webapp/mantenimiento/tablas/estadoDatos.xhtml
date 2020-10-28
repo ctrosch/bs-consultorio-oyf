@@ -1,0 +1,28 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid id="datos" columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+        <h:outputText value="Código *" />
+        <p:inputText value="#{estadoBean.estado.codigo}" maxlength="10"
+                     required="true" requiredMessage="El código es obligatorio" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{estadoBean.estado.descripcion}" maxlength="120"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

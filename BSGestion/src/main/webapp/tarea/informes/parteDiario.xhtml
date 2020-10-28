@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <ui:define name="titulo" >
+            #{parteDiarioBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarProducto" process="@this" update="@form" 
+                             actionListener="#{parteDiarioBean.procesarProducto}" />
+
+            <p:remoteCommand name="procesarProyecto" process="@this" update="@form" 
+                             actionListener="#{parteDiarioBean.procesarProyecto()}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <p:panel id="panelBusqueda" header="Parte diario" >
+
+                <p:panelGrid columns="4" layout="grid"                               
+                             styleClass="ui-panelgrid-blank" >
+
+                    <h:outputText value="Fecha formulario" />                    
+                    <h:panelGroup layout="block"> 
+
+                        <div class="Wid50 Fleft">                               
+                            <p:calendar value="#{parteDiarioBean.fechaMovimientoDesde}"                                     
+                                        placeholder="Desde"
+                                        pattern="dd/MM/yyyy"   />                        
+                        </div>
+                        <div class="Wid50 Fright">                        
+                            <p:calendar value="#{parteDiarioBean.fechaMovimientoHasta}"                                     
+                                        placeholder="Hasta"
+                                        pattern="dd/MM/yyyy"   />                        
+                        </div>                       
+                    </h:panelGroup>
+                    
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <h:outputText value="Número formulario" />                    
+                    <h:panelGroup layout="block" >
+
+                        <div class="Wid50 Fleft">    
+                            <p:inputText value="#{parteDiarioBean.numeroFormularioDesde}"  placeholder="Desde"/>
+                        </div>
+
+                        <div class="Wid50 Fright">                        
+                            <p:inputText value="#{parteDiarioBean.numeroFormularioHasta}"  placeholder="Hasta"/>
+                        </div>
+
+                    </h:panelGroup>
+                    
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                </p:panelGrid>
+
+                <p:spacer width="100%" height="1em" /> 
+
+                <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >  
+
+                    <p:commandButton value="Buscar" icon="fa fa-search"
+                                     process="panelBusqueda" 
+                                     update="@form"                                                                          
+                                     actionListener="#{parteDiarioBean.buscar()}"   />
+
+                    <p:commandButton value="Limpiar" icon="fa fa-trash"
+                                     process="panelBusqueda" 
+                                     update="@form"                                                                          
+                                     actionListener="#{parteDiarioBean.resetParametros}"   />
+
+                    <p:commandButton value="Cerrar" icon="fa fa-close"
+                                     process="panelBusqueda" 
+                                     update="@form" >
+                        <f:setPropertyActionListener target="#{parteDiarioBean.buscaMovimiento}" value="#{false}" />
+                    </p:commandButton>
+
+                </p:panelGrid>
+
+                <p:spacer width="100%" height="1em" /> 
+
+                <p:dataTable id="detalle" value="#{parteDiarioBean.lista}" var="i" reflow="true"
+                             paginator="true" rows="15"
+                             rendered="#{not empty parteDiarioBean.lista}"  >
+                    
+                    <p:column headerText="Operario" width="150" >    
+                        <h:outputText value="#{i.usuario.nombre}"  />                                
+                    </p:column>
+                    
+                    <p:column headerText="Area" width="100"  >    
+                        <h:outputText value="#{i.tarea.area.descripcion}"  />                                
+                    </p:column>
+                    
+                    <p:column headerText="Referencia" >    
+                        <h:outputText value="#{i.tarea.movimientoProduccion.formulario.codigo}-#{i.tarea.movimientoProduccion.numeroFormulario} - #{i.tarea.movimientoProduccion.itemsProducto.get(0).producto.descripcion}" 
+                                      rendered="#{i.tarea.area.codigo eq 'PRD'}"  />                                
+                        
+                        <h:outputText value="#{i.tarea.producto.descripcion}" 
+                                      rendered="#{i.tarea.area.codigo eq 'MAN'}"  />                                
+                        
+                        <h:outputText value="#{i.tarea.proyecto.descripcion}" 
+                                      rendered="#{i.tarea.area.codigo eq 'PRY'}"  />                                
+                    </p:column>
+                                        
+                    <p:column headerText="Fecha" width="100" styleClass="TexAlCenter"  >    
+                        <h:outputText value="#{i.tarea.fechaMovimiento}"  >    
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>                                               
+                    </p:column>
+
+                    <p:column headerText="Tiempo Total" width="80"  >    
+                        <h:outputText value="#{i.tarea.tiempo}" styleClass="Fright"  />                                
+                    </p:column>
+
+                </p:dataTable>
+            </p:panel>
+
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

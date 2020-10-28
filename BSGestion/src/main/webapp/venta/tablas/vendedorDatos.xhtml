@@ -1,0 +1,48 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{vendedorBean.vendedor.codigo}"
+                     readonly="#{not vendedorBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{vendedorBean.vendedor.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Nro Teléfono" />
+        <p:inputText value="#{vendedorBean.vendedor.nroTelefono}"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="E-mail" />
+        <p:inputText value="#{vendedorBean.vendedor.email}"
+                     validatorMessage="Ingrese un e-mail válido">
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+        </p:inputText>
+
+    </p:panelGrid>
+
+</ui:composition>
+

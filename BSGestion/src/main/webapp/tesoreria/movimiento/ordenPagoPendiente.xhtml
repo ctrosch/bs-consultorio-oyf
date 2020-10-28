@@ -1,0 +1,184 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- SALDOS A PAGAR -->
+    <p:panel id="panelPendiente" header="Selección de saldos a pagar"
+             rendered="#{not empty ordenPagoBean.m and not empty ordenPagoBean.m.entidad and empty ordenPagoBean.m.id}">
+
+        <p:panelGrid columns="1" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="Container40, Container60"
+                     rendered="#{not ordenPagoBean.facturasConfirmadas}">
+
+            <h:panelGroup layout="block" >
+
+                <h:outputText value="Ingresar el pago como anticipo:  " />
+                <p:selectBooleanCheckbox value="#{ordenPagoBean.m.esAnticipo}" >
+                    <p:ajax update="panelPendiente, :formulario:totales"  />
+                </p:selectBooleanCheckbox>
+
+            </h:panelGroup>
+
+            <h:panelGroup layout="block" >
+
+                <h:outputText value="Ingresar el importe a pagar: "
+                              rendered="#{ordenPagoBean.m.esAnticipo}"/>
+                <p:inputText value="#{ordenPagoBean.totalAnticipo}"
+                             style="max-width: 100px; text-align: right;"
+                             rendered="#{ordenPagoBean.m.esAnticipo}"
+                             required="true"
+                             requiredMessage="El importe a pagar es obligatorio para el anticipo" >
+
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax listener="#{ordenPagoBean.marcaAnticipo()}" event="keyup" delay="500"
+                            process="@this"
+                            update=":totales,totalHA,pgConfirmarFactura,message, messageg"  />
+                </p:inputText>
+
+            </h:panelGroup>
+
+        </p:panelGrid>
+
+
+        <p:dataTable id="tCreditos" value="#{ordenPagoBean.creditos}" var="c"
+                     rendered="#{not ordenPagoBean.m.esAnticipo and not ordenPagoBean.facturasConfirmadas}"
+                     scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+
+                     emptyMessage="No se han encontrado créditos pendientes">
+
+            <f:facet name="header">
+                <div class="headerTable">
+                    Créditos pendientes
+                </div>
+            </f:facet>
+
+            <p:column headerText="Documento"  width="200" style="text-align: center;" >
+                <h:outputText value="#{c.comprobante} " />
+
+                <h:outputText value="#{c.puntoVentaOriginal}" rendered="#{not empty c.puntoVentaOriginal}" >
+                    <f:convertNumber pattern="0000" />
+                </h:outputText>
+
+                <h:outputText value="#{c.puntoVenta}" rendered="#{empty c.puntoVentaOriginal}" >
+                    <f:convertNumber pattern="0000" />
+                </h:outputText>
+
+                <h:outputText value="#{c.numeroOriginal}"  rendered="#{not empty c.numeroOriginal}">
+                    <f:convertNumber pattern="-00000000" />
+                </h:outputText>
+
+                <h:outputText value="#{c.numeroFormulario}"  rendered="#{empty c.numeroOriginal}">
+                    <f:convertNumber pattern="-00000000" />
+                </h:outputText>
+
+            </p:column>
+
+            <p:column headerText="Vencimiento" width="100" style="text-align: center;" >
+                <h:outputText value="#{c.fechaVencimiento}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Cuota" width="50" style="text-align: center;" >
+                <h:outputText value="#{c.cuotas}" />
+            </p:column>
+
+            <p:column headerText="Imp. Pendiente" width="120"  style="text-align: right;" >
+                <h:outputText value="#{c.pendiente}" >
+                    <f:convertNumber pattern="$ #,###,##0.00" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Imp. Aplicar" width="120"  style="text-align: right;" >
+
+                <h:outputText value="#{c.importeAplicar}" rendered="#{not c.seleccionado or ordenPagoBean.facturasConfirmadas}" >
+                    <f:convertNumber pattern="$ #,###,##0.00" />
+                </h:outputText>
+                <!--<p:focus for="impAplicar" />-->
+                <p:inputText id="impAplicar" value="#{c.importeAplicar}"
+                             rendered="#{c.seleccionado and not ordenPagoBean.facturasConfirmadas}"
+                             style="text-align: right;">
+
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax listener="#{ordenPagoBean.modificaCredito(c)}" event="keyup" delay="500"
+                            process="@this"
+                            update=":totales,totalH,pgConfirmarFactura,message, messageg"  />
+                </p:inputText>
+
+            </p:column>
+
+            <p:column headerText="Seleccionar" width="60"  style="text-align: center;"
+                      rendered="#{not ordenPagoBean.facturasConfirmadas}">
+                <p:selectBooleanCheckbox  value="#{c.seleccionado}" >
+                    <p:ajax update="@form" listener="#{ordenPagoBean.marcarCredito(c)}" />
+                </p:selectBooleanCheckbox>
+            </p:column>
+
+        </p:dataTable>
+
+        <div class="Flex FlexWrap">
+
+            <div class="Container25 Responsive50 Flex">
+            </div>
+
+            <div class="Container25 Responsive50 Flex">
+            </div>
+
+            <div class="Container25 Responsive50 Flex">
+            </div>
+
+            <div class="Container25 Responsive50 Flex">
+
+                <h:panelGroup layout="block" styleClass="Card BlueBack" rendered="#{not ordenPagoBean.facturasConfirmadas}" >
+                    <div class="CardTopic White Fs14 ">Total a pagar</div>
+                    <div class="DispBlock Opac50 ">
+                        <i class="fa fa-check-square-o Fs16 White MarRight10"></i>
+                        <span class="Fs20 White FontVoltSemiBold ">
+                            <h:outputText id="totalHA" value="#{ordenPagoBean.totalHaber + ordenPagoBean.totalRetenciones}"
+                                          rendered="#{ordenPagoBean.m.esAnticipo}"
+                                          styleClass="textoImporte"  >
+                                <f:convertNumber pattern="$ ###,###,##0.00" />
+                                #{ordenPagoBean.m.retenciones}
+                            </h:outputText>
+
+                            <h:outputText id="totalH" value="#{ordenPagoBean.totalHaber}"
+                                          rendered="#{not ordenPagoBean.m.esAnticipo}"
+                                          styleClass="textoImporte"  >
+                                <f:convertNumber pattern="$ ###,###,##0.00" />
+                                #{ordenPagoBean.m.retenciones}
+                            </h:outputText>
+                        </span>
+                    </div>
+                </h:panelGroup>
+            </div>
+        </div>
+
+        <h:panelGroup id="pgConfirmarFactura" layout="block" >
+
+            <p:commandButton id="bntConformarFacturas"
+                             icon="fa fa-check"
+                             value="Continuar pago"
+                             actionListener="#{ordenPagoBean.confirmarFacturasPagar()}"
+                             rendered="#{not ordenPagoBean.facturasConfirmadas}"
+                             process="@this, tCreditos" update="@form" />
+
+            <p:commandButton  value="Modificar Saldos"
+                              icon="fa fa-undo"
+                              actionListener="#{ordenPagoBean.nuevaSeleccionFacturas()}"
+                              rendered="#{ordenPagoBean.facturasConfirmadas}"
+                              process="@this, tCreditos" update="@form" />
+
+        </h:panelGroup>
+        <div class="EmptyBox10"  />
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+
+</ui:composition>
+

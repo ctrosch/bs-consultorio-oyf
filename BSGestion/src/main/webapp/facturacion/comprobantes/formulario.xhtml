@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{impresionFormularioFacturacionBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{impresionFormularioFacturacionBean.titulo}"/>
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{impresionFormularioFacturacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+            <div class="EmptyBox10" />
+
+            <!-- ENVIO COMPROBANTE -->
+            <p:panel id="panelEnvio" header="Envio de comprobante" rendered="#{impresionFormularioFacturacionBean.solicitaEmail}" >
+
+                <p:panelGrid columns="1" layout="grid"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <p:inputText id="txtEmail" value="#{impresionFormularioFacturacionBean.emailEnvioComprobante}"
+                                 required="true"
+                                 requiredMessage="Es obligatorio ingresar una dirección de correo para enviar el comprobante"
+                                 placeholder="Ingrese la dirección de correo" />
+
+                    <p:inputTextarea style="width: 100%" rows="3" placeholder="Ingrese información adicional si lo desea"
+                                     value="#{impresionFormularioFacturacionBean.informacionAdicional}" >
+                        <p:ajax event="blur" process="@this" />
+                    </p:inputTextarea>
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                    <p:commandButton value="Enviar" icon="fa fa-send-o"
+                                     process="@this,txtEmail"
+                                     update="@form"
+                                     actionListener="#{impresionFormularioFacturacionBean.enviarNotificaciones()}"  />
+
+                    <p:commandButton value="Cancelar" icon="fa fa-close" styleClass="RedBack"
+                                     immediate="true"
+                                     update="@form" >
+                        <f:setPropertyActionListener target="#{impresionFormularioFacturacionBean.solicitaEmail}" value="#{false}" />
+                    </p:commandButton>
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <p:spacer width="100%" height="1em" rendered="#{impresionFormularioFacturacionBean.solicitaEmail}"  />
+
+            <p:panel header="#{impresionFormularioFacturacionBean.titulo}" >
+
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="Container40, Container60" >
+
+                    <h:outputText value="Formulario" />
+                    <h:panelGroup id="formularioFacturacion" layout="block" style="text-align: left;">
+                        <p:remoteCommand name="procesarFormularioFacturacion"
+                                         process="@this" update="formularioFacturacion"
+                                         actionListener="#{impresionFormularioFacturacionBean.procesarFormulario}" />
+                        <p:commandButton icon="fa fa-search" process="@this" oncomplete="PF('dlgFormularioFacturacion').show()" />
+                        <h:outputText value="#{impresionFormularioFacturacionBean.formulario.descripcion}" />
+                    </h:panelGroup>
+
+                    <h:outputText value="Número" />
+                    <p:inputText value="#{impresionFormularioFacturacionBean.numeroFormulario}" required="true"  />
+
+                    <h:outputText value="Cant. Copias" />
+                    <p:inputText value="#{impresionFormularioFacturacionBean.copias}"  >
+                        <f:convertNumber integerOnly="true" maxIntegerDigits="1"  />
+                    </p:inputText>
+
+                </p:panelGrid>
+
+                <!-- ACCIONES -->
+                <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                    <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                     actionListener="#{impresionFormularioFacturacionBean.verReporte}"
+                                     update="@form"  />
+
+                    <p:commandButton value="Enviar E-mail" icon="fa fa-envelope"
+                                     actionListener="#{impresionFormularioFacturacionBean.preparoEnvioNotificaciones}"
+                                     update="@form" />
+
+                    <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" process="@this"
+                                     actionListener="#{impresionFormularioFacturacionBean.resetParametros}"
+                                     update="@form" />
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{impresionFormularioFacturacionBean.muestraReporte}"
+                               nombreArchivo="#{impresionFormularioFacturacionBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/facturacion/busqueda/buscadorFormulario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

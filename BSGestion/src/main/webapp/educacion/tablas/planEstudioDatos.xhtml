@@ -1,0 +1,179 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <bs:outputTexWhitLink value="Carrera *"
+                              url="#{planEstudioBean.obtenerUrlMenu('SIS_00582','CODIGO',planEstudioBean.planEstudio.carrera.codigo)}" />
+
+        <p:autoComplete value="#{planEstudioBean.planEstudio.carrera}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="La Carrera es obligatoria"
+                        completeMethod="#{carreraBean.complete}"
+                        disabled="#{not planEstudioBean.esNuevo}"
+                        var="e" itemLabel="#{e.titulo}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.carrera}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{planEstudioBean.asignarCodigo()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Titulo">
+                <h:outputText value="#{e.titulo}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Año vigencia desde *" />
+        <p:inputText value="#{planEstudioBean.planEstudio.anio}"
+                     required="true"
+                     requiredMessage="El año el obligatorio" >
+            <p:ajax event="keyup" delay="500" process="@this" update="@form" listener="#{planEstudioBean.asignarCodigo()}"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <bs:outputTexWhitLink value="Modalidad *"
+                              url="#{planEstudioBean.obtenerUrlMenu('SIS_00594','CODIGO',planEstudioBean.planEstudio.modalidadCursado.codigo)}" />
+        <p:autoComplete value="#{planEstudioBean.planEstudio.modalidadCursado}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Modalidad "
+                        completeMethod="#{modalidadCursadoBean.complete}"
+                        converter="#{conversoresEducacion.modalidadCursado}"
+                        var="m" itemLabel="#{m.descripcion}" itemValue="#{m}" >
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{planEstudioBean.asignarCodigo()}" />
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <h:outputText value="Código *" />
+        <p:inputText id="codigo" value="#{planEstudioBean.planEstudio.codigo }"
+                     readonly="true"
+                     required="true" requiredMessage="El código es obligatorio" />
+
+        <h:outputText value="Titulo *" />
+        <p:inputText id="tituloCurso" value="#{planEstudioBean.planEstudio.titulo}"
+                     readonly="true"
+                     required="true" requiredMessage="El título es obligatorio" />
+
+        <h:outputText value="Duración" />
+        <p:inputText id="duracion" value="#{planEstudioBean.planEstudio.duracion}" />
+
+        <bs:outputTexWhitLink value="Tipo Certificación *"
+                              url="#{planEstudioBean.obtenerUrlMenu('SIS_00595','CODIGO',planEstudioBean.planEstudio.tipoCertificacion.codigo)}" />
+
+        <p:autoComplete value="#{planEstudioBean.planEstudio.tipoCertificacion}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Tipo Certificación "
+                        completeMethod="#{tipoCertificacionBean.complete}"
+                        converter="#{conversoresEducacion.tipoCertificacion}"
+                        var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Reglamento *"
+                              url="#{planEstudioBean.obtenerUrlMenu('SIS_00593','CODIGO',planEstudioBean.planEstudio.reglamento.id)}" />
+
+        <p:autoComplete value="#{planEstudioBean.planEstudio.reglamento}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Reglamento "
+                        completeMethod="#{reglamentoBean.complete}"
+                        converter="#{conversoresEducacion.reglamento}"
+                        var="r" itemLabel="#{r.nombre}" itemValue="#{r}" >
+            <p:ajax event="itemSelect" process="@this"/>
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-9 ui-lg-10" >
+
+        <h:outputText value="Observaciones  " />
+        <p:inputTextarea cols="80" rows="3" value="#{planEstudioBean.planEstudio.observaciones}" />
+
+    </p:panelGrid>
+
+    <p:tabView>
+
+        <p:tab title="Materias">
+
+            <p:dataTable  id="tablaMaterias" var="i"  resizeMode="expand" liveResize="true" styleClass="MaxWid700"
+                          value="#{planEstudioBean.planEstudio.materias}"
+                          emptyMessage="No se encontraron items. Haga clic en agregar items"
+                          rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{planEstudioBean.nuevoItemMateria()}"
+                                     value="Agregar"
+                                     process="tablaMaterias"
+                                     update="tablaMaterias" />
+
+                </f:facet>
+
+                <p:column headerText="Nombre"  >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.materia}"
+                                        required="true" requiredMessage="Seleccione Materia"
+                                        maxResults="8" queryDelay="1000" dropdown="true"
+                                        completeMethod="#{materiaBean.complete}"
+                                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}"
+                                        converter="#{conversoresEducacion.materia}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this"  update="@this" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{p.nombre}" />
+                            </p:column>
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver materia"
+                                                url="#{planEstudioBean.obtenerUrlMenu('SIS_00584','CODIGO',i.materia.codigo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaMaterias" update="tablaMaterias,message,messageg"
+                                   actionListener="#{planEstudioBean.eliminarItemMateria(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+
+        </p:tab>
+
+
+    </p:tabView>
+
+
+</ui:composition>
+

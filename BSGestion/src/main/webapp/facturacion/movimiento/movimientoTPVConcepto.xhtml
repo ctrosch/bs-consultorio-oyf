@@ -1,0 +1,90 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+
+    <p:dialog id="dlgCobranza" header="Cobrar" modal="true" width="100%"  style="max-width: 400px; height: 100%"
+              widgetVar="dlgCobranza"
+              resizable="false"
+              draggable="false"
+              closeOnEscape="true"
+              minHeight="400"
+              position="right,top"
+              responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <!--OTRAS CUENTAS DEBE -->
+        <h:panelGroup id="itemsDebe" layout="block" styleClass="p-grid p-justify-center" >
+
+            <ui:repeat value="#{movimientoFacturacionBean.m.movimientoTesoreria.itemsDebe}" var="i"
+                       rendered="#{not empty movimientoFacturacionBean.m.movimientoTesoreria.itemsDebe and movimientoFacturacionBean.m.movimientoTesoreria.comprobante.tipoComprobante eq 'I'}" >
+
+                <h:panelGroup layout="block" styleClass="p-col-6 Fs25" >
+                    <p:commandLink actionListener="#{movimientoFacturacionBean.asignarTotal(i)}"
+                                   process="@this"
+                                   update="itemsDebe" >
+                        <h:outputText value="#{i.concepto.medioPago}"  />
+                        <i class="fa fa-arrow-right fa-2x Fs25" ></i>
+                    </p:commandLink>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="p-col-6" >
+                    <p:inputText value="#{i.importe}" style="border:transparent;"
+                                 styleClass="Fs30 TexAlRight Wid70 Fright"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </p:inputText>
+                </h:panelGroup>
+
+            </ui:repeat>
+
+        </h:panelGroup>
+
+        <!-- ITEMS HABER -->
+        <ui:repeat value="#{movimientoFacturacionBean.m.movimientoTesoreria.itemsHaber}" var="i"
+                   rendered="#{not empty movimientoFacturacionBean.m.movimientoTesoreria.itemsHaber and movimientoFacturacionBean.m.movimientoTesoreria.comprobante.tipoComprobante eq 'E'}" >
+
+            <h:panelGroup layout="block" styleClass="Container100 Responsive50 Flex Fright"  >
+                <div class="Card GreenBack">
+                    <div class="CardTopic White Fs14 ">
+                        <h:outputText value="#{i.concepto.medioPago}" styleClass="TexAlRight" />
+                    </div>
+                    <div class="DispBlock ">
+                        <span class="Fs30 White FontVoltSemiBold Fright ">
+                            <div class="Wid100 Fright">
+                                <p:commandButton icon="fa fa-arrow-right fa-2x" styleClass="Fs30"
+                                                 actionListener="#{movimientoFacturacionBean.asignarTotal(i)}"
+                                                 process="@this"
+                                                 update="@form" >
+                                </p:commandButton>
+                                <p:inputText value="#{i.importe}" style="border:transparent; width: 70%;"
+                                             styleClass="Fs30 TexAlRight Wid70 Fright"
+                                             required="true"
+                                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo" >
+                                    <f:convertNumber pattern="###,###,##0.00" />
+                                </p:inputText>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </h:panelGroup>
+        </ui:repeat>
+
+
+        <p:commandButton value="Finalizar Venta" icon="fa fa-cash" styleClass="GreenBack Fs22 FontBold"
+                         actionListener="#{movimientoFacturacionBean.guardar(false,true)}"
+                         rendered="#{empty movimientoFacturacionBean.m.id}"
+                         update="@form" />
+
+
+
+
+    </p:dialog>
+
+
+</ui:composition>
+

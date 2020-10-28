@@ -1,0 +1,84 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- APLICACIONES -->
+    <p:dataTable id="tAplicaciones"
+                 value="#{reciboEducacionBean.m.movimientoEducacion.itemsCuentaCorriente}" var="d"
+                 rendered="#{not empty reciboEducacionBean.m.movimientoEducacion.itemsCuentaCorriente and not empty reciboEducacionBean.m.id}"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado aplicaciones">
+
+        <f:facet name="header" >
+            <h:outputText value="Aplicaciones de cuenta corriente" />
+        </f:facet>
+
+        <p:column headerText="Carrera" style="text-align: center;" >
+            <h:outputText value="#{d.itemMovimientoAplicado.movimiento.carrera.titulo }"  />
+        </p:column>
+
+        <p:column headerText="Cuota" style="text-align: center;" >
+            <h:outputText value="#{d.cuota}" />
+        </p:column>
+
+        <p:column headerText="Vencimiento" style="text-align: center;" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Observaciones" style="text-align: center;" >
+            <h:outputText value="#{d.observaciones}" />
+        </p:column>
+
+        <p:column headerText="Importe Aplicado" width="120" styleClass="TexAlCenter" >
+
+            <h:outputText value="#{d.importe*-1}" rendered="#{reciboEducacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+            <h:outputText value="#{d.importeSecundario*-1}" rendered="#{reciboEducacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tMovimientos"
+                 value="#{reciboEducacionBean.m.movimientoEducacion.movimientosRelacionados}" var="m"
+                 rendered="#{not empty reciboEducacionBean.m.movimientoEducacion.movimientosRelacionados and not empty reciboEducacionBean.m.id}"
+                 resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado aplicaciones">
+
+        <f:facet name="header" >
+            <h:outputText value="Movimientos relacionados" />
+        </f:facet>
+
+        <p:column headerText="Comprobante" style="text-align: center;" >
+            <h:outputText value="#{m.comprobante.descripcion }"  />
+        </p:column>
+
+        <p:column headerText="Pto Venta" style="text-align: center;" >
+            <h:outputText value="#{m.puntoVenta.codigo}" />
+        </p:column>
+
+        <p:column headerText="Importe" width="120" styleClass="TexAlCenter" >
+
+            <h:outputText value="#{m.importeTotal}"  >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

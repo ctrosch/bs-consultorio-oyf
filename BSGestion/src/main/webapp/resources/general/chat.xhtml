@@ -1,0 +1,24 @@
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ui:fragment rendered="#{usuarioSessionBean.estaRegistrado}"  >
+
+        <!--
+        <script>
+            (function (w, d, u) {
+                var s = d.createElement('script');
+                s.async = true;
+                s.src = u + '?' + (Date.now() / 60000 | 0);
+                var h = d.getElementsByTagName('script')[0];
+                h.parentNode.insertBefore(s, h);
+            })(window, document, 'https://cdn.bitrix24.es/b12854557/crm/site_button/loader_2_5anizb.js');
+        </script>
+        -->
+
+    </ui:fragment>
+
+</ui:composition>

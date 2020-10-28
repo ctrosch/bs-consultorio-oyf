@@ -1,0 +1,193 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{notificacionBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{notificacionBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block">
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{notificacionBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{notificacionBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+            <p:autoComplete value="#{notificacionBean.modulo}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Módulo"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{moduloBean.complete}"
+                            converter="#{conversoresGeneral.modulo}"
+                            var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{notificacionBean.buscar}" />
+            </p:autoComplete>
+
+            <p:autoComplete value="#{notificacionBean.reporte}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Reporte"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{reporteBean.complete}"
+                            converter="#{conversoresAdministracion.reporte}"
+                            var="r" itemLabel="#{r.descripcionComplete}" itemValue="#{r}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{notificacionBean.buscar}" />
+            </p:autoComplete>
+
+            <p:selectOneMenu value="#{notificacionBean.email}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{notificacionBean.buscar}"/>
+                <f:selectItem itemLabel="Envío Email" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{notificacionBean.mensajePush}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{notificacionBean.buscar}"/>
+                <f:selectItem itemLabel="Envío Mensaje Push" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{notificacionBean.whatsapp}">
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{notificacionBean.buscar}"/>
+                <f:selectItem itemLabel="Envío WhatsApp" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{notificacionBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="@form" listener="#{notificacionBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{notificacionBean.lista}" var="i"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{notificacionBean.notificacion}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{notificacionBean.onSelect}" update="@form"  />
+
+        <p:column headerText="Código"
+                  sortBy="#{i.codigo}" width="5%" style="text-align: center;" >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción"  width="20%" style="text-align: left;"
+                  sortBy="#{i.descripcion}" >
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Módulo"  width="10%" style="text-align: left;"
+                  sortBy="#{i.modulo.descripcion}" >
+            <h:outputText value="#{i.modulo.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Reporte"   width="20%" style="text-align: left;"
+                  sortBy="#{i.reporte.descripcionComplete}" >
+            <h:outputText value="#{i.reporte.descripcionComplete}" />
+        </p:column>
+
+        <p:column headerText="Envío por Email" width="10%" style="text-align: center;"
+                  sortBy="#{i.email}" >
+            <h:outputText value="Si" rendered="#{i.email eq 'S'}" />
+            <h:outputText value="No" rendered="#{i.email eq 'N'}" />
+        </p:column>
+
+        <p:column headerText="Envío por Email" width="10%" style="text-align: center;"
+                  sortBy="#{i.email}" >
+            <h:outputText value="Si" rendered="#{i.email eq 'S'}" />
+            <h:outputText value="No" rendered="#{i.email eq 'N'}" />
+        </p:column>
+
+        <p:column headerText="Envío por Mensaje Push" width="15%" style="text-align: center;"
+                  sortBy="#{i.mensajePush}" >
+            <h:outputText value="Si" rendered="#{i.mensajePush eq 'S'}" />
+            <h:outputText value="No" rendered="#{i.mensajePush eq 'N'}" />
+        </p:column>
+
+        <p:column headerText="Envío por WhatsApp" width="10%" style="text-align: center;"
+                  sortBy="#{i.whatsapp}" >
+            <h:outputText value="Si" rendered="#{i.whatsapp eq 'S'}" />
+            <h:outputText value="No" rendered="#{i.whatsapp eq 'N'}" />
+        </p:column>
+
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{notificacionBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{notificacionBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

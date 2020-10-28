@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{seguimientoComprobanteFacturacionBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{seguimientoComprobanteFacturacionBean.titulo}"/>
+
+            <f:viewParam name="MODFOR"  value="#{seguimientoComprobanteFacturacionBean.MODFOR}"/>
+            <f:viewParam name="CODFOR"  value="#{seguimientoComprobanteFacturacionBean.CODFOR}"/>
+            <f:viewParam name="NROFOR"  value="#{seguimientoComprobanteFacturacionBean.NROFOR}"/>
+
+            <f:event type="preRenderView" listener="#{seguimientoComprobanteFacturacionBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Seguimiento de comprobante
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:panelGrid id="informePanelGrid" columns="4" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <h:outputText value="Formulario" />
+                <p:autoComplete value="#{seguimientoComprobanteFacturacionBean.formulario}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{seguimientoComprobanteFacturacionBean.completeFormulario}"
+                                var="e" itemLabel="#{e.descripcionComplete}" itemValue="#{e}"
+                                converter="#{conversoresGeneral.formulario}"  >
+
+                    <p:ajax event="itemSelect" process="@this"  />
+
+                    <p:column headerText="Código" width="100">
+                        <h:outputText value="#{e.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Pto. Venta" styleClass="TexAlCenter"   >
+                        <h:outputText value="#{e.puntoVenta.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Letra" styleClass="TexAlCenter"  >
+                        <h:outputText value="#{e.letra}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Número" />
+                <p:inputText value="#{seguimientoComprobanteFacturacionBean.numeroFormulario}"  />
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                 actionListener="#{seguimientoComprobanteFacturacionBean.verReporte}"
+                                 process="@form"
+                                 update="@form" />
+
+                <p:commandButton value="A Excel" icon="fa fa-file-excel-o" styleClass="GreenBack"
+                                 actionListener="#{seguimientoComprobanteFacturacionBean.reporteToXls}"
+                                 process="@form"
+                                 update="@form"
+                                 ajax="false" />
+
+                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack"
+                                 actionListener="#{seguimientoComprobanteFacturacionBean.limpiarFiltros()}"
+                                 process="@this"
+                                 update="@form" />
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+            <h:panelGroup layout="block" rendered="#{not empty seguimientoComprobanteFacturacionBean.movimiento}">
+
+                <!-- DATOS -->
+                <p:panelGrid columns="8" layout="grid" styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+                    <h:outputText value="Formulario" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.formulario.descripcion} - #{seguimientoComprobanteFacturacionBean.movimiento.formulario.letra}" readonly="true" />
+
+                    <h:outputText value="Pto. Venta" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.puntoVenta.codigo}"
+                                 readonly="true" >
+                        <f:convertNumber pattern="00000" />
+                    </p:inputText>
+
+                    <h:outputText value="Número" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.numeroFormulario}" readonly="true" >
+                        <f:convertNumber pattern="00000000" />
+                    </p:inputText>
+
+                    <h:outputText value="Fecha" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.numeroFormulario}" readonly="true" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </p:inputText>
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="4" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:outputText value="Cliente" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.razonSocial}"  />
+
+                    <h:outputText value="Vendedor" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.vendedor.descripcion}"  />
+
+                    <h:outputText value="Condicion de pago" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.condicionDePago.descripcion}"  />
+
+                    <h:outputText value="Lista de precios" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.listaDePrecio.descripcion}"  />
+
+                    <h:outputText value="Deposito" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.deposito.descripcion}"  />
+
+                    <h:outputText value="Transporte" />
+                    <p:inputText value="#{seguimientoComprobanteFacturacionBean.movimiento.transporte.razonSocial}"  />
+
+                </p:panelGrid>
+
+                <div class="EmptyBox20" />
+
+                <h3>Resumen</h3>
+                <div class="Separator" />
+
+                <p:tree value="#{seguimientoComprobanteFacturacionBean.rootMovimiento}" var="node" orientation="horizontal">
+                    <p:treeNode>
+                        <h:outputText value="#{node}" />
+                    </p:treeNode>
+                </p:tree>
+
+                <div class="EmptyBox20" />
+
+                <h3>Detalle</h3>
+                <div class="Separator" />
+
+                <ui:repeat value="#{seguimientoComprobanteFacturacionBean.movimiento.itemsProducto}" var="i1" >
+
+                    <div style="width: 100%; padding: 5px; font-weight: bold; margin-top: 10px;">
+                        #{i1.producto.codigo} - #{i1.descripcion} - Cantidad:
+                        <h:outputText value="#{i1.cantidad}">
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+                    </div>
+
+                    <ui:repeat value="#{i1.itemsAplicacion}" var="i2" >
+
+                        <div style="width: 100%; padding: 5px;  padding-left: 15px;">
+                            #{i2.movimiento.formulario.descripcion}
+                            - #{i2.movimiento.numeroFormulario}
+                            -
+                            <h:outputText value="#{i2.movimiento.fechaMovimiento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                            - Cantidad:
+                            <h:outputText value="#{i2.cantidad}">
+                                <f:convertNumber pattern="#,###,##0.00" />
+                            </h:outputText>
+                        </div>
+
+                        <ui:repeat value="#{i2.itemsAplicacion}" var="i3" >
+                            <div style="width: 100%; padding: 5px; padding-left: 30px;">
+                                #{i3.movimiento.formulario.descripcion}
+                                - #{i3.movimiento.numeroFormulario}
+                                -
+                                <h:outputText value="#{i3.movimiento.fechaMovimiento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                                - Cantidad:
+                                <h:outputText value="#{i3.cantidad}">
+                                    <f:convertNumber pattern="#,###,##0.00" />
+                                </h:outputText>
+
+                            </div>
+
+                            <ui:repeat value="#{i3.itemsAplicacion}" var="i4" >
+
+                                <div style="width: 100%; padding: 5px; padding-left: 45px;">
+                                    #{i4.movimiento.formulario.descripcion}
+                                    - #{i4.movimiento.numeroFormulario}
+                                    -
+                                    <h:outputText value="#{i4.movimiento.fechaMovimiento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    - Cantidad:
+                                    <h:outputText value="#{i4.cantidad}">
+                                        <f:convertNumber pattern="#,###,##0.00" />
+                                    </h:outputText>
+                                </div>
+
+                                <ui:repeat value="#{i4.itemsAplicacion}" var="i5" >
+
+                                    <div style="width: 100%; padding: 5px; padding-left: 60px;">
+                                        #{i5.movimiento.formulario.descripcion}
+                                        - #{i5.movimiento.numeroFormulario}
+                                        -
+                                        <h:outputText value="#{i5.movimiento.fechaMovimiento}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                        - Cantidad:
+                                        <h:outputText value="#{i5.cantidad}">
+                                            <f:convertNumber pattern="#,###,##0.00" />
+                                        </h:outputText>
+                                    </div>
+
+                                    <ui:repeat value="#{i5.itemsAplicacion}" var="i6" >
+
+                                        <div style="width: 100%; padding: 5px; padding-left: 75px;">
+                                            #{i6.movimiento.formulario.descripcion}
+                                            - #{i6.movimiento.numeroFormulario}
+                                            -
+                                            <h:outputText value="#{i6.movimiento.fechaMovimiento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                            - Cantidad:
+                                            <h:outputText value="#{i6.cantidad}">
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+                                        </div>
+
+                                        <ui:repeat value="#{i6.itemsAplicacion}" var="i7" >
+
+                                            <div style="width: 100%; padding: 5px; padding-left: 90px;">
+                                                #{i7.movimiento.formulario.descripcion}
+                                                - #{i7.movimiento.numeroFormulario}
+                                                -
+                                                <h:outputText value="#{i7.movimiento.fechaMovimiento}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>
+                                                - Cantidad:
+                                                <h:outputText value="#{i7.cantidad}">
+                                                    <f:convertNumber pattern="#,###,##0.00" />
+                                                </h:outputText>
+                                            </div>
+
+                                        </ui:repeat>
+
+                                    </ui:repeat>
+
+                                </ui:repeat>
+
+                            </ui:repeat>
+
+                        </ui:repeat>
+                    </ui:repeat>
+                </ui:repeat>
+
+            </h:panelGroup>
+
+
+            <div class="EmptyBox10" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/facturacion/busqueda/buscadorFormulario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pv="http://primefaces.org/volt">
+
+    <ui:composition>
+
+        <h:panelGroup layout="block" styleClass="Container100 Responsive100" >
+
+            <div class="Flex FlexWrap">
+                <h:panelGroup layout="block" styleClass="Container33 Responsive50 Flex"
+                              rendered="#{dashboardBean.cantClientes > 0 }" >
+
+                    <div class="Card BlueBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Clientes</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-user Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{dashboardBean.cantClientes}" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="Container33 Responsive50 Flex"
+                              rendered="#{dashboardBean.cantProveedores > 0 }" >
+                    <div class="Card OrangeBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Proveedores</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-user Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{dashboardBean.cantProveedores}" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="Container33 Responsive50 Flex"
+                              rendered="#{dashboardBean.cantProductos > 0 }" >
+                    <div class="Card GreenBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Productos</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-cubes Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{dashboardBean.cantProductos}" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="Container33 Responsive50 Flex"
+                              rendered="#{dashboardBean.cantBeneficiarios > 0 }" >
+                    <div class="Card GreenBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Beneficiarios</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-cubes Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{dashboardBean.cantBeneficiarios}" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="Container33 Responsive50 Flex"
+                              rendered="#{dashboardBean.cantAlumnos > 0 }" >
+                    <div class="Card GreenBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Alumnos</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-cubes Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{dashboardBean.cantAlumnos}" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="Container33 Responsive50 Flex"
+                              rendered="#{dashboardBean.cantProfesores > 0 }" >
+                    <div class="Card GreenBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Profesores</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-cubes Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{dashboardBean.cantProfesores}" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="Container33 Responsive50 Flex"
+                              rendered="#{dashboardBean.cantCursos > 0 }" >
+                    <div class="Card GreenBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Cursos</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-cubes Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{dashboardBean.cantCursos}" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+            </div>
+            <div class="Flex FlexWrap">
+                <div class="Container50 Responsive100 Flex">
+                    <div class="Card">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic Fs12">Ventas</div>
+                        <div class="EmptyBox5"></div>
+                        <canvas id="myChart" width="400" height="250"></canvas>
+                        <!--
+                        <p:chart type="bar" model="#{dashboardBean.estadisticasVenta}" style="height:300px" responsive="true"/>
+                        -->
+                    </div>
+                </div>
+
+                <div class="Container50 Responsive100 Flex">
+                    <div class="Card">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic Fs12">Deuda de clientes</div>
+                        <div class="EmptyBox5"></div>
+                        <canvas id="myChart2" width="400" height="250"></canvas>
+                        <!--
+                        <p:chart type="pie" model="#{dashboardBean.vencidoVencer}" style="height:300px" responsive="true" />
+                        -->
+                    </div>
+                </div>
+
+                <div class="Container100 Responsive100 Flex">
+                    <div class="Card">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic Fs12">Ultimas Ventas</div>
+                        <div class="EmptyBox5"></div>
+                        <p:dataTable value="#{dashboardBean.ultimasVentas}"
+                                     rendered="#{not empty dashboardBean.ultimasVentas}"
+                                     var="i" scrollable="true" scrollHeight="250"
+                                     emptyMessage="No se encontraron items pendientes" >
+
+                            <p:column headerText="Tipo" width="150" >
+                                <h:outputText value="#{i.formulario.descripcion}" />
+                            </p:column>
+                            <p:column headerText="Número" width="100" >
+                                <h:outputText value="#{i.numeroFormulario}" >
+                                    <f:convertNumber pattern="00000000"  />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Fecha" width="100" >
+                                <h:outputText value="#{i.fechaMovimiento}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Cliente" >
+                                <h:outputText value="#{i.razonSocial}" />
+                            </p:column>
+
+                            <p:column headerText="Importe Total" width="100" style="text-align: right;" >
+                                <h:outputText value="#{i.itemTotal.get(0).importe}" >
+                                    <f:convertNumber pattern="#,###,##0.00" />
+                                </h:outputText>
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </div>
+
+                <div class="Container100 Responsive100 Flex">
+                    <div class="Card">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic Fs12">Próximos ingresos</div>
+                        <div class="EmptyBox5"></div>
+                        <p:dataTable value="#{dashboardBean.pendienteCompra}"
+                                     rendered="#{not empty dashboardBean.pendienteCompra}"
+                                     var="i" scrollable="true" scrollHeight="250"
+                                     emptyMessage="No se encontraron items pendientes" >
+
+                            <p:column headerText="Código" width="120" >
+                                <h:outputText value="#{i.producto.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción" filterable="true" filterBy="#{i.descripcion}" >
+                                <h:outputText value="#{i.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Fecha Ingreso" width="120" >
+                                <h:outputText value="#{i.fechaEntrega}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Cantidad" style="text-align: right;" width="120" >
+                                <h:outputText value="#{i.cantidad}" style="text-align: right" >
+                                    <f:convertNumber pattern="#,###,##0.00" />
+                                </h:outputText>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </div>
+                </div>
+                <div class="EmptyBox20"></div>
+                <p:commandButton value="Actualizar datos"
+                                 actionListener="#{dashboardBean.actualizarTodo()}"
+                                 process="@this"
+                                 update="pgTablero" />
+
+                <div class="EmptyBox20"></div>
+
+            </div>
+
+        </h:panelGroup>
+
+
+        <script>
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [#{dashboardBean.labelsVentas}],
+                    datasets: [{
+                            label: 'Ventas en pesos',
+                            data: [#{dashboardBean.datosVentas}],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                    }
+                }
+            });
+
+            var data = {
+                labels: [
+                    "Vencido",
+                    "A vencer"
+
+                ],
+                datasets: [
+                    {
+                        data: [#{dashboardBean.vencido}, #{dashboardBean.vencer}],
+                        backgroundColor: [
+                            "#FF6384",
+                            "#36A2EB"
+
+                        ],
+                        hoverBackgroundColor: [
+                            "#FF6384",
+                            "#36A2EB"
+                        ]
+                    }]
+            };
+
+
+            var ctx2 = document.getElementById("myChart2");
+            // For a pie chart
+            var myPieChart = new Chart(ctx2, {
+                type: 'pie',
+                data: data,
+                options: {
+                    responsive: true
+                }
+            });
+
+        </script>
+
+    </ui:composition>
+</html>

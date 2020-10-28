@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Movimientos de Tesorería por Fecha
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:panel header="Movimientos por fecha">
+
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                <div class="EmptyBox10"></div>
+                <p:panelGrid columns="2" layout="grid" style="max-width: 800px;"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="Container40, Container60" >
+
+                    <h:outputText value="Cuenta de Tesorería"  />
+                    <p:autoComplete value="#{movimientoPorFechaBean.cuentaTesoreria}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{cuentaTesoreriaBean.complete}"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresTesoreria.cuentaTesoreria}"  >
+
+                        <p:ajax event="itemSelect" process="@this" />
+
+                        <p:column headerText="Código" width="100">
+                            <h:outputText value="#{e.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                    <h:outputText value="Fecha formulario"  />
+                    <h:panelGroup layout="block"  >
+
+                        <div class="Wid50 Fleft">
+                            <p:calendar value="#{movimientoPorFechaBean.fechaDesde}"
+                                        pattern="dd/MM/yyyy"
+                                        showOn="button"
+                                        navigator="true"
+                                        mask="true"  >
+                                <p:ajax event="dateSelect"  process="@this" />
+                            </p:calendar>
+                        </div>
+                        <div class="Wid50 Fright">
+                            <p:calendar value="#{movimientoPorFechaBean.fechaHasta}"
+                                        pattern="dd/MM/yyyy"
+                                        showOn="button"
+                                        navigator="true"
+                                        mask="true"  >
+                                <p:ajax event="dateSelect"  process="@this" />
+                            </p:calendar>
+                        </div>
+                    </h:panelGroup>
+
+
+                </p:panelGrid>
+
+                <div class="EmptyBox10"/>
+
+                <!-- ACCIONES -->
+                <p:panelGrid columns="3" layout="grid"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <h:outputText value="" />
+
+                    <p:commandButton value="Buscar" icon="fa fa-search" styleClass="BlueBack"
+                                     actionListener="#{movimientoPorFechaBean.consultarDatos()}"
+                                     process="@form"
+                                     update="@form"/>
+
+                    <h:outputText value="" />
+
+                </p:panelGrid>
+
+                <div class="EmptyBox10"/>
+
+                <p:dataTable id="movimientos" value="#{movimientoPorFechaBean.movimientos}" var="c"
+                             resizeMode="expand" liveResize="true"
+                             emptyMessage="No se han encontrado movimientos"  >
+
+                    <f:facet name="header" >
+                        Movimientos encontrados
+                    </f:facet>
+
+                    <f:facet name="footer">
+                        <div style="width: 100%; text-align: right;">
+                            <h:commandLink>
+                                <p:graphicImage value="/resources/image/excel_64.png" width="32"
+                                                title="Descargar datos a excel"/>
+                                <p:dataExporter type="xls" target="movimientos"
+                                                fileName="movim-#{movimientoPorFechaBean.cuentaTesoreria.descripcion}"
+                                                preProcessor="#{customizeDocument.postProcessXLS}"  />
+                            </h:commandLink>
+
+                            <h:commandLink>
+                                <p:graphicImage value="/resources/image/pdf_64.png"
+                                                title="Descargar datos a pdf" width="32"/>
+                                <p:dataExporter type="pdf" target="movimientos"
+                                                fileName="movim-#{movimientoPorFechaBean.cuentaTesoreria.descripcion}"
+                                                preProcessor="#{customizeDocument.preProcessPDF}" />
+                            </h:commandLink>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="Formulario" style="width: 15%"
+                              filterBy="#{c.movimiento.formulario.codigo}">
+                        <h:outputText value="Saldo inicial" rendered="#{empty c.movimiento}" />
+                        <h:outputText value="#{c.movimiento.formulario.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Número" style="width: 18%;text-align: center;"
+                              filterBy="#{c.movimiento.numeroFormulario}">
+
+                        <h:outputText value="#{c.movimiento.formulario.puntoVenta.codigo}" >
+                            <f:convertNumber pattern="0000" />
+                        </h:outputText>
+                        <h:outputText value="#{c.movimiento.numeroFormulario}" >
+                            <f:convertNumber pattern="-00000000" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Fecha" style="width: 10%" >
+                        <h:outputText value="#{c.movimiento.fechaMovimiento}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Concepto" style="width: 20%"
+                              filterBy="#{c.concepto.descripcion}">
+                        <h:outputText value="#{c.concepto.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Referencia" style="width: 20%"
+                              filterBy="#{c.movimiento.referencia}">
+                        <h:outputText value="#{c.movimiento.referencia}" />
+                    </p:column>
+
+                    <p:column headerText="Observaciones" style="width: 20%" >
+                        <h:outputText value="#{c.movimiento.observaciones}" rendered="#{not empty c.movimiento.observaciones}" />
+                        <h:outputText value="#{c.observaciones}" rendered="#{not empty c.observaciones}" />
+                    </p:column>
+
+                    <p:column headerText="Debe" style="width: 12%; " >
+                        <h:outputText value="#{c.importeDebe}" style="float: right;"
+                                      rendered="#{c.importeDebe > 0  and c.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaPrimaria }" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+
+                        <h:outputText value="#{c.importeDebeMonedaSecundaria}" style="float: right;"
+                                      rendered="#{c.importeDebeMonedaSecundaria > 0  and c.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaSecundaria }" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Haber" style="width: 12%;" >
+                        <h:outputText value="#{c.importeHaber}" style="float: right;"
+                                      rendered="#{c.importeHaber > 0 and c.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaPrimaria }" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+
+                        <h:outputText value="#{c.importeHaberMonedaSecundaria}" style="float: right;"
+                                      rendered="#{c.importeHaberMonedaSecundaria > 0 and c.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaSecundaria }" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Saldo" style="width: 10%; " >
+                        <h:outputText value="#{c.saldo}" style="float: right;"
+                                      rendered="#{movimientoPorFechaBean.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaPrimaria }" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+                        <h:outputText value="#{c.saldoMonedaSecundaria}" style="float: right;"
+                                      rendered="#{movimientoPorFechaBean.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaSecundaria }" >
+                            <f:convertNumber pattern="#,###,##0.00" />
+                        </h:outputText>
+
+                    </p:column>
+
+                    <p:column headerText="Ver" width="50" style="text-align: center;" >
+
+                        <p:commandButton icon="fa fa-search"
+                                         rendered="#{not empty c.movimiento}"
+                                         action="#{movimientoPorFechaBean.imprimir(c.movimiento.formulario.codigo, c.movimiento.numeroFormulario)}"
+                                         process="@this"
+                                         update="@form"  />
+
+                    </p:column>
+
+                </p:dataTable>
+
+
+
+
+            </p:panel>
+
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoPorFechaBean.muestraReporte}"
+                               nombreArchivo="#{movimientoPorFechaBean.nombreArchivo}" />
+
+        </ui:define>
+
+    </ui:composition>
+</html>

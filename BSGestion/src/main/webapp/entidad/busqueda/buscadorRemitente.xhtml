@@ -1,0 +1,74 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorRemitente" header="Remitentes" modal="true"
+              widgetVar="dlg_remitente"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 900px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaR"/>
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaR" value="#{clienteBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaRemitente" listener="#{clienteBean.buscar}"/>
+                </p:inputText>
+
+                <p:selectOneMenu value="#{clienteBean.tipoEntidad}"
+                                 converter="#{conversoresEntidad.tipoEntidad}">
+                    <f:selectItem itemLabel="Todos" itemValue="" />
+                    <f:selectItems value="#{clienteBean.tipos}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaR" update="tablaRemitente" listener="#{clienteBean.buscar}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaRemitente" value="#{clienteBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{clienteBean.entidad}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{clienteBean.onSelect}" update="@form"
+                        oncomplete="PF('dlg_remitente').hide(), procesarRemitente()" />
+
+                <p:column headerText="Cuenta" width="20%" style="text-align: center;"
+                          sortBy="#{e.nrocta}"   >
+                    <h:outputText value="#{e.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Razón social" width="40%" style="text-align: left;"
+                          sortBy="#{e.razonSocial}" >
+                    <h:outputText value="#{e.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Nro documento" width="20%" style="text-align: left;" >
+                    <h:outputText value="#{e.nrodoc}" />
+                </p:column>
+
+                <p:column headerText="Dirección" width="40%" style="text-align: left;" >
+                    <h:outputText value="#{e.direccion} #{e.numero}" />
+                </p:column>
+
+                <p:column headerText="Localidad" width="30%" style="text-align: left;" >
+                    <h:outputText value="#{e.localidad.descripcion}" />
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

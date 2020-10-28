@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{materiaBean.codMenu}"/>
+            <f:viewParam name="CODIGO"  value="#{materiaBean.codigo}"/>
+            <f:viewParam name="TITULO"  value="#{materiaBean.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{materiaBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+
+
+        <ui:define name="titulo" >
+            #{materiaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{materiaBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <h:panelGroup layout="block"  >
+
+                <ui:fragment rendered="#{materiaBean.modoVista eq 'B'}">
+                    <ui:include src="materiaBusqueda.xhtml"  />
+                </ui:fragment>
+
+                <ui:fragment rendered="#{materiaBean.modoVista eq 'D'}">
+                    <ui:include src="materiaMenu.xhtml"  />
+                    <ui:include src="materiaDatos.xhtml"  />
+                </ui:fragment>
+
+            </h:panelGroup>
+
+            <!--
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+                <h:panelGroup layout="block" >
+                    <ui:include src="areaBusqueda.xhtml"  />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <ui:include src="areaDatos.xhtml"  />
+                </h:panelGroup>
+            </p:panelGrid>
+            -->
+
+
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+
+
+    </ui:composition>
+</html>
+

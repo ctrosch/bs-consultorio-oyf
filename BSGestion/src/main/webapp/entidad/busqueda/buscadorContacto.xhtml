@@ -1,0 +1,90 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorContacto" header="Contactos" modal="true"
+              widgetVar="dlgContacto"
+              resizable="false"
+              draggable="false" minHeight="400"
+              position="top"              
+              showEffect="fade" hideEffect="fade"               
+              responsive="true"> 
+
+        <h:form prependId="false" >
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+                
+                <p:inputText id="txtBusquedaContacto" value="#{contactoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaContacto" listener="#{contactoBean.buscar}"/>
+                </p:inputText>
+                
+            </p:panelGrid>
+            
+            <div class="EmptyBox10" />
+
+            <p:dataTable id="tablaContacto" value="#{contactoBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{contactoBean.contacto}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{contactoBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgContacto').hide(), procesarContacto()" />
+
+                <p:column headerText="Nombre" sortBy="#{i.nombre}"  style="text-align: center;"  >
+                    <h:outputText value="#{i.nombre}" />
+                </p:column>
+
+                <p:column headerText="Teléfono" >
+                    <h:outputText value="#{i.telefono}" />
+                </p:column>
+                
+                <p:column headerText="Celular"  >
+                    <h:outputText value="#{i.celular}" />
+                </p:column>
+                
+                 <p:column headerText="Email"  >
+                    <h:outputText value="#{i.email}" />
+                </p:column>
+
+                <p:column headerText="Dirección"  >
+                    <h:outputText value="#{i.direccion}" />
+                </p:column>
+                                
+                <p:column headerText="Localidad" >
+                    <h:outputText value="#{i.localidad.descripcion} - #{i.localidad.provincia.descripcion}" />
+                </p:column>
+            </p:dataTable>
+
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{contactoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaContacto" listener="#{contactoBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroContacto" value="#{contactoBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{contactoBean.buscar}"
+                                     process="@this,cantRegistroContacto" update="tablaContacto" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{reporteService.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{reporteService.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{reporteService.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid id="informePanelGrid" columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid500" >
+
+                <h:outputText value="Proveedor " />
+                <p:autoComplete value="#{reporteService.proveedor}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                rendered="#{reporteService.muestroCampo('C','NROCTA')}"
+                                completeMethod="#{proveedorBean.complete}"
+                                var="e" itemValue="#{e}" itemLabel="#{e.razonSocial}"
+                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                    <p:ajax event="itemSelect" process="@this"   />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+
+                    <p:column headerText="Nro doc">
+                        <h:outputText value="#{e.nrodoc}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="Proveedor " />
+                <p:autoComplete value="#{reporteService.proveedor2}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                rendered="#{reporteService.muestroCampo('C','NROCTA')}"
+                                completeMethod="#{proveedorBean.complete}"
+                                var="e" itemValue="#{e}" itemLabel="#{e.razonSocial}"
+                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                    <p:ajax event="itemSelect" process="@this"   />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+
+                    <p:column headerText="Nro doc">
+                        <h:outputText value="#{e.nrodoc}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="Proveedor " />
+                <p:autoComplete value="#{reporteService.proveedor3}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                rendered="#{reporteService.muestroCampo('C','NROCTA')}"
+                                completeMethod="#{proveedorBean.complete}"
+                                var="e" itemValue="#{e}" itemLabel="#{e.razonSocial}"
+                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                    <p:ajax event="itemSelect" process="@this"   />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+
+                    <p:column headerText="Nro doc">
+                        <h:outputText value="#{e.nrodoc}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="Cantidad de copias " />
+                <p:inputText value="#{reporteService.copias}" />
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                 actionListener="#{reporteService.verReporte}"
+                                 update="@form" />
+
+                <p:commandButton value="A Excel" icon="fa fa-file-excel-o" styleClass="GreenBack"
+                                 actionListener="#{reporteService.reporteToXls}"
+                                 update="@form"
+                                 ajax="false" />
+
+                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack"
+                                 actionListener="#{reporteService.limpiarFiltros()}"
+                                 process="@this"
+                                 update="@form" />
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

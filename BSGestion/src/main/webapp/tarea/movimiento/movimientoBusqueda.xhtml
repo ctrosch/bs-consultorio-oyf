@@ -1,0 +1,313 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- BUSQUEDA -->
+    <div class="Container100 TexAlRight">
+
+        <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack MaxWid100"
+                         actionListener="#{tareaBean.nuevo}"
+                         process="@this"
+                         update="@form, dialogos" >
+        </p:commandButton>
+
+        <p:commandButton value="Volver" icon="fa fa-arrow-right" styleClass="OrangeBack MaxWid100"
+                         immediate="true"
+                         update="@form" >
+            <f:setPropertyActionListener target="#{tareaBean.modoVista}" value="#{'D'}" />
+        </p:commandButton>
+    </div>
+
+    <p:panelGrid id="panelBusqueda" columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,
+                 ui-g-8 ui-md-8 ui-lg-2,
+                 ui-g-4 ui-md-4 ui-lg-2,
+                 ui-g-8 ui-md-8 ui-lg-2,
+                 ui-g-4 ui-md-4 ui-lg-2,
+                 ui-g-8 ui-md-8 ui-lg-2" >
+
+        <h:outputText value="Fecha tarea" />
+        <h:panelGroup layout="block">
+
+            <div class="Wid50 Fleft">
+                <p:calendar value="#{tareaBean.fechaMovimientoDesde}"
+                            placeholder="Desde"
+                            pattern="dd/MM/yyyy"   />
+            </div>
+            <div class="Wid50 Fright">
+                <p:calendar value="#{tareaBean.fechaMovimientoHasta}"
+                            placeholder="Hasta"
+                            pattern="dd/MM/yyyy"   />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Número tarea" />
+        <h:panelGroup layout="block" >
+
+            <div class="Wid50 Fleft">
+                <p:inputText value="#{tareaBean.numeroFormularioDesde}"  placeholder="Desde"/>
+            </div>
+
+            <div class="Wid50 Fright">
+                <p:inputText value="#{tareaBean.numeroFormularioHasta}"  placeholder="Hasta"/>
+            </div>
+
+        </h:panelGroup>
+
+        <h:outputText value="Número OP" />
+        <h:panelGroup layout="block" >
+
+            <div class="Wid50 Fleft">
+                <p:inputText value="#{tareaBean.numeroOrdenProduccionDesde}"  placeholder="Desde"/>
+            </div>
+
+            <div class="Wid50 Fright">
+                <p:inputText value="#{tareaBean.numeroOrdenProduccionHasta}"  placeholder="Hasta"/>
+            </div>
+
+        </h:panelGroup>
+
+        <h:outputText value="Estado"  />
+        <p:selectOneMenu value="#{tareaBean.estado}"
+                         effect="fade" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Todos" />
+            <f:selectItem itemValue="B" itemLabel="Activa" />
+            <f:selectItem itemValue="Z" itemLabel="Finalizada" />
+            <f:selectItem itemValue="X" itemLabel="Anulada" />
+
+        </p:selectOneMenu>
+
+        <h:outputText value="Area"  />
+        <p:selectOneMenu value="#{tareaBean.area}"
+                         converter="#{conversoresTarea.area}"
+                         effect="fade" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{areaBean.lista}" var="a" itemLabel="#{a.descripcion}" itemValue="#{a}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Operario"   />
+        <p:autoComplete value="#{tareaBean.operario}" dropdown="true"
+                        completeMethod="#{operarioBean.complete}"
+                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}"
+                        converter="#{conversoresProduccion.operario}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column>
+                <h:outputText value="#{p.nombre}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Proyecto" />
+        <p:autoComplete value="#{tareaBean.proyecto}" dropdown="true"
+                        completeMethod="#{proyectoBean.complete}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresInversiones.proyecto}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column>
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column>
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Planta" />
+        <p:autoComplete value="#{tareaBean.planta}" dropdown="true"
+                        completeMethod="#{plantaBean.complete}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresProduccion.planta}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column>
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column>
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+
+    <div class="EmptyBox10" />
+
+    <div class="Container100 TexAlLeft">
+
+        <p:commandButton value="Buscar" icon="fa fa-search" styleClass="BlueBack MaxWid100"
+                         process="@form"
+                         update="@form"
+                         actionListener="#{tareaBean.buscar()}"   />
+
+        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="RedBack MaxWid100"
+                         process="@form"
+                         update="@form"
+                         actionListener="#{tareaBean.resetParametros}"   />
+
+    </div>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="movimientos" value="#{tareaBean.lista}" var="i"
+                 rendered="#{not empty tareaBean.lista}"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 rowStyleClass="#{i.estado eq 'X'  ? 'Red' : null}" >
+
+        <f:facet name="header">
+            Tareas encontradas
+        </f:facet>
+
+        <f:facet name="footer">
+            <div class="p-grid" >
+
+                <div class="p-col-8 p-md-3 " >
+                    <!--
+                    <p:selectOneMenu value="#{tareaBean.accionEnLote}"  >
+                        <p:ajax process="@this" update="movimientos" />
+                        <f:selectItem itemLabel="Acción en lote" itemValue="" />
+                        <f:selectItem itemLabel="Generar Reinscripción"    itemValue="R" />
+                        <f:selectItem itemLabel="Generar Baja Inscripción" itemValue="B" />
+                    </p:selectOneMenu>
+                    -->
+                </div>
+
+                <div class="p-col-4 p-md-1" >
+                    <!--
+                    <p:commandButton value="Aplicar" icon="fa fa-check" styleClass="GreenBack"
+                                     rendered="#{not empty tareaBean.accionEnLote}"
+                                     process="@form"
+                                     update="@form"
+                                     actionListener="#{tareaBean.aplicarAccionEnLotes()}"   />
+                    -->
+                </div>
+
+                <div class="p-col-12 p-md-8 TexAlRight" >
+
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistros" value="#{tareaBean.cantidadRegistros}" style="max-width: 80px;" styleClass="TexAlRight"/>
+                    <p:commandButton icon="fa fa-check" styleClass="GreenBack"
+                                     style="margin-left: 1px;"
+                                     actionListener="#{tareaBean.buscar() }"
+                                     process="@form" update="movimientos" />
+
+                </div>
+            </div>
+        </f:facet>
+
+        <p:column headerText="Acciones" width="80" style="text-align: center; min-width: 80px;">
+
+            <p:commandLink title="Seleccionar movimiento" styleClass="icono-datatable"
+                           actionListener="#{tareaBean.seleccionar(i)}"
+                           process="@this"
+                           update="@form"  >
+                <i class="fa fa-check fa-2x Green" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Modificar movimiento" styleClass="icono-datatable"
+                           actionListener="#{tareaBean.copiar(i)}"
+                           rendered="#{i.estado ne 'B'}"
+                           disabled="#{i.estado eq 'X'}"
+                           process="@this"
+                           update="@form"  >
+                <i class="fa fa-edit fa-2x Green" ></i>
+            </p:commandLink>
+
+
+            <p:commandLink title="Anular o revertir movimiento" styleClass="icono-datatable"
+                           actionListener="#{tareaBean.anular(i)}"
+                           disabled="#{i.estado eq 'X'}"
+                           process="@this"
+                           update="@form"  >
+                <p:confirm header="Confirmación" message="¿Está seguro de anular #{i.formulario.descripcion}  #{i.puntoVenta.codigo} #{i.numeroFormulario} ?  Esta acción no se puede deshacer." icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+        <p:column headerText="Estado" width="70" styleClass="texAlCenter"  class="Blue" >
+
+            <i class="fa fa-bullseye fa-2x #{(i.estado eq 'B'  ? 'Green' : (i.estado eq 'Z'  ? 'LightGray' : (i.estado eq 'X'  ? 'Red' : null)))}"
+               style="padding-right: 2px;"></i>
+
+            <h:outputText value="Activa"     rendered="#{i.estado eq 'B'}"/>
+            <h:outputText value="Finalizada" rendered="#{i.estado eq 'Z'}"/>
+            <h:outputText value="Anulada"    rendered="#{i.estado eq 'X'}"/>
+        </p:column>
+
+        <p:column headerText="Area" width="100" >
+            <h:outputText value="#{i.area.descripcion}"  />
+        </p:column>
+
+        <p:column headerText="Fecha" width="70" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Hora inicio" width="70" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.horaInicio}"  >
+                <f:convertDateTime pattern="HH:mm:ss"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Hora fin" width="70" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.horaFin}"  >
+                <f:convertDateTime pattern="HH:mm:ss"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Tiempo Total" width="70" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.tiempoTotal}"  />
+        </p:column>
+
+        <p:column headerText="Número" width="60" >
+            <h:outputText value="#{i.numeroFormulario}" >
+                <f:convertNumber pattern="00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Detalle" >
+            <h:outputText value="#{i.proyecto.descripcion}" rendered="#{i.area.codigo eq 'PRY'}"  />
+            <h:outputText value="#{i.producto.descripcion}" rendered="#{i.area.codigo eq 'MAN'}"  />
+            <h:outputText value="#{i.movimientoProduccion.formulario.codigo}-#{i.movimientoProduccion.numeroFormulario}" rendered="#{i.area.codigo eq 'PRD'}"  />
+        </p:column>
+
+
+
+        <p:column headerText="Grupo" width="70" >
+            <h:outputText value="#{i.grupoProduccion}"  />
+        </p:column>
+
+
+        <p:column headerText="MP" width="70" >
+
+            <ui:repeat value="#{i.movimientosProduccion}" var="m" >
+
+                <h:outputText value="#{m.tipoMovimiento} "  />
+
+            </ui:repeat>
+
+        </p:column>
+
+
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

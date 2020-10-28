@@ -1,0 +1,275 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <div class="EmptyBox10" />
+    <!-- DETALLE -->
+    <p:tabView id="tb" rendered="#{not empty movimientoStockBean.m and not movimientoStockBean.buscaMovimiento}">
+
+        <p:tab title="Items">
+
+            <p:dataTable id="detalle" value="#{movimientoStockBean.m.itemsProducto}" var="i"
+                         scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items. Haga clic en agregar items"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <!--
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     disabled="#{not empty movimientoStockBean.m.id}"
+                                     value="Agregar item"
+                                     actionListener="#{movimientoStockBean.nuevoItem()}"
+                                     process="detalle"
+                                     update="detalle,message,messageg" />
+                </f:facet>
+                -->
+
+                <f:facet name="footer">
+
+                    <h:panelGroup id="footerDetalle" layout="block"  styleClass="p-grid" >
+
+                        <div class="p-col" >
+
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             value="Agregar item"
+                                             disabled="#{not empty movimientoStockBean.m.id}"
+                                             actionListener="#{movimientoStockBean.nuevoItem()}"
+                                             process="detalle" update="@form" />
+
+                        </div>
+
+                        <div class="p-col" >
+
+
+                            <p:commandButton icon="fa fa-plus" styleClass="OrangeBack"
+                                             value="Selección múltiple"
+                                             disabled="#{not empty movimientoStockBean.m.id}"
+                                             actionListener="#{movimientoStockBean.preparoBusquedaProductos()}"
+                                             oncomplete="PF('dlgProductoNew').show();"
+                                             process="detalle" update="@form, buscadorProductoNew" />
+                        </div>
+
+                    </h:panelGroup>
+
+                    <!--
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     disabled="#{movimientoFacturacionBean.CIRCOM ne movimientoFacturacionBean.CIRAPL and empty movimientoFacturacionBean.m.itemsProducto}"
+                                     rendered="#{movimientoFacturacionBean.circuito.permiteAgregarItems eq 'S'}"
+                                     actionListener="#{movimientoFacturacionBean.nuevoItem()}"
+                                     process="detalle"
+                                     update="detalle,message,messageg, tbPrincipal:txtCotizacion" />
+
+                    -->
+
+                </f:facet>
+
+                <p:column headerText="" width="80"
+                          rendered="#{movimientoStockBean.muestroCampo('D','IMAGEN')}"  >
+
+                    <h:graphicImage value="/#{aplicacionBean.parametro.nombreCarpetaArchivos}/productos/#{i.producto.imagenChica}"
+                                    width="100%"
+                                    rendered="#{not empty i.producto.imagenChica}"/>
+                    <h:graphicImage name="image/noimage.png" styleClass="TexAlCenter MarAuto" width="100%"
+                                    rendered="#{empty i.producto.imagenChica}" />
+                </p:column>
+
+
+                <p:column headerText="Código" width="70"  styleClass="TexAlCenter"
+                          rendered="#{movimientoStockBean.muestroCampo('D','ARTCOD')}"  >
+
+                    <h:outputText value="#{i.producto.codigo}" rendered="#{not empty i.producto}" />
+                </p:column>
+
+                <p:column headerText="Producto" width="450"  >
+
+                    <div class="ui-inputgroup">
+                        <span class="ui-inputgroup-addon">
+                            <p:commandLink process="@this"
+                                           title="Buscar producto"
+                                           styleClass="Fs18 Fright" style="color: #0277bd; padding-left: 5px;"
+                                           update=":buscadorProducto"
+                                           oncomplete="PF('dlgProducto').show()" >
+                                <f:setPropertyActionListener value="#{i}" target="#{movimientoStockBean.item}" />
+                                <i class="fa fa-search" ></i>
+                            </p:commandLink>
+                        </span>
+
+
+                        <p:inputText value="#{i.producto.descripcion}" rendered="#{not empty i.producto}" readonly="true" />
+
+
+                        <h:panelGroup styleClass="ui-inputgroup-addon"
+                                      rendered="#{ movimientoStockBean.muestroCampo('D','STOCK')}" >
+
+                            <p:commandLink id="btnStock"
+                                           title="Ver stock"
+                                           styleClass="icono-link"
+                                           actionListener="#{consultaStock.verStockPorProductoDeposito(i.producto, movimientoStockBean.m.deposito)}"
+                                           process="@this"
+                                           update="buscadorStock"
+                                           oncomplete="PF('dlgStock').show()"
+                                           rendered="#{movimientoStockBean.m.tipoMovimiento ne 'T' and not empty i.producto and not empty movimientoStockBean.m.deposito}" >
+                                <i class="fa fa-cubes Blue" ></i>
+                                <f:setPropertyActionListener value="#{i}" target="#{movimientoStockBean.item}" />
+                            </p:commandLink>
+
+                            <p:commandLink id="btnStock2"
+                                           title="Ver stock"
+                                           styleClass="icono-link"
+                                           actionListener="#{consultaStock.verStockPorProductoDeposito(i.producto, movimientoStockBean.m.depositoTransferencia)}"
+                                           process="@this"
+                                           update="buscadorStock"
+                                           oncomplete="PF('dlgStock').show()"
+                                           rendered="#{movimientoStockBean.m.tipoMovimiento eq 'T' and not empty i.producto and not empty movimientoStockBean.m.depositoTransferencia }" >
+                                <i class="fa fa-cubes Blue" ></i>
+                                <f:setPropertyActionListener value="#{i}" target="#{movimientoStockBean.item}" />
+                            </p:commandLink>
+
+                        </h:panelGroup>
+
+                        <h:panelGroup styleClass="ui-inputgroup-addon">
+                            <bs:linkMenuSistema url="#{movimientoStockBean.obtenerUrlMenu('SIS_00138','CODIGO',i.producto.codigo)}" />
+
+                        </h:panelGroup>
+
+                    </div>
+
+                </p:column>
+
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}" width="120"
+                          rendered="#{movimientoStockBean.muestroCampo('D','NATRI1') and aplicacionBean.parametroStock.administraAtributo1 eq 'S'}" >
+
+                    <p:inputText value="#{i.atributo1}" rendered="#{not empty i.producto and i.producto.administraAtributo1 eq 'S'}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}" width="120"
+                          rendered="#{movimientoStockBean.muestroCampo('D','NATRI2') and aplicacionBean.parametroStock.administraAtributo2 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo2}" rendered="#{not empty i.producto and i.producto.administraAtributo2 eq 'S'}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo3}" width="120"
+                          rendered="#{movimientoStockBean.muestroCampo('D','NATRI3') and aplicacionBean.parametroStock.administraAtributo3 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo3}" rendered="#{not empty i.producto and i.producto.administraAtributo3 eq 'S'}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo4}" width="120"
+                          rendered="#{movimientoStockBean.muestroCampo('D','NATRI4') and aplicacionBean.parametroStock.administraAtributo4 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo4}" rendered="#{not empty i.producto and i.producto.administraAtributo4 eq 'S'}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo5}" width="120"
+                          rendered="#{movimientoStockBean.muestroCampo('D','NATRI5') and aplicacionBean.parametroStock.administraAtributo5 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo5}" rendered="#{not empty i.producto and i.producto.administraAtributo5 eq 'S'}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo6}" width="120"
+                          rendered="#{movimientoStockBean.muestroCampo('D','NATRI6') and aplicacionBean.parametroStock.administraAtributo6 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo6}" rendered="#{not empty i.producto and i.producto.administraAtributo6 eq 'S'}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo7}" width="120"
+                          rendered="#{movimientoStockBean.muestroCampo('D','NATRI7') and aplicacionBean.parametroStock.administraAtributo7 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo7}" rendered="#{not empty i.producto and i.producto.administraAtributo7 eq 'S'}" />
+                </p:column>
+
+                <p:column headerText="Cantidad" width="80"
+                          rendered="#{movimientoStockBean.muestroCampo('D','CANTID')}" >
+
+                    <p:inputText  value="#{i.cantidad}" styleClass="TexAlRight"
+                                  rendered="#{empty movimientoStockBean.m.id}">
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </p:inputText>
+
+                    <h:outputText value="#{i.cantidad}"  styleClass="Fright"
+                                  rendered="#{not empty movimientoStockBean.m.id}" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="U.M." width="75" style="text-align: center;"
+                          rendered="#{movimientoStockBean.muestroCampo('D','UNIMED')}" >
+                    <h:outputText  value="#{i.unidadMedida.codigo}" rendered="#{not empty i.producto}" />
+                </p:column>
+
+                <p:column headerText="Costo Rep." width="100"
+                          rendered="#{movimientoStockBean.muestroCampo('D','PREREP')}">
+
+                    <p:inputText id="txtPrecioImp" value="#{i.precio}" styleClass="TexAlRight" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Moneda" width="100" styleClass="TexAlCenter"
+                          rendered="#{movimientoStockBean.muestroCampo('D','MONPRD')}">
+
+                    <h:outputText value="#{i.producto.monedaReposicion.codigo}" />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <!--
+                    <p:commandButton icon="fa fa-plus" process="detalle" update="@form"
+                                     actionListener="#{movimientoStockBean.agregarItem(i)}"
+                                     rendered="#{not i.todoOk and empty i.id and not empty movimientoStockBean.m.deposito}" />
+                    <p:commandButton icon="fa fa-close" styleClass="RedBack" process="detalle" update="@form"
+                                     actionListener="#{movimientoFacturacionBean.eliminarItem(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar #{i.descripcion}?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    -->
+
+                    <p:commandLink id="btnAtri"
+                                   title="Ver Atributos"
+                                   rendered="#{not empty i.producto and movimientoStockBean.muestroCampo('D','DATR')}"
+                                   actionListener="#{consultaAtributosBean.verAtributosPorProducto(i.producto)}"
+                                   process="@this"
+                                   update="consultaAtributos"
+                                   oncomplete="PF('dlgConsultaAtributos').show()" >
+                        <i class="fa fa-archive fa-2x Orange" ></i>
+                    </p:commandLink>
+
+
+                    <p:commandLink process="detalle" update="@form"
+                                   actionListener="#{movimientoStockBean.eliminarItem(i)}"
+                                   rendered="#{empty movimientoStockBean.m.id }" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar #{(empty i.producto?'':i.producto.descripcion)}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10"></div>
+
+            <p:inputText id="txtCodigoBarra" style="margin-right:10px; max-width: 300px;" styleClass="Fs15"
+                         placeholder="Ingrese código de barra"
+                         value="#{movimientoStockBean.codigoBarra}" />
+
+            <p:commandButton id="btnBuscar" icon="fa fa-barcode" styleClass="GreenBack Fs15"
+                             actionListener="#{movimientoStockBean.procesarCodigoBarra}"
+                             process="@this,txtCodigoBarra"
+                             update="detalle,message,messageg,txtCodigoBarra" />
+            <p:defaultCommand target="btnBuscar"  />
+            <p:focus for="txtCodigoBarra" />
+
+            <div class="EmptyBox10"></div>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+</ui:composition>
+

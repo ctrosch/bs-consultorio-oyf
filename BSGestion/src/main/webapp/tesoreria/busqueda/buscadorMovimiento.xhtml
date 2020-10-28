@@ -1,0 +1,31 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorMovimientoTesoreria" header="Selección de movimientos de tesoreria" modal="true"
+              widgetVar="dlg_movimiento_tesoreria"
+              resizable="false"
+              draggable="false"
+              position="top"              
+              closable="false"
+              showEffect="fade" hideEffect="fade"
+              minHeight="500"
+              style="max-width: 900px;" responsive="true"
+              visible="#{reversionMovimientoTesoreriaBean.seleccionaMovimiento}">
+        
+            <h:form prependId="false" >
+                
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                <div class="EmptyBox10" />    
+
+                
+                
+            </h:form>
+
+        </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,102 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="2" layout="grid" style="max-width: 700px;"
+                 styleClass="ui-panelgrid-blank" >
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{mascaraContabilidadBean.mascara.codigo}"
+                     readonly="#{not mascaraContabilidadBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{mascaraContabilidadBean.mascara.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tablaCuenta" var="i" style="max-width: 700px;"
+                 value="#{mascaraContabilidadBean.mascara.items}"
+                 emptyMessage="No se encontraron resultados"
+                 resizableColumns="true" resizeMode="expand" liveResize="true"
+                 rows="50"  >
+
+        <f:facet name="footer" >
+
+            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                             actionListener="#{mascaraContabilidadBean.nuevoItem()}"
+                             value="Agregar item"
+                             process="tablaCuenta"
+                             update="tablaCuenta" />
+        </f:facet>
+
+        <p:column headerText="Cuenta contable" >
+
+            <div class="ui-inputgroup">
+                <p:autoComplete value="#{i.cuentaContable}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{cuentaContableBean.completeImputable}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                converter="#{conversoresContabilidad.cuentaContable}" >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                    <p:column headerText="Nro cuenta">
+                        <h:outputText value="#{p.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{p.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Imputable">
+                        <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                        <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+                    </p:column>
+
+                </p:autoComplete>
+                <span class="ui-inputgroup-addon">
+                    <bs:linkMenuSistema title="Ver Cuenta Contable"
+                                        url="#{mascaraContabilidadBean.obtenerUrlMenu('SIS_00420','NROCTA',i.cuentaContable.nrocta)}" />
+                </span>
+            </div>
+
+        </p:column>
+
+        <p:column headerText="Debe/Haber" width="100"  >
+
+            <p:selectOneMenu value="#{i.debeHaber}" style="min-width: 50px;"  requiredMessage="Seleccione debe/haber"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Debe" itemValue="D" />
+                <f:selectItem itemLabel="Haber" itemValue="H" />
+            </p:selectOneMenu>
+
+        </p:column>
+
+        <p:column headerText="" width="50" style="text-align: center;" >
+
+            <p:commandLink process="tablaCuenta" update="tablaCuenta,message,messageg"
+                           actionListener="#{mascaraContabilidadBean.eliminarItem(i)}" >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+    </p:dataTable>
+
+
+
+</ui:composition>
+

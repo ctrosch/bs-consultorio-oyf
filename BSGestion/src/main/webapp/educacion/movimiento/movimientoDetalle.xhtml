@@ -1,0 +1,129 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <div class="EmptyBox10" />
+    <!-- DETALLE -->
+    <p:tabView id="tb" activeIndex="#{movimientoEducacionBean.indexTab1}" rendered="#{not empty movimientoEducacionBean.m}">
+
+        <p:ajax event="tabChange" listener="#{movimientoEducacionBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Condiciones de pago"  >
+
+            <p:dataTable id="detalle" value="#{movimientoEducacionBean.m.itemsMovimiento}" var="i" styleClass="MaxWid1200"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <p:column headerText="Concepto" width="200"   >
+                    <h:outputText value="#{i.concepto.descripcion}"  />
+                </p:column>
+
+                <p:column headerText="Cantidad" width="80"   >
+                    <h:outputText value="#{i.cantidad}" styleClass="Fright"  >
+                        <f:convertNumber pattern="0" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Cuota Desde" width="80"   >
+                    <h:outputText value="#{i.cuotaDesde}" styleClass="Fright"  >
+                        <f:convertNumber pattern="0" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Cuota Hasta" width="80"   >
+                    <h:outputText value="#{i.cuotaHasta}" styleClass="Fright"  >
+                        <f:convertNumber pattern="0" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="P. Unitario" width="100"  >
+                    <!--
+                    <h:outputText value="#{i.precio}"  styleClass="Fright"  >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+                    -->
+
+                    <p:inputText value="#{i.precio}"  styleClass="TexAlRight"
+                                 readonly="#{not empty i.id or i.itemArancel.editaImporte eq 'N'}">
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <f:validateDoubleRange minimum="0" maximum="1000000" />
+                        <p:ajax event="keyup" delay="500"
+                                listener="#{movimientoEducacionBean.calcularImportes()}"
+                                process="@this"
+                                update="importeTotal,tb:detalleCuotas" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="% Bonificación" width="100"  >
+                    <p:inputText value="#{i.porcentaTotalBonificacion}"  styleClass="TexAlRight"  >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <f:validateDoubleRange minimum="0" maximum="100" />
+                        <p:ajax event="keyup" delay="500"
+                                listener="#{movimientoEducacionBean.calcularImportes()}"
+                                process="@this"
+                                update="importeTotal,tb:detalleCuotas" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Total" width="100"   >
+
+                    <h:outputText id="importeTotal" value="#{i.importe}" styleClass="Fright" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="Observaciones/Detalle" >
+                    <p:inputTextarea value="#{i.observaciones}" rows="1" />
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10"></div>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Detalle de cuotas"  >
+
+            <p:dataTable id="detalleCuotas" value="#{movimientoEducacionBean.m.itemsCuentaCorriente}" var="i" styleClass="MaxWid800"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items" >
+
+                <p:column headerText="Concepto" width="150"   >
+                    <h:outputText value="#{i.observaciones}"  />
+                </p:column>
+
+                <p:column headerText="Vencimiento" width="100"  >
+                    <h:outputText value="#{i.fechaVencimiento}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Cuota" width="80"   >
+                    <h:outputText value="#{i.cuota}" styleClass="Fright"  >
+                        <f:convertNumber pattern="0" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Importe" width="100"  >
+                    <h:outputText value="#{i.importe}"  styleClass="Fright"  >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+
+            </p:dataTable>
+
+            <div class="EmptyBox10"></div>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+</ui:composition>
+

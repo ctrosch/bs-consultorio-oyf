@@ -1,0 +1,181 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText  id="txtBusqueda" value="#{usuarioBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{usuarioBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{usuarioBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{usuarioBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+            <p:selectOneMenu value="#{usuarioBean.tipo}"
+                             converter="#{conversoresSeguridad.tipo}"
+                             effect="fade" filter="true" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{usuarioBean.buscar()}" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar Tipo" />
+                <f:selectItems value="#{tipoUsuarioBean.lista}" var="t" itemLabel="#{t.descripcion}" itemValue="#{t}" />
+            </p:selectOneMenu>
+
+            <p:selectOneMenu value="#{usuarioBean.estado}"
+                             converter="#{conversoresSeguridad.estado}"
+                             effect="fade" filter="true" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{usuarioBean.buscar()}" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar Estado" />
+                <f:selectItems value="#{estadoUsuarioBean.lista}" var="e" itemLabel="#{e.descripcion}" itemValue="#{e}" />
+            </p:selectOneMenu>
+
+            <p:autoComplete value="#{usuarioBean.sucursal}" dropdown="true" forceSelection="true"
+                            placeholder="Sucursal"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{sucursalBean.complete}"
+                            converter="#{conversoresGeneral.sucursal}"
+                            var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{usuarioBean.buscar()}" />
+            </p:autoComplete>
+
+            <p:autoComplete value="#{usuarioBean.grupo}" dropdown="true" forceSelection="true"
+                            placeholder="Grupo"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{grupoBean.complete}"
+                            var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                            converter="#{conversoresSeguridad.grupo}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{usuarioBean.buscar()}" />
+            </p:autoComplete>
+
+        </p:panelGrid>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{usuarioBean.lista}" var="e"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{usuarioBean.usuario}" rowKey="#{e}"
+                 rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{usuarioBean.onSelect}" update="@form" />
+
+        <p:column headerText="Usuario" width="100"
+                  sortBy="#{e.usuario}"   >
+            <h:outputText value="#{e.usuario}" />
+        </p:column>
+
+        <p:column headerText="Clave" width="100"
+                  sortBy="#{e.password}"   >
+            <h:outputText value="#{e.password}" />
+        </p:column>
+
+        <p:column headerText="Nombre" width="150"
+                  sortBy="#{e.nombre}" >
+            <h:outputText value="#{e.nombre}" />
+        </p:column>
+
+        <p:column headerText="E-mail" width="150"
+                  sortBy="#{e.email}" >
+            <h:outputText value="#{e.email}" />
+        </p:column>
+
+        <p:column headerText="Tipo" width="100"
+                  sortBy="#{e.tipo.descripcion}" >
+            <h:outputText value="#{e.tipo.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Estado" width="100"
+                  sortBy="#{e.estado.descripcion}" >
+            <h:outputText value="#{e.estado.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Sucursales" width="100" styleClass="TexAlCenter" >
+            <ui:repeat value="#{e.sucursales}" var="s" >
+                <h:outputText value="#{s.sucursal.codigo} "  />
+            </ui:repeat>
+        </p:column>
+
+        <p:column headerText="Grupos" width="100" styleClass="TexAlCenter" >
+            <ui:repeat value="#{e.grupos}" var="g" >
+                <h:outputText value="#{g.grupo.codigo} "  />
+            </ui:repeat>
+        </p:column>
+
+
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{usuarioBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{usuarioBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

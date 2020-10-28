@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Parametros de stock
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{parametroStockBean.guardar()}"
+                            rendered="#{not parametroStockBean.buscaMovimiento}"
+                            update="@form" />
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="6" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+                <bs:outputTexWhitLink value="Tipo de producto *"
+                                      url="#{parametroStockBean.obtenerUrlMenu('SIS_00139','CODIGO',parametroStockBean.parametro.tipoProducto.codigo)}" />
+
+                <p:selectOneMenu id="tipoProducto" value="#{parametroStockBean.parametro.tipoProducto}"
+                                 converter="#{conversoresStock.tipoProducto}"
+                                 required="true"
+                                 requiredMessage="Seleccione el tipo de producto" >
+                    <p:ajax update="rubro01, rubro02" process="@this" listener="#{parametroStockBean.limpiarCodigo}" />
+                    <f:selectItem itemLabel="Selecccionar" itemValue="" />
+                    <f:selectItems value="#{tipoProductoBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Rubro *" />
+                <p:selectOneMenu id="rubro01"
+                                 value="#{parametroStockBean.parametro.rubr01}"
+                                 converter="#{conversoresStock.rubro01}"
+                                 rendered="#{not empty parametroStockBean.parametro.tipoProducto}"
+                                 required="false"
+                                 requiredMessage="Seleccione el rubro" >
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{parametroStockBean.parametro.tipoProducto.rubro01}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Sub-Rubro *" />
+                <p:selectOneMenu id="rubro02"
+                                 value="#{parametroStockBean.parametro.rubr02}"
+                                 converter="#{conversoresStock.rubro02}"
+                                 rendered="#{not empty parametroStockBean.parametro.tipoProducto}"
+                                 required="false"
+                                 requiredMessage="Seleccione el sub-rubro" >
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{parametroStockBean.parametro.tipoProducto.rubro02}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Es Bien de Uso *" />
+                <p:selectOneMenu value="#{parametroStockBean.parametro.bienDeUso}" style="min-width: 50px;"
+                                 required="true" requiredMessage="Seleccione si gestiona stock"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneMenu>
+
+                <bs:outputTexWhitLink value="Unidad de medida *"
+                                      url="#{parametroStockBean.obtenerUrlMenu('SIS_00141','CODIGO',parametroStockBean.parametro.unidadDeMedida.codigo)}" />
+
+                <p:selectOneMenu value="#{parametroStockBean.parametro.unidadDeMedida}"
+                                 required="true" requiredMessage="Seleccione la unidad de medida"
+                                 converter="#{conversoresStock.unidadMedida}" filter="true"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{unidadMedidaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Concepto de Venta *" />
+                <p:selectOneMenu value="#{parametroStockBean.parametro.conceptoVenta}"
+                                 converter="#{conversoresVenta.conceptoVenta}">
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{parametroStockBean.conceptosVenta}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <bs:outputTexWhitLink value="Cuenta contable de venta *"
+                                      url="#{parametroStockBean.obtenerUrlMenu('SIS_00420','NROCTA',parametroStockBean.parametro.cuentaContableVenta.nrocta)}" />
+
+                <p:autoComplete value="#{parametroStockBean.parametro.cuentaContableVenta}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{cuentaContableBean.completeImputable}"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresContabilidad.cuentaContable}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Concepto de Compra *" />
+                <p:selectOneMenu value="#{parametroStockBean.parametro.conceptoCompra}"
+                                 converter="#{conversoresProveedor.conceptoProveedor}">
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{parametroStockBean.conceptosCompra}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <bs:outputTexWhitLink value="Cuenta contable de compra *"
+                                      url="#{parametroStockBean.obtenerUrlMenu('SIS_00420','NROCTA',parametroStockBean.parametro.cuentaContableCompra.nrocta)}" />
+
+                <p:autoComplete value="#{parametroStockBean.parametro.cuentaContableCompra}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{cuentaContableBean.completeImputable}"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresContabilidad.cuentaContable}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Gestiona Stock *" />
+                <p:selectOneMenu value="#{parametroStockBean.parametro.gestionaStock}" style="min-width: 50px;"
+                                 required="true" requiredMessage="Seleccione si gestiona stock"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Imprime cantidad *" />
+                <p:selectOneMenu value="#{parametroStockBean.parametro.imprimeCantidad}"  style="min-width: 50px;"
+                                 required="true" requiredMessage="Seleccione si imprime cantidad"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Garantía" />
+                <h:panelGroup layout="block" >
+                    <div class="Wid20 Responsive100 Fleft">
+                        <p:inputText value="#{parametroStockBean.parametro.garantia}" styleClass="TexAlRight" />
+                    </div>
+                    <div class="Wid80 Responsive100 Fright">
+                        <p:selectOneMenu value="#{parametroStockBean.parametro.unidadDeGarantia}"
+                                         required="false" requiredMessage="Seleccione la unidad de medida"
+                                         converter="#{conversoresStock.unidadMedida}" filter="true"  >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItems value="#{unidadMedidaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </h:panelGroup>
+
+                <h:outputText value="Stock mínimo " />
+                <p:inputText value="#{parametroStockBean.parametro.stockMinimo}"  />
+
+                <h:outputText value="Stock máximo " />
+                <p:inputText value="#{parametroStockBean.parametro.stockMaximo}"  />
+
+                <h:outputText value="Punto de pedido " />
+                <p:inputText value="#{parametroStockBean.parametro.puntoDePedido}"  />
+
+                <h:outputText value="Dias entrega " />
+                <p:inputText value="#{parametroStockBean.parametro.diasEntrega}"  />
+
+                <bs:outputTexWhitLink value="Unidad M. Peso"
+                                      url="#{parametroStockBean.obtenerUrlMenu('SIS_00141','CODIGO',parametroStockBean.parametro.unidadDePeso.codigo)}" />
+                <p:selectOneMenu value="#{parametroStockBean.parametro.unidadDePeso}"
+                                 required="false" requiredMessage="Seleccione la unidad de medida de peso"
+                                 converter="#{conversoresStock.unidadMedida}" filter="true"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{unidadMedidaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Moneda de reposición " />
+                <p:selectOneMenu value="#{parametroStockBean.parametro.monedaReposicion}"
+                                 required="true" requiredMessage="Seleccione la moneda de reposición"
+                                 converter="#{conversoresGeneral.moneda}"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <p:fieldset legend="Administración de atributos">
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:outputText value="Gestiona Atributo 1" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.administraAtributo1}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Gestiona Atributo 2" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.administraAtributo2}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Gestiona Atributo 3" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.administraAtributo3}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Gestiona Atributo 4" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.administraAtributo4}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Gestiona Atributo 5" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.administraAtributo5}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Gestiona Atributo 6" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.administraAtributo6}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Gestiona Atributo 7" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.administraAtributo7}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                    </p:panelGrid>
+
+                </p:fieldset>
+
+                <p:fieldset legend="Descripción de atributos">
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:outputText value="Descripción atributo 1:" />
+                        <p:inputText value="#{parametroStockBean.parametro.descripcionAtributo1}" />
+
+                        <h:outputText value="Descripción atributo 2:" />
+                        <p:inputText value="#{parametroStockBean.parametro.descripcionAtributo2}" />
+
+                        <h:outputText value="Descripción atributo 3:" />
+                        <p:inputText value="#{parametroStockBean.parametro.descripcionAtributo3}" />
+
+                        <h:outputText value="Descripción atributo 4:" />
+                        <p:inputText value="#{parametroStockBean.parametro.descripcionAtributo4}" />
+
+                        <h:outputText value="Descripción atributo 5:" />
+                        <p:inputText value="#{parametroStockBean.parametro.descripcionAtributo5}" />
+
+                        <h:outputText value="Descripción atributo 6:" />
+                        <p:inputText value="#{parametroStockBean.parametro.descripcionAtributo6}" />
+
+                        <h:outputText value="Descripción atributo 7:" />
+                        <p:inputText value="#{parametroStockBean.parametro.descripcionAtributo7}" />
+
+                    </p:panelGrid>
+
+                </p:fieldset>
+
+                <p:fieldset legend="Generación de código">
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:outputText value="Código de producto manual" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.codigoManual}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Cant. carácteres código" />
+                        <p:inputText value="#{parametroStockBean.parametro.caracteresParaGeneracionCodigo }" />
+
+                        <h:outputText value="Utilizar Tipo en código" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.utilizaTipoProductoGeneracionCodigo}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Utilizar Rubro en código" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.utilizaRubro1GeneracionCodigo}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Utilizar Sub Rubro en código" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.utilizaRubro2GeneracionCodigo}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+                        <h:outputText value="Utilizar Familia en código" />
+                        <p:selectOneRadio value="#{parametroStockBean.parametro.utilizaRubro3GeneracionCodigo}" >
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneRadio>
+
+
+                    </p:panelGrid>
+                </p:fieldset>
+
+            </p:panelGrid>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+        </ui:define>
+
+    </ui:composition>
+</html>
+

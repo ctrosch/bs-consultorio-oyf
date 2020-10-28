@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"      value="#{tareaBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{tareaBean.titulo}"/>
+
+            <f:viewParam name="SUCTA" value="#{tareaBean.SUCTA}"/>
+            <f:viewParam name="MODTA"  value="#{tareaBean.MODTA}"/>
+            <f:viewParam name="CODTA"  value="#{tareaBean.CODTA}"/>
+
+            <f:viewParam name="SUCTA" value="#{tareaBean.SUCTA}"/>
+            <f:viewParam name="MODTA"  value="#{tareaBean.MODTA}"/>
+            <f:viewParam name="CODTA"  value="#{tareaBean.CODTA}"/>
+
+            <f:viewParam name="SUCPR" value="#{tareaBean.SUCPR}"/>
+            <f:viewParam name="MODPR"  value="#{tareaBean.MODPR}"/>
+            <f:viewParam name="CODPR"  value="#{tareaBean.CODPR}"/>
+
+            <f:viewParam name="SUCPP" value="#{tareaBean.SUCPP}"/>
+            <f:viewParam name="MODPP"  value="#{tareaBean.MODPP}"/>
+            <f:viewParam name="CODPP"  value="#{tareaBean.CODPP}"/>
+
+            <f:viewParam name="SUCVC" value="#{tareaBean.SUCVC}"/>
+            <f:viewParam name="MODVC"  value="#{tareaBean.MODVC}"/>
+            <f:viewParam name="CODVC"  value="#{tareaBean.CODVC}"/>
+
+            <f:event type="preRenderView" listener="#{tareaBean.iniciarVariablesMantenimiento()}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{tareaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{tareaBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarProducto" process="@this" update="@form"
+                             actionListener="#{tareaBean.procesarProducto}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <ui:fragment rendered="#{tareaBean.modoVista eq 'B'}">
+                <ui:include src="movimientoBusqueda.xhtml"  />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{tareaBean.modoVista eq 'D'}">
+                <ui:include src="movimientoMenu.xhtml"  />
+                <ui:include src="movimientoDatos.xhtml"  />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{tareaBean.muestraReporte}"
+                               nombreArchivo="#{tareaBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/stock/busqueda/buscadorProducto.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorStock.xhtml" />
+            <ui:include src="/tarea/busqueda/buscadorOrdenesProduccion.xhtml" />
+            <ui:include src="/tarea/busqueda/buscadorProcesoProduccion.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

@@ -1,0 +1,74 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorDistribucion" header="Distribución por Centro de Costo" modal="true"
+              widgetVar="dlgDistribucion"
+              resizable="false"
+              draggable="false"
+              minHeight="400"
+              style="max-width: 800px;" responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaDistribucion" value="#{distribucionBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,centroCostoDistribucion" update="tablaDistribucion" listener="#{distribucionBean.buscar}"/>
+                </p:inputText>
+
+                <p:autoComplete id="centroCostoDistribucion" value="#{distribucionBean.centroCosto}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{centroCostoBean.complete}"
+                                var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                converter="#{conversoresContabilidad.centroCosto}" >
+
+                    <p:ajax event="itemSelect" process="@this,txtBusquedaDistribucion" update="tablaDistribucion" listener="#{distribucionBean.buscar}" />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{p.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{p.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaDistribucion" value="#{distribucionBean.lista}"  var="i"
+                         emptyMessage="No se encontraron datos"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         paginator="true" paginatorAlwaysVisible="false" rows="30"
+                         selectionMode="single" selection="#{distribucionBean.distribucion}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{distribucionBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgDistribucion').hide(), procesarDistribucion()" />
+
+                <p:column headerText="Centro de costo" sortBy="#{i.centroCosto.descripcion}"   >
+                    <h:outputText value="#{i.centroCosto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Código" sortBy="#{i.codigo}"  width="100"   >
+                    <h:outputText value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{i.descripcion}"   >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+
+
+            </p:dataTable>
+
+        </h:form>
+
+
+    </p:dialog>
+
+</ui:composition>

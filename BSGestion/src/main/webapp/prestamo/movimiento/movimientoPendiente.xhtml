@@ -1,0 +1,255 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank" >
+
+        <p:dataTable id="detalleCuotas"  style="max-width: 1000px;"
+                     rendered="#{empty movimientoPrestamoBean.m.debitosPrestamo}"
+                     value="#{movimientoPrestamoBean.m.prestamo.itemsPrestamo}" var="i"
+                     scrollable="true" scrollHeight="500" resizeMode="expand" liveResize="true" >
+
+            <p:column headerText="Cuota" width="50" styleClass="TexAlCenter" >
+                <h:outputText value="#{i.cuota}" />
+            </p:column>
+
+            <p:column headerText="Vencimiento" width="80" styleClass="TexAlCenter"
+                      sortBy="#{i.fechaVencimiento}" >
+                <h:outputText value="#{i.fechaVencimiento}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Capital" width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{i.capital}" styleClass="Fright"  >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Interés" width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{i.interes}" styleClass="Fright"  >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="G. Otorg." width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{i.gastosOtorgamiento}" styleClass="Fright"  >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Microseguro" width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{i.importeMicroseguros}" styleClass="Fright"  >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Total cuota" width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{i.totalCuota}" styleClass="Fright"  >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+        </p:dataTable>
+
+        <!-- SALDOS PENDIENTES -->
+        <p:dataTable id="tDebitos"  style="max-width: 1000px;"
+                     rendered="#{not empty movimientoPrestamoBean.m.debitosPrestamo}"
+                     value="#{movimientoPrestamoBean.m.debitosPrestamo}" var="d"
+                     scrollable="true" scrollHeight="500" resizeMode="expand" liveResize="true"
+                     emptyMessage="No se han encontrado cuotas pendientes">
+
+            <p:column headerText="Cuota" width="50" styleClass="TexAlCenter" >
+                <h:outputText value="#{d.cuotas}" />
+            </p:column>
+
+            <p:column headerText="Vencimiento" width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{d.fechaVencimiento}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Capital" width="80" styleClass="TexAlCenter"  >
+                <h:outputText value="#{d.capital}" styleClass="Fright" >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Intereses" width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{d.interes}" styleClass="Fright" >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Int. Mora" width="80" styleClass="TexAlCenter" >
+                <p:inputText value="#{d.interesMora}"
+                             style="text-align: right;" >
+                    <f:convertNumber pattern="#,##0.0000" />
+                    <p:ajax listener="#{movimientoPrestamoBean.modificaDebito(d)}" event="keyup" delay="500"
+                            update="importePendiente,message, messageg" />
+                </p:inputText>
+            </p:column>
+
+            <p:column headerText="G. Otorg." width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{d.gastosOtorgamiento}" styleClass="Fright"  >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Microseguro" width="80" styleClass="TexAlCenter" >
+                <h:outputText value="#{d.importeMicroseguros}" styleClass="Fright"  >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Total Cuota" width="80" styleClass="TexAlCenter" >
+
+                <h:outputText id="importePendiente" value="#{d.pendiente}" styleClass="Fright" >
+                    <f:convertNumber pattern="#,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+
+        </p:dataTable>
+
+        <h:panelGroup layout="block" >
+
+            <p:panelGrid columns="4" layout="grid"
+                         rendered="#{not empty movimientoPrestamoBean.m.prestamoReprogramado}"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <!--
+                <h:outputText value="Fecha Próxima Cuota"  />
+                <p:calendar id="fechaPrimerVencimiento"
+                            value="#{movimientoPrestamoBean.m.prestamoReprogramado.fechaEntrega}"
+                            disabled="#{movimientoPrestamoBean.m.prestamoReprogramado.estado.codigo ne 'A'}"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true" >
+                    <p:ajax process="@this" event="dateSelect" listener="#{movimientoPrestamoBean.generarCuotasReprogramacion}"
+                            update="detalleReprogramacion" />
+                </p:calendar>
+                -->
+
+                <h:outputText value="Cantidad de cuotas *" />
+                <p:inputText value="#{movimientoPrestamoBean.m.prestamoReprogramado.cantidadCuotas}" styleClass="TexAlRight"
+                             readonly="#{movimientoPrestamoBean.m.prestamoReprogramado.estado.codigo ne 'A'}">
+                    <p:ajax listener="#{movimientoPrestamoBean.generarCuotasReprogramacion()}" event="keyup" delay="500"
+                            update="detalleReprogramacion" />
+                </p:inputText>
+
+                <h:outputText value="Período de pago *" />
+                <p:autoComplete value="#{movimientoPrestamoBean.m.prestamoReprogramado.periodo}"  dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                disabled="#{movimientoPrestamoBean.m.prestamoReprogramado.estado.codigo ne 'A'}"
+                                completeMethod="#{periodoBean.complete}"
+                                required="true" requiredMessage="El período de pago es obligatorio"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresGeneral.periodo}" >
+
+                    <p:ajax event="itemSelect" process="@this" update="detalleReprogramacion"
+                            listener="#{movimientoPrestamoBean.generarCuotasReprogramacion()}" />
+                </p:autoComplete>
+
+                <h:outputText value="Períodos de gracia *" />
+                <p:inputText value="#{movimientoPrestamoBean.m.prestamoReprogramado.periodosGracia}" styleClass="TexAlRight"
+                             readonly="#{movimientoPrestamoBean.m.prestamoReprogramado.estado.codigo ne 'A'}">
+                    <p:ajax listener="#{movimientoPrestamoBean.generarCuotasReprogramacion}" event="keyup" delay="500"
+                            update="detalleReprogramacion" />
+                </p:inputText>
+
+                <h:outputText value="Gastos Otorgamiento" />
+                <p:inputText value="#{movimientoPrestamoBean.m.prestamoReprogramado.gastosOtorgamiento}" styleClass="TexAlRight"
+                             readonly="#{movimientoPrestamoBean.m.prestamoReprogramado.estado.codigo ne 'A'}" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax listener="#{movimientoPrestamoBean.generarCuotasReprogramacion}" event="keyup" delay="500"
+                            update="detalleReprogramacion" />
+                </p:inputText>
+
+                <h:outputText value="Microseguro" />
+                <p:inputText value="#{movimientoPrestamoBean.m.prestamoReprogramado.importeMicroseguros}" styleClass="TexAlRight"
+                             readonly="#{movimientoPrestamoBean.m.prestamoReprogramado.estado.codigo ne 'A'}" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax listener="#{movimientoPrestamoBean.generarCuotasReprogramacion}" event="keyup" delay="500"
+                            update="detalleReprogramacion" />
+                </p:inputText>
+
+            </p:panelGrid>
+
+            <p:dataTable id="detalleReprogramacion" var="i" style="max-width: 700px;"
+                         value="#{movimientoPrestamoBean.m.prestamoReprogramado.itemsPrestamo}"
+                         rendered="#{not empty movimientoPrestamoBean.m.prestamoReprogramado}"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         paginator="true" paginatorAlwaysVisible="false" rows="50" >
+
+                <f:facet name="header">
+                    <h:outputText value="Reprogramación" />
+                </f:facet>
+
+                <p:column headerText="Cuota" width="50" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.cuota}" />
+                </p:column>
+
+                <p:column headerText="Vencimiento" styleClass="TexAlCenter"
+                          sortBy="#{i.fechaVencimiento}" >
+                    <h:outputText value="#{i.fechaVencimiento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Capital" width="70" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.capital}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Interés" width="70" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.interes}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="G. Otorg." width="70" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.gastosOtorgamiento}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Microseguro" width="70" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.importeMicroseguros}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Total cuota" width="70" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.totalCuota}" styleClass="Fright"  >
+                        <f:convertNumber pattern="#,###,##0.0000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:columnGroup type="footer">
+                    <p:row>
+                        <p:column colspan="2" style="text-align:right" footerText="Totales:" />
+                        <p:column footerText="#{movimientoPrestamoBean.m.prestamoReprogramado.importeCapital}" />
+                        <p:column footerText="#{movimientoPrestamoBean.m.prestamoReprogramado.importeInteres}" />
+                        <p:column footerText="#{movimientoPrestamoBean.m.prestamoReprogramado.gastosOtorgamiento}" />
+                        <p:column footerText="#{movimientoPrestamoBean.m.prestamoReprogramado.importeMicroseguros }" />
+                        <p:column footerText="#{movimientoPrestamoBean.m.prestamoReprogramado.importeTotal}" />
+                    </p:row>
+                </p:columnGroup>
+
+            </p:dataTable>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>
+

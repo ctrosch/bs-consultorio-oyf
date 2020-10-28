@@ -1,0 +1,128 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- CENTRO COSTO -->
+    <p:dialog id="centroCosto" header="Imputación por Centro de Costo" modal="true"
+              widgetVar="dlgCentroCostoTesoreria"
+              resizable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 900px;" responsive="true" >
+
+        <p:dataTable id="tablaCentroCosto" value="#{movimientoTesoreriaBean.itemMovimiento.itemsCentroCosto}" var="d"
+                     resizeMode="expand" liveResize="true"
+                     rowStyleClass="#{d.conError  ? 'conError' : null}"
+                     rowExpandMode="single"
+                     style="max-width: 650px;">
+
+            <p:ajax event="rowToggle" listener="#{movimientoTesoreriaBean.onRowToggle}"
+                    update="tablaSubCuentas" />
+
+            <p:column headerText="Código" width="100" styleClass="TexAlCenter"  >
+                <h:outputText value="#{d.centroCosto.codigo}" />
+            </p:column>
+
+            <p:column headerText="Centro Costo" width="170" >
+                <h:outputText value="#{d.centroCosto.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Distribución" width="170" >
+                <h:outputText value="#{d.distribucion.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Detalle" width="60" styleClass="TexAlCenter" >
+                <p:rowToggler  />
+            </p:column>
+
+            <p:rowExpansion>
+
+                <div class="Wid90 Fright MarAuto WidAutoOnMobile">
+
+                    <p:dataTable id="tablaSubCuentas" value="#{d.subCuentas}" var="s"
+                                 resizeMode="expand" liveResize="true"
+                                 rowStyleClass="#{s.conError  ? 'conError' : null}" >
+
+                        <!--
+                        <f:facet name="header">
+                            <h:outputText value="Imputación por Sub-Cuentas" />
+                        </f:facet>
+                        -->
+
+                        <f:facet name="footer" >
+
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             actionListener="#{movimientoTesoreriaBean.nuevoItemSubCuenta(d)}"
+                                             immediate="true"
+                                             value="Agregar Sub Cuenta"
+                                             process="tablaSubCuentas"
+                                             update="tablaSubCuentas" />
+
+                        </f:facet>
+
+                        <p:column headerText="Sub Cuenta" width="200" >
+
+                            <p:autoComplete value="#{s.subCuenta}" dropdown="true"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{movimientoTesoreriaBean.completeSubCuenta}"
+                                            var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                                            converter="#{conversoresContabilidad.subCuenta}" >
+
+                                <p:ajax event="itemSelect" process="@this" update="tablaSubCuentas" />
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{p.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Descripción">
+                                    <h:outputText value="#{p.descripcion}" />
+                                </p:column>
+
+                            </p:autoComplete>
+
+                        </p:column>
+
+                        <p:column headerText="Porcentaje" width="80" >
+                            <p:inputText value="#{s.porcentaje}" styleClass="TexAlRight"
+                                         rendered="#{not empty s.subCuenta}"  >
+                                <f:convertNumber pattern="##0.00" />
+                                <p:ajax event="keyup" delay="500"
+                                        process="@this"
+                                        update="importe"
+                                        listener="#{movimientoTesoreriaBean.calcularImportes}" />
+
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="Importe" width="80" >
+                            <p:inputText id="importe" value="#{s.importe}" required="true" styleClass="TexAlRight"
+                                         rendered="#{not empty s.subCuenta}"  >
+                                <f:convertNumber pattern="###,###,##0.0000" />
+                                <p:ajax event="keyup" delay="500"  process="@this" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="" width="50" style="text-align: center;" >
+
+                            <p:commandLink process="tablaSubCuentas" update="tablaSubCuentas,message,messageg"
+                                           actionListener="#{movimientoTesoreriaBean.eliminarItemSubCuenta(d, s)}" >
+                                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                                <i class="fa fa-close fa-2x Red" ></i>
+                            </p:commandLink>
+
+                        </p:column>
+                    </p:dataTable>
+                </div>
+
+            </p:rowExpansion>
+
+        </p:dataTable>
+
+    </p:dialog>
+
+
+</ui:composition>
+

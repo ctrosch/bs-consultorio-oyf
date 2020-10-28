@@ -1,0 +1,496 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <p:accordionPanel id="accordion" widgetVar="accordion" >
+
+        <p:tab title="Filtros">
+
+            <p:panelGrid id="informePanelGrid" columns="4" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <h:outputText value="Fecha formulario" />
+                <h:panelGroup layout="block">
+
+                    <div class="Wid50 Fleft">
+                        <p:calendar value="#{movimientoFacturacionBean.fechaMovimientoDesde}"
+                                    placeholder="Desde"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true" >
+                            <p:ajax event="dateSelect" process="@this" update="tblGrupo"
+                                    oncomplete="PF('accordion').select(1)"
+                                    listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}" />
+                        </p:calendar>
+                    </div>
+                    <div class="Wid50 Fright">
+                        <p:calendar value="#{movimientoFacturacionBean.fechaMovimientoHasta}"
+                                    placeholder="Hasta"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect"  process="@this" update="tblGrupo"
+                                    oncomplete="PF('accordion').select(1)"
+                                    listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}" />
+                        </p:calendar>
+                    </div>
+                </h:panelGroup>
+
+                <h:outputText value="Número formulario" />
+                <h:panelGroup layout="block" >
+
+                    <div class="Wid50 Fleft">
+                        <p:inputText value="#{movimientoFacturacionBean.numeroFormularioDesde}"  placeholder="Desde">
+                            <p:ajax event="keyup" delay="500" process="@this" update="tblGrupo"
+                                    oncomplete="PF('accordion').select(1)"
+                                    listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}"/>
+                        </p:inputText>
+                    </div>
+
+                    <div class="Wid50 Fright">
+                        <p:inputText value="#{movimientoFacturacionBean.numeroFormularioHasta}"  placeholder="Hasta" >
+                            <p:ajax event="keyup" delay="500" process="@this" update="tblGrupo"
+                                    oncomplete="PF('accordion').select(1)"
+                                    listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}"/>
+                        </p:inputText>
+                    </div>
+
+                </h:panelGroup>
+
+                <h:outputText value="Cliente" />
+                <p:autoComplete value="#{movimientoFacturacionBean.cliente}" dropdown="true"
+                                placeholder="Seleccionar"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{clienteBean.complete}"
+                                var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="tblGrupo"
+                            oncomplete="PF('accordion').select(1)"
+                            listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}" />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Canal de Venta"
+                              rendered="#{movimientoFacturacionBean.muestroCampo('B','CANVTA')}" />
+                <p:autoComplete value="#{movimientoFacturacionBean.canalVenta}" dropdown="true" placeholder="Seleccionar"
+                                rendered="#{movimientoFacturacionBean.muestroCampo('B','CANVTA')}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{canalVentaBean.complete}"
+                                var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                converter="#{conversoresVenta.canalVenta}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="tblGrupo"
+                            oncomplete="PF('accordion').select(1)"
+                            listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}" />
+                </p:autoComplete>
+
+                <h:outputText value="Vendedor"
+                              rendered="#{movimientoFacturacionBean.muestroCampo('B','VNDDOR')}" />
+                <p:autoComplete value="#{movimientoFacturacionBean.vendedor}" dropdown="true" placeholder="Seleccionar"
+                                rendered="#{movimientoFacturacionBean.muestroCampo('B','VNDDOR')}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{vendedorBean.complete}"
+                                var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                converter="#{conversoresVenta.vendedor}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="tblGrupo"
+                            oncomplete="PF('accordion').select(1)"
+                            listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}" />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{l.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{l.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Repartidor"
+                              rendered="#{movimientoFacturacionBean.muestroCampo('B','REPDOR')}" />
+                <p:autoComplete value="#{movimientoFacturacionBean.repartidor}" dropdown="true" placeholder="Seleccionar"
+                                rendered="#{movimientoFacturacionBean.muestroCampo('B','REPDOR')}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{repartidorBean.complete}"
+                                var="l" itemLabel="#{l.nombre}" itemValue="#{l}"
+                                converter="#{conversoresVenta.repartidor}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="tblGrupo"
+                            oncomplete="PF('accordion').select(1)"
+                            listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}" />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{l.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{l.nombre}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Mantiene precios originales "
+                              rendered="#{movimientoFacturacionBean.muestroCampo('B','CONGEL')}"  />
+                <p:selectBooleanCheckbox value="#{movimientoFacturacionBean.congelaPrecio}"
+                                         rendered="#{movimientoFacturacionBean.muestroCampo('B','CONGEL')}" >
+                    <p:ajax event="change" process="@this" update="tblGrupo"
+                            oncomplete="PF('accordion').select(1)"
+                            listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}"  />
+                </p:selectBooleanCheckbox>
+
+                <h:outputText value="Mantiene cotización original "
+                              rendered="#{movimientoFacturacionBean.muestroCampo('B','CONCOT')}"  />
+                <p:selectBooleanCheckbox value="#{movimientoFacturacionBean.congelaCotizacion}"
+                                         rendered="#{movimientoFacturacionBean.muestroCampo('B','CONCOT')}"   >
+                    <p:ajax event="change" process="@this" update="tblGrupo"
+                            oncomplete="PF('accordion').select(1)"
+                            listener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}"  />
+                </p:selectBooleanCheckbox>
+
+            </p:panelGrid>
+
+            <div class="EmptyBox20"></div>
+
+            <div class="Wid100 TexAlCenter informePanelGrid900" >
+
+                <p:commandButton value="Buscar pendientes" icon="fa fa-search" styleClass="GreenBack" style="width:auto"
+                                 actionListener="#{movimientoFacturacionBean.seleccionarMovimientosPendientes()}"
+                                 process="@this"
+                                 oncomplete="PF('accordion').select(1)"
+                                 update="tblGrupo" >
+                </p:commandButton>
+
+                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                                 actionListener="#{movimientoFacturacionBean.limpiarFiltroPendiente()}"
+                                 update="@form" >
+                </p:commandButton>
+
+            </div>
+
+
+
+        </p:tab>
+
+        <p:tab title="Clientes">
+
+            <p:dataTable id="tblGrupo" value="#{movimientoFacturacionBean.movimientosPendientes}"  var="m"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         scrollable="true" scrollHeight="250"
+                         emptyMessage="No se encontraron documentos - HAGA CLIC EN BUSCAR PENDIENTES"  >
+
+                <p:column headerText="" width="60" style="text-align: center;" >
+
+                    <p:commandLink id="seleMovim" styleClass="icono-datatable"
+                                   actionListener="#{movimientoFacturacionBean.seleccionarItemPendiente(m, true)}"
+                                   process="@this"
+                                   update="@form"
+                                   oncomplete="PF('accordion').select(2)" >
+                        <i class="fa fa-check fa-2x Green" ></i>
+                    </p:commandLink>
+
+                    <!--
+                                                        <p:commandButton icon="fa fa-search" id="seleMovim"
+
+                                                                         update="@form" process="@this"
+                                                                         oncomplete="PF('accordion').select(1)" />
+                    -->
+                </p:column>
+
+                <p:column headerText="Cliente"  width="200" >
+                    <h:outputText value="#{m.cliente.nrocta} - #{m.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Condición Pago"  width="100" >
+                    <h:outputText value="#{m.condicionDePago.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Transporte" width="200"  >
+                    <h:outputText value="#{m.transporte.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Canal de Venta" width="200"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('B','CANVTA')}" >
+                    <h:outputText value="#{m.canalVenta.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Sucursal" width="200"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('B','CODSUC')}" >
+                    <h:outputText value="#{m.sucursal.nombre}" />
+                </p:column>
+
+                <p:column headerText="Moneda Reg." width="50"  >
+                    <h:outputText value="#{m.monedaRegistracion.codigo}" />
+                </p:column>
+
+                <p:column headerText="Cotizacion" width="50" style="text-align: right;"
+                          rendered="#{movimientoFacturacionBean.congelaCotizacion}"  >
+                    <h:outputText value="#{m.cotizacion}" >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Cant. Pendientes" width="80" style="text-align: right;" >
+                    <h:outputText value="#{m.pendiente}" styleClass="TexAlRight" >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+
+            </p:dataTable>
+        </p:tab>
+
+        <p:tab title="Productos">
+
+            <p:dataTable id="tblDetalle" value="#{movimientoFacturacionBean.itemsPendiente}" var="i"
+                         scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items pendientes" >
+
+                <f:facet name="header" >
+
+                    <div class="Wid100" >
+
+                        <p:inputText id="txtCodigoBarraP" style="margin-right:10px; max-width: 300px;" styleClass="Fs15 WhiteBack"
+                                     placeholder="Ingrese código de barra"
+                                     value="#{movimientoFacturacionBean.codigoBarraPendiente}" />
+
+                        <p:commandButton id="btnBuscarP" icon="fa fa-barcode" styleClass="GreenBack Fs15"
+                                         actionListener="#{movimientoFacturacionBean.procesarCodigoBarraPendiente()}"
+                                         process="@this,txtCodigoBarraP"
+                                         update="tblDetalle,txtCodigoBarraP,message" />
+                        <p:defaultCommand target="btnBuscarP"  />
+                        <p:focus for="txtCodigoBarraP" />
+
+                        <p:commandLink id="infoCodigoBarraP" styleClass="Fs20" action="#">
+                            <i class="fa fa-info-circle White" />
+                        </p:commandLink>
+                        <p:tooltip id="toolTipInfoCodigoBarraP" for="infoCodigoBarraP" position="top" >
+                            <p>Ingrese el código del producto o código de barra(espacio)cantidad"</p>
+                        </p:tooltip>
+
+                    </div>
+
+                </f:facet>
+
+                <!--
+                <p:column headerText="Detalle" width="30" styleClass="TexAlCenter" >
+                    <p:rowToggler  />
+                </p:column>
+                -->
+
+                <p:column headerText="Comprobante" width="80" styleClass="TexAlCenter" >
+
+                    <h:outputText value="#{i.codfor}" />
+                    <h:outputText value="-" />
+                    <h:outputText value="#{i.nrofor}" >
+                        <f:convertNumber pattern="00000000"  />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Fecha" width="80" styleClass="TexAlCenter">
+                    <h:outputText value="#{i.fchmov}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Código" width="80" styleClass="TexAlCenter">
+                    <h:outputText value="#{i.producto.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="300" >
+                    <h:outputText value="#{i.descripcion}" />
+                    <br/>
+                    <h:outputText value="#{i.observacion}" />
+                </p:column>
+
+                <p:column headerText="Cant. Pdte." width="80" style="text-align: right;"  >
+                    <h:outputText value="#{i.cantidad}" style="text-align: right" >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column width="20" style="text-align: center; " >
+                    <f:facet name="header">
+                        <p:selectBooleanCheckbox value="#{movimientoFacturacionBean.seleccionaTodo}" >
+                            <p:ajax event="change" listener="#{movimientoFacturacionBean.seleccionarTodo}"
+                                    update="tblDetalle" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </f:facet>
+
+                    <p:selectBooleanCheckbox id="seleccionado" value="#{i.seleccionado}" >
+                        <p:ajax event="change" listener="#{movimientoFacturacionBean.seleccionarItemPendiente(i)}"
+                                process="@this"
+                                update="cantidadSeleccionada" />
+                    </p:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="Cant Sel." width="80" style="text-align: right;"  >
+
+
+                    <p:inputText id="cantidadSeleccionada" value="#{i.cantidadSeleccionada}" style="text-align: right" >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                        <p:ajax listener="#{movimientoFacturacionBean.modificarCantidadSeleccionada(i)}" event="keyup" delay="500"
+                                process="@this" update="seleccionado"  />
+                    </p:inputText>
+
+                    <!--
+                    <p:spinner id="cantidadSeleccionada" value="#{i.cantidadSeleccionada}"  style="text-align: right;"
+                               onkeyup="procesarCantidadP()" min="0" max="#{i.cantidad}" stepFactor="0.01" >
+
+                        <p:ajax listener="#{movimientoFacturacionBean.modificarCantidadSeleccionada(i)}"
+                                process="@this" update="seleccionado" />
+                    </p:spinner>
+                    -->
+
+                    <p:remoteCommand name="procesarCantidadP"
+                                     process="cantidadSeleccionada"
+                                     update="seleccionado"
+                                     actionListener="#{movimientoFacturacionBean.modificarCantidadSeleccionada(i)}" />
+                </p:column>
+
+                <p:column headerText="U.M." width="50" style="text-align: center;">
+                    <h:outputText value="#{i.unidadMedida.codigo}" />
+                </p:column>
+
+                <p:column headerText="Cód. Proveedor" width="80" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.producto.codigoProveedor}" />
+                </p:column>
+
+                <p:column headerText="Pcio Unit" width="80" style="text-align: right;"  >
+                    <h:outputText value="#{i.precio}" style="text-align: right" >
+                        <f:convertNumber pattern="#,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Bonif." width="80" style="text-align: right;"  >
+                    <h:outputText value="#{i.porcentajeBonificacion1}" style="text-align: right" >
+                        <f:convertNumber pattern="#,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Pcio Total" width="80" style="text-align: right;"  >
+                    <h:outputText value="#{i.cantidad*(i.precio-(i.porcentajeBonificacion1*i.precio/100))}" style="text-align: right" >
+                        <f:convertNumber pattern="#,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+
+
+                <p:rowExpansion>
+
+                    <div class="Wid80 Fright MarAuto WidAutoOnMobile">
+
+                        <p:panelGrid columns="6" layout="grid"
+                                     styleClass="ui-panelgrid-blank">
+
+                            <h:outputText value="Formulario" />
+                            <h:outputText value="#{i.codfor}" />
+
+                            <h:outputText value="Numero" />
+                            <h:outputText value="#{i.nrofor}" >
+                                <f:convertNumber pattern="00000000"  />
+                            </h:outputText>
+
+                            <h:outputText value="Fecha" />
+                            <h:outputText value="#{i.fchmov}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+
+
+                        </p:panelGrid>
+                    </div>
+
+                </p:rowExpansion>
+
+            </p:dataTable>
+
+            <div class="EmptyBox20" />
+
+            <div class="Wid100 TexAlCenter">
+
+                <p:commandButton icon="ui-icon-check"  value="Finalizar" styleClass="MaxWid500 GreenButton"
+                                 process="@form" update="@form :formulario"
+                                 rendered="#{not empty movimientoFacturacionBean.itemsPendiente}"
+                                 actionListener="#{movimientoFacturacionBean.finalizarProcesoSeleccionPendiente()}" />
+
+
+            </div>
+
+        </p:tab>
+
+    </p:accordionPanel>
+
+    <div class="EmptyBox20" />
+
+    <p:dialog id="dlgCantidad" header="Ingrese Cantidad" modal="true" style="width: 800px; " width="600"
+              widgetVar="dlgCantidad"
+              resizable="false"
+              draggable="false"
+              position="center"
+              closable="true"
+              showEffect="fade" hideEffect="fade" >
+
+        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank Wid600 MaxWid600"
+                     rendered="#{not empty movimientoFacturacionBean.itemPendiente}"
+                     columnClasses="ui-g-6 ui-md-5 ui-lg-5,ui-g-6 ui-md-7 ui-lg-7" >
+
+            <h:outputText value="Producto" />
+            <p:inputText value="#{movimientoFacturacionBean.itemPendiente.producto.descripcion}"
+                         disabled="true"
+                         readonly="true" />
+
+            <h:outputText value="Cantidad Pendiente" />
+            <p:inputText value="#{movimientoFacturacionBean.itemPendiente.cantidad}" styleClass="TexAlRight"
+                         disabled="true"
+                         readonly="true" >
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+
+            <h:outputText value="Cantidad a Confirmar" />
+            <p:inputText id="dlgCantidadSeleccionada" styleClass="TexAlRight"
+                         value="#{movimientoFacturacionBean.itemPendiente.cantidadSeleccionada}"  >
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+
+        </p:panelGrid>
+
+        <p:focus for="dlgCantidadSeleccionada" />
+
+        <div class="EmptyBox20" />
+
+        <div class="Wid100 TexAlCenter">
+
+            <p:commandButton icon="ui-icon-check"  value="Confirmar" styleClass="MaxWid400 GreenButton"
+                             process="@form"
+                             update="@form"
+                             actionListener="#{movimientoFacturacionBean.modificarCantidadSeleccionada(movimientoFacturacionBean.itemPendiente)}"
+                             oncomplete="PF('dlgCantidad').hide()"
+                             />
+
+        </div>
+
+        <div class="EmptyBox10" />
+
+    </p:dialog>
+
+
+</ui:composition>

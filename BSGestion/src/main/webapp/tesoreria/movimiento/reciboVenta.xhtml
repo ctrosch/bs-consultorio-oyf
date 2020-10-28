@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{reciboBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{reciboBean.titulo}"/>
+
+            <f:viewParam name="SUCURS" value="#{reciboBean.SUCCJ}"/>
+            <f:viewParam name="SUCCJ" value="#{reciboBean.SUCCJ}"/>
+            <f:viewParam name="CODCJ"  value="#{reciboBean.CODCJ}"/>
+            <f:viewParam name="CODVT"  value="#{reciboBean.CODVT}"/>
+
+            <f:event type="preRenderView" listener="#{reciboBean.iniciarVariables()}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{reciboBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{reciboBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu-right">
+            <p:commandLink actionListener="#{reciboBean.addFavorito()}"
+                           process="@this"
+                           update="message,messageg"
+                           styleClass="Fs30 Fright" style="color: #0277bd;padding-right: 5px;" >
+                <i class="fa fa-star" ></i>
+            </p:commandLink>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <ui:include src="reciboVentaMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{reciboBean.modoVista eq 'B'}" >
+                <ui:include src="reciboVentaBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{reciboBean.modoVista eq 'D'}" >
+                <ui:include src="reciboVentaDatos.xhtml" />
+
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-g-12 ui-lg-10,ui-g-12 ui-lg-2"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <p:tabView id="tb" activeIndex="#{reciboBean.indexTab1}"
+                               rendered="#{not empty reciboBean.m and not empty reciboBean.m.entidad}"  >
+
+                        <p:ajax event="tabChange" listener="#{reciboBean.onTab1Change}" />
+
+                        <p:tab id="t0" title="Saldos" >
+
+                            <ui:include src="reciboVentaPendiente.xhtml" />
+
+                            <ui:include src="reciboVentaAplicaciones.xhtml" />
+
+                        </p:tab>
+
+                        <p:tab id="t1" title="Conceptos de Cobro" >
+                            <ui:include src="reciboVentaConcepto.xhtml" />
+                        </p:tab>
+                    </p:tabView>
+
+                    <ui:include src="reciboVentaTotales.xhtml" />
+
+                </p:panelGrid>
+
+
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reciboBean.muestraReporte}"
+                               nombreArchivo="#{reciboBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <!-- ENVIO COMPROBANTE -->
+            <bs:envioComprobante solicitaEmail="#{reciboBean.solicitaEmail}"
+                                 email="#{reciboBean.emailEnvioComprobante}"
+                                 informacionAdicional ="#{reciboBean.informacionAdicional}"
+                                 actionListener="#{reciboBean.enviarNotificaciones()}"  />
+
+            <ui:include src="/tesoreria/busqueda/buscadorFormulario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

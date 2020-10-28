@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{reporteService.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{reporteService.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{reporteService.iniciarVariables()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:panelGrid id="informePanelGrid" columns="4" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <h:outputText value="Fecha de reservas"  />
+                <p:calendar  value="#{reporteService.fecha}"
+                             pattern="dd/MM/yyyy"
+                             showOn="button"
+                             navigator="true"
+                             mask="true">
+                    <p:ajax event="dateSelect"  process="@this" />
+                </p:calendar>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                 actionListener="#{reporteService.verReporte}"
+                                 update="@form"  />
+
+                <p:commandButton value="A Excel" icon="fa fa-file-excel-o" styleClass="GreenBack"
+                                 actionListener="#{reporteService.reporteToXls}"
+                                 update="@form"
+                                 ajax="false" />
+
+                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack"
+                                 actionListener="#{reporteService.limpiarFiltros()}"
+                                 process="@this"
+                                 update="@form" />
+
+            </p:panelGrid>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

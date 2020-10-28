@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{movimientoContabilidadBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoContabilidadBean.titulo}"/>
+            <f:viewParam name="SUCCG" value="#{movimientoContabilidadBean.SUCCG}"/>
+            <f:viewParam name="CODCG"  value="#{movimientoContabilidadBean.CODCG}"/>
+            <f:event type="preRenderView" listener="#{movimientoContabilidadBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoContabilidadBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{movimientoContabilidadBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{movimientoContabilidadBean.nuevaBusqueda}"
+                            immediate="true"
+                            update="@form" />
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            action="#{movimientoContabilidadBean.nuevo()}"
+                            process="@this"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{movimientoContabilidadBean.guardar(false)}"
+                            rendered="#{empty movimientoContabilidadBean.m.id }"
+                            update="@form" />
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            actionListener="#{movimientoContabilidadBean.imprimir}"
+                            rendered="#{not empty movimientoContabilidadBean.m.id}"
+                            process="@this" >
+                </p:menuitem>
+
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarCuentaContable" process="@this" update="detalle"
+                             actionListener="#{movimientoContabilidadBean.procesarCuentaContable()}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoContabilidadBean.muestraReporte}"
+                               nombreArchivo="#{movimientoContabilidadBean.nombreArchivo}" />
+
+            <ui:fragment rendered="#{movimientoContabilidadBean.modoVista eq 'B'}" >
+                <ui:include src="movimientoBusqueda.xhtml" />
+                <div class="EmptyBox10" />
+            </ui:fragment>
+
+
+            <ui:fragment rendered="#{not empty movimientoContabilidadBean.m and movimientoContabilidadBean.modoVista eq 'D'}" >
+
+                <ui:include src="movimientoDatos.xhtml" />
+                <div class="EmptyBox10" />
+                <ui:include src="movimientoDetalle.xhtml"  />
+
+            </ui:fragment>
+
+
+
+
+
+            <div class="EmptyBox10" />
+
+            <ui:include src="movimientoCentroCosto.xhtml" />
+
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <p:dialog id="dlgImportar" header="Importar Archivo" modal="true" style="width: 800px; " width="600"
+                      widgetVar="dlgImportar"
+                      resizable="false"
+                      draggable="false"
+                      position="center"
+                      closable="true"
+                      showEffect="fade" hideEffect="fade" >
+
+
+
+                <h:form prependId="false" enctype="multipart/form-data" >
+
+                    #{request.contextPath}/contabilidad/movimiento/modelo-importador-aisento.xlsx
+
+                    <p:commandButton ajax="false"  icon="fa fa-download"  >
+                        <p:fileDownload value="#{request.contextPath}/contabilidad/movimiento/modelo-importador-aisento.xlsx" />
+                    </p:commandButton>
+
+                    <div class="EmptyBox10" />
+
+                    <p:fileUpload fileUploadListener="#{movimientoContabilidadBean.importarExcel}"
+                                  mode="advanced"
+                                  label="Buscar" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                                  invalidFileMessage="Formato inválido, solo se permiten archivos xls o xlsx"
+                                  invalidSizeMessage="El tamaño del archivo es muy grande, debe ser menor a 9MB"
+                                  fileLimit="2"
+                                  update="formulario"
+                                  auto="true" dragDropSupport="true"
+                                  sizeLimit="9000000" allowTypes="/(\.|\/)(xls|xlsx)$/" />
+                </h:form>
+
+            </p:dialog>
+
+
+
+
+            <ui:include src="/contabilidad/busqueda/buscadorCuentaContable.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

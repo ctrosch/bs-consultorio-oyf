@@ -1,0 +1,65 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar"/>
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{cuentaContableBean.buscar()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{cuentaContableBean.nuevo()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+        </p:menuitem>
+
+        <p:menuitem value="Nuevo item" icon="fa fa-arrow-down"
+                    actionListener="#{cuentaContableBean.nuevoHijo(cuentaContableBean.cuentaContable)}"
+                    rendered="#{not empty cuentaContableBean.cuentaContable and cuentaContableBean.cuentaContable.imputable eq 'N' and cuentaContableBean.modoVista eq 'D'}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{cuentaContableBean.guardar(false)}"
+                    rendered="#{not empty cuentaContableBean.cuentaContable and cuentaContableBean.modoVista eq 'D'}"
+                    process="@this,panelDatos"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{cuentaContableBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty cuentaContableBean.cuentaContable and not cuentaContableBean.esNuevo and cuentaContableBean.cuentaContable.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{cuentaContableBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty cuentaContableBean.cuentaContable and not cuentaContableBean.esNuevo and cuentaContableBean.cuentaContable.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Ver Plan Cuenta" icon="fa fa-print"
+                    actionListener="#{reporteService.verReporte}"
+                    immediate="true"
+                    process="@this"
+                    update="@form" />
+
+
+    </p:menubar>
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

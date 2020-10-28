@@ -1,0 +1,42 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorDepositoI" header="Depositos" modal="true"
+              widgetVar="dlg_depositoI"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              style="max-width: 650px;" responsive="true" 
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+            
+            <p:dataTable value="#{buscadorDepositoBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{buscadorDepositoBean.deposito}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" > 
+            
+                <p:ajax event="rowSelect" listener="#{buscadorDepositoBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlg_depositoI').hide(), procesarDepositoI()" />
+
+                <p:column headerText="Código" sortBy="#{i.codigo}"  width="25%" style="text-align: center;"  >
+                    <h:outputText value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{i.descripcion}" width="75%"  filterBy="#{i.descripcion}"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+            </p:dataTable>     
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

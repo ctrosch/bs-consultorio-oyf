@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{gestionMesasBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{gestionMesasBean.titulo}"/>
+            <f:viewParam name="SUCBR" value="#{gestionMesasBean.SUCBR}"/>
+            <f:viewParam name="CODBR"  value="#{gestionMesasBean.CODBR}"/>
+            <f:event type="preRenderView" listener="#{gestionMesasBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{gestionMesasBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{gestionMesasBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido">
+
+            <p:growl id="mgrowl" showDetail="true" />
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank" >
+
+                <p:selectOneRadio  value="#{gestionMesasBean.salon}" layout="responsive" columns="2"
+                                   converter="#{conversoresBar.salon}" >
+                    <f:selectItems value="#{gestionMesasBean.salones}" var="s" itemLabel="#{s.descripcion}" itemValue="#{s}"/>
+                    <p:ajax event="change" process="@this" update="@form" listener="#{gestionMesasBean.actualizarMesas()}"  />
+                </p:selectOneRadio>
+
+                <p:progressBar value="50" labelTemplate="Ocupación 50%" displayOnly="true"/>
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+            <div class="p-grid">
+                <ui:repeat value="#{gestionMesasBean.mesas}" var="m" >
+                    <div class="p-col-6 p-md-3 p-lg-1 PadWithBorder5" >
+
+                        <p:commandLink actionListener="#{gestionMesasBean.seleccionarMesa(m)}"
+                                       process="@this" update="@form"
+                                       oncomplete="PF('dlgMesa').show()" >
+
+                            <div class="p-grid box #{not empty m.movimiento?m.movimiento.estado.color:'GreenBack'} PadWithBorder5" >
+
+                                <div class="p-col-6 Fs12 White" >
+
+                                    <p>#{m.movimiento.personas} <i class="fa fa-users" /></p>
+                                    <p>#{m.movimiento.items.size()} <i class="fa fa-glass" /></p>
+                                    <p>#{m.movimiento.items.size()} <i class="fa fa-cutlery" /></p>
+
+
+                                </div>
+
+                                <div class="p-col-6 White" >
+
+
+                                    <div class="TexAlCenter Fs30 White" style="height: 60%" >#{m.descripcion}</div>
+
+                                    <div class="TexAlCenter" style="float: bottom; bottom: 0px;">
+                                        <p> <h:outputText value="#{m.movimiento.auditoria.fechaAlta}" >
+                                                <f:convertDateTime pattern="HH:mm" />
+                                            </h:outputText>
+                                            <i class="fa fa-clock-o" />
+                                        </p>
+                                    </div>
+
+
+
+
+                                </div>
+
+                            </div>
+
+                        </p:commandLink>
+
+                    </div>
+
+                </ui:repeat>
+
+            </div>
+
+            <div class="p-col-10 p-align-end" >
+                <p:commandButton icon="fa fa-sync" styleClass="GreenBack"
+                                 value="Actualizar"
+                                 process="@this" update="@form" />
+
+            </div>
+
+            <p:dialog id="datosMovimiento" modal="true"
+                      resizable="false" draggable="false"
+                      style="min-width: 100%; min-height: 100%;"
+                      styleClass="Hei100 Wid100"
+                      minHeight="450"
+                      position="top"
+                      showEffect="fade" hideEffect="fade"
+                      responsive="true"
+                      header="Mesa #{gestionMesasBean.mesa.descripcion}"
+                      widgetVar="dlgMesa" dynamic="true" >
+
+                <ui:include src="mesa.xhtml"  />
+
+            </p:dialog>
+
+            <!--
+            <h:panelGrid columns="3" columnClasses="colTop,colTop">
+
+                <h:panelGroup>
+                    <ui:include src="mesas.xhtml" />
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <ui:include src="mesaSeleccionada.xhtml" />
+                </h:panelGroup>
+            </h:panelGrid>
+            -->
+
+
+
+
+        </ui:define>
+
+    </ui:composition>
+</html>

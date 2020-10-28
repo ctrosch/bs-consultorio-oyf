@@ -1,0 +1,33 @@
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+
+
+    <p:ajaxStatus>
+        <f:facet name="default">
+            <h:outputText value=""  style="font-size: 10px;"/>
+        </f:facet>
+
+        <f:facet name="start">
+
+            <p:graphicImage value="/resources/ajax/Preloader.gif"
+                            width="25"/>
+            <h:outputText value="Aguarde por favor...  "  style="font-size: 10px;"/>
+
+        </f:facet>
+
+        <f:facet name="complete">
+
+            <h:outputText value=""  style="font-size: 10px;"/>
+
+        </f:facet>
+
+        <f:facet name="error">
+            <h:outputText value=""  style="font-size: 10px;"/>
+        </f:facet>
+
+    </p:ajaxStatus>
+
+</ui:composition>

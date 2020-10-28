@@ -1,0 +1,87 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorStock" header="Stock" modal="true"
+              widgetVar="dlgStock"
+              resizable="false"
+              draggable="false"
+              minHeight="400"
+              responsive="true"
+              style="max-width: 800px;"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:dataTable id="tablaStock" value="#{consultaStock.stock}" var="i"
+                         emptyMessage="No se encontraron datos"
+                         resizeMode="expand" liveResize="true"
+                         scrollable="true" scrollHeight="150"
+                         selectionMode="single" selection="#{consultaStock.itemStock}" rowKey="#{i}">
+
+                <p:ajax event="rowSelect" listener="#{consultaStock.onSelectStock}" update="@form"
+                        oncomplete="PF('dlgStock').hide(), procesarStock()" />
+
+                <p:column headerText="Depósito" sortBy="#{i.codigo}"   >
+                    <h:outputText value="#{i.deposito.descripcion}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}"
+                          rendered="#{aplicacionBean.parametroStock.administraAtributo1 eq 'S'}" >
+                    <h:outputText value="#{i.atributo1}"  />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}"
+                          rendered="#{aplicacionBean.parametroStock.administraAtributo2 eq 'S'}">
+
+                    <h:outputText  value="#{i.atributo2}"  />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo3}"
+                          rendered="#{aplicacionBean.parametroStock.administraAtributo3 eq 'S'}">
+
+                    <h:outputText  value="#{i.atributo3}"  />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo4}"
+                          rendered="#{aplicacionBean.parametroStock.administraAtributo4 eq 'S'}">
+
+                    <h:outputText  value="#{i.atributo4}"  />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo5}"
+                          rendered="#{aplicacionBean.parametroStock.administraAtributo5 eq 'S'}">
+
+                    <h:outputText  value="#{i.atributo5}"  />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo6}"
+                          rendered="#{aplicacionBean.parametroStock.administraAtributo6 eq 'S'}">
+
+                    <h:outputText  value="#{i.atributo6}"  />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo7}"
+                          rendered="#{aplicacionBean.parametroStock.administraAtributo7 eq 'S'}">
+
+                    <h:outputText  value="#{i.atributo7}"  />
+                </p:column>
+
+                <p:column headerText="Stock" sortBy="#{i.stocks}" width="80"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.stocks}" styleClass="Fright" >
+                        <f:convertNumber pattern="#{i.unidadDeMedida.formato}" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,76 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <p:dialog id="buscadorPendiente" header="Selección de pendientes" modal="true"
+              widgetVar="dlgPendiente"
+              resizable="false"
+              draggable="false"
+              position="top"
+              closable="true"
+              showEffect="fade" hideEffect="fade"
+              style="min-width: 100%; min-height: 100%;"
+              styleClass="Hei100 Wid100"
+              responsive="true" >
+
+        <h:form id="fPendiente" prependId="false"  >
+
+            <p:dataTable value="#{movimientoEducacionBean.pendientes}"  var="m"
+                         scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron movimientos"  >
+
+                <p:column width="50" styleClass="TexAlCenter" >
+
+                    <p:commandLink title="Seleccionar movimiento" styleClass="icono-datatable"
+                                   actionListener="#{movimientoEducacionBean.seleccionarMovimientoPendiente(m) }"
+                                   process="@this"
+                                   update="@form, :formulario"
+                                   oncomplete="PF('dlgPendiente').hide()" >
+                        <i class="fa fa-check fa-2x Green" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+                <p:column headerText="Número" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{m.puntoVenta.codigo}" >
+                        <f:convertNumber pattern="0000" />
+                    </h:outputText>
+                    -
+                    <h:outputText value="#{m.numeroFormulario}" >
+                        <f:convertNumber pattern="00000000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Fecha" width="80" styleClass="TexAlCenter" >
+                    <h:outputText value="#{m.fechaMovimiento}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Alumno" width="200" filterBy="#{m.alumno.nombreComplete}" filterMatchMode="contains" >
+                    <h:outputText value="#{m.alumno.nombreComplete}" />
+                </p:column>
+
+                <p:column headerText="Carrera" width="200" filterBy="#{m.carrera.titulo}" filterMatchMode="contains" >
+                    <h:outputText value="#{m.carrera.titulo}" />
+                </p:column>
+
+                <p:column headerText="Bonificación" width="50"  >
+                    <h:outputText value="#{m.porcentajeBonificacion}" >
+                        <f:convertNumber pattern="0.00 %" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox20" />
+
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

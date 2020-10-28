@@ -1,0 +1,71 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <div class="EmptyBox20" />
+
+    <!-- APLICACIONES -->
+    <p:dataTable id="aplicaciones" value="#{movimientoProveedorBean.m.itemCuentaCorrienteAplicacion}" var="i"
+                 resizableColumns="true" resizeMode="expand" liveResize="true"
+                 paginator="true" rows="15"
+                 rendered="#{not empty movimientoProveedorBean.m.itemCuentaCorriente}" >
+
+        <f:facet name="header">
+            Aplicaciones en cuenta corriente
+        </f:facet>
+
+        <p:column headerText="Comprobante"  >
+
+            <h:outputText value="#{i.movimiento.comprobante.descripcion} " />
+
+            <h:outputText value="#{i.movimiento.puntoVenta.codigo}" rendered="#{empty i.movimiento.puntoVentaOriginal}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+
+            <h:outputText value="#{i.movimiento.puntoVentaOriginal}" rendered="#{not empty i.movimiento.puntoVentaOriginal}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+
+            <h:outputText value=" - " />
+
+            <h:outputText value="#{i.movimiento.numeroFormulario}" rendered="#{empty i.movimiento.numeroOriginal}" >
+                <f:convertNumber pattern="00000000" />
+            </h:outputText>
+
+            <h:outputText value="#{i.movimiento.numeroOriginal}" rendered="#{not empty i.movimiento.numeroOriginal}" />
+
+
+        </p:column>
+
+        <p:column headerText="Fecha Emisión" >
+            <h:outputText value="#{i.movimiento.fechaEmision}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha Carga" >
+            <h:outputText value="#{i.movimiento.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha Vencimiento" >
+            <h:outputText value="#{i.movimiento.fechaVencimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Importe" >
+            <h:outputText value="#{i.importe}" styleClass="Fright" >
+                <f:convertNumber pattern="$ #,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+    </p:dataTable>
+
+
+</ui:composition>
+

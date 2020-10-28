@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU" value="#{comprobanteTesoreriaBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{comprobanteTesoreriaBean.titulo}"/>
+            <f:viewParam name="CODIGO" value="#{comprobanteTesoreriaBean.CODIGO}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{comprobanteTesoreriaBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{comprobanteTesoreriaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{comprobanteTesoreriaBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{comprobanteTesoreriaBean.modoVista eq 'B'}">
+                <ui:include src="comprobanteBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{comprobanteTesoreriaBean.modoVista eq 'D'}">
+                <ui:include src="comprobanteMenu.xhtml" />
+                <ui:include src="comprobanteDatos.xhtml" />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/contabilidad/busqueda/buscadorDistribucion.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

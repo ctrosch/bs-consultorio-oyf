@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{usuarioSessionBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{usuarioSessionBean.titulo}"/>
+        </f:metadata>
+
+        <ui:define name="titulo-header" >
+            Mis datos
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{usuarioSessionBean.guardar()}"
+                            rendered="#{not usuarioSessionBean.buscaMovimiento}"
+                            update="@form" />
+            </p:menubar>
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="p-grid p-justify-center">
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+
+                    <h:outputText value="Usuario" />
+                    <p:inputText value="#{usuarioSessionBean.usuario.usuario}" readonly="true" />
+
+                </div>
+
+            </div>
+
+            <div class="p-grid p-justify-center">
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+                    <h:outputText value="Clave" />
+                    <p:inputText value="#{usuarioSessionBean.usuario.password}"
+                                 required="true"
+                                 requiredMessage="La clave es necesaria" />
+                </div>
+
+            </div>
+
+            <div class="p-grid p-justify-center">
+
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+                    <h:outputText value="Nombre" />
+                    <p:inputText value="#{usuarioSessionBean.usuario.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre es necesario" />
+
+                </div>
+            </div>
+
+            <div class="p-grid p-justify-center">
+
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+                    <h:outputText value="E-mail" />
+                    <p:inputText value="#{usuarioSessionBean.usuario.email}"   />
+                </div>
+            </div>
+
+            <div class="p-grid p-justify-center">
+
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+                    <h:outputText value="Tipo de usuario" />
+                    <p:inputText value="#{usuarioSessionBean.usuario.tipo.descripcion}" readonly="true" />
+
+
+                </div>
+            </div>
+
+            <div class="p-grid p-justify-center">
+
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+                    <h:outputText value="Estado" />
+                    <p:inputText value="#{usuarioSessionBean.usuario.estado.descripcion}" readonly="true" />
+                </div>
+            </div>
+
+            <div class="p-grid p-justify-center">
+
+
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+
+                    <p:graphicImage value="../#{aplicacionBean.parametro.nombreCarpetaArchivos}/usuarios/#{usuarioSessionBean.usuario.imagen}"
+                                    styleClass="TexAlCenter MarAuto"
+                                    rendered="#{not empty usuarioSessionBean.usuario.imagen}"/>
+
+                    <h:graphicImage name="image/noimage.png" styleClass="TexAlCenter MarAuto"
+                                    rendered="#{empty usuarioSessionBean.usuario.imagen}" />
+
+
+                    <p:commandButton type="button" value="Eliminar imagen"
+                                     actionListener="#{usuarioSessionBean.eliminarImagen()}"
+                                     update="@form" >
+                    </p:commandButton>
+                </div>
+
+            </div>
+
+            <div class="p-grid p-justify-center">
+
+                <div class="p-col-12 p-md-6 p-lg-6 ">
+
+                    <p:tabView>
+
+                        <p:tab title="Subir imagen">
+
+                            <p:outputPanel id="photo">
+
+                                <h:form prependId="false" enctype="multipart/form-data"
+                                        rendered="#{not empty usuarioSessionBean.usuario.usuario}" >
+
+                                    <div class="EmptyBox10" />
+                                    <p:fileUpload fileUploadListener="#{usuarioSessionBean.upload}"
+                                                  mode="advanced"
+                                                  label="Buscar imagen" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                                                  invalidFileMessage="Formato inválido"
+                                                  invalidSizeMessage="El tamaño del archivo es muy grande, debe ser menor a 800KB"
+                                                  fileLimit="1"
+                                                  update=":formulario,@form"
+                                                  auto="true" dragDropSupport="true"
+                                                  sizeLimit="800000" allowTypes="/(\.|\/)(png|jpg|jpge)$/" />
+
+                                </h:form>
+
+                            </p:outputPanel>
+
+                        </p:tab>
+
+                        <p:tab title="Capturar imagen">
+
+                            <h:panelGroup>
+
+                                <p:photoCam widgetVar="pc" listener="#{usuarioSessionBean.oncapture}" update="@form" />
+
+                                <p:commandButton type="button" value="Obterner imagen" onclick="PF('pc').capture()"/>
+
+                            </h:panelGroup>
+
+                        </p:tab>
+
+                    </p:tabView>
+
+                </div>
+
+            </div>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

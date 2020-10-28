@@ -1,0 +1,133 @@
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <p:dialog  header="Agregar Concepto" id="conceptoComprobante" modal="true"
+               closable="false"
+               widgetVar="dlgConceptoComprobante" dynamic="true"
+               style="max-width: 900px;" width="600" responsive="true" >
+
+        <!-- MENU -->
+        <p:menubar id="menuBarCC">
+
+            <p:menuitem value="Nuevo" icon="fa fa-plus"
+                        actionListener="#{conceptoComprobanteProveedorBean.nuevo()}"
+                        process="@form"
+                        immediate="true"
+                        update="pgDatosCC, messagecc,menuBarCC,messagegcc" />
+
+            <p:menuitem value="Guardar" icon="fa fa-save"
+                        actionListener="#{conceptoComprobanteProveedorBean.guardar(false)}"
+                        process="@form"
+                        update="pgDatosCC, messagecc,menuBarCC,messagegcc" />
+
+            <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                        actionListener="#{conceptoComprobanteProveedorBean.habilitaDeshabilita('S')}"
+                        rendered="#{not empty conceptoComprobanteProveedorBean.conceptoComprobanteProveedor and not conceptoComprobanteProveedorBean.esNuevo and conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.auditoria.debaja eq 'N'}"
+                        process="@this"
+                        update="pgDatosCC, messagecc,messagegcc"/>
+
+            <p:menuitem value="Habilitar" icon="fa fa-check"
+                        actionListener="#{conceptoComprobanteProveedorBean.habilitaDeshabilita('N')}"
+                        rendered="#{not empty conceptoComprobanteProveedorBean.conceptoComprobanteProveedor and not conceptoComprobanteProveedorBean.esNuevo and conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.auditoria.debaja eq 'S'}"
+                        process="@this"
+                        update="pgDatosCC, messagecc,messagegcc" />
+
+
+            <p:menuitem icon="fa fa-refresh"
+                        value="Finalizar"
+                        rendered="#{not conceptoComprobanteProveedorBean.esNuevo}"
+                        actionListener="#{comprobanteProveedorBean.sincronizarConceptos()}"
+                        process="@this"
+                        update="@form, :formulario"
+                        oncomplete="PF('dlgConceptoComprobante').hide()" />
+            <p:menuitem icon="fa fa-close"
+                        value="Cancelar"
+                        rendered="#{conceptoComprobanteProveedorBean.esNuevo}"
+                        process="@this"
+                        update="@form, :formulario"
+                        oncomplete="PF('dlgConceptoComprobante').hide()" />
+
+        </p:menubar>
+
+        <p:messages id="messagecc" showDetail="true" /><p:growl id="messagegcc" showDetail="true" life="4000" />
+
+        <p:panelGrid id="pgDatosCC" columns="2" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="Container40, Container60" >
+
+            <h:outputText value="Comprobante" />
+            <h:outputText value="#{conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.comprobante.descripcion}" />
+
+            <h:outputText value="Concepto" />
+            <h:outputText value="#{conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.concepto.descripcion}"
+                          rendered="#{not conceptoComprobanteProveedorBean.esNuevo}"  />
+
+            <p:autoComplete value="#{conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.concepto}"
+                            rendered="#{conceptoComprobanteProveedorBean.esNuevo and not empty conceptoComprobanteProveedorBean.conceptos}"
+                            required="true" requiredMessage="Seleccione el concepto"
+                            maxResults="8" queryDelay="1000" dropdown="true"
+                            completeMethod="#{conceptoProveedorBean.complete}"
+                            var="p" itemLabel="#{p.codigo} #{p.descripcion}" itemValue="#{p}"
+                            converter="#{conversoresGeneral.concepto}" >
+
+                <p:ajax event="itemSelect" process="@this"  />
+
+                <p:column headerText="Tipo">
+                    <h:outputText value="#{p.tipoConcepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{p.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{p.descripcion}" />
+                </p:column>
+
+            </p:autoComplete>
+
+
+            <h:outputText value="Debe/Haber *" />
+            <p:selectOneMenu value="#{conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.debeHaber}"
+                             required="true" requiredMessage="Seleccione debe/haber"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Debe" itemValue="D" />
+                <f:selectItem itemLabel="Haber" itemValue="H" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Es impuesto *" />
+            <p:selectOneMenu value="#{conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.impuesto}"
+                             required="true" requiredMessage="Seleccione si es un impuesto"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Edita imputación *" />
+            <p:selectOneMenu value="#{conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.editaImputacion}"
+                             required="true" requiredMessage="Seleccione si edita imputación"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Edita si es cero *" />
+            <p:selectOneMenu value="#{conceptoComprobanteProveedorBean.conceptoComprobanteProveedor.editaSiCero}"
+                             required="true" requiredMessage="Seleccione si edita si es cero"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+        </p:panelGrid>
+    </p:dialog>
+
+
+</ui:composition>

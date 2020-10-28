@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Parametros de Educación
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{parametroEducacionBean.guardar()}"
+                            rendered="#{not parametroEducacionBean.buscaMovimiento}"
+                            update="@form" />
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <bs:outputTexWhitLink value="Alumno por Defecto "
+                                      url="#{parametroEducacionBean.obtenerUrlMenu('SIS_00577','NROCTA',parametroEducacionBean.parametro.alumnoPredeterminado.nrocta)}" />
+                <p:autoComplete value="#{parametroEducacionBean.parametro.alumnoPredeterminado}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{alumnoBean.complete}"
+                                var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                                converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Apellido">
+                        <h:outputText value="#{e.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{e.apellido}" />
+                    </p:column>
+
+                    <p:column headerText="Nro doc">
+                        <h:outputText value="#{e.nrodoc}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="6" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+                <bs:outputTexWhitLink value="Estado Matrícula *"
+                                      url="#{parametroEducacionBean.obtenerUrlMenu('SIS_00605','CODIGO',parametroEducacionBean.parametro.estado.codigo)}" />
+                <p:autoComplete value="#{parametroEducacionBean.parametro.estado}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                required="true" requiredMessage="Seleccione Estado de Matrícula"
+                                completeMethod="#{estadoEducacionBean.complete}"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresEducacion.estado}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{e.codigo}" />
+                    </p:column>
+
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+
+                </p:autoComplete>
+
+                <h:outputText value="Moneda Registración *" />
+                <p:selectOneMenu value="#{parametroEducacionBean.parametro.monedaRegistracion}"
+                                 required="true" requiredMessage="Seleccione la moneda de Registración"
+                                 converter="#{conversoresGeneral.moneda}"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Moneda Secundaria *" />
+                <p:selectOneMenu value="#{parametroEducacionBean.parametro.monedaSecundaria}"
+                                 required="true" requiredMessage="Seleccione la moneda Secundaria"
+                                 converter="#{conversoresGeneral.moneda}"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="% Interés Diario por Cuota Vencida " />
+                <p:inputText value="#{parametroEducacionBean.parametro.porcentajeInteres}"  >
+                    <f:convertNumber pattern="#,##0.00" />
+                </p:inputText>
+
+                <h:outputText value="Importe Recargo Cuota Vencida " />
+                <p:inputText value="#{parametroEducacionBean.parametro.importeRecargoCuotaVencida}"  >
+                    <f:convertNumber pattern="#,##0.00"/>
+                </p:inputText>
+
+                <h:outputText value="Importe Reinscripción " />
+                <p:inputText value="#{parametroEducacionBean.parametro.importeReinscripcion}"  >
+                    <f:convertNumber pattern="#,##0.00"/>
+                </p:inputText>
+
+
+                <h:outputText value="Cantidad de Cuotas Vencidas para reinscripción " />
+                <p:inputText value="#{parametroEducacionBean.parametro.cantidadCuotasVencidasParaReinscripcion}"  >
+                    <f:convertNumber pattern="0" />
+                </p:inputText>
+
+
+                <h:outputText value="Días de Vencimiento " />
+                <p:inputText value="#{parametroEducacionBean.parametro.diaVencimientoSegunPeriodo}"  >
+                    <f:convertNumber pattern="0" />
+                </p:inputText>
+
+                <h:outputText value="Período " />
+                <p:autoComplete value="#{parametroEducacionBean.parametro.periodo}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{periodoBean.complete}"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresGeneral.periodo}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Fecha Cal. Vto " />
+
+                <p:selectOneMenu value="#{parametroEducacionBean.parametro.origenFechaCalculoVencimiento}"
+                                 required="true" requiredMessage="Seleccione la fecha origen para cálculo de vencimiento"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="Fecha de Movimiento" itemValue="M" />
+                    <f:selectItem itemLabel="Fecha inicio Cursado" itemValue="I" />
+                </p:selectOneMenu>
+
+
+            </p:panelGrid>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+        </ui:define>
+
+    </ui:composition>
+</html>
+

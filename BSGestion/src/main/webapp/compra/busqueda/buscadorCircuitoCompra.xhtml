@@ -1,0 +1,193 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorCircuitoCompra" header="Circuito de Compra" modal="true"
+              widgetVar="dlgCircuitoCompra"
+              resizable="false"
+              draggable="false"
+              minHeight="400"
+              style="max-width: 1200px;" responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:panelGrid columns="6" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+                <p:inputText id="txtBusquedaCircuitoCompra"  value="#{circuitoCompraBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+
+                    <p:ajax event="keyup" delay="500"
+                            listener="#{circuitoCompraBean.buscar}"
+                            process="@this,acCO,acPV,acCJ,acST,acPI"
+                            update="tablaCircuitoCompra" />
+
+                </p:inputText>
+
+                <h:panelGroup layout="group" >
+                    <h:outputText value="Actualiza Compra" />
+                    <p:selectOneRadio id="acCO" value="#{circuitoCompraBean.actualizaCompra}" >
+
+                        <p:ajax listener="#{circuitoCompraBean.buscar}"
+                                process="@this,txtBusquedaCircuitoCompra,acPV,acCJ,acST,acPI"
+                                update="tablaCircuitoCompra"  />
+
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                        <f:selectItem itemLabel="N/D" itemValue="" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+
+                <h:panelGroup layout="group" >
+                    <h:outputText value="Actualiza Ventas" />
+                    <p:selectOneRadio id="acPV" value="#{circuitoCompraBean.actualizaProveedor}" >
+
+                        <p:ajax listener="#{circuitoCompraBean.buscar}"
+                                process="@this,txtBusquedaCircuitoCompra,acCO,acCJ,acST,acPI"
+                                update="tablaCircuitoCompra"  />
+
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                        <f:selectItem itemLabel="N/D" itemValue="" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+
+                <h:panelGroup layout="group" >
+                    <h:outputText value="Actualiza Tesorería" />
+                    <p:selectOneRadio id="acCJ" value="#{circuitoCompraBean.actualizaTesoreria}" >
+
+                        <p:ajax listener="#{circuitoCompraBean.buscar}"
+                                process="@this,txtBusquedaCircuitoCompra,acCO,acPV,acST,acPI"
+                                update="tablaCircuitoCompra"  />
+
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                        <f:selectItem itemLabel="N/D" itemValue="" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+
+                <h:panelGroup layout="group" >
+                    <h:outputText value="Actualiza Stock" />
+                    <p:selectOneRadio id="acST" value="#{circuitoCompraBean.actualizaStock}" >
+
+                        <p:ajax listener="#{circuitoCompraBean.buscar}"
+                                process="@this,txtBusquedaCircuitoCompra,acCO,acPV,acCJ,acPI"
+                                update="tablaCircuitoCompra"  />
+
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                        <f:selectItem itemLabel="N/D" itemValue="" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+
+                <h:panelGroup layout="group" >
+                    <h:outputText value="Pendiente Ingreso" />
+                    <p:selectOneRadio id="acPI" value="#{circuitoCompraBean.pendienteIngreso}" >
+
+                        <p:ajax listener="#{circuitoCompraBean.buscar}"
+                                process="@this,txtBusquedaCircuitoCompra,acCO,acPV,acCJ,acST"
+                                update="tablaCircuitoCompra"  />
+
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                        <f:selectItem itemLabel="N/D" itemValue="" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaCircuitoCompra"
+                         value="#{circuitoCompraBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" rows="10"
+                         paginator="true"
+                         selectionMode="single" selection="#{circuitoCompraBean.circuito}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{circuitoCompraBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgCircuitoCompra').hide(), procesarCircuitoCompra()" />
+
+                <p:column headerText="Circuito Inicio" width="10%" style="text-align: center;"
+                          sortBy="#{e.circom}"   >
+                    <h:outputText value="#{e.circom}" />
+                </p:column>
+
+                <p:column headerText="Circuito Aplicado" width="10%" style="text-align: center;"
+                          sortBy="#{e.cirapl}"   >
+                    <h:outputText value="#{e.cirapl}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >
+                    <h:outputText value="#{e.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Act. Compra" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaCompra}" >
+                    <h:outputText value="Si" rendered="#{e.actualizaCompra eq 'S'}" />
+                    <h:outputText value="No" rendered="#{e.actualizaCompra eq 'N'}" />
+                </p:column>
+
+                <p:column headerText="Act. Proveed" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaProveedor}" >
+                    <h:outputText value="Si" rendered="#{e.actualizaProveedor eq 'S'}" />
+                    <h:outputText value="No" rendered="#{e.actualizaProveedor eq 'N'}" />
+                </p:column>
+
+                <p:column headerText="Act. Tesoreria" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaTesoreria}" >
+                    <h:outputText value="Si" rendered="#{e.actualizaTesoreria eq 'S'}" />
+                    <h:outputText value="No" rendered="#{e.actualizaTesoreria eq 'N'}" />
+
+                </p:column>
+
+                <p:column headerText="Act. Stock" width="15%" style="text-align: left;"
+                          sortBy="#{e.actualizaStock}" >
+                    <h:outputText value="Si" rendered="#{e.actualizaStock eq 'S'}" />
+                    <h:outputText value="No" rendered="#{e.actualizaStock eq 'N'}" />
+                </p:column>
+
+                <!--
+                <p:column headerText="" width="10%" style="text-align: center;" >
+                    <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                     actionListener="#{circuitoCompraBean.seleccionar(e)}"
+                                     process="@this"
+                                     update="@form" />
+                </p:column>
+                -->
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{circuitoCompraBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaCircuitoCompra" listener="#{circuitoCompraBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistrosCircuitoCompra" value="#{circuitoCompraBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{circuitoCompraBean.buscar}"
+                                     process="@this,cantRegistrosCircuitoCompra" update="tablaCircuitoCompra" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </h:form>
+
+
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!--DATOS-->
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{centroCostoBean.centroCosto.codigo}"
+                     readonly="#{not centroCostoBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{centroCostoBean.centroCosto.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="Máscara" />
+        <p:inputText value="#{centroCostoBean.centroCosto.mascara}"
+                     required="true"
+                     requiredMessage="La máscara es necesaria" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tablaDimesiones" var="i"  style="max-width: 900px;"
+                 value="#{centroCostoBean.centroCosto.subCuentas}"
+                 resizeMode="expand" liveResize="true"
+                 emptyMessage="No se encontraron items. Haga clic en agregar items"
+                 rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+        <f:facet name="header" >
+            Subcuentas por Centro de Costo
+        </f:facet>
+
+        <f:facet name="footer" >
+
+            <h:outputLink value="#{request.contextPath}#{centroCostoBean.obtenerUrlMenu('SIS_00419')}"
+                          target="_blank" style="font-weight: normal;"
+                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left GreenBack"  >
+
+                <span class="ui-button-icon-left ui-icon ui-c fa fa-plus"></span>
+                <span class="ui-button-text ui-c">Agregar SubCuenta</span>
+
+            </h:outputLink>
+
+        </f:facet>
+
+        <p:column headerText="Código"  >
+
+            <h:outputText value="#{i.codigo}" />
+
+        </p:column>
+
+        <p:column headerText="Descripción"  >
+
+            <h:outputText value="#{i.descripcion}" />
+
+        </p:column>
+
+    </p:dataTable>
+
+</html>
+

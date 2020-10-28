@@ -1,0 +1,57 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- DATOS -->
+    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{tipoImpuestoBean.tipoDeImpuesto.codigo}"
+                     readonly="#{not tipoImpuestoBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{tipoImpuestoBean.tipoDeImpuesto.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Trabaja con Mínimo *" />
+        <p:selectOneMenu value="#{tipoImpuestoBean.tipoDeImpuesto.minimo}"
+                         required="true" requiredMessage="Seleccione el impuesto trabaja con mínimo"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Valor mínimo *" />
+        <p:inputText value="#{tipoImpuestoBean.tipoDeImpuesto.valorMinimo}"
+                     required="true"
+                     requiredMessage="El valor mínimo es necesario" >
+            <f:convertNumber  pattern="#,##0.00" />
+        </p:inputText>
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

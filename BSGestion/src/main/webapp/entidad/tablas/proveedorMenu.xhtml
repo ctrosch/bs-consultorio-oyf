@@ -1,0 +1,64 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{proveedorBean.buscar()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{proveedorBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <!--
+            <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+            -->
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{proveedorBean.guardar(false)}"
+                    rendered="#{not proveedorBean.buscaMovimiento}"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{proveedorBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty proveedorBean.entidad and not proveedorBean.esNuevo and proveedorBean.entidad.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{proveedorBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty proveedorBean.entidad and not proveedorBean.esNuevo and proveedorBean.entidad.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:submenu label="Consultas" icon="fa fa-list-alt"
+                   rendered="#{not proveedorBean.esNuevo and proveedorBean.modoVista eq 'D'}" >
+
+            <p:menuitem value="Cuenta Corriente" icon="fa fa-info-circle"
+                        rendered="#{not empty proveedorBean.entidad and proveedorBean.modoVista eq 'D'}"
+                        url="#{request.contextPath}#{proveedorBean.obtenerUrlMenu('SIS_00112','NROCTA',proveedorBean.entidad.nrocta)}"
+                        target="_blank"
+                        process="@this" >
+            </p:menuitem>
+
+        </p:submenu>
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

@@ -1,0 +1,197 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusquedaProducto"/>
+
+    <p:panelGrid id="header" columns="3" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-4, ui-g-12 ui-md-4, ui-g-12 ui-md-4"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusquedaProducto" value="#{productoBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500" process="@this,filtro,tipoProducto" update="tabla" listener="#{productoBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <p:autoComplete id="tipoProducto" value="#{productoBean.tipoProducto}" dropdown="true" forceSelection="true"
+                        placeholder="Tipo de Producto"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{tipoProductoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresStock.tipoProducto}" >
+
+            <p:ajax event="itemSelect" process="@this,filtro,txtBusquedaProducto" update="filtro,tabla" listener="#{productoBean.buscar}" />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{productoBean.limpiarFiltroBusqueda()}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{productoBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:selectOneMenu filter="true" filterMatchMode="startsWith"
+                             value="#{productoBean.rubro01}"
+                             converter="#{conversoresStock.rubro01}"   >
+                <p:ajax event="itemSelect" process="@this,header" update="tabla" listener="#{productoBean.buscar}" />
+                <f:selectItem itemLabel="Seleccionar Rubro" itemValue="" />
+                <f:selectItems value="#{productoBean.tipoProducto.rubro01}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+            </p:selectOneMenu>
+
+            <p:selectOneMenu filter="true" filterMatchMode="startsWith"
+                             value="#{productoBean.rubro02}"
+                             converter="#{conversoresStock.rubro02}"  >
+                <p:ajax event="itemSelect" process="@this,header" update="tabla" listener="#{productoBean.buscar}" />
+                <f:selectItem itemLabel="Seleccionar Sub Rubro" itemValue="" />
+                <f:selectItems value="#{productoBean.tipoProducto.rubro02}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+            </p:selectOneMenu>
+
+            <p:selectOneMenu filter="true" filterMatchMode="startsWith"
+                             value="#{productoBean.rubro03}"
+                             converter="#{conversoresStock.rubro03}"  >
+                <p:ajax event="itemSelect" process="@this,header" update="tabla" listener="#{productoBean.buscar}" />
+                <f:selectItem itemLabel="Seleccionar Familia" itemValue="" />
+                <f:selectItems value="#{productoBean.tipoProducto.rubro03}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+            </p:selectOneMenu>
+
+            <p:autoComplete value="#{productoBean.proveedorHabitual}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Proveedor Habitual "
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{proveedorBean.complete}"
+                            converter="#{conversoresEntidad.entidadComercial}"
+                            var="a" itemLabel="#{a.razonSocial}" itemValue="#{a}" >
+                <p:ajax event="itemSelect" process="@this,header" update="tabla" listener="#{productoBean.buscar}" />
+                <p:column headerText="Nro cuenta" width="100">
+                    <h:outputText value="#{a.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Razón social">
+                    <h:outputText value="#{a.razonSocial}" />
+                </p:column>
+            </p:autoComplete>
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{productoBean.mostrarDebaja}" >
+                    <p:ajax process="@this,header" update="@form" listener="#{productoBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{productoBean.lista}" var="i"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{productoBean.producto}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{productoBean.onSelect}" update="@form"  />
+
+        <p:column headerText="Código"
+                  sortBy="#{i.codigo}"  width="100" style="text-align: center;" >
+            <h:outputText value="#{i.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción"  style="text-align: left;"
+                  sortBy="#{i.descripcion}" >
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Nro Parte"
+                  sortBy="#{i.numeroParte}"  width="100" style="text-align: center;" >
+            <h:outputText value="#{i.numeroParte}" />
+        </p:column>
+
+        <p:column headerText="U.M."
+                  sortBy="#{i.unidadDeMedida}"  width="50" style="text-align: center;" >
+            <h:outputText value="#{i.unidadDeMedida.codigo}" />
+        </p:column>
+
+        <p:column headerText="Rubro" style="text-align: left;"
+                  sortBy="#{i.rubr01.descripcion}" >
+            <h:outputText value="#{i.rubr01.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Sub Rubro" style="text-align: left;"
+                  sortBy="#{i.rubr02.descripcion}" >
+            <h:outputText value="#{i.rubr02.descripcion}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+
+        <h:panelGroup layout="block" >
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{productoBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{productoBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte()}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls()}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

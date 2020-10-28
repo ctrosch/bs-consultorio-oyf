@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"     value="#{movimientoStockBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoStockBean.titulo}"/>
+            <f:viewParam name="SUCURS" value="#{movimientoStockBean.SUCST}"/>
+            <f:viewParam name="SUCST"  value="#{movimientoStockBean.SUCST}"/>
+            <f:viewParam name="CODST"  value="#{movimientoStockBean.CODST}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoStockBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{productoBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoStockBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{movimientoStockBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarProducto" process="@this" update="tb:detalle"  actionListener="#{movimientoStockBean.procesarProducto}" />
+
+            <p:remoteCommand name="procesarProductos" process="@this" update="@form"
+                             actionListener="#{movimientoStockBean.procesarProductos()}" />
+
+            <p:remoteCommand name="procesarStock"    process="@this" update="tb:detalle"  actionListener="#{movimientoStockBean.procesarStock}" />
+            <p:remoteCommand name="procesarMascaraStock" process="@this" update="@form"   actionListener="#{movimientoStockBean.procesarMascaraStock}" />
+
+            <ui:include src="movimientoMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <ui:fragment rendered="#{movimientoStockBean.modoVista eq 'B'}" >
+                <ui:include src="movimientoBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty movimientoStockBean.m and movimientoStockBean.modoVista eq 'D'}" >
+
+                <ui:include src="movimientoDatos.xhtml" />
+                <ui:include src="movimientoDetalle.xhtml"  />
+
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoStockBean.muestraReporte}"
+                               nombreArchivo="#{movimientoStockBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/stock/busqueda/buscadorProductoNew.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorProducto.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorStock.xhtml" />
+            <ui:include src="/stock/informes/consultaAtributos.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorMascaraStock.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

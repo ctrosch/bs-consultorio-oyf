@@ -1,0 +1,136 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorItemPrecioCosto" header="Precios de Costo" modal="true"
+              widgetVar="dlgItemPrecioCosto"
+              resizable="false"
+              draggable="false"
+              minHeight="400"
+              position="top"
+              responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaItemPrecioCosto" value="#{itemListaPrecioCostoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,listaPrecio" update="tablaItemPrecioCosto" listener="#{itemListaPrecioCostoBean.buscar}"/>
+                </p:inputText>
+
+                <p:autoComplete id="listaPrecio" value="#{itemListaPrecioCostoBean.listaCosto}"
+                                dropdown="true" placeholder="Seleccionar Lista de Costo"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{listaPrecioCostoBean.complete}"
+                                var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                converter="#{conversoresProveedor.listaCosto}"  forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this,txtBusquedaItemPrecioCosto"
+                            update="tablaItemPrecioCosto" listener="#{itemListaPrecioCostoBean.buscar}"/>
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{l.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{l.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaItemPrecioCosto" var="e"
+                         value="#{itemListaPrecioCostoBean.lista}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{itemListaPrecioCostoBean.itemListaPrecio}" rowKey="#{e}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{itemListaPrecioCostoBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgItemPrecioCosto').hide(), procesarItemPrecioCosto()" />
+
+                <p:column headerText="Código"  width="12%" style="text-align: left;"
+                          sortBy="#{e.producto.codigo}"
+                          filterBy="#{e.producto.codigo}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{e.producto.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción"  width="30%" style="text-align: left;"
+                          sortBy="#{e.producto.descripcion}"
+                          filterBy="#{e.producto.descripcion}"
+                          filterMatchMode="contains">
+                    <h:outputText value="#{e.producto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Tipo de producto"  width="12%" style="text-align: left;"
+                          filterBy="#{e.producto.tipoProducto.descripcion}"
+                          filterMatchMode="contains">
+
+                    <h:outputText value="#{e.producto.tipoProducto.descripcion}" />
+                </p:column>
+
+
+                <p:column headerText="Lista de Precio"  width="12%" style="text-align: left;"
+                          sortBy="#{e.listaCosto.descripcion}"
+                          filterBy="#{e.listaCosto.descripcion}"
+                          filterMatchMode="contains">
+
+                    <h:outputText value="#{e.listaCosto.descripcion}" />
+                </p:column>
+
+
+                <p:column headerText="Fecha Vigencia"  width="100" style="text-align: left;"
+                          sortBy="#{e.fechaVigencia}"
+                          filterBy="#{e.fechaVigencia}"
+                          filterMatchMode="contains" >
+
+                    <h:outputText value="#{e.fechaVigencia}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="Precio"  width="80" sortBy="#{e.precio}" style="text-align: right;" >
+                    <h:outputText value="#{e.precio}"  >
+                        <f:convertNumber pattern="##0.00" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{itemListaPrecioCostoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaItemPrecioCosto" listener="#{itemListaPrecioCostoBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistroItemPrecioCosto" value="#{itemListaPrecioCostoBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{itemListaPrecioCostoBean.buscar}"
+                                     process="@this,cantRegistroItemPrecioCosto" update="tablaItemPrecioCosto" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </h:form>
+
+
+    </p:dialog>
+
+</ui:composition>

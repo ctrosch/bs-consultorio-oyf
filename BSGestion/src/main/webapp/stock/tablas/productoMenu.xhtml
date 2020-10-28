@@ -1,0 +1,56 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{productoBean.buscar()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{productoBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <!--
+            <p:confirm header="Confirmacion" rendered="#{productoBean.modoVista eq 'D' and productoBean.esNuevo}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+            -->
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{productoBean.guardar(false)}"
+                    rendered="#{not productoBean.buscaMovimiento}"
+                    update="@form" />
+
+        <p:menuitem value="Duplicar" icon="fa fa-copy"
+                    actionListener="#{productoBean.duplicar(productoBean.producto)}"
+                    rendered="#{not productoBean.buscaMovimiento}"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{productoBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty productoBean.producto and not productoBean.esNuevo and productoBean.producto.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{productoBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty productoBean.producto and not productoBean.esNuevo and productoBean.producto.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

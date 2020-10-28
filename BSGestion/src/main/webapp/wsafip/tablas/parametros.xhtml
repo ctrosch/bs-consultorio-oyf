@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+        
+        <ui:define name="titulo" >
+            Parámetros WSAA
+        </ui:define>
+        
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            action="#{parametroWSBean.guardar}"                                
+                            update="@form" />
+            </p:menubar>
+        </ui:define>
+        
+        <ui:define name="contenido" >
+            
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+            <div class="EmptyBox10" />    
+
+            <!-- DATOS -->
+            <p:panel header="Datos" >               
+
+                <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                    <h:outputText value="Código" />
+                    <h:outputText value="#{parametroWSBean.parametro.codigo}" />
+
+                    <h:outputText value="Descripción" />
+                    <h:outputText value="#{parametroWSBean.parametro.descripcion}" />
+
+                    <h:outputText value="Modo Prueba:"  />                                    
+                    <p:selectOneRadio value="#{parametroWSBean.parametro.modoPrueba}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />                                       
+                    </p:selectOneRadio>
+
+                    <h:outputText value="Tipo autorización:"  />                                    
+                    <p:selectOneRadio value="#{parametroWSBean.parametro.tipoAutorizacion}" >
+                        <f:selectItem itemLabel="Individual" itemValue="I" />
+                        <f:selectItem itemLabel="General" itemValue="G" />                                       
+                    </p:selectOneRadio>
+
+                    <h:outputText value="CUIT:"  /> 
+                    <p:inputText value="#{parametroWSBean.parametro.cuitWS}"  />
+
+                    <h:outputText value="Path Key:" />
+                    <p:inputTextarea  rows="3" cols="80"
+                                      value="#{parametroWSBean.parametro.pathKey}"  />
+
+                    <h:outputText value="Path Certificado:" />
+                    <p:inputTextarea  rows="3" cols="80"
+                                      value="#{parametroWSBean.parametro.pathCertificado}"  />
+
+                    <h:outputText value="WSDL Pruebas:" />
+                    <p:inputTextarea  rows="3" cols="80"
+                                      value="#{parametroWSBean.parametro.wsdlPrueba}"  />
+
+                    <h:outputText value="WSDL Producción" />
+                    <p:inputTextarea  rows="3" cols="80"
+                                      value="#{parametroWSBean.parametro.wsdlProduccion}"  />
+
+                    <p:commandButton value="Verificar Datos de acceso"
+                                     actionListener="#{parametroWSBean.comprobarConexion}"
+                                     update="@form" />
+
+                </p:panelGrid>
+
+            </p:panel>
+
+        </ui:define>
+  
+    </ui:composition>
+</html>
+
+    
+    

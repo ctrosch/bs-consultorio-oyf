@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PP_ETIQUETA" pageWidth="300" pageHeight="250" columnWidth="290" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" uuid="168813ab-9f66-41e2-b4c0-5e15e826a97d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="operarios" uuid="2f5bb8c3-012d-49f0-bb8d-c036d33419c7">
+		<parameter name="ID_TAR" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select o.codope, e.nombre
+from ta_tarea t
+inner join ta_tarea_operario o on t.ID = o.id_tarea
+inner join pd_operario e on o.codope  = e.codigo
+where t.id  = $P{ID_TAR}
+order by e.nombre]]>
+		</queryString>
+		<field name="codope" class="java.lang.String">
+			<fieldDescription><![CDATA[Operario]]></fieldDescription>
+		</field>
+		<field name="nombre" class="java.lang.String">
+			<fieldDescription><![CDATA[Nombre]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="COPIAS" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+m.id,
+m.codfor,
+m.nrofor,
+m.fchmov,
+m.observ,
+ma.codfor,
+ma.nrofor,
+ma.fchmov,
+ma.observ,
+i.artcod,
+p.`DESCRP`,
+p.PESONT,
+p.VOLUME,
+i.cantid,
+d.natri1,
+d.natri2,
+d.natri3,
+concat(ma.nrofor,'-', DATE_FORMAT(m.fchmov, "%y%m%d")) as lote,
+m.id_tar
+from pd_movimiento m
+inner join pd_movimiento_item i on m.id  = i.id_mcab
+inner join pd_movimiento_item_detalle d on i.id  = d.id_idet
+inner join pd_movimiento_item ia on i.id_iapl = ia.id
+inner join pd_movimiento ma on ia.id_mcab = ma.id
+inner join st_producto p on i.artcod  = p.`CODIGO`,
+gr_copias cpy
+where m.tipmov = 'PP'
+and cpy.ID <= $P{COPIAS}
+AND m.ID = $P{ID}]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Id]]></fieldDescription>
+	</field>
+	<field name="codfor" class="java.lang.String">
+		<fieldDescription><![CDATA[Código Formulario]]></fieldDescription>
+	</field>
+	<field name="nrofor" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Número Formulario]]></fieldDescription>
+	</field>
+	<field name="fchmov" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fecha Movimiento]]></fieldDescription>
+	</field>
+	<field name="observ" class="java.lang.String">
+		<fieldDescription><![CDATA[Observaciones]]></fieldDescription>
+	</field>
+	<field name="artcod" class="java.lang.String">
+		<fieldDescription><![CDATA[Producto ]]></fieldDescription>
+	</field>
+	<field name="DESCRP" class="java.lang.String">
+		<fieldDescription><![CDATA[Descripción]]></fieldDescription>
+	</field>
+	<field name="PESONT" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Peso Neto]]></fieldDescription>
+	</field>
+	<field name="VOLUME" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Volumen]]></fieldDescription>
+	</field>
+	<field name="cantid" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Cantidad ]]></fieldDescription>
+	</field>
+	<field name="natri1" class="java.lang.String">
+		<fieldDescription><![CDATA[Atributo 1]]></fieldDescription>
+	</field>
+	<field name="natri2" class="java.lang.String">
+		<fieldDescription><![CDATA[Atributo 2]]></fieldDescription>
+	</field>
+	<field name="natri3" class="java.lang.String">
+		<fieldDescription><![CDATA[Atributo 3]]></fieldDescription>
+	</field>
+	<field name="lote" class="java.lang.String"/>
+	<field name="id_tar" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Tarea asociada]]></fieldDescription>
+	</field>
+	<detail>
+		<band height="177" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement x="0" y="0" width="136" height="38" uuid="6c14e2cd-e70b-4759-b71c-9f1617bbf275"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="136" y="14" width="136" height="25" uuid="92a11785-b45b-42df-8b6c-2e84627a4cc5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lote}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="107" width="82" height="15" uuid="7f6ab343-d271-41ec-b4a1-2efceb153a32"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="122" width="53" height="15" uuid="fe8652a7-c58d-4dd9-97a6-726d461a2e11"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Operarios]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="45" y="88" width="99" height="15" uuid="cd7a0166-6439-42f0-a80f-8b7871e5f142"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{artcod}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="38" width="272" height="1" uuid="7bcfaafe-6450-4df2-8a70-ac2ae7c11589"/>
+			</line>
+			<line>
+				<reportElement x="0" y="72" width="272" height="1" uuid="25a1ea90-0a88-4c42-bf1e-97fdc6308368"/>
+			</line>
+			<componentElement>
+				<reportElement x="53" y="122" width="219" height="15" uuid="26c40ed3-e4ce-4fb9-a2b1-04305b6cec16"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="operarios" uuid="29dff95b-55c4-4d35-8543-06b19196bfeb">
+						<datasetParameter name="ID_TAR">
+							<datasetParameterExpression><![CDATA[$F{id_tar}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="219">
+						<textField>
+							<reportElement x="0" y="0" width="219" height="15" uuid="b40583a9-9d55-42c9-be3e-1f54eaceeb77"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<line>
+				<reportElement x="0" y="104" width="272" height="1" uuid="232724cb-5098-4c39-b345-1dee89046fd3"/>
+			</line>
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement x="0" y="162" width="272" height="14" uuid="f86daef9-4b0e-4020-b7a1-bcb60c8f521d"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="39" width="272" height="33" uuid="302b0c8c-2098-48dd-987c-baf7b67e87b8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="45" y="73" width="71" height="15" uuid="644769d5-9d04-4b1c-8487-8eb07dbb4050"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PESONT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="189" y="73" width="55" height="15" uuid="1a6b2ae3-6112-4420-9416-4fc323d46459"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VOLUME}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="136" y="0" width="136" height="14" uuid="1ef17688-29ac-4435-9009-528246a4c211"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro Lote]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="88" width="45" height="15" uuid="99a31e17-eae1-424c-b976-a2d428d4e5b2"/>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="73" width="45" height="15" uuid="83f0c4e7-0e1b-4fc7-bc2f-a86989d42882"/>
+				<text><![CDATA[Peso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="73" width="28" height="15" uuid="84b2e782-2cbc-4145-a617-2281b8a39980"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Kg.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="144" y="73" width="45" height="15" uuid="90786f29-fe1a-401b-a5b9-5ce0d8cc595d"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Volumen]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="244" y="73" width="28" height="15" uuid="47bc62ec-39a2-43d8-bfec-24738c49cf77"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Cm3]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="82" y="107" width="190" height="15" uuid="8eae8a97-ecfd-4080-8512-0ea4a103c1b9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observ}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

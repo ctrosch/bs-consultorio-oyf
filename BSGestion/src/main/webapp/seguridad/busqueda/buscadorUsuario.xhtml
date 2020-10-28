@@ -1,0 +1,92 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorUsuario" header="Usuarios" modal="true"
+              widgetVar="dlg_usuario"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              style="max-width: 900px;" responsive="true" 
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+
+            <p:inputText value="#{usuarioBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this" update="tablaUsuario" listener="#{usuarioBean.buscar}"/>
+            </p:inputText>
+            
+            <div class="EmptyBox10" />
+            
+            <p:dataTable id="tablaUsuario" value="#{usuarioBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{usuarioBean.usuario}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{usuarioBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlg_usuario').hide(), procesarUsuario()" />
+
+                <p:column headerText="Usuario" style="text-align: center;"
+                          sortBy="#{e.usuario}"   >                         
+                    <h:outputText value="#{e.usuario}" />
+                </p:column>
+                
+                <p:column headerText="Clave" style="text-align: center;"
+                          sortBy="#{e.password}"   >                         
+                    <h:outputText value="#{e.password}" />
+                </p:column>
+
+                <p:column headerText="Nombre" width="25%" style="text-align: left;"
+                          sortBy="#{e.nombre}" >                    
+                    <h:outputText value="#{e.nombre}" />                                        
+                </p:column>
+
+                <p:column headerText="E-mail" width="15%" style="text-align: left;"
+                          sortBy="#{e.email}" >
+                    <h:outputText value="#{e.email}" />  
+                </p:column>
+                
+                <p:column headerText="Tipo" width="20%" style="text-align: left;"
+                          sortBy="#{e.tipo.descripcion}" >
+                    <h:outputText value="#{e.tipo.descripcion}" />  
+                </p:column>
+
+                <p:column headerText="Estado" width="20%" style="text-align: left;"
+                          sortBy="#{e.estado.descripcion}" >
+                    <h:outputText value="#{e.estado.descripcion}" />  
+                </p:column>
+            </p:dataTable>
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{usuarioBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaUsuario" listener="#{usuarioBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroUsuario" value="#{usuarioBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{usuarioBean.buscar}"
+                                     process="@this,cantRegistroUsuario" update="tablaUsuario" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

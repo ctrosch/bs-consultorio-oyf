@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU" value="#{movimientoEducacionBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoEducacionBean.titulo}"/>
+
+            <f:viewParam name="CODED"  value="#{movimientoEducacionBean.CODED}"/>
+            <f:viewParam name="SUCED"  value="#{movimientoEducacionBean.PTOED}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoEducacionBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoEducacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{movimientoEducacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <ui:include src="movimientoMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <ui:fragment rendered="#{movimientoEducacionBean.modoVista eq 'B'}" >
+                <ui:include src="movimientoBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty movimientoEducacionBean.m and movimientoEducacionBean.modoVista eq 'D'}" >
+
+                <ui:include src="movimientoDatos.xhtml" rendered="#{not empty movimientoEducacionBean.m}" />
+                <ui:include src="movimientoDetalle.xhtml" rendered="#{not empty movimientoEducacionBean.m}"  />
+
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoEducacionBean.muestraReporte}"
+                               nombreArchivo="#{movimientoEducacionBean.nombreArchivo}" />
+
+            <ui:include src="movimientoPendiente.xhtml" rendered="#{not empty movimientoEducacionBean.m}"  />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+
+
+        </ui:define>
+
+    </ui:composition>
+</html>
+

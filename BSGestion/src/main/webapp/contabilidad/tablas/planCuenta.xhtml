@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{planCuentaBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{planCuentaBean.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{planCuentaBean.iniciarVariables()}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{planCuentaBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank" >
+
+                <p:scrollPanel style="width:90%;height:400px" >
+
+                    <p:treeTable id="treeSingle" value="#{planCuentaBean.arbol}" var="m"
+                                 selectionMode="single"
+                                 selection="#{planCuentaBean.nodoSeleccionado}"
+                                 rowStyleClass="#{m.imputable eq 'N'  ? 'origenUsuario' : null}" >
+
+                        <p:ajax event="select" listener="#{planCuentaBean.onNodeSelect}" update="@form"  />
+
+                        <p:column headerText="Nro Cuenta" filterBy="#{m.nrocta}" filterable="true">
+                            <h:outputText value="#{m.nrocta}" />
+
+                            <!--
+                            <p:commandButton icon="fa fa-plus" actionListener="#{planCuentaBean.nuevo(m)}"
+                                             process="@this" update="@form" styleClass="Fright"
+                                             rendered="#{m.imputable eq 'N' and m.nivel eq 4}"/>
+                            -->
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{m.descripcion}" />
+
+                        </p:column>
+
+                        <p:column headerText="Imputable" width="50">
+                            <h:outputText value="Si" rendered="#{m.imputable eq 'S' }"   />
+                            <h:outputText value="No" rendered="#{m.imputable eq 'N' }"   />
+                        </p:column>
+
+                    </p:treeTable>
+
+                </p:scrollPanel>
+
+                <h:panelGroup layout="block">
+
+                    <p:menubar id="menuBar">
+
+                        <p:menuitem value="Nuevo item" icon="fa fa-plus" id="btnNew"
+                                    actionListener="#{planCuentaBean.nuevo()}"
+                                    process="@this"
+                                    update="@form"
+                                    immediate="true" >
+                            <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert"
+                                       rendered="#{not planCuentaBean.esNuevo}"/>
+                        </p:menuitem>
+
+                        <p:menuitem value="Guardar" icon="fa fa-save"
+                                    actionListener="#{planCuentaBean.guardar(false)}"
+                                    rendered="#{not planCuentaBean.buscaMovimiento}"
+                                    update="@form" />
+
+                        <p:menuitem value="Imprimir" icon="fa fa-print"
+                                    actionListener="#{reporteService.verReporte}"
+                                    immediate="true"
+                                    process="@this"
+                                    update="@form" />
+
+                    </p:menubar>
+
+                    <div class="EmptyBox10" />
+
+                    <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                    <div class="EmptyBox10" />
+
+                    <p:panelGrid id="datos" columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank" >
+
+                        <h:outputText value="Cuenta principal" />
+                        <p:inputText value="#{planCuentaBean.cuentaContable.cuentaContable.descripcion}"
+                                     readonly="true"
+                                     required="true"
+                                     requiredMessage="La cuenta madre es necesaria" />
+
+                        <h:outputText value="Nro cuenta" />
+                        <p:inputText value="#{planCuentaBean.cuentaContable.nrocta}"
+                                     readonly="true"
+                                     required="true"
+                                     requiredMessage="El número de cuenta es necesario" />
+
+                        <h:outputText value="Descripción" />
+                        <p:inputText value="#{planCuentaBean.cuentaContable.descripcion}"
+                                     required="true"
+                                     requiredMessage="La descripción es necesaria" />
+
+                        <h:outputText value="Imputable" />
+                        <p:selectOneMenu value="#{planCuentaBean.cuentaContable.imputable}"
+                                         rendered="#{planCuentaBean.esNuevo}"
+                                         required="true" requiredMessage="Seleccione si la cuenta es imputable"  >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneMenu>
+                        <h:outputText value="Si" rendered="#{not planCuentaBean.esNuevo and planCuentaBean.cuentaContable.imputable eq 'S' }"   />
+                        <h:outputText value="No" rendered="#{not planCuentaBean.esNuevo and planCuentaBean.cuentaContable.imputable eq 'N' }"   />
+
+
+                        <h:outputText value="Imputa en Ventas" />
+                        <p:selectOneMenu value="#{planCuentaBean.cuentaContable.imputacionVenta}"
+                                         required="true" requiredMessage="Seleccione si la cuenta imputa en ventas"  >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Imputa en Compras" />
+                        <p:selectOneMenu value="#{planCuentaBean.cuentaContable.imputacionCompras}"
+                                         required="true" requiredMessage="Seleccione si la cuenta imputa en compras"  >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Imputa en Tesoreria" />
+                        <p:selectOneMenu value="#{planCuentaBean.cuentaContable.imputacionTesoreria}"
+                                         required="true" requiredMessage="Seleccione si la cuenta imputa en tesoreria"  >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Imputa en Contabilidad" />
+                        <p:selectOneMenu value="#{planCuentaBean.cuentaContable.imputacionContabilidad}"
+                                         required="true" requiredMessage="Seleccione si la cuenta imputa en contabilidad"  >
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItem itemLabel="Si" itemValue="S" />
+                            <f:selectItem itemLabel="No" itemValue="N" />
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

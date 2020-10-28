@@ -1,0 +1,309 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- DETALLE -->
+    <p:tabView id="tb" rendered="#{not empty movimientoFacturacionBean.m and not movimientoFacturacionBean.buscaMovimiento}">
+
+        <p:tab title="Picking" >
+
+            <p:dataTable id="detalle" value="#{movimientoFacturacionBean.m.itemsProducto}" var="i"
+                         resizeMode="expand" liveResize="true" >
+
+                <p:column headerText="" width="65"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','IMAGEN')}"  >
+
+                    <h:outputLink value="/#{aplicacionBean.parametro.nombreCarpetaArchivos}/productos/#{i.producto.imagenChica}"
+                                  rendered="#{not empty i.producto.imagenChica}" target="_blank" >
+
+                        <h:graphicImage value="/#{aplicacionBean.parametro.nombreCarpetaArchivos}/productos/#{i.producto.imagenChica}"
+                                        width="100%" />
+                    </h:outputLink>
+
+                    <h:graphicImage name="image/noimage.png" styleClass="TexAlCenter MarAuto" width="100%"
+                                    rendered="#{empty i.producto.imagenChica}" />
+                </p:column>
+
+                <p:column headerText="Código" width="70"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','ARTCOD')}"  >
+
+                    <h:outputText value="#{i.producto.codigo}" rendered="#{not empty i.producto}" />
+                </p:column>
+
+                <p:column headerText="Producto" width="300" >
+                    <p:commandButton icon="fa fa-search"
+                                     process="@this"
+                                     oncomplete="PF('dlgProducto').show()"
+                                     rendered="#{not i.todoOk and not empty movimientoFacturacionBean.m.listaDePrecio}" />
+
+                    <p:inputText value="#{i.descripcion}"
+                                 rendered="#{not empty i.producto and movimientoFacturacionBean.circuito.editaDescripcion eq 'S'}" >
+                        <p:ajax event="blur" process="@this" />
+                    </p:inputText>
+
+                    <h:outputText value="#{i.descripcion}"
+                                  rendered="#{not empty i.producto and movimientoFacturacionBean.circuito.editaDescripcion eq 'N'}"/>
+                </p:column>
+
+                <p:column headerText="Observaciones/Detalle" width="300"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','OBSERVA')}" >
+                    <p:inputTextarea value="#{i.observaciones}" rows="2"
+                                     rendered="#{ (i.todoOk or not empty i.producto) and not empty movimientoFacturacionBean.m.listaDePrecio}" />
+                </p:column>
+
+                <p:column headerText="Stock" width="50" style="text-align: center;"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','STOCK')}">
+
+                    <p:commandButton icon="fa fa-search"
+                                     rendered="#{not empty i.producto}"
+                                     actionListener="#{consultaStock.verStockPorProducto(i.producto)}"
+                                     process="@this"
+                                     update="consultaStock"
+                                     oncomplete="PF('dlgConsultaStock').show()" >
+
+                        <f:setPropertyActionListener value="#{i}" target="#{movimientoFacturacionBean.item}" />
+                    </p:commandButton>
+                </p:column>
+
+                <p:column headerText="Cantidad" width="70"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','CANTID')}" >
+
+                    <!-- Item sin agregar -->
+                    <p:inputText value="#{i.cantidad}"
+                                 rendered="#{not empty i.producto and not i.todoOk }" style="text-align: right;"
+                                 readonly="#{movimientoFacturacionBean.circuito.editaCantidad ne 'S'}" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportesLineaByPrecio(i)}" event="keyup" delay="500"
+                                update="total,
+                                :formulario:totales,
+                                #{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec':''}" />
+                    </p:inputText>
+
+                    <!-- Item agregado -->
+                    <p:inputText  value="#{i.cantidad}"
+                                  rendered="#{not empty i.producto and i.todoOk }" style="text-align: right;"
+                                  readonly="#{movimientoFacturacionBean.circuito.editaCantidad ne 'S'}" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                update="total2,
+                                :formulario:totales,
+                                #{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec2':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="U.M." width="85" style="text-align: center;"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','UNIMED')}">
+
+                    <h:outputText  value="#{i.unidadMedida.codigo}"
+                                   rendered="#{not empty i.producto and movimientoFacturacionBean.circuito.editaUnidadMedida eq 'N'}" />
+
+                    <p:selectOneMenu value="#{i.unidadMedida}"
+                                     rendered="#{not empty i.producto and movimientoFacturacionBean.circuito.editaUnidadMedida eq 'S'}"
+                                     required="true"
+                                     requiredMessage="Seleccione la unidad de medida"
+                                     converter="#{conversoresStock.unidadMedida}" filter="true"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItems value="#{unidadMedidaBean.lista}" var="u" itemLabel="#{u.codigo}" itemValue="#{u}"/>
+                    </p:selectOneMenu>
+
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}" width="120"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','NATRI1') and movimientoFacturacionBean.circuito.administraAtributo1 eq 'S'}" >
+
+                    <p:inputText value="#{i.atributo1}" readonly="#{empty i.producto or i.producto.administraAtributo1 eq 'N'}"   />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}" width="120"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','NATRI2') and movimientoFacturacionBean.circuito.administraAtributo1 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo2}" readonly="#{empty i.producto or i.producto.administraAtributo2 eq 'N'}"   />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo3}" width="120"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','NATRI3') and movimientoFacturacionBean.circuito.administraAtributo3 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo3}" readonly="#{empty i.producto or i.producto.administraAtributo3 eq 'N'}"   />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo4}" width="120"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','NATRI4') and movimientoFacturacionBean.circuito.administraAtributo4 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo4}" readonly="#{empty i.producto or i.producto.administraAtributo4 eq 'N'}"   />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo5}" width="120"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','NATRI5') and movimientoFacturacionBean.circuito.administraAtributo5 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo5}"  readonly="#{empty i.producto or i.producto.administraAtributo5 eq 'N'}"   />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo6}" width="120"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','NATRI6') and movimientoFacturacionBean.circuito.administraAtributo6 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo6}" readonly="#{empty i.producto or i.producto.administraAtributo6 eq 'N'}"   />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo7}" width="120"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','NATRI7') and movimientoFacturacionBean.circuito.administraAtributo7 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo7}" readonly="#{empty i.producto or i.producto.administraAtributo7 eq 'N'}"   />
+                </p:column>
+
+                <p:column headerText="Detalle" style="width: 50px; text-align: center;"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','DETALL')}"   >
+                    <p:rowToggler  />
+                </p:column>
+
+                <p:column headerText="Precio" width="90"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','PRECIO')}">
+
+                    <h:outputText id="txtPrecio" value="#{i.precio}" styleClass="Fright"
+                                  rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                    </h:outputText>
+
+                    <p:inputText id="precio"  value="#{i.precio}" styleClass="TexAlRight"
+                                 rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo ne aplicacionBean.parametro.codigoMonedaSecundaria and not empty i.producto and not i.todoOk}"
+                                 readonly="#{movimientoFacturacionBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportesLineaByPrecio(i)}" event="keyup" delay="500"
+                                update="total,:formulario:totales,#{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec':''},#{movimientoFacturacionBean.muestroCampo('D','PRESEC')?'txtPrecioSec':''}" />
+                    </p:inputText>
+
+                    <p:inputText id="precio2"  value="#{i.precio}" styleClass="TexAlRight"
+                                 rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo ne aplicacionBean.parametro.codigoMonedaSecundaria and not empty i.producto and i.todoOk}"
+                                 readonly="#{movimientoFacturacionBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                update="total2,:formulario:totales,#{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec2':''},#{movimientoFacturacionBean.muestroCampo('D','PRESEC')?'txtPrecioSec':''}" />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="Precio Sec." width="90" style="text-align: right;"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','PRESEC')}">
+
+                    <h:outputText id="txtPrecioSec" value="#{i.precioSecundario}" styleClass="Fright"
+                                  rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo ne aplicacionBean.parametro.codigoMonedaSecundaria}"  >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                    </h:outputText>
+
+                    <p:inputText id="preciosec"  value="#{i.precioSecundario}" styleClass="TexAlRight"
+                                 rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria and not empty i.producto and not i.todoOk}"
+                                 readonly="#{movimientoFacturacionBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportesLineaByPrecio(i)}" event="keyup" delay="500"
+                                update="total,:formulario:totales,#{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec':''},#{movimientoFacturacionBean.muestroCampo('D','PRECIO')?'txtPrecio':''}" />
+                    </p:inputText>
+
+                    <p:inputText id="preciosec2"  value="#{i.precioSecundario}"  styleClass="TexAlRight"
+                                 rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria and not empty i.producto and i.todoOk}"
+                                 readonly="#{movimientoFacturacionBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                update="total2,:formulario:totales,#{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec2':''},#{movimientoFacturacionBean.muestroCampo('D','PRECIO')?'txtPrecio':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="% Bonif." width="75" style="text-align: right;"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','PCTBF1')}">
+
+                    <!-- BONIF DEL ITEM QUE AÚN NO SE AGREGÓ -->
+                    <p:inputText value="#{i.porcentajeBonificacion1}" styleClass="TexAlRight"
+                                 rendered="#{not empty i.producto and not i.todoOk}"
+                                 readonly="#{movimientoFacturacionBean.circuito.editaBonificacion ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportesLineaByPrecio(i)}" event="keyup" delay="500"
+                                update="#{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec':''},total,:formulario:totales" />
+                    </p:inputText>
+
+                    <p:inputText  value="#{i.porcentajeBonificacion1}" styleClass="TexAlRight"
+                                  rendered="#{not empty i.producto and i.todoOk}"
+                                  readonly="#{movimientoFacturacionBean.circuito.editaBonificacion ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                update="#{movimientoFacturacionBean.muestroCampo('D','TOTSEC')?'totalsec2':''},total2,:formulario:totales" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Total" width="90"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','TOTLIN')}" >
+
+                    <!-- TOTAL DEL ITEM QUE AÚN NO SE AGREGÓ -->
+                    <h:outputText id="total" value="#{i.totalLineaSinBonificacionPieSinIVA}" styleClass="Fright"
+                                  rendered="#{not empty i.producto and not i.todoOk}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                    <!-- TOTAL DEL ITEM AGREGADO -->
+                    <h:outputText id="total2" value="#{i.totalLineaSinBonificacionPieSinIVA}" styleClass="Fright"
+                                  rendered="#{not empty i.producto and i.todoOk}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Total Sec"  width="90"
+                          rendered="#{movimientoFacturacionBean.muestroCampo('D','TOTSEC')}">
+
+                    <!-- TOTAL DEL ITEM QUE AÚN NO SE AGREGÓ -->
+                    <h:outputText id="totalsec" value="#{i.totalLineaSecundario}" styleClass="Fright"
+                                  rendered="#{not empty i.producto and not i.todoOk}"  >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                    <!-- TOTAL DEL ITEM AGREGADO -->
+                    <h:outputText id="totalsec2" value="#{i.totalLineaSecundario}" styleClass="Fright"
+                                  rendered="#{not empty i.producto and i.todoOk}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <!--
+                    <p:commandButton icon="fa fa-plus" process="detalle" update="@form"
+                                     actionListener="#{movimientoFacturacionBean.agregarItem(i)}"
+                                     rendered="#{not i.todoOk and empty i.id}" />
+                    -->
+
+                    <p:commandLink process="detalle" update="@form"
+                                   actionListener="#{movimientoFacturacionBean.eliminarItem(i)}"
+                                   rendered="#{not empty i.producto}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar #{i.descripcion}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+
+            </p:dataTable>
+
+            <!--
+            <div class="EmptyBox10"></div>
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                <h:outputText value="Código de barras" />
+                <p:inputText value="#{movimientoFacturacionBean.codigoBarra}" >
+                <h:outputText value="" />
+                <h:outputText value="" />
+
+                </p:inputText>
+            </p:panelGrid>
+            -->
+
+        </p:tab>
+
+    </p:tabView>
+
+
+</ui:composition>
+

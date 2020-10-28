@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pv="http://primefaces.org/volt"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+
+
+    <ui:composition template="/template2.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredView()}"/>
+        </f:metadata>
+
+        <ui:define name="head" >
+
+            <c:if test="#{not empty aplicacionBean.parametro.pathImagenInicio}" >
+                <style>
+                    .body {
+                        #{aplicacionBean.parametro.cssPathImagenInicio}
+                        background-repeat: no-repeat;
+                        background-position: center top;
+                        background-attachment: fixed;
+                        backgroudn-size: contain;
+                    }
+                </style>
+            </c:if>
+
+        </ui:define>
+
+        <ui:define name="script" >
+
+            <script type="text/javascript">
+
+                window.onbeforeunload = function () {
+
+                    return "Al cerrar esta ventana, no podrá continuar trabajando en el sistema";
+                }
+            </script>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.js" />
+
+
+        </ui:define>
+
+        <ui:define name="titulo" >
+            #{aplicacionBean.organizacion.nombreFantasia} - Principal
+        </ui:define>
+
+        <ui:define name="menu">
+            <h:form id="menuform" >
+                <pv:menu model="#{principalBean.modelo}"    />
+            </h:form>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+
+            <p:poll interval="3601" listener="#{usuarioSessionBean.checkExpiredView()}"  />
+
+            <h:form id="formulario" prependId="false">
+
+                <p:tabView styleClass="Hei100 Wid100">
+                    <p:tab title="Principal">
+
+                        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                     columnClasses="ui-g-12 ui-lg-4, ui-g-12 ui-lg-8" >
+
+                            <h:panelGroup id="dgResultado" layout="block" styleClass="Responsive100" >
+
+                                <p:inputText id="txtBusqueda" style="margin-right:10px" autocomplete="false" placeholder="Buscar"
+                                             value="#{principalBean.txtBusqueda}"
+                                             rendered="#{usuarioSessionBean.estaRegistrado}" >
+                                </p:inputText>
+
+                                <p:commandButton id="btnBuscar" icon="fa fa-search"
+                                                 actionListener="#{principalBean.buscarMenuItem()}"
+                                                 process="@this,txtBusqueda"
+                                                 update="dgResultado,message,messageg" />
+
+                                <p:defaultCommand target="btnBuscar" />
+
+                                <p:spacer width="100%" height="1em"  />
+
+                                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="1000" />
+
+                                <p:dataList value="#{principalBean.resultadoBusqueda}" var="r"
+                                            rendered="#{not empty principalBean.resultadoBusqueda}"
+                                            type="unordered" itemType="none"
+                                            rows="40" paginator="true" paginatorAlwaysVisible="false" >
+
+                                    <f:facet name="header">
+                                        Resultados
+                                    </f:facet>
+
+                                    <h:outputLink  value="#{request.contextPath}#{r.urlCompleta}"
+                                                   target="_blank"
+                                                   rendered="#{empty r.menuItem}" >
+
+                                        <div class="EmptyBox5"></div>
+
+                                        <div style="display:inline-block; ">
+                                            <i class="fa #{r.icono} Fs18" style="margin-top:5px; margin-right: 5px;"></i>
+                                            <h:outputText value="#{r.modulo.codigo} - #{r.nombre}" />
+                                        </div>
+
+                                        <p:ajax event="click" update="@form" listener="#{principalBean.agregarReciente(r)}" />
+
+                                        <p:commandLink title="Agregar a favorito"
+                                                       actionListener="#{principalBean.agregarFavorito(r)}" update="@form"  >
+                                            <i class="fa fa-star Fs18" style="margin-left: 10px;"></i>
+                                        </p:commandLink>
+
+                                    </h:outputLink>
+                                </p:dataList>
+                            </h:panelGroup>
+
+                            <h:panelGroup layout="block" styleClass="Responsive100" >
+
+                                <p:dataGrid value="#{principalBean.favoritos}" var="r" columns="5" rows="20" layout="grid"
+                                            rendered="#{not empty principalBean.favoritos}"
+                                            paginator="true" paginatorAlwaysVisible="false" >
+
+                                    <f:facet name="header" >
+                                        Favoritos
+                                    </f:facet>
+
+                                    <p:panel style="text-align:center; border: none;">
+
+                                        <h:outputLink id="menu"  value="#{request.contextPath}#{r.menu.urlCompleta}" target="_blank" >
+                                            <div style="padding:1px;min-height: 60px;">
+                                                <div class="MarAuto" style="width: 25px;">
+                                                    <i class="fa #{r.menu.icono} fa-2x" style="margin-right: auto; margin-left: auto;"></i>
+                                                </div>
+                                                <div class="EmptyBox5"></div>
+                                                <div class="TexAlCenter" >
+                                                    <span class="Fs12">
+                                                        <h:outputText value="#{r.menu.modulo.codigo} - #{r.menu.nombre}" />
+                                                    </span>
+                                                    <div class="EmptyBox5"></div>
+                                                </div>
+                                            </div>
+                                        </h:outputLink>
+
+                                        <p:contextMenu for="menu">
+                                            <p:menuitem value="Quitar de favoritos" icon="ui-icon-close"
+                                                        actionListener="#{principalBean.quitarFavorito(r)}"
+                                                        process="@this"
+                                                        update="@form" />
+                                        </p:contextMenu>
+                                    </p:panel>
+
+                                </p:dataGrid>
+
+                                <div class="EmptyBox10" />
+
+                                <p:dataGrid value="#{principalBean.recientes}" var="r" columns="5" rows="20" layout="grid"
+                                            rendered="#{not empty principalBean.recientes}"
+                                            paginator="true" paginatorAlwaysVisible="false" >
+
+                                    <f:facet name="header" >
+                                        Recientes
+                                    </f:facet>
+
+                                    <p:panel style="text-align:center; border: none;">
+                                        <h:outputLink  value="#{request.contextPath}#{r.menu.urlCompleta}" target="_blank" >
+                                            <div style="padding:1px;min-height: 65px;">
+                                                <div class="MarAuto" style="width: 25px;">
+                                                    <i class="fa #{r.menu.icono} fa-2x" style="margin-right: auto; margin-left: auto;"></i>
+                                                </div>
+                                                <div class="EmptyBox5"></div>
+                                                <div class="TexAlCenter" >
+                                                    <span class="Fs12">
+                                                        <h:outputText value="#{r.menu.modulo.codigo} - #{r.menu.nombre}" />
+                                                    </span>
+                                                    <div class="EmptyBox5"></div>
+                                                </div>
+                                            </div>
+                                        </h:outputLink>
+                                    </p:panel>
+                                </p:dataGrid>
+                            </h:panelGroup>
+
+
+                        </p:panelGrid>
+
+                    </p:tab>
+
+                    <p:tab title="Tablero">
+
+                        <p:panelGrid id="pgTablero" columns="1" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="Container100" >
+
+                            <ui:include src="/global/dashboard.xhtml" />
+
+                        </p:panelGrid>
+
+                        <!--
+                        <iframe src="http://localhost:4848/extensions/Prueba/Prueba.html" class="Container100 Hei100" style="height: 500px; border:none;" >
+
+                        </iframe>
+                        -->
+
+                    </p:tab>
+
+                </p:tabView>
+
+            </h:form>
+
+            <style>
+
+                #layout-topbar {
+                    width: 90%;
+                    height: auto;
+                    padding: 0px 5%;
+                    position: fixed;
+                    z-index: 999;
+                }
+
+                #layout-portlets-cover {
+                    width: 90%;
+                    height: auto;
+                    padding: 0px 5% 0px;
+                }
+
+                @media (min-width: 961px) and (max-width: 1200px) {
+                    /* topbar */
+                    #layout-topbar {
+                        width: 84%;
+                        padding: 0px 8%;
+                    }
+
+                    #layout-portlets-cover {
+                        width: 84%;
+                        padding: 0px 8%;
+                    }
+                }
+
+
+                .ui-tabs-panels {
+                    border:none !important;
+                }
+
+            </style>
+
+            <ui:include src="/resources/general/chat.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,275 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{empresaBean.empresa.codigo}" readonly="true"  />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Razón Social" />
+        <p:inputText value="#{empresaBean.empresa.razonSocial}"
+                     required="true" requiredMessage="La razón social es obligatoria" />
+
+        <h:outputText value="Nombre Fantasía" />
+        <p:inputText value="#{empresaBean.empresa.nombreFantasia}"
+                     required="true" requiredMessage="El nombre es obligatorio" />
+
+        <h:outputText value="Dirección" />
+        <p:inputText value="#{empresaBean.empresa.direccion}"
+                     required="true" requiredMessage="El nombre es obligatorio" />
+
+        <h:outputText value="Ciudad" />
+        <p:inputText value="#{empresaBean.empresa.ciudad}"  />
+
+        <h:outputText value="Provincia" />
+        <p:inputText value="#{empresaBean.empresa.provincia}"  />
+
+        <h:outputText value="País" />
+        <p:inputText value="#{empresaBean.empresa.pais}"  />
+
+        <h:outputText value="Condición de IVA"  />
+        <p:inputText value="#{empresaBean.empresa.condicionIVA}"  />
+
+        <h:outputText value="C.U.I.T.:"  />
+        <p:inputText value="#{empresaBean.empresa.cuit}"  />
+
+        <h:outputText value="Número IB"  />
+        <p:inputText value="#{empresaBean.empresa.nroIB}"  />
+
+        <h:outputText value="Agente de Retención"  />
+        <p:inputText value="#{empresaBean.empresa.nroAG}"  />
+
+        <h:outputText value="Impuesto Munic."  />
+        <p:inputText value="#{empresaBean.empresa.impuestoMunicipal}"  />
+
+        <h:outputText value="Inicio Actividades"  />
+        <p:inputText value="#{empresaBean.empresa.inicioActividades}"  />
+
+        <h:outputText value="E-mail"  />
+        <p:inputText value="#{empresaBean.empresa.email}"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+        </p:inputText>
+
+        <h:outputText value="Teléfono"  />
+        <p:inputText value="#{empresaBean.empresa.telefono}"  />
+
+        <h:outputText value="Banco Emisor"  />
+        <p:inputText value="#{empresaBean.empresa.bancoEmisor}"  />
+
+        <h:outputText value="CBU Banco Emisor"  />
+        <p:inputText value="#{empresaBean.empresa.cbu}"  />
+
+        <h:outputText value="Alias Banco Emisor"  />
+        <p:inputText value="#{empresaBean.empresa.alias}"  />
+
+        <h:outputText value=""  />
+        <h:outputText value=""  />
+
+        <h:outputText value="Path logo"  />
+        <p:inputTextarea rows="3" cols="100"
+                         value="#{empresaBean.empresa.logo}" title="Path Logo" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:tabView>
+
+        <p:tab title="Sucursales">
+
+            <p:dataTable  id="tablaSucursal" var="i"  resizeMode="expand" liveResize="true"
+                          value="#{empresaBean.empresa.sucursales}"
+                          paginator="false"
+                          emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+                <f:facet name="header" >
+                    Sucursales
+                </f:facet>
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{empresaBean.nuevoSucursal()}"
+                                     value="Agregar Sucursal"
+                                     process="tablaSucursal"
+                                     update="tablaSucursal" />
+
+                </f:facet>
+
+                <p:column headerText="Código" width="60"   >
+
+                    <p:inputText value="#{i.codigo}" maxlength="6"
+                                 required="true"
+                                 requiredMessage="El código el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Nombre"  >
+
+                    <p:inputText value="#{i.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Dirección"  >
+
+                    <p:inputText value="#{i.direccion}"
+                                 required="true"
+                                 requiredMessage="La dirección es obligatoria" />
+
+
+                </p:column>
+
+                <p:column headerText="Ciudad"  >
+
+                    <p:inputText value="#{i.ciudad}"
+                                 required="true"
+                                 requiredMessage="La ciudad el obligatoria" />
+
+                </p:column>
+
+                <p:column headerText="Provincia" >
+
+                    <p:inputText value="#{i.provincia}"
+                                 required="true"
+                                 requiredMessage="La provincia el obligatoria" />
+
+                </p:column>
+
+                <p:column headerText="Pais"  >
+
+                    <p:inputText value="#{i.pais}"
+                                 required="true"
+                                 requiredMessage="El pais el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Email"  >
+
+                    <p:inputText value="#{i.email}"
+                                 required="true"
+                                 requiredMessage="El email el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Teléfono"  >
+
+                    <p:inputText value="#{i.telefono}"
+                                 required="true"
+                                 requiredMessage="El teléfono el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Logo" >
+
+                    <p:inputText value="#{i.logo}" />
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaSucursal" update="tablaSucursal,message,messageg"
+                                   actionListener="#{empresaBean.eliminarSucursal(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab title="Unidad de Negocio">
+
+            <p:dataTable  id="tablaUnidadNegocio" var="i"   resizeMode="expand" liveResize="true"
+                          value="#{empresaBean.empresa.unidadesNegocios}"
+                          emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{empresaBean.nuevoItemMateria()}"
+                                     immediate="true"
+                                     value="Agregar Unidad de Negocio"
+                                     process="tablaUnidadNegocio"
+                                     update="tablaUnidadNegocio" />
+
+                </f:facet>
+
+                <p:column headerText="Código" width="60"   >
+
+                    <p:inputText value="#{i.codigo}" maxlength="6"
+                                 required="true"
+                                 requiredMessage="El código el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Nombre"  >
+
+                    <p:inputText value="#{i.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Email"  >
+
+                    <p:inputText value="#{i.email}"
+                                 required="true"
+                                 requiredMessage="El email el obligatorio" />
+
+                </p:column>
+
+                <p:column headerText="Teléfono"  >
+
+                    <p:inputText value="#{i.telefono}"
+                                 required="true"
+                                 requiredMessage="El teléfono el obligatorio" />
+
+                </p:column>
+
+
+                <p:column headerText="Logo" >
+
+                    <p:inputText value="#{i.logo}" />
+
+                </p:column>
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaUnidadNegocio" update="tablaUnidadNegocio,message,messageg"
+                                   actionListener="#{empresaBean.eliminarItemMateria(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+
+        </p:tab>
+
+    </p:tabView>
+
+
+
+
+</ui:composition>
+

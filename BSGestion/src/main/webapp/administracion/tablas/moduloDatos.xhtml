@@ -1,0 +1,62 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- DATOS -->
+    <p:panelGrid  columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                  columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{moduloBean.modulo.codigo}"
+                     readonly="#{not moduloBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{moduloBean.modulo.descripcion}"
+                     readonly="#{not moduloBean.esNuevo}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Fecha Habilitación Desde" />
+        <p:calendar value="#{moduloBean.modulo.fechaDesde}"
+                    placeholder="Desde"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Fecha Habilitación Hasta" />
+        <p:calendar value="#{moduloBean.modulo.fechaHasta}"
+                    placeholder="Hasta"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

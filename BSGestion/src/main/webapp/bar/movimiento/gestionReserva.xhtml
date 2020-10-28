@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <ui:define name="meta-data" >
+
+        </ui:define>
+
+        <ui:define name="titulo" >
+            Reserva
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Reserva
+        </ui:define>
+
+        <ui:define name="menu">
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarReserva" process="@this" update="@form" />
+
+            <p:growl id="messageg" showDetail="true" life="4000" />
+
+            <!-- DATOS -->
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank MaxWid700 MarAuto NoPadding"
+                         columnClasses="ui-g-5,ui-g-7" >
+
+                <!-- pattern="EEEEEEE dd MMMMMMM yyyy"  -->
+
+                <h:outputText value="Fecha"  />
+                <p:calendar value="#{gestionReservaBean.reserva.fechaMovimiento}" autocomplete="off"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true" >
+                    <p:ajax process="@this" update="@form" event="dateSelect" listener="#{gestionReservaBean.actualizarTotales()}" />
+                </p:calendar>
+
+                <h:outputText value="Contacto"  />
+                <!--
+                <p:inputText value="#{gestionReservaBean.reserva.nombreContacto}" />
+                -->
+                <p:autoComplete value="#{gestionReservaBean.reserva.nombreContacto}" autocomplete="off"
+                                maxResults="8" queryDelay="1000"
+                                placeholder="Nombre Contacto"
+                                completeMethod="#{gestionReservaBean.completeContacto}"
+                                var="p"
+                                itemLabel="#{p}"
+                                itemValue="#{p}" forceSelection="false" >
+
+                    <p:ajax event="itemSelect" process="@this" />
+
+                </p:autoComplete>
+
+                <h:outputText value="Cant. Personas" />
+                <p:inputText value="#{gestionReservaBean.reserva.cantidadPersonas}"
+                             autocomplete="off"
+                             styleClass="TexAlRight"
+                             required="true"
+                             requiredMessage="La cantidad de personas es necesaria" />
+
+                <h:outputText value="Salón" />
+                <p:selectOneRadio  value="#{gestionReservaBean.reserva.salon}" layout="responsive" columns="2"
+                                   converter="#{conversoresBar.salon}" >
+                    <f:selectItems value="#{gestionReservaBean.salones}" var="s" itemLabel="#{s.descripcion}" itemValue="#{s}"/>
+                    <p:ajax event="change" process="@this" update="infoReservas" listener="#{gestionReservaBean.actualizarTotales()}"  />
+                </p:selectOneRadio>
+
+
+                <h:outputText value="Observaciones" />
+                <p:inputTextarea style="width: 100%" rows="1"
+                                 value="#{gestionReservaBean.reserva.observaciones}" >
+                    <p:ajax event="blur" process="@this" />
+                </p:inputTextarea>
+
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank MaxWid700 MarAuto NoPadding"
+                         columnClasses="ui-g-6 ui-md-3,ui-g-6 ui-md-3,ui-g-6 ui-md-3,ui-g-6 ui-md-3" >
+
+                <p:commandButton value="Reservar" styleClass="GreenBack" icon="fa fa-check"
+                                 actionListener="#{gestionReservaBean.guardar(false)}"
+                                 rendered="#{not empty gestionReservaBean.reserva and gestionReservaBean.esNuevo and gestionReservaBean.reserva.auditoria.debaja eq 'N'}"
+                                 update="@form" >
+                </p:commandButton>
+
+                <p:commandButton value="Actualizar Reserva" icon="fa fa-save"
+                                 actionListener="#{gestionReservaBean.guardar(false)}"
+                                 rendered="#{not empty gestionReservaBean.reserva and not gestionReservaBean.esNuevo}"
+                                 update="@form" >
+                </p:commandButton>
+
+                <p:commandButton value="Nueva Reserva" styleClass="GreenBack" icon="fa fa-check"
+                                 actionListener="#{gestionReservaBean.nuevo()}"
+                                 rendered="#{not empty gestionReservaBean.reserva and not gestionReservaBean.esNuevo}"
+                                 update="@form" >
+                </p:commandButton>
+
+                <p:commandButton value="Anular" styleClass="RedBack" icon="fa fa-trash"
+                                 actionListener="#{gestionReservaBean.habilitaDeshabilita('S')}"
+                                 rendered="#{not empty gestionReservaBean.reserva and not gestionReservaBean.esNuevo and gestionReservaBean.reserva.auditoria.debaja eq 'N'}"
+                                 process="@this"
+                                 update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? No podrá deshacer esta acción" icon="ui-icon-alert" />
+                </p:commandButton>
+
+                <p:commandButton value="Buscar" icon="fa fa-search" styleClass="BlueBack"
+                                 actionListener="#{gestionReservaBean.buscar()}"
+                                 process="@this"
+                                 update="buscadorReserva"
+                                 oncomplete="PF('dlgReserva').show()"
+                                 immediate="true" >
+                </p:commandButton>
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+
+            <p:outputPanel id="infoReservas" >
+
+                <p:panelGrid   columns="4" layout="grid" styleClass="ui-panelgrid-blank MaxWid700 MarAuto NoPadding" >
+
+                    <h:outputText value="Cant. Reservas " styleClass="Fs14" />
+                    <h:outputText value="#{gestionReservaBean.cantidadReservas}"  styleClass="FontBold Fs14"  />
+
+                    <h:outputText value="Cant. Personas " styleClass="Fs14" />
+                    <h:outputText value="#{gestionReservaBean.cantidadPersonas}" styleClass="FontBold" />
+
+
+
+                </p:panelGrid>
+
+                <div class="MarAuto MaxWid500" >
+                    <p:chart type="metergauge" model="#{gestionReservaBean.medidor}" style="width:100%;height:250px" styleClass="MarAuto" />
+                </div>
+
+            </p:outputPanel>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/bar/busqueda/buscadorReserva.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

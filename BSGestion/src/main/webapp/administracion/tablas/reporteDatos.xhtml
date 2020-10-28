@@ -1,0 +1,73 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="4" layout="grid" style="max-width: 900px;"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Origen " />
+        <p:inputText value="SISTEMA"  readonly="true" rendered="#{reporteBean.reporte.origen eq 'SIS' }" />
+        <p:inputText value="USUARIO"  readonly="true" rendered="#{reporteBean.reporte.origen eq 'USR' }" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText id="codigo" value="#{reporteBean.reporte.codigo}"
+                     required="true" readonly="true"
+                     requiredMessage="El codigo es necesario" />
+
+        <h:outputText value="Nombre" />
+        <p:inputText value="#{reporteBean.reporte.nombre}"
+                     required="true"
+                     requiredMessage="El nombre es necesario" />
+
+        <h:outputText value="Grupo" />
+        <p:selectOneMenu value="#{reporteBean.reporte.grupo}" effect="fold" editable="true"    >
+            <p:ajax event="itemSelect" process="@this"  />
+            <f:selectItem itemLabel="Ingrese un grupo" itemValue="" />
+            <f:selectItem itemLabel="informes" itemValue="informes" />
+            <f:selectItem itemLabel="formularios" itemValue="formularios" />
+        </p:selectOneMenu>
+
+        <bs:outputTexWhitLink value="Módulo"
+                              url="#{reporteBean.obtenerUrlMenu('SIS_00217','CODIGO',reporteBean.reporte.modulo.codigo)}" />
+        <p:selectOneMenu value="#{reporteBean.reporte.modulo}"
+                         required="true" requiredMessage="Seleccione el módulo"
+                         converter="#{conversoresGeneral.modulo}"
+                         effect="fade" filter="true" >
+            <p:ajax event="itemSelect" process="@this"  update="@form" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{moduloBean.lista}" var="m" itemLabel="#{m.descripcion}" itemValue="#{m}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Path" />
+        <p:inputText value="#{reporteBean.reporte.path}" readonly="#{reporteBean.reporte.origen ne 'SIS'}"
+                     required="true"
+                     requiredMessage="El Path es necesario" />
+
+    </p:panelGrid>
+
+    <h:form id="fUpload" prependId="false" enctype="multipart/form-data" >
+
+        <div class="EmptyBox10" />
+        <p:fileUpload fileUploadListener="#{reporteBean.upload}" style="border: 1px solid;"
+                      rendered="#{not empty reporteBean.reporte.modulo}"
+                      mode="advanced"
+                      label="Buscar archivo" cancelLabel="Cancelar" uploadLabel="Subir archivo"
+                      invalidFileMessage="Formato inválido"
+                      fileLimit="1"
+                      update=":formulario,@form"
+                      auto="true" dragDropSupport="true"
+                      allowTypes="/(\.|\/)(jasper)$/" />
+    </h:form>
+
+
+</ui:composition>
+

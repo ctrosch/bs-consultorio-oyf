@@ -1,0 +1,32 @@
+<ui:composition 
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog header="Ingreso al sistema" widgetVar="dlgLogin" resizable="false" modal="true" width="600" position="top">
+                
+        <p:messages id="msgLogin" showDetail="true" />
+
+        <p:panelGrid columns="1" layout="grid" style="max-width: 300px; margin-left: auto; margin-right: auto; padding: 50px; " >
+
+            <p:inputText id="txtUsuario2" placeholder="Usuario" style="width: 100%;"
+                         value="#{usuarioSessionBean.txtUsuario}"
+                         requiredMessage="El usuario es obligatorio" size="13" >
+                <f:validateLength maximum="20" />
+            </p:inputText>
+
+            <p:password value="#{usuarioSessionBean.txtClave}" style="width: 100%;"
+                        feedback="false" id="txtPassword2"
+                        maxlength="20" placeholder="Clave"
+                        requiredMessage="La clave es obligatoria" size="13"/>
+
+            <p:commandButton icon="fa fa-check-circle fa-lg lh160" value="Ingresar" style="width: 100%;"
+                             actionListener="#{usuarioSessionBean.loginDlg()}"
+                             update="@form, :fMenus" />                                       
+        </p:panelGrid>
+
+    </p:dialog>
+
+
+</ui:composition>

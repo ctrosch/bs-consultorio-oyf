@@ -1,0 +1,127 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{cuentaTesoreriaBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{cuentaTesoreriaBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{cuentaTesoreriaBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{cuentaTesoreriaBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+            <!-- filtros a agregar -->
+            <p:autoComplete value="#{cuentaTesoreriaBean.sucursal}" dropdown="true" forceSelection="true" placeholder="Buscar Sucursal"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{sucursalBean.complete}"
+                            converter="#{conversoresGeneral.sucursal}"
+                            var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{cuentaTesoreriaBean.buscar}" />
+            </p:autoComplete>
+
+            <p:selectOneMenu id="tipoCuentaTesoreria" value="#{cuentaTesoreriaBean.tipoCuenta}"
+                             converter="#{conversoresTesoreria.tipoCuentaTesoreria}"  >
+                <f:selectItem itemLabel="Seleccione tipo de cuenta" itemValue="" />
+                <f:selectItems value="#{tipoCuentaTesoreriaBean.lista}"
+                               var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                <p:ajax process="@this,txtBusqueda" update="tabla" listener="#{cuentaTesoreriaBean.buscar}"/>
+            </p:selectOneMenu>
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{cuentaTesoreriaBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="@form" listener="#{cuentaTesoreriaBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+        </p:panelGrid>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" var="e" value="#{cuentaTesoreriaBean.lista}"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{cuentaTesoreriaBean.cuentaTesoreria}" rowKey="#{e}"
+                 rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{cuentaTesoreriaBean.onSelect}" update="@form" />
+
+        <p:column headerText="Código" width="10%" style="text-align: center;"
+                  sortBy="#{e.codigo}"   >
+            <h:outputText value="#{e.codigo}" />
+        </p:column>
+
+        <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                  sortBy="#{e.descripcion}" >
+            <h:outputText value="#{e.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Sucursal" width="15%" style="text-align: left;"
+                  sortBy="#{e.sucursal.nombre}" >
+            <h:outputText value="#{e.sucursal.nombre}" />
+        </p:column>
+
+        <p:column headerText="Tipo de Cuenta" width="15%" style="text-align: left;"
+                  sortBy="#{e.tipoCuenta.codigo}" >
+            <h:outputText value="#{e.tipoCuenta.descripcion}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{cuentaTesoreriaBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{cuentaTesoreriaBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

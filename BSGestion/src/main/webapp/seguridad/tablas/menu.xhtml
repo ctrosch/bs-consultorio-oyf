@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="TITULO"  value="#{menuBean.titulo}"/>
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{menuBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{menuBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+            <p:panelGrid columns="1" layout="grid"   styleClass="ui-panelgrid-blank" >
+
+
+                <p:panelGrid id="pFiltros" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                    <p:selectOneMenu id="selectModuloVista" value="#{menuBean.modulo}" filter="true" styleClass="MaxWid300"
+                                     converter="#{conversoresGeneral.modulo}"  >
+                        <f:selectItem itemLabel="Filtrar Módulo" itemValue="" />
+                        <f:selectItems value="#{moduloBean.lista}"
+                                       var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                        <p:ajax event="itemSelect" process="pFiltros" update="treeSingle" listener="#{menuBean.actualizarArbol()}"/>
+                    </p:selectOneMenu>
+
+                    <p:selectOneMenu id="selectOrigenVista" value="#{menuBean.origen}"  >
+                        <f:selectItem itemLabel="Seleccionar Origen" itemValue="" />
+                        <f:selectItem itemLabel="Sistema" itemValue="SIS" />
+                        <f:selectItem itemLabel="Usuario" itemValue="USR" />
+                        <p:ajax event="itemSelect" process="pFiltros" update="treeSingle" listener="#{menuBean.actualizarArbol()}"/>
+                    </p:selectOneMenu>
+
+                    <p:commandButton value="Sincronizar con base" process="@this" update="@form" styleClass="MaxWid300 Fright RedBack"
+                                     actionListener="#{menuBean.sincronizarFromBase()}" />
+                </p:panelGrid>
+
+                <h:panelGroup layout="block" >
+
+                    <p:treeTable id="treeSingle" value="#{menuBean.arbol}" var="m"
+                                 selectionMode="single"
+                                 selection="#{menuBean.nodoSeleccionado}"
+                                 rowStyleClass="#{m.origen eq 'USR'  ? 'origenUsuario' : null}" >
+
+                        <p:ajax event="select" listener="#{menuBean.onNodeSelect}" update="datosMenu" oncomplete="PF('dlgDatosMenu').show()" />
+
+                        <p:column headerText="Nombre" filterBy="#{m.nombre}" filterable="true" width="450">
+
+                            <i class="#{m.activo eq 'N'  ? 'fa fa-close fa-2x Red Fleft' : ''}"></i>
+                            <h:outputText value="#{m.nombre}" />
+
+                            <h:outputLink value="#{request.contextPath}#{m.urlCompleta}"
+                                          target="_blank" styleClass="Fs18 Fright" style="color: #0277bd;"
+                                          rendered="#{not empty m.urlCompleta}" >
+
+                                <i class="fa fa-external-link" ></i>
+
+                            </h:outputLink>
+                        </p:column>
+
+                        <p:column headerText="Orden" filterBy="#{m.orden}" filterable="true" width="50"  >
+                            <h:outputText value="#{m.orden}" />
+                        </p:column>
+
+                        <p:column headerText="Código" filterBy="#{m.codigo}" filterable="true" width="70" >
+                            <h:outputText value="#{m.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Url">
+                            <h:outputText value="#{m.url}" />
+                        </p:column>
+
+                        <p:column headerText="Módulo" filterBy="#{m.modulo.codigo}" filterable="true" width="50" >
+                            <h:outputText value="#{m.modulo.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Origen" width="200" >
+                            <h:outputText value="SISTEMA" rendered="#{m.origen eq 'SIS' }"   />
+                            <h:outputText value="USUARIO" rendered="#{m.origen eq 'USR' }"   />
+                        </p:column>
+
+                    </p:treeTable>
+
+                </h:panelGroup>
+
+            </p:panelGrid>
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <p:dialog id="datosMenu"
+                      modal="true"
+                      resizable="false"
+                      draggable="false"
+                      minHeight="450"
+                      position="top"
+                      showEffect="fade" hideEffect="fade"
+                      responsive="true"
+                      widgetVar="dlgDatosMenu" dynamic="true" >
+                <h:form id="fMenu" prependId="false">
+
+                    <p:menubar>
+                        <p:menuitem value="Nuevo Item" icon="fa fa-plus"
+                                    actionListener="#{menuBean.nuevoHijo}" update="@form" process="@this" />
+
+                        <p:menuitem id="save" icon="fa fa-save"
+                                    value="Guardar"
+                                    actionListener="#{menuBean.guardar}"
+                                    process="@form"
+                                    update="@form" />
+
+                        <p:menuitem id="copy" icon="fa fa-copy"
+                                    value="Duplicar"
+                                    actionListener="#{menuBean.duplicar}"
+                                    update="@form" />
+
+                        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                                    actionListener="#{menuBean.habilitaDeshabilita('N')}"
+                                    rendered="#{not empty menuBean.menu and menuBean.menu.activo eq 'S'}"
+                                    process="@this"
+                                    update="@form" />
+
+                        <p:menuitem value="Habilitar" icon="fa fa-check"
+                                    actionListener="#{menuBean.habilitaDeshabilita('S')}"
+                                    rendered="#{not empty menuBean.menu and menuBean.menu.activo eq 'N'}"
+                                    process="@this"
+                                    update="@form" />
+
+                        <p:menuitem value="Cerrar" icon="fa fa-close"
+                                    process="@this"
+                                    update=":formulario"
+                                    oncomplete="PF('dlgDatosMenu').hide()" />
+
+                        <p:menuitem value="Finalizar" icon="fa fa-refresh"
+                                    actionListener="#{menuBean.actualizarArbol}"
+                                    process="@this"
+                                    update=":formulario"
+                                    oncomplete="PF('dlgDatosMenu').hide()" />
+
+                        <p:menuitem value="Probar Link" icon="fa fa-external-link"
+                                    url="#{request.contextPath}#{menuBean.menu.urlCompleta}"
+                                    rendered="#{not empty menuBean.menu.urlCompleta}"
+                                    target="_blank" />
+
+
+                    </p:menubar>
+                    <p:hotkey bind="ctrl+s" update="@form" actionListener="#{menuBean.guardar}" />
+
+                    <div class="EmptyBox10"></div>
+
+                    <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                    <div class="EmptyBox10"></div>
+
+                    <p:panelGrid id="pgDatosm"  columns="2" layout="grid"  rendered="#{not empty menuBean.menu}"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Wid70,Wid30" >
+
+                        <p:panelGrid   columns="4" layout="grid"  rendered="#{not empty menuBean.menu}"
+                                       styleClass="ui-panelgrid-blank"
+                                       columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                            <h:outputText value="Código " />
+                            <p:inputText id="codigo" value="#{menuBean.menu.codigo}" readonly="true"  />
+
+                            <h:outputText value="Origen " />
+                            <p:inputText value="SISTEMA" rendered="#{menuBean.menu.origen eq 'SIS'}" readonly="true"   />
+                            <p:inputText value="USUARIO" rendered="#{menuBean.menu.origen eq 'USR'}" readonly="true"   />
+
+                            <h:outputText value="Menu principal: "/>
+                            <p:autoComplete value="#{menuBean.menu.menuPrincipal}" dropdown="true"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{menuBean.complete}"
+                                            var="p"
+                                            itemLabel="#{p.codigo} - #{p.nombre}"
+                                            itemValue="#{p}" converter="#{conversoresSeguridad.menu}" forceSelection="true" >
+                                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                                <p:column headerText="Módulo">
+                                    <h:outputText value="#{p.modulo.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{p.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{p.nombre}" />
+                                </p:column>
+                                <p:column headerText="Origen">
+                                    <h:outputText value="#{p.origen}" />
+                                </p:column>
+                            </p:autoComplete>
+
+                            <h:outputText value="Módulo" />
+                            <p:selectOneMenu value="#{menuBean.menu.modulo}"
+                                             required="true" requiredMessage="Seleccione el módulo"
+                                             converter="#{conversoresGeneral.modulo}"
+                                             effect="fade" filter="true" >
+                                <p:ajax process="@this" />
+                                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                                <f:selectItems value="#{moduloBean.lista}" var="m" itemLabel="#{m.descripcion}" itemValue="#{m}" />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Nombre: " />
+                            <p:inputText value="#{menuBean.menu.nombre}"  />
+
+                            <h:outputText value="URL: " />
+                            <p:inputText value="#{menuBean.menu.url}"  />
+
+
+                            <bs:outputTexWhitLink value="Vista *"
+                                                  url="#{menuBean.obtenerUrlMenu('SIS_00279','CODIGO',menuBean.menu.vista.codigo)}" />
+                            <p:autoComplete value="#{menuBean.menu.vista}" dropdown="true"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{vistaBean.complete}"
+                                            var="p" itemLabel="#{p.origen}-#{p.nombre}" itemValue="#{p}"
+                                            converter="#{conversoresAdministracion.vista}" forceSelection="true" >
+                                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                                <p:column headerText="Módulo">
+                                    <h:outputText value="#{p.modulo.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{p.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{p.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Origen">
+                                    <h:outputText value="#{p.origen}" />
+                                </p:column>
+                            </p:autoComplete>
+
+                            <h:outputText value="Path Vista" />
+                            <p:inputText value="#{menuBean.menu.vista.path}" readonly="true" />
+
+                            <h:outputText value="Icono: " />
+                            <p:autoComplete value="#{menuBean.menu.icono}"
+                                            completeMethod="#{menuBean.completeIcono}" />
+
+                            <!--
+                            <p:selectOneMenu value="#{menuBean.menu.icono}" >
+                                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                <f:selectItem itemLabel="Edición" itemValue="fa-edit" />
+                                <f:selectItem itemLabel="Informe" itemValue="fa-info-circle" />
+                                <f:selectItem itemLabel="Configuración" itemValue="fa-gear" />
+                                <f:selectItem itemLabel="Impresión" itemValue="fa-print" />
+                                <f:selectItem itemLabel="Carpeta" itemValue="fa-folder" />
+                                <f:selectItem itemLabel="Tablas" itemValue="fa-table" />
+                            </p:selectOneMenu>
+                            -->
+
+                            <h:outputText value="Nivel: "  />
+                            <p:inputText value="#{menuBean.menu.nivel}"  />
+
+                            <h:outputText value="Orden: " />
+                            <p:inputText value="#{menuBean.menu.orden}"  />
+
+                            <h:outputText value="Tipo: " />
+                            <p:selectOneMenu id="priori" value="#{menuBean.menu.tipo}">
+                                <p:ajax process="@this" />
+                                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                <f:selectItem itemLabel="Defecto" itemValue="0" />
+                                <f:selectItem itemLabel="Registración" itemValue="1" />
+                                <f:selectItem itemLabel="ABM Entidades" itemValue="6" />
+                                <f:selectItem itemLabel="Informe" itemValue="2" />
+                                <f:selectItem itemLabel="Configuración" itemValue="3" />
+                                <f:selectItem itemLabel="Impresión" itemValue="4" />
+                                <f:selectItem itemLabel="Anulación" itemValue="5" />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Activo: " />
+                            <p:selectOneMenu  value="#{menuBean.menu.activo}">
+                                <p:ajax process="@this" />
+                                <f:selectItem itemLabel="Si" itemValue="S" />
+                                <f:selectItem itemLabel="No" itemValue="N" />
+                            </p:selectOneMenu>
+
+                            <!--
+                            <h:panelGroup layout="block">
+                                <p:remoteCommand name="procesarReporte"  process="@this" update="pgDatosm"
+                                                 actionListener="#{menuBean.procesarReporte()}" />
+                                <h:outputText value="Reporte" />
+                                <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                                 update="buscadorReporte"
+                                                 oncomplete="PF('dlgReporte').show()"
+                                                 process="@this"  />
+                            </h:panelGroup>
+                            <p:inputText value="#{menuBean.menu.reporte.nombre}" rendered="#{not empty menuBean.menu.reporte}"   />
+                            -->
+
+                            <bs:outputTexWhitLink value="Reporte *"
+                                                  url="#{menuBean.obtenerUrlMenu('SIS_00315','CODIGO',menuBean.menu.reporte.codigo)}" />
+                            <bs:autocompleteReporte value="#{menuBean.menu.reporte}" />
+
+                        </p:panelGrid>
+
+                        <p:tabView activeIndex="0">
+                            <p:tab id="t0"  title="Parámetros">
+
+                                <p:dataTable id="dtParametroMenu" value="#{menuBean.menu.parametros}"
+                                             var="p"
+                                             rendered="#{not empty menuBean.menu}"
+                                             emptyMessage="No se encontraron resultados"
+                                             scrollable="true" scrollHeight="300" >
+
+                                    <f:facet name="footer" >
+
+                                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                                         value="Agregar item"
+                                                         actionListener="#{menuBean.nuevoParametro()}"
+                                                         process="dtParametroMenu"
+                                                         update="dtParametroMenu,message,messageg" />
+
+                                    </f:facet>
+
+                                    <p:column headerText="Nombre">
+                                        <p:inputText value="#{p.nombre}" />
+                                    </p:column>
+
+                                    <p:column headerText="Valor">
+                                        <p:inputText value="#{p.valor}" />
+                                    </p:column>
+
+                                    <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                                        <p:commandLink process="dtParametroMenu" update="dtParametroMenu,message,messageg"
+                                                       actionListener="#{menuBean.eliminarMenuParametro(p)}"  >
+                                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{p.nombre}?" icon="ui-icon-alert" />
+                                            <i class="fa fa-close fa-2x Red" ></i>
+                                        </p:commandLink>
+
+                                    </p:column>
+
+
+                                </p:dataTable>
+
+                            </p:tab>
+
+                            <p:tab id="t1" title="Permiso a Usuarios">
+
+                                <p:dataTable id="dtUsuarioMenu"
+                                             value="#{menuBean.menu.itemMenuUsuario}"
+                                             resizeMode="expand" liveResize="true"
+                                             var="i"
+                                             rendered="#{not empty menuBean.menu}"
+                                             emptyMessage="No se encontraron resultados"
+                                             scrollable="true" scrollHeight="300" >
+
+
+                                    <!--
+                                    <f:facet name="footer" >
+
+                                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                                         value="Agregar item"
+                                                         actionListener="#{menuBean.nuevoParametro()}"
+                                                         process="dtParametroMenu"
+                                                         update="dtParametroMenu" />
+
+                                    </f:facet>
+                                    -->
+
+
+                                    <p:column headerText="Nombre">
+                                        <h:outputText value="#{i.usuario.nombre}" />
+                                    </p:column>
+
+
+                                    <!--
+                                    <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                                        <p:commandLink process="dtParametroMenu" update="dtParametroMenu,message,messageg"
+                                                       actionListener="#{menuBean.eliminarMenuParametro(p)}"  >
+                                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{p.nombre}?" icon="ui-icon-alert" />
+                                            <i class="fa fa-close fa-2x Red" ></i>
+                                        </p:commandLink>
+
+                                    </p:column>
+                                    -->
+
+
+
+                                </p:dataTable>
+
+
+                            </p:tab>
+
+
+                            <p:tab id="t2" title="Permiso a Grupos">
+
+                                <p:dataTable id="dtGrupoMenu" value="#{menuBean.menu.itemMenuGrupo}"
+                                             resizeMode="expand" liveResize="true"
+                                             var="g"
+                                             rendered="#{not empty menuBean.menu}"
+                                             emptyMessage="No se encontraron resultados"
+                                             scrollable="true" scrollHeight="300" >
+
+                                    <!--
+                                                                        <f:facet name="footer" >
+
+                                                                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                                                                             value="Agregar item"
+                                                                                             actionListener="#{menuBean.nuevoParametro()}"
+                                                                                             process="dtParametroMenu"
+                                                                                             update="dtParametroMenu" />
+
+                                                                        </f:facet>
+                                    -->
+
+
+                                    <p:column headerText="Descripción">
+                                        <h:outputText value="#{g.grupo.descripcion}" />
+                                    </p:column>
+
+
+                                    <!--
+                                    <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                                        <p:commandLink process="dtParametroMenu" update="dtParametroMenu,message,messageg"
+                                                       actionListener="#{menuBean.eliminarMenuParametro(p)}"  >
+                                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{p.nombre}?" icon="ui-icon-alert" />
+                                            <i class="fa fa-close fa-2x Red" ></i>
+                                        </p:commandLink>
+
+                                    </p:column>
+                                    -->
+
+
+
+                                </p:dataTable>
+
+
+                            </p:tab>
+
+                        </p:tabView>
+
+                    </p:panelGrid>
+
+                    <p:ajaxStatus widgetVar="ajaxStatus" >
+                        <f:facet name="default" />
+                        <f:facet name="start">
+                            <div class="EmptyBox5"></div>
+                            <div class="ajaxImagen">
+                                <p:graphicImage value="/resources/ajax/ajax02.GIF"                                                 />
+                            </div>
+                        </f:facet>
+                        <f:facet name="complete" />
+                    </p:ajaxStatus>
+
+                </h:form>
+
+            </p:dialog>
+
+        </ui:define>
+
+    </ui:composition>
+
+
+
+</html>
+

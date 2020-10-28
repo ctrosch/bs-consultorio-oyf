@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{reporteService.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{reporteService.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{reporteService.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:panel id="panelFiltros" header="#{reporteService.titulo}"  >
+
+                <p:messages id="message" showDetail="false" /><p:growl id="messageg" showDetail="false" life="4000" />
+
+                <p:panelGrid id="informePanelGrid" columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid500"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:outputText value="Lista de Costo" />
+                    <p:autoComplete value="#{reporteService.listaPrecioCosto}"
+                                    required="true" requiredMessage="La lista de costo es obligatoria"
+                                    dropdown="true" placeholder="Seleccionar Lista de Costo"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{listaPrecioCostoBean.complete}"
+                                    var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                    converter="#{conversoresProveedor.listaCosto}"  forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <h:outputText value="Fecha vigencia" />
+                    <p:calendar value="#{reporteService.fecha}"
+                                placeholder="Fecha vigencia"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+
+                    <h:outputText value="Incluir impuesto" />
+                    <p:selectOneMenu value="#{reporteService.incluyeImpuesto}"
+                                     required="true" requiredMessage="Seleccione si desea incluir impuesto" >
+                        <p:ajax process="@this"  />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Tipo de Producto" />
+                    <p:selectOneMenu id="tipoProducto" value="#{reporteService.tipoProducto}"
+                                     required="false" requiredMessage="El tipo de producto es obligatorio"
+                                     converter="#{conversoresStock.tipoProducto}"  >
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItems value="#{productoBean.tipos}"
+                                       var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                        <p:ajax process="@this" update="panelFiltros" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Rubro desde" />
+                    <p:selectOneMenu id="rubro01d" filter="true" filterMatchMode="contains"
+                                     value="#{reporteService.rubro01Desde}"
+                                     converter="#{conversoresStock.rubro01}"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItems value="#{reporteService.tipoProducto.rubro01}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Rubro hasta" />
+                    <p:selectOneMenu id="rubro01h" filter="true" filterMatchMode="contains"
+                                     value="#{reporteService.rubro01Hasta}"
+                                     converter="#{conversoresStock.rubro01}"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItems value="#{reporteService.tipoProducto.rubro01}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Sub-Rubro desde" />
+                    <p:selectOneMenu id="rubro02d" filter="true" filterMatchMode="contains"
+                                     value="#{reporteService.rubro02Desde}"
+                                     converter="#{conversoresStock.rubro02}"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItems value="#{reporteService.tipoProducto.rubro02}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Sub-Rubro hasta" />
+                    <p:selectOneMenu id="rubro02h" filter="true" filterMatchMode="contains"
+                                     value="#{reporteService.rubro02Hasta}"
+                                     converter="#{conversoresStock.rubro02}"  >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItems value="#{reporteService.tipoProducto.rubro02}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Proveedor habitual" />
+                    <p:autoComplete value="#{reporteService.proveedorHabitual}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    placeholder="Seleccionar Proveedor"
+                                    completeMethod="#{proveedorBean.complete}"
+                                    var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                    converter="#{conversoresEntidad.entidadComercial}"  >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Nro cuenta" width="100">
+                            <h:outputText value="#{e.nrocta}" />
+                        </p:column>
+
+                        <p:column headerText="Razón social">
+                            <h:outputText value="#{e.razonSocial}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre Fantasía">
+                            <h:outputText value="#{e.nombreFantasia}" />
+                        </p:column>
+                    </p:autoComplete>
+
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                    <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                     actionListener="#{reporteService.verReporte()}"
+                                     update="@form"   />
+
+                    <p:commandButton value="A Excel" icon="fa fa-file-excel-o"
+                                     actionListener="#{reporteService.reporteToXls}"
+                                     update="@form"
+                                     ajax="false" />
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+
+    </ui:composition>
+
+</html>
+

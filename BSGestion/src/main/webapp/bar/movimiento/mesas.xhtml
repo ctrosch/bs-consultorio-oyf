@@ -1,0 +1,49 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dataGrid id="dgMesas"
+                value="#{gestionMesasBean.mesas}" var="m"  paginator="false"
+                style="width: 500px; height: auto; min-height: 700px;"
+                columns="8" rows="100" >
+
+        <p:panel style="width: 70px; background-color: yellowgreen;" rendered="#{m.estado == 'LIBRE'}" >
+
+            <p:commandLink actionListener="#{gestionMesasBean.seleccionarMesa(m)}"
+                           process="@this" update="@form" >
+
+                <h:panelGroup layout="block" style="border: 1px solid yellowgreen;" >
+                    <h:outputText value="#{m.descripcion}" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Libre" />
+                </h:panelGroup>
+
+            </p:commandLink>
+
+        </p:panel>
+
+        <p:panel style="width: 70px; background-color: red;" rendered="#{m.estado == 'OCUPADA'}" >
+
+            <p:commandLink actionListener="#{gestionMesasBean.seleccionarMesa(m)}"
+                           process="@this" update="@form" >
+
+                <h:panelGroup layout="block" style="border: 1px solid red;" >
+                    <h:outputText value="#{m.descripcion}" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Ocupada" />
+                </h:panelGroup>
+
+            </p:commandLink>
+
+        </p:panel>
+
+    </p:dataGrid>
+
+</ui:composition>

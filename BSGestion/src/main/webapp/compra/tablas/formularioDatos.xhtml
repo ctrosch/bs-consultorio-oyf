@@ -1,0 +1,137 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{formularioCompraBean.formulario.codigo}" readonly="#{not formularioCompraBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{formularioCompraBean.formulario.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <bs:outputTexWhitLink value="Pto. Venta"
+                              url="#{formularioCompraBean.obtenerUrlMenu('SIS_00125','CODIGO',formularioCompraBean.formulario.puntoVenta.codigo)}" />
+        <p:selectOneMenu value="#{formularioCompraBean.formulario.puntoVenta}"
+                         required="true" requiredMessage="Seleccione El punto de venta"
+                         converter="#{conversoresGeneral.puntoVenta}"
+                         effect="fade" filter="true" filterMatchMode="contains" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{puntoVentaBean.lista}" var="s" itemLabel="#{s.descripcion}" itemValue="#{s}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Letra" />
+        <p:inputText value="#{formularioCompraBean.formulario.letra}"
+                     required="true"
+                     requiredMessage="La letra es necesaria"/>
+
+        <h:outputText value="Codigo Impositivo" />
+        <p:inputText value="#{formularioCompraBean.formulario.codigoDGI}"   />
+
+        <bs:outputTexWhitLink value="Reporte"
+                              url="#{formularioCompraBean.obtenerUrlMenu('SIS_00315','CODIGO',formularioCompraBean.formulario.reporte.codigo)}" />
+        <p:autoComplete value="#{formularioCompraBean.formulario.reporte}" forceSelection="true" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{formularioCompraBean.completeReporte}"
+                        var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                        converter="#{conversoresAdministracion.reporte}"  >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Módulo">
+                <h:outputText value="#{p.modulo.codigo}" />
+            </p:column>
+
+            <p:column headerText="Código">
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{p.nombre}" />
+            </p:column>
+
+            <p:column headerText="Origen">
+                <h:outputText value="#{p.origen}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <bs:outputTexWhitLink value="Plantilla"
+                              url="#{formularioCompraBean.obtenerUrlMenu('SIS_00662','CODIGO',formularioCompraBean.formulario.plantilla.codigo)}" />
+        <bs:autocompletePlantilla value="#{formularioCompraBean.formulario.plantilla}" />
+
+        <h:outputText value="Último número" />
+        <p:inputText value="#{formularioCompraBean.formulario.ultimoNumero}"   />
+
+        <h:outputText value="Última fecha" />
+        <p:calendar value="#{formularioCompraBean.formulario.ultimaFecha}"
+                    required="true"
+                    requiredMessage="última fecha es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+        <h:outputText value="Tipo Numeración" />
+        <p:selectOneMenu value="#{formularioCompraBean.formulario.tipoNumeracion}"
+                         required="true" requiredMessage="Seleccione el tipo de numeración"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Automático" itemValue="A" />
+            <f:selectItem itemLabel="Renumeración Mensual" itemValue="M" />
+            <f:selectItem itemLabel="Semiautomática" itemValue="S" />
+            <f:selectItem itemLabel="Irrestricta" itemValue="I" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Modo Recuperación de fecha" />
+        <p:selectOneMenu value="#{formularioCompraBean.formulario.recuperacionFecha}"
+                         required="true" requiredMessage="Seleccione el tipo de numeración"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Fecha actual" itemValue="A" />
+            <f:selectItem itemLabel="Última fecha" itemValue="U" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Modifica fecha" />
+        <p:selectOneMenu value="#{formularioCompraBean.formulario.modificaFecha}"
+                         required="true" requiredMessage="Seleccione si se modifica la fecha"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Modifica numeración" />
+        <p:selectOneMenu value="#{formularioCompraBean.formulario.modificaNumeracion}"
+                         required="true" requiredMessage="Seleccione si se modifica la numeración"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Cant. Max items" />
+        <p:inputText value="#{formularioCompraBean.formulario.cantidadMaximaItems}"   />
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="3" value="#{formularioCompraBean.formulario.textos}" />
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

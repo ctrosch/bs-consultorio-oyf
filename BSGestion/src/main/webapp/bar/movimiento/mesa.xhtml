@@ -1,0 +1,192 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:outputPanel id="panelMesa">
+
+        <div class="p-grid">
+
+            <div class="p-col-12" >
+                <p:messages id="messageM" showDetail="true" /><p:growl id="messagegM" showDetail="true" life="4000" />
+            </div>
+
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         rendered="#{empty gestionMesasBean.m}"
+                         columnClasses="p-col-4, p-col-8">
+
+                <h:outputText value="Salón: " />
+                <p:selectOneMenu id="salon" value="#{gestionMesasBean.salon}"
+                                 effect="fade" converter="#{conversoresBar.salon}" >
+
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{gestionMesasBean.salones}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Mesa: " />
+                <p:selectOneMenu id="mesa" value="#{gestionMesasBean.mesa}"
+                                 effect="fade" converter="#{conversoresBar.mesa}" >
+
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{gestionMesasBean.mesas}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                </p:selectOneMenu>
+
+                <h:outputText value="Mozo: " />
+                <p:autoComplete id="mozo" value="#{gestionMesasBean.mozo}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{mozoBean.complete}"
+                                var="p" itemLabel="#{p.nombre}" itemValue="#{p}"
+                                converter="#{conversoresBar.mozo}" >
+
+                    <p:ajax event="itemSelect" process="@this"  />
+
+                </p:autoComplete>
+
+                <h:outputText id="nota" value="Notas: "  />
+                <p:inputTextarea value="#{gestionMesasBean.notas}" rows="2" cols="40" />
+
+                <h:outputText value="" />
+                <!--
+                <h:panelGroup layout="block" style="text-align: right;">
+                    <p:commandLink actionListener=""
+                                   process="panelMesa"
+                                   update="panelMesa" >
+                        Abrir Mesa
+                    </p:commandLink>
+                </h:panelGroup>
+                -->
+
+                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                 value="Abrir Mesa"
+                                 actionListener="#{gestionMesasBean.abrir()}"
+                                 process="panelMesa" update="panelMesa" />
+
+            </p:panelGrid>
+
+            <h:panelGroup layout="block"
+                          styleClass="p-col-12 p-md-6 p-lg-4"
+                          rendered="#{not empty gestionMesasBean.mesa}" >
+
+
+
+                <h:panelGrid columns="3" cellpadding="4"
+                             id="pgProducto" >
+
+                    <p:inputText value="#{gestionMesasBean.cantidad}" size="4" style="text-align: right;"/>
+
+                    <p:autoComplete value="#{gestionMesasBean.producto}"
+                                    completeMethod="#{productoBean.complete}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}"
+                                    size="70"
+                                    forceSelection="true" />
+
+                    <p:commandLink actionListener="#{gestionMesasBean.agregarItem}"
+                                   process="pgProducto"
+                                   update="pgProducto,tblProductos,mgrowl" >
+                        <i class="fa fa-plus" ></i>
+                    </p:commandLink>
+
+
+                </h:panelGrid>
+
+                <p:dataTable id="tblProductos" value="#{gestionMesasBean.m.items}" var="i"
+                             style="margin-top: 10px;">
+
+                    <f:facet name="header">
+                        <h:outputText value="Lista de producto" />
+                    </f:facet>
+
+                    <f:facet name="footer">
+
+                        <h:panelGroup layout="block" style="text-align: right; font-weight: bold;">
+                            <h:outputText value="Total: $ " />
+                            <!--
+                            <h:outputText value="#{gestionMesasBean.totalMovimiento}" >
+                                <f:convertNumber pattern="0.00" />
+                            </h:outputText>
+                            -->
+                        </h:panelGroup>
+
+                    </f:facet>
+
+                    <p:column headerText="Cant." width="25" style="text-align: right;" >
+                        <h:outputText value="#{i.cantidad}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción" width="300" >
+                        <h:outputText value="#{i.producto.codigo} - #{i.producto.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Total" width="60" style="text-align: right;" >
+                        <h:outputText value="#{i.totalLinea}" >
+                            <f:convertNumber pattern="$ 0.00" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column style="text-align: center;" width="30">
+
+                        <p:commandButton immediate="true" rendered="#{not empty i.producto}"
+                                         actionListener="#{gestionMesasBean.eliminarItem(i)}" icon="delete16"
+                                         process="@this"
+                                         update="@form"  />
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                    <p:commandButton icon="fa fa-copy" styleClass="BlueBack"
+                                     value="Facturar Mesa"
+                                     actionListener="#{gestionMesasBean.facturarMesa()}"
+                                     process="@this" update="@form" />
+
+                    <p:commandButton icon="fa fa-close" styleClass="RedBack"
+                                     value="Cerrar Mesa"
+                                     actionListener="#{gestionMesasBean.cerrarMesa()}"
+                                     process="@this" update="@form" />
+
+                    <p:commandButton icon="fa fa-close"
+                                     value="Continuar"
+                                     actionListener="#"
+                                     oncomplete="PF('dlgMesa').hide()"
+                                     process="@this" update="@form" />
+
+
+                </p:panelGrid>
+
+
+                <h:panelGroup layout="block" style="text-align: left; margin-top: 10px;">
+                    <h:outputText value="Reservas" style="font-size: 15px;" />
+                </h:panelGroup>
+                <p:separator style="background-color: yellowgreen;" />
+                <h:panelGroup layout="block" style="text-align: right;">
+                    <p:commandLink actionListener="#{gestionMesasBean.nuevoMovimiento}"
+                                   process="@this"
+                                   update="@form" >
+                        Nueva reserva
+                    </p:commandLink>
+                </h:panelGroup>
+
+            </h:panelGroup>
+
+
+            <div class="p-col-12 p-md-6 p-lg-8" >
+
+            </div>
+
+        </div>
+
+
+
+
+    </p:outputPanel>
+
+
+</ui:composition>

@@ -1,0 +1,50 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- APLICACIONES -->
+    <p:dataTable id="tAplicaciones"
+                 value="#{reciboPrestamoBean.m.movimientoPrestamo.itemCuentaCorriente}" var="d"
+                 rendered="#{not empty reciboPrestamoBean.m.movimientoPrestamo.itemCuentaCorriente}"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado aplicaciones">
+
+        <f:facet name="header" >
+            <h:outputText value="Aplicaciones de cuenta corriente" />
+        </f:facet>
+
+        <p:column headerText="Cuota" style="text-align: center;" >
+            <h:outputText value="#{d.cuota}" />
+        </p:column>
+
+        <p:column headerText="Vencimiento" style="text-align: center;" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Observaciones" style="text-align: center;" >
+            <h:outputText value="#{d.observaciones}" />
+        </p:column>
+
+        <p:column headerText="Importe Aplicado" width="120" styleClass="TexAlCenter" >
+
+            <h:outputText value="#{d.importe}" rendered="#{reciboPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+            <h:outputText value="#{d.importeSecundario}" rendered="#{reciboPrestamoBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

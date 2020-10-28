@@ -1,0 +1,167 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Nro Legajo *" />
+        <p:inputText value="#{profesionalMedicoBean.entidad.nrocta}" readonly="true"  />
+
+        <h:outputText value="Estado *" />
+        <p:selectOneMenu value="#{profesionalMedicoBean.entidad.estado}"
+                         required="true" requiredMessage="Seleccione el estado"
+                         converter="#{conversoresEntidad.estadoEntidad}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" update="@form" />
+            <f:selectItems value="#{estadoEntidadBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Sucursal*" />
+        <p:autoComplete value="#{profesionalMedicoBean.entidad.sucursal}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar la sucursal"
+                        completeMethod="#{sucursalBean.complete}"
+                        converter="#{conversoresGeneral.sucursal}"
+                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Apellido *" />
+        <p:inputText id="apelliProf" value="#{profesionalMedicoBean.entidad.apellido}"
+                     required="true" requiredMessage="Debe ingresar el Apellido/s del Profesor" />
+
+        <h:outputText value="Nombre *" />
+        <p:inputText id="nombProf" value="#{profesionalMedicoBean.entidad.nombre}"
+                     required="true" requiredMessage="Debe ingresar el nombre/s del Profesor" />
+
+
+        <h:outputText value="Tipo/Nro Documento *" />
+        <h:panelGroup id="pnTipoDoc" layout="block"  >
+
+            <div class="Wid40 Responsive100 Fleft">
+                <p:autoComplete value="#{profesionalMedicoBean.entidad.tipoDocumento}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid60 Responsive100 Fright">
+                <p:inputMask value="#{profesionalMedicoBean.entidad.nrodoc}"
+                             mask="#{profesionalMedicoBean.entidad.tipoDocumento.mascara}"
+                             rendered="#{not empty profesionalMedicoBean.entidad.tipoDocumento}"
+                             required="true"
+                             requiredMessage="El número de documento del Profesional Médico es obligatorio"  />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Sexo*" />
+        <p:selectOneMenu value="#{profesionalMedicoBean.entidad.sexo}"
+                         required="true" requiredMessage="Seleccione Sexo"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Masculino" itemValue="M" />
+            <f:selectItem itemLabel="Femenino" itemValue="F" />
+            <f:selectItem itemLabel="No Definido" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Dirección * " />
+        <p:inputText value="#{profesionalMedicoBean.entidad.direccion}" placeholder="Calle - Número - Depto - Piso"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{proveedorBean.obtenerUrlMenu('SIS_00126','IDLC',profesionalMedicoBean.entidad.localidad.id)}" />
+
+        </h:panelGroup>
+        <p:autoComplete id="localidad" value="#{profesionalMedicoBean.entidad.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{profesionalMedicoBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <h:outputText value="Teléfono" />
+        <p:inputText value="#{profesionalMedicoBean.entidad.telefono}"   />
+
+
+        <h:outputText value="Celular * " />
+        <p:inputText value="#{profesionalMedicoBean.entidad.ntelex}"
+                     required="true" requiredMessage="El celular es obligatorio" />
+
+        <h:outputText value="Dirección de email *" />
+        <p:inputText value="#{profesionalMedicoBean.entidad.email}"
+                     required="true" requiredMessage="El email es obligatorio"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateLength minimum="0" maximum="200" />
+            <!--
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+            -->
+        </p:inputText>
+
+        <p:inputText value="#{profesionalMedicoBean.entidad.razonSocial}"
+                     style="display: none"/>
+
+        <p:selectOneMenu value="#{profesionalMedicoBean.entidad.condicionDeIva}"
+                         converter="#{conversoresGeneral.condicionDeIva}"
+                         effect="fade" filter="true" style="display: none">
+            <p:ajax process="@this" />
+
+            <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-2 ui-md-3 ui-lg-2, ui-g-10 ui-md-9 ui-lg-10" >
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{profesionalMedicoBean.entidad.notas}" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10"> </div>
+
+</ui:composition>
+

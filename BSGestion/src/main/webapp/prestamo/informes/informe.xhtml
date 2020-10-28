@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"     value="#{reporteService.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{reporteService.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{reporteService.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{reporteService.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:panelGrid id="informePanelGrid" columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid500"
+                         columnClasses="ui-g-4,ui-g-8" >
+
+                <h:outputText value="Sucursal "
+                              rendered="#{reporteService.muestroCampo('C','CODSUC')}" />
+                <p:autoComplete value="#{reporteService.sucursal}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                rendered="#{reporteService.muestroCampo('C','CODSUC')}"
+                                completeMethod="#{sucursalBean.complete}"
+                                converter="#{conversoresGeneral.sucursal}"
+                                var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" />
+                </p:autoComplete>
+
+                <h:outputText value="Formulario"
+                              rendered="#{reporteService.muestroCampo('C','CODFOR')}" />
+                <p:autoComplete value="#{reporteService.formulario}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                rendered="#{reporteService.muestroCampo('C','CODFOR')}"
+                                completeMethod="#{formularioPrestamoBean.complete}"
+                                var="e" itemLabel="#{e.descripcionComplete}" itemValue="#{e}"
+                                converter="#{conversoresGeneral.formulario}"  >
+
+                    <p:ajax event="itemSelect" process="@this"  />
+
+                    <p:column headerText="Código" width="100">
+                        <h:outputText value="#{e.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Pto. Venta" styleClass="TexAlCenter"   >
+                        <h:outputText value="#{e.puntoVenta.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Letra" styleClass="TexAlCenter"  >
+                        <h:outputText value="#{e.letra}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+                <h:outputText value="Tipo de comprobante *"
+                              rendered="#{reporteService.muestroCampo('C','TIPCOM')}" />
+                <p:selectOneMenu value="#{reporteService.tipoComprobante}"
+                                 converter="#{conversoresGeneral.tipoComprobante}"
+                                 rendered="#{reporteService.muestroCampo('C','TIPCOM')}"  >
+                    <p:ajax event="itemSelect" process="@this"  />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItems value="#{tipoComprobantePrestamoBean.lista}" var="t" itemValue="#{t}" itemLabel="#{t.descripcion}" />
+
+                </p:selectOneMenu>
+
+                <h:outputText value="Fecha"
+                              rendered="#{reporteService.muestroCampo('C','FECHA')}" />
+
+                <p:calendar value="#{reporteService.fecha}"
+                            rendered="#{reporteService.muestroCampo('C','FECHA')}"
+                            placeholder="Desde"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax event="dateSelect"  process="@this" />
+                </p:calendar>
+
+                <h:outputText value="Fecha"
+                              rendered="#{reporteService.muestroCampo('C','FCHDES') and reporteService.muestroCampo('C','FCHHAS')}" />
+                <h:panelGroup id="fechasDH" layout="block"
+                              rendered="#{reporteService.muestroCampo('C','FCHDES') and reporteService.muestroCampo('C','FCHHAS')}" >
+                    <div class="Wid50 Fleft">
+                        <p:calendar value="#{reporteService.fechaDesde}"
+                                    rendered="#{reporteService.muestroCampo('C','FCHDES')}"
+                                    placeholder="Desde"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect" process="@this" update="fechasDH" listener="#{reporteService.onFechaDesdeSelect()}" />
+                        </p:calendar>
+                    </div>
+                    <div class="Wid50 Fright">
+                        <p:calendar value="#{reporteService.fechaHasta}"
+                                    rendered="#{reporteService.muestroCampo('C','FCHHAS')}"
+                                    placeholder="Hasta"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+                    </div>
+                </h:panelGroup>
+
+                <h:outputText value="Fecha Vencimiento"
+                              rendered="#{reporteService.muestroCampo('C','FCHVTD') and reporteService.muestroCampo('C','FCHVTH')}" />
+                <h:panelGroup layout="block"
+                              rendered="#{reporteService.muestroCampo('C','FCHVTD') and reporteService.muestroCampo('C','FCHVTH')}" >
+                    <div class="Wid50 Fleft">
+                        <p:calendar value="#{reporteService.fechaVencimientoDesde}"
+                                    rendered="#{reporteService.muestroCampo('C','FCHVTD')}"
+                                    placeholder="Desde"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+                    </div>
+                    <div class="Wid50 Fright">
+                        <p:calendar value="#{reporteService.fechaVencimientoHasta}"
+                                    rendered="#{reporteService.muestroCampo('C','FCHVTH')}"
+                                    placeholder="Hasta"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+                    </div>
+                </h:panelGroup>
+
+                <h:outputText value="Fecha Pago"
+                              rendered="#{reporteService.muestroCampo('C','FCHPAD') and reporteService.muestroCampo('C','FCHPAH')}" />
+                <h:panelGroup layout="block"
+                              rendered="#{reporteService.muestroCampo('C','FCHPAD') and reporteService.muestroCampo('C','FCHPAH')}" >
+                    <div class="Wid50 Fleft">
+                        <p:calendar value="#{reporteService.fechaPagoDesde}"
+                                    rendered="#{reporteService.muestroCampo('C','FCHPAD')}"
+                                    placeholder="Desde"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+                    </div>
+                    <div class="Wid50 Fright">
+                        <p:calendar value="#{reporteService.fechaPagoHasta}"
+                                    rendered="#{reporteService.muestroCampo('C','FCHPAH')}"
+                                    placeholder="Hasta"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+                    </div>
+                </h:panelGroup>
+
+                <h:outputText value="Destinatario " rendered="#{reporteService.muestroCampo('C','NROCTA')}" />
+                <p:autoComplete value="#{reporteService.destinatario}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                rendered="#{reporteService.muestroCampo('C','NROCTA')}"
+                                completeMethod="#{destinatarioBean.complete}"
+                                var="e" itemValue="#{e}" itemLabel="#{e.razonSocial}"
+                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                    <p:ajax event="itemSelect" process="@this"  />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+
+                    <p:column headerText="Nro doc">
+                        <h:outputText value="#{e.nrodoc}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="Estado" rendered="#{reporteService.muestroCampo('C','CODEST')}" />
+                <p:selectOneMenu value="#{reporteService.estadoPrestamo}"
+                                 rendered="#{reporteService.muestroCampo('C','CODEST')}"
+                                 converter="#{conversoresPrestamo.estadoPrestamo}"
+                                 effect="fade" filter="true" >
+                    <p:ajax event="itemSelect" process="@this"  />
+                    <f:selectItem itemValue="" itemLabel="Todos" />
+                    <f:selectItems value="#{estadoPrestamoBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Reprogramaciones"
+                              rendered="#{reporteService.muestroCampo('C','REPROG')}" />
+                <p:selectOneMenu value="#{reporteService.reprogramado}"
+                                 rendered="#{reporteService.muestroCampo('C','REPROG')}"
+                                 effect="fade" filter="true" >
+                    <p:ajax event="itemSelect" process="@this"  />
+                    <f:selectItem itemValue=""  itemLabel="Incluir todos" />
+                    <f:selectItem itemValue="N"  itemLabel="Excluir reprogramados" />
+                    <f:selectItem itemValue="S" itemLabel="Solo reprogramados" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Línea de crédito" />
+                <p:selectOneMenu value="#{reporteService.lineaCredito}"
+                                 converter="#{conversoresPrestamo.lineaCredito}"
+                                 effect="fade" filter="true" >
+                    <p:ajax event="itemSelect" process="@this"  />
+                    <f:selectItem itemValue="" itemLabel="Todas" />
+                    <f:selectItems value="#{lineaCreditoBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Financiador" />
+                <p:selectOneMenu value="#{reporteService.financiador}"
+                                 converter="#{conversoresPrestamo.financiador}"
+                                 effect="fade" filter="true" >
+                    <p:ajax event="itemSelect" process="@this"  />
+                    <f:selectItem itemValue="" itemLabel="Todos" />
+                    <f:selectItems value="#{financiadorBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Promotor" />
+                <p:selectOneMenu value="#{reporteService.promotor}"
+                                 converter="#{conversoresPrestamo.promotor}"
+                                 effect="fade"  filter="true" >
+                    <p:ajax event="itemSelect" process="@this"  />
+                    <f:selectItem itemValue="" itemLabel="Todos" />
+                    <f:selectItems value="#{promotorBean.lista}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Género" rendered="#{reporteService.muestroCampo('C','CLAS02')}" />
+                <p:selectOneRadio value="#{reporteService.clasificacion02}"
+                                  rendered="#{reporteService.muestroCampo('C','CLAS02')}"
+                                  converter="#{conversoresPrestamo.clasificacion02}" >
+                    <p:ajax process="@this"  />
+                    <f:selectItem itemValue="" itemLabel="Todos" />
+                    <f:selectItems value="#{clasificacion02Bean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneRadio>
+
+                <h:outputText value="Actividad" rendered="#{reporteService.muestroCampo('C','CLAS03')}" />
+                <p:selectOneMenu value="#{reporteService.clasificacion03}"
+                                 rendered="#{reporteService.muestroCampo('C','CLAS03')}"
+                                 converter="#{conversoresPrestamo.clasificacion03}" >
+                    <p:ajax event="itemSelect" process="@this"  />
+                    <f:selectItem itemValue="" itemLabel="Todos" />
+                    <f:selectItems value="#{clasificacion03Bean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Zona" rendered="#{reporteService.muestroCampo('C','CLAS01')}" />
+                <p:selectOneRadio value="#{reporteService.clasificacion01}"
+                                  rendered="#{reporteService.muestroCampo('C','CLAS01')}"
+                                  converter="#{conversoresPrestamo.clasificacion01}" >
+                    <p:ajax process="@this"  />
+                    <f:selectItem itemValue="" itemLabel="Todos" />
+                    <f:selectItems value="#{clasificacion01Bean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneRadio>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                 actionListener="#{reporteService.verReporte}"
+                                 update="@form" />
+
+                <p:commandButton value="A Excel" icon="fa fa-file-excel-o" styleClass="GreenBack"
+                                 actionListener="#{reporteService.reporteToXls}"
+                                 update="@form"
+                                 ajax="false" />
+
+                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack"
+                                 actionListener="#{reporteService.limpiarFiltros()}"
+                                 process="@this"
+                                 update="@form" />
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+
+            <p:dataList value="#{reporteService.parameters}" var="p"
+                        rendered="#{reporteService.DEBUG}">
+
+                <f:facet name="header">
+                    Parámetros
+                </f:facet>
+
+                <h:outputText value="#{p}" />
+            </p:dataList>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

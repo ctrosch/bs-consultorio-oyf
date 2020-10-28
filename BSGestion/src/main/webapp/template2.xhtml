@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+
+    <f:metadata>
+        <ui:insert name="meta-data">
+
+        </ui:insert>
+    </f:metadata>
+
+    <h:head>
+        <f:facet name="first">
+            <link rel="shortcut icon" type="image/x-icon" href="#{resource['image/favicon.ico']}"/>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="robots" content="NoIndex, NoFollow" />
+
+            <c:if test="#{not empty aplicacionBean.parametro.pathImagenInicio}" >
+                <style>
+
+                    .body {
+                        background-image: url(#{aplicacionBean.parametro.pathImagenInicio});
+                        background-repeat: no-repeat;
+                        background-position: center top;
+                        background-size: 100%;
+                        background-attachment: fixed;
+                    }
+                </style>
+            </c:if>
+
+        </f:facet>
+
+        <title>
+            <ui:insert name="titulo">
+                #{aplicacionBean.organizacion.nombreFantasia}
+            </ui:insert>
+        </title>
+
+        <script type="text/javascript" language="javascript" src="#{request.contextPath}/resources/js/calendar_es.js" />
+        <h:outputScript name="js/layout.js" library="volt-layout" />
+        <h:outputScript name="js/utiles.js" />
+
+        <h:outputStylesheet library="css" name="estilos.css"/>
+        <h:outputStylesheet library="css" name="primeflex.css"/>
+        <h:outputStylesheet library="css" name="jquery.countup.css"/>
+
+        <ui:insert name="head"></ui:insert>
+
+        <ui:insert name="script" >
+            <script type="text/javascript">
+
+                function heightSize() {
+
+                    f = document.getElementById('frame');
+
+                    if (f !== null) {
+                        f.height = screen.height - 200;
+                    } else {
+
+                    }
+                }
+            </script>
+        </ui:insert>
+
+    </h:head>
+
+    <h:body styleClass="#{aplicacionBean.parametro.fondo} body" >
+
+        <ui:include src="topbar.xhtml" />
+
+        <p:tooltip />
+
+        <div id="layout-portlets-cover" class="MarAuto" style="width: 90%;"  >
+            <div id="layout-portlets-cover-indent"  >
+                <div id="layout-portlets-table"  >
+
+                    <div id="layout-portlets-tablerow"  >
+
+                        <div id="layout-portlets-tablecell-left">
+                            <div id="layout-menu-cover"  >
+                                <ui:insert name="menu" />
+                            </div>
+                        </div>
+                        <div id="layout-portlets-tablecell-right"   >
+                            <ui:insert name="contenido" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ui:insert name="dialogos" >
+
+        </ui:insert>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes GreenButton" icon="ui-icon-check fa fa-check Fs14 white" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no RedButton" icon="ui-icon-close fa fa-close Fs14 white" />
+        </p:confirmDialog>
+
+        <ui:include src="/template/exceptionHandler.xhtml" />
+        <ui:include src="/template/ajaxStatus-footer.xhtml"  />
+
+
+        <h:outputStylesheet name="css/core-layout.css" library="volt-layout" />
+        <h:outputStylesheet name="css/animate.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-font.css" library="volt-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-layout.css" library="volt-layout" />
+
+        <ui:include src="/resources/general/chat.xhtml"  />
+
+    </h:body>
+
+</html>

@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="movimientoTesoreria" pageWidth="595" pageHeight="840" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="21db4006-82c7-4753-bdd2-6f5767781961">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="style1" backcolor="#FFFFFF" fill="Solid">
+		<box>
+			<pen lineWidth="0.25"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<subDataset name="detalle" uuid="528f0a9f-a722-41b2-beae-6ff7dfb2bc98">
+		<parameter name="ID_MCAB" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[Select
+  i.*,
+  c.NROCTA AS  CUENTA_NROCTA,
+  c.DESCRIP as CUENTA_DESCRIPCION
+
+From
+  cg_movimiento_item i  Inner Join cg_cuenta_contable c on i.CTACON = c.NROCTA
+WHERE
+i.ID_MCAB = $P{ID_MCAB}]]>
+		</queryString>
+		<field name="ID" class="java.lang.Integer">
+			<fieldDescription><![CDATA[Id]]></fieldDescription>
+		</field>
+		<field name="NROITM" class="java.lang.Integer">
+			<fieldDescription><![CDATA[Número de item]]></fieldDescription>
+		</field>
+		<field name="ID_MCAB" class="java.lang.Integer">
+			<fieldDescription><![CDATA[Movimiento]]></fieldDescription>
+		</field>
+		<field name="CTACON" class="java.lang.String">
+			<fieldDescription><![CDATA[Cuenta Contable]]></fieldDescription>
+		</field>
+		<field name="DEBHAB" class="java.lang.String">
+			<fieldDescription><![CDATA[Debe/Haber]]></fieldDescription>
+		</field>
+		<field name="IMPDEB" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[Importe Debe]]></fieldDescription>
+		</field>
+		<field name="IMPHAB" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[Importe Haber]]></fieldDescription>
+		</field>
+		<field name="SECDEB" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[Importe Secundario Debe]]></fieldDescription>
+		</field>
+		<field name="SECHAB" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[Importe Secundario Haber]]></fieldDescription>
+		</field>
+		<field name="DEBAJA" class="java.lang.String">
+			<fieldDescription><![CDATA[Deshabilitado]]></fieldDescription>
+		</field>
+		<field name="FECALT" class="java.sql.Timestamp">
+			<fieldDescription><![CDATA[Fecha de Alta]]></fieldDescription>
+		</field>
+		<field name="FECMOD" class="java.sql.Timestamp">
+			<fieldDescription><![CDATA[Fecha de Modificacion]]></fieldDescription>
+		</field>
+		<field name="ULTOPR" class="java.lang.String">
+			<fieldDescription><![CDATA[Ultima Operación]]></fieldDescription>
+		</field>
+		<field name="USERID" class="java.lang.String">
+			<fieldDescription><![CDATA[Usuario]]></fieldDescription>
+		</field>
+		<field name="CUENTA_NROCTA" class="java.lang.String"/>
+		<field name="CUENTA_DESCRIPCION" class="java.lang.String"/>
+		<variable name="TOTAL_DEBE" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{IMPDEB}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+		<variable name="TOTAL_HABER" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{IMPHAB}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+	</subDataset>
+	<parameter name="LOGO" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EN_LETRAS" class="java.lang.String"/>
+	<parameter name="CANT_COPIAS" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+  gr_formulario.SUCURS As gr_formulario_SUCURS,
+  gr_formulario.DESCRP As gr_formulario_DESCRP,
+  gr_formulario.LETRID As gr_formulario_LETRID,
+  cg_movimiento.ID As cg_movimiento_ID,
+  cg_movimiento.MODCOM As cg_movimiento_MODCOM,
+  cg_movimiento.CODCOM As cg_movimiento_CODCOM,
+  cg_movimiento.MODFOR As cg_movimiento_MODFOR,
+  cg_movimiento.CODFOR As cg_movimiento_CODFOR,
+  cg_movimiento.NROFOR As cg_movimiento_NROFOR,
+  cg_movimiento.FCHMOV As cg_movimiento_FCHMOV,
+  cg_movimiento.OBSERV As cg_movimiento_OBSERV,
+  cg_movimiento.REFERN As cg_movimiento_REFERN,
+  cg_movimiento.COTIZA As cg_movimiento_COTIZA,
+  cg_movimiento.ID_REV As cg_movimiento_ID_REV,
+(Select Sum(i.IMPDEB) From cg_movimiento_item i WHERE i.ID_MCAB = cg_movimiento.ID) AS TOTDEB,
+(Select Sum(i.IMPHAB) From cg_movimiento_item i WHERE i.ID_MCAB = cg_movimiento.ID) AS TOTHAB
+From
+  gr_formulario gr_formulario Inner Join
+  cg_movimiento cg_movimiento On gr_formulario.MODFOR = cg_movimiento.MODFOR And
+  gr_formulario.CODFOR = cg_movimiento.CODFOR,
+  gr_copias
+Where cg_movimiento.`ID` = $P{ID}
+and gr_copias.ID <= $P{CANT_COPIAS}]]>
+	</queryString>
+	<field name="gr_formulario_SUCURS" class="java.lang.String"/>
+	<field name="gr_formulario_DESCRP" class="java.lang.String"/>
+	<field name="gr_formulario_LETRID" class="java.lang.String"/>
+	<field name="cg_movimiento_ID" class="java.lang.Integer"/>
+	<field name="cg_movimiento_MODCOM" class="java.lang.String"/>
+	<field name="cg_movimiento_CODCOM" class="java.lang.String"/>
+	<field name="cg_movimiento_MODFOR" class="java.lang.String"/>
+	<field name="cg_movimiento_CODFOR" class="java.lang.String"/>
+	<field name="cg_movimiento_NROFOR" class="java.lang.Integer"/>
+	<field name="cg_movimiento_FCHMOV" class="java.sql.Date"/>
+	<field name="cg_movimiento_OBSERV" class="java.lang.String"/>
+	<field name="cg_movimiento_REFERN" class="java.lang.String"/>
+	<field name="cg_movimiento_COTIZA" class="java.math.BigDecimal"/>
+	<field name="cg_movimiento_ID_REV" class="java.lang.Integer"/>
+	<field name="TOTDEB" class="java.math.BigDecimal"/>
+	<field name="TOTHAB" class="java.math.BigDecimal"/>
+	<variable name="TOTAL_DEBE" class="java.math.BigDecimal" calculation="Sum"/>
+	<variable name="TOTAL_HABER" class="java.math.BigDecimal" calculation="Sum"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="142" splitType="Stretch">
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="5" y="0" width="145" height="45" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="150" y="44" width="126" height="11" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="19" y="77" width="257" height="11" uuid="cde29b6f-c09a-4dd8-b1ac-c138522de8dd"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_CONDICION_IVA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="19" y="66" width="257" height="11" uuid="f105f519-4779-438c-84e3-a1ebf5094287"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_TELEFONO}+" | "+$P{EMP_EMAIL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="302" y="0" width="253" height="15" uuid="fe387915-ad4d-4dc1-ae12-1c7d159f331f"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_formulario_DESCRP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="455" y="19" width="100" height="12" uuid="1e3a7cb3-8289-4a7a-8533-401e028d3c1a"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="19" y="55" width="257" height="11" uuid="ba882b76-c605-41ba-9916-ca4482832282"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_DIRECCION} +" | "+ $P{EMP_CIUDAD} +"|"+ $P{EMP_PROVINCIA}+"|"+$P{EMP_PAIS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="55" width="154" height="11" uuid="ba882b76-c605-41ba-9916-ca4482832282"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.U.I.T.: " + $P{EMP_CUIT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="302" y="31" width="100" height="12" uuid="0931a391-807e-4c92-82cf-c268493b152b"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cg_movimiento_FCHMOV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="302" y="20" width="100" height="12" uuid="7847c39c-7f77-46f0-86ad-c33ba0f086c2"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<textField pattern="0000">
+				<reportElement x="466" y="31" width="26" height="12" uuid="c3957ca3-f937-4a65-b686-79713cfe22b0"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_formulario_SUCURS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="492" y="31" width="5" height="12" uuid="d43b7128-1272-421f-80c6-eae9c179b674"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField pattern="00000000">
+				<reportElement x="497" y="31" width="47" height="12" uuid="c3957ca3-f937-4a65-b686-79713cfe22b0"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cg_movimiento_NROFOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="77" width="154" height="11" uuid="cde29b6f-c09a-4dd8-b1ac-c138522de8dd"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["INICIO DE ACTIVIDAD: "+$P{EMP_INIACT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="66" width="154" height="11" uuid="f105f519-4779-438c-84e3-a1ebf5094287"/>
+				<textElement textAlignment="Left">
+					<font size="8"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ING. BRUTOS : " + $P{EMP_IB}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="89" width="555" height="1" forecolor="#666666" uuid="e5213f1b-e8bf-4c3f-8747-ddfd467ec212"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="278" y="36" width="1" height="54" forecolor="#666666" uuid="bf4a3080-8050-4f9b-87d0-59bec3874c13"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement mode="Transparent" x="263" y="0" width="30" height="36" forecolor="#FFFFFF" uuid="96cfb1a6-f736-4122-a157-e3a126ed5d7d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="28" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_formulario_LETRID}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="74" y="106" width="481" height="35" uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cg_movimiento_OBSERV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="106" width="74" height="35" uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observaciones:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="93" width="74" height="13" uuid="ac2d3b34-857c-4685-bf30-a6e4b2b0da52"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Referencia:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="74" y="93" width="481" height="13" uuid="36cc1007-1486-42ab-a00d-e9f4191315fd"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cg_movimiento_REFERN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="602" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table" x="5" y="11" width="543" height="583" uuid="7ac7e797-1add-4611-b561-bdf618b06938"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="detalle" uuid="acf237f4-047d-40c1-a984-2f318c7fa3ec">
+						<datasetParameter name="ID_MCAB">
+							<datasetParameterExpression><![CDATA[$P{ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:columnGroup width="540" uuid="8dba4ac9-ceb9-468e-93cb-d19da0464069">
+						<jr:column width="38" uuid="5b9e8cf6-c9c1-414f-8078-61b471dd3f16">
+							<jr:tableHeader style="table_TH" height="18" rowSpan="1">
+								<staticText>
+									<reportElement x="1" y="0" width="37" height="18" uuid="7a31f1e4-b676-4b09-9c69-226d06c6e5b7"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true" isStrikeThrough="false"/>
+									</textElement>
+									<text><![CDATA[Item]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="13" rowSpan="1">
+								<textField>
+									<reportElement style="style1" x="0" y="0" width="38" height="13" uuid="7b26ed40-932f-45c9-95ef-4c30faa0c860"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8"/>
+										<paragraph leftIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{NROITM}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="91" uuid="97f4f2aa-4ae8-4666-9d6a-e82ef19a182a">
+							<jr:tableHeader style="table_TH" height="18" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="91" height="18" uuid="217908f4-c4b7-45eb-904e-b27973125135"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true" isStrikeThrough="false"/>
+									</textElement>
+									<text><![CDATA[Cuenta]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="13" rowSpan="1">
+								<textField pattern="#.#.##.##.##">
+									<reportElement style="style1" x="0" y="0" width="91" height="13" uuid="5e075906-6475-48b9-88ec-1548d0ef0b56"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8"/>
+										<paragraph rightIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{CTACON}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="231" uuid="7fc91648-c38d-4c3c-b691-e3cba69ffbdb">
+							<jr:tableHeader style="table_TH" height="18" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="231" height="18" uuid="3bd2c386-9e30-4ebf-b73b-095aa240c82e"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true" isStrikeThrough="false"/>
+									</textElement>
+									<text><![CDATA[Descripción]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="13" rowSpan="1">
+								<textField pattern="###0.00">
+									<reportElement style="style1" x="0" y="0" width="231" height="13" uuid="f265046f-7be7-4c0d-bb81-62026e0571d5"/>
+									<textElement verticalAlignment="Middle">
+										<font size="8"/>
+										<paragraph rightIndent="5"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{CUENTA_DESCRIPCION}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90" uuid="931b3b88-64a2-476b-885d-a0d87b92e254">
+							<jr:tableHeader style="table_TH" height="18" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="90" height="18" uuid="4f519615-7af6-46f6-8d75-7a77d3294096"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true" isStrikeThrough="false"/>
+									</textElement>
+									<text><![CDATA[Debe]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="13" rowSpan="1">
+								<textField pattern="###0.00" isBlankWhenNull="true">
+									<reportElement style="style1" x="0" y="0" width="90" height="13" uuid="cdfbacc1-d304-41de-82e8-d8aeb2db8fb1"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="8"/>
+										<paragraph rightIndent="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{IMPDEB}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90" uuid="a49d26c5-7173-4e3d-8215-ffbfb14de46d">
+							<jr:tableHeader style="table_TH" height="18" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="90" height="18" uuid="68525a48-8a32-490e-bc88-2f2d472f4dcd"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="8" isBold="true" isStrikeThrough="false"/>
+									</textElement>
+									<text><![CDATA[Haber]]></text>
+								</staticText>
+							</jr:tableHeader>
+							<jr:detailCell height="13" rowSpan="1">
+								<textField pattern="#,##0.00">
+									<reportElement style="style1" x="0" y="0" width="90" height="13" uuid="3ea7a0c0-1c42-4b3d-94cc-5db1d0dfdec4"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="8"/>
+										<paragraph rightIndent="10"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{IMPHAB}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:columnGroup>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="430" y="3" width="113" height="12" uuid="f8fe2b52-83c7-43ee-8138-9a582231e385"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="8" y="3" width="100" height="12" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="240" y="3" width="100" height="12" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" forecolor="#666666" uuid="118e9730-dc2f-49fa-9538-faed77961d7b"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="32">
+			<textField pattern="###0.00">
+				<reportElement x="458" y="10" width="90" height="13" uuid="ade18625-4013-4cba-bc64-9c82e0a84b65"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTHAB}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="368" y="10" width="90" height="13" uuid="6a3c6d5d-06bd-4ab0-a731-e456221f973a"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTDEB}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="294" y="10" width="74" height="13" uuid="fa169d41-4c41-454e-9f21-63a1a15366f6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

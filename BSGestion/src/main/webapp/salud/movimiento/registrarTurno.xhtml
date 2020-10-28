@@ -1,0 +1,133 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+
+    <p:dialog id="registrarTurno" header="Turnos"
+              widgetVar="dlgTurno"  responsive="true" modal="true" >
+
+
+        <h:form prependId="false" >
+
+
+            <!-- DATOS -->
+            <p:panelGrid  columns="2" layout="grid"
+                          styleClass="ui-panelgrid-blank"
+                          columnClasses="ui-g-5,ui-g-7" >
+
+                <!-- pattern="EEEEEEE dd MMMMMMM yyyy"  -->
+
+                <h:outputText value="Fecha"  />
+                <p:calendar value="#{gestionReservaTurnoBean.reservaTurno.fechaMovimiento}"
+                            disabled="#{empty gestionReservaTurnoBean.reservaTurno.id}"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax process="@this"  />
+                </p:calendar>
+
+                <h:outputText value="Profesional"  />
+
+                <p:autoComplete value="#{gestionReservaTurnoBean.profesional}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                required="true" requiredMessage="El profesional es obligatorio"
+                                completeMethod="#{profesionalMedicoBean.complete}"
+                                var="p" itemLabel="#{p.nombreComplete}" itemValue="#{p}"
+                                converter="#{conversoresEntidad.entidadComercial}"
+                                disabled="true">
+
+                    <p:ajax event="itemSelect" process="@this" />
+
+
+                    <p:column headerText="Apellido">
+                        <h:outputText value="#{p.apellido}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{p.nombre}" />
+                    </p:column>
+
+
+                </p:autoComplete>
+
+                <h:outputText value="Paciente" />
+                <p:autoComplete value="#{gestionReservaTurnoBean.reservaTurno.paciente}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                required="true" requiredMessage="El paciente es obligatorio"
+                                completeMethod="#{pacienteBean.complete}"
+                                var="q" itemLabel="#{q.nombreComplete}" itemValue="#{q}"
+                                converter="#{conversoresEntidad.entidadComercial}"
+                                disabled="#{not empty gestionReservaTurnoBean.reservaTurno.id}">
+
+
+                    <p:ajax event="itemSelect" process="@this" update="@this"/>
+
+                    <p:column headerText="Nro legajo" width="100">
+                        <h:outputText value="#{q.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Apellido">
+                        <h:outputText value="#{q.apellido}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{q.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Nro doc">
+                        <h:outputText value="#{q.nrodoc}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <p:outputLabel for="time" value="Hora" />
+                <p:calendar id="time" value="#{gestionReservaTurnoBean.reservaTurno.horaMovimiento}" pattern="HH:mm" timeOnly="true"  />
+
+                <h:outputText value="Observaciones" />
+                <p:inputTextarea style="width: 100%" rows="1"
+                                 value="#{gestionReservaTurnoBean.reservaTurno.observaciones}"  >
+                    <p:ajax event="blur" process="@this" />
+                </p:inputTextarea>
+
+
+            </p:panelGrid>
+
+            <div class="EmptyBox10" />
+
+            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank MaxWid700 MarAuto NoPadding"
+                         columnClasses="ui-g-6 ui-md-3,ui-g-6 ui-md-3,ui-g-6 ui-md-3,ui-g-6 ui-md-3" >
+
+                <p:commandButton value="Guardar Turno" styleClass="GreenBack" icon="fa fa-check" update="messageg"
+                                 actionListener="#{gestionReservaTurnoBean.guardar(false)}"
+                                 rendered="#{not empty gestionReservaTurnoBean.reservaTurno and gestionReservaTurnoBean.esNuevo and gestionReservaTurnoBean.reservaTurno.auditoria.debaja eq 'N'}"
+                                 oncomplete="PF('dlgTurno').hide(), procesarTurno()" >
+                </p:commandButton>
+
+                <p:commandButton value="Actualizar Turno" icon="fa fa-save" update="messageg"
+                                 actionListener="#{gestionReservaTurnoBean.guardar(false)}"
+                                 rendered="#{not empty gestionReservaTurnoBean.reservaTurno and not gestionReservaTurnoBean.esNuevo}"
+                                 oncomplete="PF('dlgTurno').hide(), procesarTurno()" >
+                </p:commandButton>
+
+
+                <p:commandButton value="Anular" styleClass="RedBack" icon="fa fa-trash" update="messageg"
+                                 actionListener="#{gestionReservaTurnoBean.habilitaDeshabilita('S')}"
+                                 rendered="#{not empty gestionReservaTurnoBean.reservaTurno and not gestionReservaTurnoBean.esNuevo and gestionReservaTurnoBean.reservaTurno.auditoria.debaja eq 'N'}"
+                                 process="@this"
+                                 oncomplete="PF('dlgTurno').hide(), procesarTurno()" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? No podrá deshacer esta acción" icon="ui-icon-alert" />
+                </p:commandButton>
+
+            </p:panelGrid>
+
+        </h:form>
+
+
+    </p:dialog>
+
+</ui:composition>
+
+

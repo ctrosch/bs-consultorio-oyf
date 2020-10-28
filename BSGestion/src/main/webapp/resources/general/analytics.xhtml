@@ -1,0 +1,26 @@
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <c:if test="#{aplicacionBean.parametro.modoPrueba eq 'N' and request.contextPath ne '/bs-base'}" >
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async="true" src="https://www.googletagmanager.com/gtag/js?id=UA-65831176-1"></script>
+        <script>
+            /*<![CDATA[ */
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'UA-65831176-1');
+            /* ]]> */
+        </script>
+
+
+    </c:if>
+
+</ui:composition>

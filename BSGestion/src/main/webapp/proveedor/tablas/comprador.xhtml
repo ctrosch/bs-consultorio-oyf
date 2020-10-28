@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"      value="#{compradorBean.codMenu}"/>
+            <f:viewParam name="CODIGO"  value="#{compradorBean.codigo}"/>
+            <f:viewParam name="TITULO"  value="#{compradorBean.titulo}"/>
+
+            <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+            <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+
+            <f:event type="preRenderView" listener="#{compradorBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+
+
+        <ui:define name="titulo" >
+            #{compradorBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{compradorBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarLocalidad" process="@this" update="localidad"
+                             actionListener="#{compradorBean.procesarLocalidadDlg()}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{compradorBean.modoVista eq 'B'}">
+                <ui:include src="compradorBusqueda.xhtml"  />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{compradorBean.modoVista eq 'D'}">
+                <ui:include src="compradorMenu.xhtml"  />
+                <ui:include src="compradorDatos.xhtml"  />
+            </ui:fragment>
+
+
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{reporteService.muestraReporte}"
+                               nombreArchivo="#{reporteService.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/global/busqueda/buscadorLocalidad.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+</html>
+

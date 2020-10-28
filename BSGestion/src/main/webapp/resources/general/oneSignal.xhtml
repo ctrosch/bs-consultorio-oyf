@@ -1,0 +1,158 @@
+
+<ui:composition 
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+
+
+
+    <script type="text/javascript">
+
+        /* 
+         * To change this license header, choose License Headers in Project Properties.
+         * To change this template file, choose Tools | Templates
+         * and open the template in the editor.
+         */
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(["init", {
+                appId: "dbdbfb80-1ab7-4257-bb87-f2997dea12a6",
+                autoRegister: false, /* Set to true to automatically prompt visitors */
+                notifyButton: {
+                    enable: true, /* Set to false to hide */
+                    position: 'bottom-left',
+                    text: {
+                        'tip.state.unsubscribed': 'Suscripción a notificaciones',
+                        'tip.state.subscribed': 'Estás suscrito a notificaciones',
+                        'tip.state.blocked': 'Has bloqueado las notificaciones',
+                        'message.prenotify': 'Has bloqueado las notificaciones',
+                        'message.action.subscribed': 'Gracias por suscribirte!',
+                        'message.action.resubscribed': 'Estás suscrito a notificaciones',
+                        'message.action.unsubscribed': 'No volverás a recibir notificaciones',
+                        'dialog.main.title': 'Administrar notificaciones del sitio',
+                        'dialog.main.button.subscribe': 'SUSCRIBIRSE',
+                        'dialog.main.button.unsubscribe': 'DESUSCRIBIRSE',
+                        'dialog.blocked.title': 'Desbloquear notificaciones',
+                        'dialog.blocked.message': 'Sigue estas instrucciones para permitir notificaciones:'
+                    }
+
+                },
+                promptOptions: {
+                    /* Change bold title, limited to 30 characters */
+                    siteName: 'Intercap S.R.L.',
+                    /* Subtitle, limited to 90 characters */
+                    actionMessage: "Estimado cliente, queremos enviarles ofertas secretas y novedades desde la web.",
+                    /* Example notification title */
+                    exampleNotificationTitle: 'Descuento especial lanzamiento 40% OFF',
+                    /* Example notification message */
+                    exampleNotificationMessage: 'Adquirí los nuevos productos de la línea Motegi a un precio imbatible!',
+                    /* Text below example notification, limited to 50 characters */
+                    exampleNotificationCaption: 'Puede anular su suscripción en cualquier momento',
+                    /* Accept button text, limited to 15 characters */
+                    acceptButtonText: "ACEPTAR",
+                    /* Cancel button text, limited to 15 characters */
+                    cancelButtonText: "NO GRACIAS"
+                }
+            }]);
+
+
+
+        function subscribe() {
+            // OneSignal.push(["registerForPushNotifications"]);
+            OneSignal.push(["registerForPushNotifications"]);
+            event.preventDefault();
+        }
+        function unsubscribe() {
+            OneSignal.setSubscription(true);
+        }
+
+        var OneSignal = OneSignal || [];
+        OneSignal.push(function () {
+            /* These examples are all valid */
+            // Occurs when the user's subscription changes to a new value.
+            OneSignal.on('subscriptionChange', function (isSubscribed) {
+                console.log("El estado de suscripción del usuario es ahora:", isSubscribed);
+                
+                 OneSignal.sendTag("cta_usuario", "#{usuarioSessionBean.usuario.cliente.nrocta}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+                
+                 OneSignal.sendTag("tipo_usuario", "#{usuarioSessionBean.usuario.tipo}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+                
+                  OneSignal.sendTag("nombre_usuario", "#{usuarioSessionBean.usuario.nombre}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+                
+                OneSignal.sendTag("razon_social", "#{usuarioSessionBean.usuario.cliente.nombre}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+
+                OneSignal.sendTag("sitio_usuario", "#{usuarioSessionBean.usuario.cliente.codigoSitio}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+
+                OneSignal.sendTag("email_usuario", "#{usuarioSessionBean.usuario.cliente.direml}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+
+                OneSignal.sendTag("localidad_usuario", "#{usuarioSessionBean.usuario.cliente.codigoPostal.descrp}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+
+                OneSignal.sendTag("vendedor_usuario", "#{usuarioSessionBean.usuario.cliente.vendedor.descrp}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+
+                OneSignal.sendTag("postnet_usuario", "#{usuarioSessionBean.usuario.cliente.posnet}", function (tagsSent)
+                {
+                    // Callback called when tags have finished sending
+                    console.log("Los Tags fueron enviados");
+                });
+            });
+
+            var isPushSupported = OneSignal.isPushNotificationsSupported();
+            if (isPushSupported)
+            {
+                // Push notifications are supported
+                OneSignal.isPushNotificationsEnabled().then(function (isEnabled)
+                {
+                    if (isEnabled)
+                    {
+                        console.log("Push notifications are enabled!");
+
+                    } else {
+                        OneSignal.showHttpPrompt();
+                        console.log("¡Las notificaciones push están habilitadas!");
+                    }
+                });
+
+            } else {
+                console.log("Las notificaciones push no son compatibles.");
+            }
+        });
+
+
+    </script>
+
+
+</ui:composition>

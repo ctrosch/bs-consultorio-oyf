@@ -1,0 +1,60 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorLocalidad1" header="Localidad" modal="true"
+              widgetVar="dlgLocalidad1"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 650px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusqueda"/>
+            
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+                
+                <p:inputText id="txtBusqueda" value="#{localidadBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaLocalidad1" listener="#{localidadBean.buscar}"/>
+                </p:inputText>
+
+            </p:panelGrid>        
+
+            <p:dataTable id="tablaLocalidad1" value="#{localidadBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" 
+                         selection="#{localidadBean.localidad}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+                
+                <p:ajax event="rowSelect" listener="#{localidadBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgLocalidad1').hide(), procesarLocalidad1()" />
+                    
+                <p:column headerText="C.P." width="20%" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >                         
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Nombre" width="40%" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+
+                <p:column headerText="Provincia" width="40%" style="text-align: left;"
+                          sortBy="#{e.provincia.descripcion}" >
+                    <h:outputText value="#{e.provincia.descripcion}" />  
+                </p:column>
+                
+            </p:dataTable>      
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

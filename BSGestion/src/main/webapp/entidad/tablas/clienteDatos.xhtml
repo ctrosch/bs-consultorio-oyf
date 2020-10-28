@@ -1,0 +1,887 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="8" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Nro Cuenta *" />
+        <p:inputText value="#{clienteBean.entidad.nrocta}" readonly="true"  />
+
+        <h:outputText value="Estado *" />
+        <p:selectOneMenu value="#{clienteBean.entidad.estado}"
+                         required="true" requiredMessage="Seleccione el estado"
+                         converter="#{conversoresEntidad.estadoEntidad}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" update="@form" />
+            <f:selectItems value="#{estadoEntidadBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Sucursal*" />
+        <p:autoComplete value="#{clienteBean.entidad.sucursal}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar la sucursal"
+                        completeMethod="#{sucursalBean.complete}"
+                        converter="#{conversoresGeneral.sucursal}"
+                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+        <h:outputText value="Canal de Venta *" />
+        <p:autoComplete value="#{clienteBean.entidad.canalVenta}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar el Canal de Venta"
+                        completeMethod="#{canalVentaBean.complete}"
+                        converter="#{conversoresVenta.canalVenta}"
+                        var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Razón Social *" />
+        <p:inputText id="c2" value="#{clienteBean.entidad.razonSocial}"
+                     required="true" requiredMessage="La razón social es obligatoria" />
+
+        <h:outputText value="Nombre Fantasía *" />
+        <p:inputText id="nombFanta" value="#{clienteBean.entidad.nombreFantasia}" />
+
+        <h:outputText value="Dirección * " />
+        <p:inputText value="#{clienteBean.entidad.direccion}" placeholder="Calle - Número - Depto - Piso"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+        <h:outputText value="Condición de IVA *" />
+        <p:selectOneMenu value="#{clienteBean.entidad.condicionDeIva}"
+                         required="true" requiredMessage="Seleccione la condición de iva"
+                         converter="#{conversoresGeneral.condicionDeIva}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{clienteBean.obtenerUrlMenu('SIS_00126','IDLC',clienteBean.entidad.localidad.id)}" />
+
+        </h:panelGroup>
+        <p:autoComplete id="localidad" value="#{clienteBean.entidad.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{clienteBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Tipo/Nro Documento" />
+        <h:panelGroup id="pnTipoDoc" layout="block"  >
+
+            <div class="Wid40 Responsive100 Fleft">
+                <p:autoComplete value="#{clienteBean.entidad.tipoDocumento}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid60 Responsive100 Fright">
+                <p:inputMask value="#{clienteBean.entidad.nrodoc}"
+                             mask="#{clienteBean.entidad.tipoDocumento.mascara}"
+                             rendered="#{not empty clienteBean.entidad.tipoDocumento}"
+                             required="true"
+                             requiredMessage="El número de documento del cliente es obligatorio"  />
+            </div>
+        </h:panelGroup>
+
+        <bs:outputTexWhitLink value="Zona *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00128','CODIGO',clienteBean.entidad.zona.codigo)}" />
+        <p:autoComplete value="#{clienteBean.entidad.zona}"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{zonaBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresGeneral.zona}" forceSelection="true" dropdown="true" >
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Tipo/Nro IB" />
+        <h:panelGroup id="pnTipoDoc1" layout="block">
+            <div class="Wid40 Responsive100 Fleft">
+                <p:autoComplete value="#{clienteBean.entidad.tipoDocumento1}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc1" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid60 Responsive100 Fright">
+                <p:inputMask value="#{clienteBean.entidad.nrodo1}"
+                             mask="#{clienteBean.entidad.tipoDocumento1.mascara}"
+                             rendered="#{not empty clienteBean.entidad.tipoDocumento1}"
+                             required="true"
+                             requiredMessage="El número de documento 'Nro IB' del cliente es obligatorio"  />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Teléfono" />
+        <p:inputText value="#{clienteBean.entidad.telefono}"   />
+
+        <h:outputText value="Tipo/Nro Otro"  />
+        <h:panelGroup id="pnTipoDoc2" layout="block"  >
+
+            <div class="Wid40 Responsive100 Fleft">
+                <p:autoComplete value="#{clienteBean.entidad.tipoDocumento2}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc2" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid60 Responsive100 Fright">
+                <p:inputMask value="#{clienteBean.entidad.nrodo2}"
+                             mask="#{clienteBean.entidad.tipoDocumento2.mascara}"
+                             rendered="#{not empty clienteBean.entidad.tipoDocumento2}"
+                             required="true"
+                             requiredMessage="El número de documento 'Nro Otro' del cliente es obligatorio" />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Celular * " />
+        <p:inputText value="#{clienteBean.entidad.ntelex}"
+                     required="true" requiredMessage="El celular es obligatorio" />
+
+        <bs:outputTexWhitLink value="Condición de Pago *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00355','CODIGO',clienteBean.entidad.condicionDePagoVentas.codigo)}" />
+        <p:autoComplete value="#{clienteBean.entidad.condicionDePagoVentas}"
+                        required="true" requiredMessage="Seleccione la condición de pago por defecto del cliente"
+                        dropdown="true" placeholder="Seleccionar"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{condicionPagoVentaBean.complete}"
+                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                        converter="#{conversoresVenta.condicionDePagoVenta}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Dirección de email *" />
+        <p:inputText value="#{clienteBean.entidad.email}"
+                     required="true" requiredMessage="El email es obligatorio"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateLength minimum="0" maximum="200" />
+            <!--
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+            -->
+        </p:inputText>
+
+        <!--
+        <h:outputText value="Solo para ventas de contado *" />
+        <p:selectOneRadio  value="#{clienteBean.entidad.soloContado}"
+                           required="true"  >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+        -->
+
+        <bs:outputTexWhitLink value="Lista de Precios *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00087','CODIGO',clienteBean.entidad.listaDePrecioVenta.codigo)}" />
+        <p:autoComplete value="#{clienteBean.entidad.listaDePrecioVenta}"
+                        required="true" requiredMessage="Seleccione la lista de precio del cliente"
+                        dropdown="true" placeholder="Seleccionar"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{listaPrecioVentaBean.complete}"
+                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                        converter="#{conversoresVenta.listaPrecioVenta}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <bs:outputTexWhitLink value="Vendedor *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00084','CODIGO',clienteBean.entidad.vendedor.codigo)}" />
+        <p:autoComplete value="#{clienteBean.entidad.vendedor}" dropdown="true" placeholder="Seleccionar"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El vendedor es obligatorio"
+                        completeMethod="#{vendedorBean.complete}"
+                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                        converter="#{conversoresVenta.vendedor}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Cobrador *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00274','CODIGO',clienteBean.entidad.cobrador.codigo)}" />
+        <p:autoComplete value="#{clienteBean.entidad.cobrador}" dropdown="true" placeholder="Seleccionar"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El cobrador es obligatorio"
+                        completeMethod="#{cobradorBean.complete}"
+                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                        converter="#{conversoresVenta.cobrador}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Repartidor *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00579','CODIGO',clienteBean.entidad.repartidor.codigo)}" />
+        <p:autoComplete value="#{clienteBean.entidad.repartidor}" dropdown="true" placeholder="Seleccionar"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El repartidor es obligatorio"
+                        completeMethod="#{repartidorBean.complete}"
+                        var="l" itemLabel="#{l.nombre}" itemValue="#{l}"
+                        converter="#{conversoresVenta.repartidor}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Código">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre">
+                <h:outputText value="#{l.nombre}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Cuenta Vinculada"  />
+
+        <p:autoComplete value="#{clienteBean.entidad.cuentaVinculada}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{clienteBean.complete}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this"  />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+
+
+        <!--
+        <bs:outputTexWhitLink value="Categoría *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00428')}" />
+        <p:selectOneMenu value="#{clienteBean.entidad.categoria}"
+                         required="true" requiredMessage="Seleccione la categoría"
+                         converter="#{conversoresEntidad.categoria}"
+                         effect="fade"  filter="true" >
+            <p:ajax process="@this" update="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{clienteBean.listaCategoria}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <bs:outputTexWhitLink value="Origen *"
+                              url="#{clienteBean.obtenerUrlMenu('SIS_00429')}" />
+        <p:selectOneMenu value="#{clienteBean.entidad.origen}"
+                         required="true" requiredMessage="Seleccione el origen"
+                         converter="#{conversoresEntidad.origen}"
+                         effect="fade"  filter="true" >
+            <p:ajax process="@this" update="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{clienteBean.listaOrigen}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+        -->
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank" columnClasses="ui-g-3, ui-g-9" >
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{clienteBean.entidad.notas}" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10"> </div>
+
+    <p:tabView id="tbDatosAsociados" activeIndex="#{clienteBean.indexTab1}" rendered="#{not clienteBean.esNuevo}" >
+
+        <p:ajax event="tabChange" listener="#{clienteBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Direcciones de entrega" >
+
+            <p:dataTable id="tablaDE" var="d"
+                         value="#{clienteBean.entidad.direccionesDeEntrega}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{clienteBean.nuevoItemDireccionEntrega()}"
+                                     value="Agregar dirección de entrega"
+                                     process="tablaDE"
+                                     update="tablaDE" />
+                </f:facet>
+
+                <p:column headerText="Código" width="60" style="text-align: center;"
+                          sortBy="#{d.codigo}"   >
+                    <h:outputText value="#{d.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="100" style="text-align: left;"
+                          sortBy="#{d.descripcion}" >
+                    <p:inputText value="#{d.descripcion}"
+                                 required="true" requiredMessage="Debe asignar una descripción a la dirección de entrega" />
+                </p:column>
+
+                <p:column headerText="Dirección" width="200" style="text-align: left;"
+                          sortBy="#{d.direccion}" >
+                    <p:inputText value="#{d.direccion}"
+                                 required="true" requiredMessage="Debe asignar una dirección a la dirección de entrega" />
+                </p:column>
+
+                <p:column headerText="Localidad" width="150" style="text-align: left;" >
+                    <p:autoComplete value="#{d.localidad}" dropdown="true"
+                                    maxResults="8" queryDelay="1000"
+                                    required="true" requiredMessage="La localidad en la dirección de entrega es obligatoria"
+                                    completeMethod="#{localidadBean.complete}"
+                                    var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}"
+                                    converter="#{conversoresGeneral.localidad}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@this"
+                                listener="#{clienteBean.onLocalidadDireccionEntregaSelect}" />
+
+                        <p:column headerText="C.P.">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Provincia">
+                            <h:outputText value="#{p.provincia.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="Nombre Contacto" width="120" style="text-align: left;" >
+                    <p:inputText value="#{d.contacto}"  />
+                </p:column>
+
+                <p:column headerText="Tel. Contacto" width="120" style="text-align: left;" >
+                    <p:inputText value="#{d.telefono}"  />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaDE" update="@form"
+                                   actionListener="#{clienteBean.eliminarItemDireccionEntrega(d)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Impuestos Asociados" >
+
+            <p:dataTable id="tablaIMP" var="i" style="max-width: 600px;"
+                         value="#{clienteBean.entidad.impuestos}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{clienteBean.nuevoItemImpuesto()}"
+                                     value="Agregar Impuesto"
+                                     process="tablaIMP"
+                                     update="tablaIMP" />
+                </f:facet>
+
+                <p:column headerText="Tipo de Impuesto" width="150" style="text-align: left;" >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.tipoImpuesto}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="El tipo de impuesto es obligatorio"
+                                        completeMethod="#{tipoImpuestoBean.complete}"
+                                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                        converter="#{conversoresGeneral.tipoImpuesto}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{l.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{l.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Tipo Impuesto"
+                                                url="#{clienteBean.obtenerUrlMenu('SIS_00147','CODIGO',i.tipoImpuesto.codigo)}" />
+                        </span>
+                    </div>
+
+                </p:column>
+
+                <p:column headerText="Conceptos" width="150" style="text-align: left;" >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.conceptoVenta}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="El concepto es obligatorio"
+                                        completeMethod="#{conceptoVentaBean.complete}"
+                                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                        converter="#{conversoresGeneral.concepto}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{l.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{l.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Conceptos"
+                                                url="#{clienteBean.obtenerUrlMenu('SIS_00183','CODIGO',i.conceptoVenta.codigo,'TCONCEPTO',i.conceptoVenta.tipo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaIMP" update="@form"
+                                   actionListener="#{clienteBean.eliminarItemImpuesto(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{clienteBean.mostrarImpuestoDebaja}" >
+                        <p:ajax process="@this" update="tablaIMP"
+                                listener="#{clienteBean.sincronizarImpuesto()}" />
+                    </p:selectBooleanCheckbox>
+                    Mostrar registros deshabilitados
+                </h:panelGroup>
+
+            </p:panelGrid>
+
+        </p:tab>
+
+        <p:tab id="t2" title="Contactos asociados" >
+
+            <p:dataTable id="tablaContacto" value="#{clienteBean.entidad.contactos}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer">
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{clienteBean.nuevoContacto()}"
+                                     value="Agregar Contacto"
+                                     process="tablaContacto"
+                                     update="tablaContacto" />
+                </f:facet>
+
+                <p:column headerText="Sector"  >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.sector}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{contactoSectorBean.complete}"
+                                        var="s" itemLabel="#{s.descripcion}" itemValue="#{s}"
+                                        converter="#{conversoresEntidad.sector}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{s.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver sector"
+                                                url="#{clienteBean.obtenerUrlMenu('SIS_00683','CODIGO',i.sector.codigo)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Nombre" sortBy="#{i.nombre}"  style="text-align: center;"  >
+                    <p:inputText value="#{i.nombre}" required="true" requiredMessage="El nombre del contacto es obligatorio" />
+                </p:column>
+
+                <p:column headerText="Celular" width="120"  >
+                    <p:inputText value="#{i.celular}" />
+                </p:column>
+
+                <p:column headerText="Teléfono" width="120" >
+                    <p:inputText value="#{i.telefono}"  />
+                </p:column>
+
+                <p:column headerText="Email" width="200" >
+                    <p:inputText value="#{i.email}" />
+                </p:column>
+
+                <p:column headerText="Dirección" width="180" >
+                    <p:inputText value="#{i.direccion}" />
+                </p:column>
+
+                <!--
+                <p:column headerText="Altura" width="50"  >
+                    <p:inputText value="#{i.direccion}" />
+                </p:column>
+
+                <p:column headerText="Piso" width="30"  >
+                    <p:inputText value="#{i.departamentoPiso}" />
+                </p:column>
+
+                <p:column headerText="Depto" width="30" >
+                    <p:inputText value="#{i.departamentoNumero}" />
+                </p:column>
+                -->
+
+                <p:column headerText="Localidad" width="200" >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{i.localidad}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{localidadBean.complete}"
+                                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}"
+                                        converter="#{conversoresGeneral.localidad}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" />
+
+                            <p:column headerText="C.P.">
+                                <h:outputText value="#{l.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{l.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Provincia">
+                                <h:outputText value="#{p.provincia.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver localidad"
+                                                url="#{clienteBean.obtenerUrlMenu('SIS_00126','IDLC',i.localidad.id)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaContacto" update="@form"
+                                   actionListener="#{clienteBean.eliminarContacto(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el contacto #{i.nombre}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t3" title="Actividad Comercial" >
+
+            <p:dataTable id="tablaAC" var="a"  style="max-width: 600px;"
+                         value="#{clienteBean.entidad.actividades}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{clienteBean.nuevoItemActividad()}"
+                                     immediate="true"
+                                     value="Agregar Actividad"
+                                     process="tablaAC"
+                                     update="tablaAC" />
+                </f:facet>
+
+
+
+                <p:column headerText="Actividad" width="200" style="text-align: center;" >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{a.actividadComercial}" dropdown="true"
+                                        maxResults="20" queryDelay="1000"
+                                        required="true" requiredMessage="La actividad de la entidad es obligatoria"
+                                        completeMethod="#{actividadComercialClienteBean.complete}"
+                                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                        converter="#{conversoresEntidad.actividad}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{l.descripcion}" />
+                            </p:column>
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Actividad"
+                                                url="#{clienteBean.obtenerUrlMenu('SIS_00681','CODIGO',a.actividadComercial.codigo,'CODTIP',a.actividadComercial.codtip)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaAC" update="@form"
+                                   actionListener="#{clienteBean.eliminarItemActividad(a)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t4" title="Transportes" >
+
+            <p:dataTable id="tablaTR" var="t"  style="max-width: 800px;"
+                         value="#{clienteBean.entidad.transportes}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{clienteBean.nuevoItemTransporte()}"
+                                     immediate="true"
+                                     value="Agregar Transporte"
+                                     process="tablaTR"
+                                     update="tablaTR" />
+                </f:facet>
+
+
+                <p:column headerText="Transporte" width="400" style="text-align: center;" >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{t.transporte}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="El transporte es obligatorio"
+                                        completeMethod="#{transporteBean.complete}"
+                                        var="y" itemLabel="#{y.razonSocial}" itemValue="#{y}"
+                                        converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{y.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{y.razonSocial}" />
+                            </p:column>
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver transporte"
+                                                url="#{clienteBean.obtenerUrlMenu('SIS_00127','NROCTA',t.transporte.nrocta)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Sucursal" width="200" style="text-align: center;" >
+
+                    <p:autoComplete value="#{t.sucursal}" dropdown="true"
+                                    maxResults="8" queryDelay="1000"
+                                    required="true" requiredMessage="La sucursal es obligatoria"
+                                    completeMethod="#{sucursalBean.complete}"
+                                    var="x" itemLabel="#{x.nombre}" itemValue="#{x}"
+                                    converter="#{conversoresGeneral.sucursal}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{x.nombre}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                </p:column>
+
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaTR" update="@form"
+                                   actionListener="#{clienteBean.eliminarItemTransporte(t)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <!--
+        <p:tab id="t3" title="Geolocalización">
+
+            <script type="text/javascript">
+                function geocode() {
+                    PF('geoMap').geocode(document.getElementById('address').value);
+                }
+
+            </script>
+
+            <h3 style="margin-top:0">Geocode</h3>
+            <h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">
+                <p:outputLabel for="address" value="Address:" />
+                <p:inputText id="address" />
+                <p:commandButton value="Geocode" icon="pi pi-search" onclick="geocode()" type="button" />
+            </h:panelGrid>
+
+            <p:gmap id="geoGmap" widgetVar="geoMap" center="#{clienteBean.centerGeoMap}" zoom="2" type="ROADMAP"
+                    model="#{clienteBean.geoModel}" style="width:100%;height:400px">
+                <p:ajax event="geocode" listener="#{clienteBean.onGeocode}" update="@this" />
+            </p:gmap>
+
+            <h:panelGroup layout="block">
+
+                <div>
+                    <div class="Wid50 Fleft">
+                        <p:inputText value="#{clienteBean.entidad.coordenadaLatitud}"
+                                     placeholder="Latitud" title="Latitud"  >
+                            <f:convertNumber pattern="0.000000" maxFractionDigits="6" maxIntegerDigits="2" />
+                        </p:inputText>
+                    </div>
+                    <div class="Wid50 Fright">
+                        <p:inputText value="#{clienteBean.entidad.coordenadaLongitud}"
+                                     placeholder="Longitud" title="Longitud" >
+
+                            <f:convertNumber pattern="0.000000" maxFractionDigits="6" maxIntegerDigits="2" />
+                        </p:inputText>
+                    </div>
+                </div>
+
+                <div class="EmptyBox5" />
+
+                <p:gmap rendered="#{not empty clienteBean.entidad.coordenadaLatitud and not empty clienteBean.entidad.coordenadaLongitud }"
+                        center="#{clienteBean.entidad.coordenadaLatitud}, #{clienteBean.entidad.coordenadaLongitud}"
+                        zoom="14" type="ROADMAP" style="width:100%;height:250px;"
+                        model="#{clienteBean.simpleModel}"  />
+
+            </h:panelGroup>
+
+
+        </p:tab>
+        -->
+
+    </p:tabView>
+
+</ui:composition>
+

@@ -1,0 +1,181 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <p:dialog id="buscadorPendiente" header="Selección de pendientes" modal="true"
+              widgetVar="dlg_pendiente"
+              resizable="false"
+              draggable="false"
+              position="top"
+              closable="#{movimientoProduccionBean.circuito.circom eq movimientoProduccionBean.circuito.circom ? 'true':'false'}"
+              showEffect="fade" hideEffect="fade"
+              style="min-width: 100%; min-height: 100%;"
+              styleClass="Hei100 Wid100"
+              responsive="true"
+              visible="#{movimientoProduccionBean.seleccionaPendiente}">
+
+        <h:form id="fPendiente" prependId="false" rendered="#{movimientoProduccionBean.seleccionaPendiente}" >
+
+            <p:wizard id="wizPendiente" widgetVar="wizPendiente" styleClass="Wid100" style="min-height: 100%; height: 100%;"
+                      backLabel="Atras" nextLabel="Siguiente" flowListener="#{movimientoProduccionBean.procesoSeleccionPendientes}" >
+
+                <p:tab id="filtro" title="Filtros" >
+
+                    <p:messages showDetail="true" /><p:growl showDetail="true" life="4000" />
+
+                    <div class="ui-g Hei100 Wid100">
+                        <div class="ui-g-12 Hei100">
+                            <p:outputPanel style="min-height: 350px;">
+
+                                <p:panelGrid columns="4" layout="grid"
+                                             styleClass="ui-panelgrid-blank"
+                                             columnClasses="Container20, Container30,Container20, Container30" >
+
+                                </p:panelGrid>
+
+                            </p:outputPanel>
+
+                            <div class="Wid100 TexAlCenter" >
+
+                                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" process="@this" styleClass="MaxWid500"
+                                                 actionListener="#{movimientoProduccionBean.resetParametros}"
+                                                 update="@form" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </p:tab>
+
+                <p:tab id="pendiente_grupo" title="Grupo de pendientes">
+
+                    <p:messages showDetail="true" /><p:growl showDetail="true" life="4000" />
+
+                    <div class="ui-g Hei100">
+                        <div class="ui-g-12">
+
+                            <p:accordionPanel id="accordion" widgetVar="accordion" >
+
+                                <p:tab title="Detalle de grupo">
+
+                                    <div class="ui-g Hei100">
+                                        <div class="ui-g-12">
+                                            <p:dataTable value="#{movimientoProduccionBean.movimientosPendientes}"  var="m"
+                                                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                                                         scrollable="true" scrollHeight="250"
+                                                         emptyMessage="No se encontraron documentos - HAGA CLIC EN VER PENDIENTES"  >
+
+                                                <p:column headerText="Formulario"  width="200" >
+                                                    <h:outputText value="#{m.codfor} - #{m.formulario.descripcion}" />
+                                                </p:column>
+
+                                                <p:column headerText="Número" width="70" styleClass="TexAlCenter"  >
+                                                    <h:outputText value="#{m.nrofor}" >
+                                                        <f:convertNumber pattern="00000000"  />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Fecha" width="80" style="text-align: center;" >
+                                                    <h:outputText value="#{m.fchmov}" >
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Producto"  >
+                                                    <h:outputText value="#{m.descripcion}" />
+                                                </p:column>
+
+                                                <p:column headerText="Cant. Pendientes" width="80" >
+                                                    <h:outputText value="#{m.pendiente}" styleClass="Fright" >
+                                                        <f:convertNumber pattern="#,###,##0.00" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Seleccionar" width="60" styleClass="TexAlCenter" >
+                                                    <p:commandButton icon="fa fa-search" id="seleMovim"
+                                                                     actionListener="#{movimientoProduccionBean.seleccionarItemPendiente(m, true)}"
+                                                                     update="@form" process="@this"
+                                                                     oncomplete="PF('accordion').select(1)" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </div>
+                                    </div>
+                                </p:tab>
+
+                                <p:tab title="Detalle de items" >
+
+                                    <div class="ui-g Hei100">
+                                        <div class="ui-g-12">
+
+                                            <p:dataTable id="tblDetalle" value="#{movimientoProduccionBean.itemsPendiente}"
+                                                         var="i" scrollable="true" scrollHeight="250"
+                                                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                                                         emptyMessage="No se encontraron items pendientes" >
+
+                                                <p:column headerText="Código" width="80">
+                                                    <h:outputText value="#{i.producto.codigo}" />
+                                                </p:column>
+
+                                                <p:column headerText="Descripción" >
+                                                    <h:outputText value="#{i.producto.descripcion}" />
+                                                </p:column>
+
+                                                <p:column headerText="Observacion/Detalle" >
+                                                    <h:outputText value="#{i.observ}" />
+                                                </p:column>
+
+                                                <p:column headerText="Cantidad" width="80" style="text-align: right;"  >
+                                                    <h:outputText value="#{i.pendiente}" style="text-align: right" >
+                                                        <f:convertNumber pattern="#,###,##0.00" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="U.M." width="50" style="text-align: center;" >
+                                                    <h:outputText value="#{i.unidadMedida.codigo}" />
+                                                </p:column>
+
+                                                <p:column width="20" style="text-align: center; " >
+                                                    <f:facet name="header" >
+                                                        <p:selectBooleanCheckbox value="#{movimientoProduccionBean.seleccionaTodo}" >
+                                                            <p:ajax event="change" listener="#{movimientoProduccionBean.seleccionarTodo()}"
+                                                                    update="tblDetalle" process="@this"/>
+                                                        </p:selectBooleanCheckbox>
+                                                    </f:facet>
+
+                                                    <p:selectBooleanCheckbox value="#{i.seleccionado}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+
+                                            <div class="EmptyBox20" />
+
+                                            <div class="Wid100 TexAlCenter">
+
+                                                <p:commandButton icon="ui-icon-check"  value="Finalizar" styleClass="MaxWid500 GreenButton"
+                                                                 process="@form" update="@form :formulario"
+                                                                 rendered="#{not empty movimientoProduccionBean.itemsPendiente}"
+                                                                 actionListener="#{movimientoProduccionBean.finalizarProcesoSeleccionPendiente()}" />
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </p:tab>
+                            </p:accordionPanel>
+                        </div>
+                    </div>
+                </p:tab>
+
+            </p:wizard>
+
+            <div class="EmptyBox20" />
+
+
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

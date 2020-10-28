@@ -1,0 +1,155 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+
+        <bs:outputTexWhitLink value="Tipo de concepto"
+                              url="#{conceptoVentaBean.obtenerUrlMenu('SIS_00145','CODIGO',conceptoVentaBean.concepto.tipoConcepto.codigo,'MODULO',conceptoVentaBean.concepto.tipoConcepto.modulo)}" />
+        <p:inputText value="#{conceptoVentaBean.concepto.tipoConcepto.descripcion}"
+                     readonly="true"
+                     rendered="#{not conceptoVentaBean.esNuevo}" />
+
+        <p:selectOneMenu value="#{conceptoVentaBean.concepto.tipoConcepto}" rendered="#{conceptoVentaBean.esNuevo}"
+                         converter="#{conversoresGeneral.tipoConcepto}"
+                         required="true"
+                         requiredMessage="Seleccione el tipo de concepto" >
+            <p:ajax process="@this" listener="#{conceptoVentaBean.onTipoChange}" />
+            <f:selectItem itemLabel="Selecccionar" itemValue="" />
+            <f:selectItems value="#{conceptoVentaBean.tipos}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{conceptoVentaBean.concepto.codigo}"
+                     readonly="#{not conceptoVentaBean.esNuevo}"
+                     required="true" requiredMessage="El código de concepto es obligatorio" />
+
+        <h:outputText value="Es concepto de cobranza" />
+        <p:selectOneRadio value="#{conceptoVentaBean.concepto.conceptoConbranza}" required="true" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+            <p:ajax process="@this" />
+        </p:selectOneRadio>
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{conceptoVentaBean.concepto.descripcion}"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <bs:outputTexWhitLink value="Cuenta Contable"
+                              url="#{conceptoVentaBean.obtenerUrlMenu('SIS_00420','NROCTA',conceptoVentaBean.concepto.cuentaContable.nrocta)}" />
+        <p:autoComplete value="#{conceptoVentaBean.concepto.cuentaContable}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="La Cuenta Contable es obligatoria"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresContabilidad.cuentaContable}" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Imputable">
+                <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+    </p:panelGrid>
+
+    <p:tabView activeIndex="#{conceptoVentaBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{conceptoVentaBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Impuestos asociados">
+
+            <p:dataTable id="tablaImpuesto" var="i"  resizeMode="expand" liveResize="true"
+                         value="#{conceptoVentaBean.concepto.impuestos}"  style="max-width: 600px;"
+                         emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{conceptoVentaBean.nuevoItemImpuesto()}"
+                                     value="Agregar Impuesto"
+                                     process="tablaImpuesto"
+                                     update="tablaImpuesto" />
+
+                </f:facet>
+
+                <p:column headerText="Impuesto"  >
+
+                    <div class="ui-inputgroup">
+
+                        <p:autoComplete value="#{i.tipoImpuesto}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{tipoImpuestoBean.complete}"
+                                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.tipoImpuesto}" >
+
+                            <p:ajax event="itemSelect" process="@this"  listener="#{conceptoVentaBean.asignarCodigoImpuesto(i)}" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Impuesto" url="#{conceptoVentaBean.obtenerUrlMenu('SIS_00147','CODIGO',i.tipoImpuesto.codigo)}" />
+                        </span>
+
+                    </div>
+
+                </p:column>
+
+                <p:column headerText="Tasa" >
+                    <p:inputText value="#{i.tasa}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                        <p:ajax event="keyup" delay="500" process="@this" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaImpuesto" update="@form"
+                                   actionListener="#{conceptoVentaBean.eliminarItemImpuesto(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+    </p:tabView>
+
+</ui:composition>
+

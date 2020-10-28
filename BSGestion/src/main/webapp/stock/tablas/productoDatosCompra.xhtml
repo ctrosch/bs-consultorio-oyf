@@ -1,0 +1,235 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Concepto de Compra *" />
+        <p:selectOneMenu value="#{productoBean.producto.conceptoProveedor}" style="max-width: 100% !important;"
+                         required="true" requiredMessage="Seleccione el concepto de compra"
+                         converter="#{conversoresProveedor.conceptoProveedor}">
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{productoBean.conceptosProveedor}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <bs:outputTexWhitLink value="Cuenta contable de compra *"
+                              url="#{productoBean.obtenerUrlMenu('SIS_00420','NROCTA',productoBean.producto.cuentaContableCompra.nrocta)}" />
+
+
+        <p:autoComplete value="#{productoBean.producto.cuentaContableCompra}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresContabilidad.cuentaContable}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Proveedor habitual"
+                              url="#{productoBean.obtenerUrlMenu('SIS_00161','NROCTA',productoBean.producto.proveedorHabitual.nrocta)}" />
+
+        <p:autoComplete value="#{productoBean.producto.proveedorHabitual}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{proveedorBean.complete}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <!--
+        <h:outputText value="Disp. para picking Compras " />
+        <p:selectOneMenu value="#{productoBean.producto.disponibleParaPickingCompras}"  style="min-width: 50px;"
+                         required="true" requiredMessage="Seleccione si imprime cantidad"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+        -->
+
+        <h:outputText value="Punto de pedido " />
+        <p:inputText value="#{productoBean.producto.puntoDePedido}"  styleClass="TexAlRight" >
+            <f:convertNumber pattern="0"  />
+        </p:inputText>
+
+        <h:outputText value="Dias entrega " />
+        <p:inputText value="#{productoBean.producto.diasEntrega}"  styleClass="TexAlRight" >
+            <f:convertNumber pattern="0"  />
+        </p:inputText>
+
+        <h:outputText value="Codigo Proveedor " />
+        <p:inputText value="#{productoBean.producto.codigoProveedor}" styleClass="TexAlRight" >
+            <f:validateLength maximum="25" />
+        </p:inputText>
+
+        <h:outputText value="Fecha de reposición " />
+        <p:calendar value="#{productoBean.producto.fechaReposicion}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+        <h:outputText value="Moneda de reposición " />
+        <p:selectOneMenu value="#{productoBean.producto.monedaReposicion}"
+                         required="true" requiredMessage="Seleccione la moneda de reposición"
+                         converter="#{conversoresGeneral.moneda}"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="Precio de reposición " />
+        <p:inputText value="#{productoBean.producto.precioReposicion}" styleClass="TexAlRight"
+                     required="true" requiredMessage="El precio de reposición es obligatorio" >
+            <f:convertNumber pattern="#,##0.00" />
+        </p:inputText>
+
+        <h:outputText value="Fecha de ultima compra " />
+        <p:inputText value="#{productoBean.producto.fechaUltimaCompra}" readonly="true" >
+            <f:convertDateTime pattern="dd/MM/yyyy" />
+        </p:inputText>
+
+        <h:outputText value="Moneda de ultima compra " />
+        <p:inputText value="#{productoBean.producto.monedaUltimaCompra.descripcion}" readonly="true" />
+
+        <h:outputText value="Precio de ultima compra " />
+        <p:inputText value="#{productoBean.producto.precioUltimaCompra}" readonly="true" styleClass="TexAlRight" >
+            <f:convertNumber pattern="#,##0.00" />
+        </p:inputText>
+
+        <h:outputText value="Fecha de producción " />
+        <p:calendar value="#{productoBean.producto.fechaProduccion}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"  >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+        <h:outputText value="Moneda de producción " />
+        <p:selectOneMenu value="#{productoBean.producto.monedaDeProduccion}"
+                         required="true" requiredMessage="Seleccione la moneda de producción"
+                         converter="#{conversoresGeneral.moneda}"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItems value="#{monedaBean.lista}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="Precio de producción " />
+        <p:inputText value="#{productoBean.producto.precioProduccion}" styleClass="TexAlRight"
+                     required="true" requiredMessage="El precio de producción es obligatorio" >
+            <f:convertNumber pattern="#,##0.00" />
+        </p:inputText>
+
+
+
+
+        <p:spacer height="15" />
+        <p:spacer height="15" />
+
+    </p:panelGrid>
+
+    <p:dataTable id="tablaEQ" var="d" style="max-width: 700px;"
+                 value="#{productoBean.producto.equivalenciaProveedor}"
+                 emptyMessage="No se encontraron resultados"
+                 resizableColumns="true" resizeMode="expand" liveResize="true"
+                 rows="10"  >
+
+        <f:facet name="header">
+            Equivalencias con proveedores
+        </f:facet>
+
+        <f:facet name="footer" >
+
+            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                             actionListener="#{productoBean.nuevoItemEquivalenciaProveedor()}"
+                             value="Agregar equivalencia"
+                             process="tablaEQ"
+                             update="tablaEQ" />
+
+
+        </f:facet>
+
+        <p:column headerText="Proveedor" style="text-align: left;" >
+            <div class="ui-inputgroup">
+                <p:autoComplete value="#{d.proveedor}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{proveedorBean.complete}"
+                                var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                    <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+
+                </p:autoComplete>
+                <span class="ui-inputgroup-addon">
+                    <bs:linkMenuSistema title="Ver Proveedor"
+                                        url="#{productoBean.obtenerUrlMenu('SIS_00161','NROCTA',d.proveedor.nrocta)}" />
+                </span>
+            </div>
+
+        </p:column>
+
+        <p:column headerText="Código Proveedor" width="200" style="text-align: center;"
+                  sortBy="#{d.codigo}"   >
+            <p:inputText value="#{d.codigo}" />
+
+        </p:column>
+
+        <p:column headerText="" width="50" style="text-align: center;" >
+
+            <p:commandLink process="tablaEQ" update="tablaEQ,message,messageg"
+                           actionListener="#{productoBean.eliminarItemEquivalenciaProveedor(d)}" >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+    </p:dataTable>
+
+</ui:composition>
+

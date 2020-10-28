@@ -1,0 +1,229 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario" />
+        <p:inputText value="#{movimientoEducacionBean.m.formulario.descripcion} - #{movimientoEducacionBean.m.formulario.letra}" readonly="true" />
+
+        <h:outputText value="Punto de Venta" />
+        <p:inputText value="#{movimientoEducacionBean.m.puntoVenta.codigo}" readonly="true" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número"  />
+        <p:inputText value="#{movimientoEducacionBean.m.numeroFormulario}" readonly="true" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"  />
+        <p:calendar value="#{movimientoEducacionBean.m.fechaMovimiento}"
+                    disabled="#{movimientoEducacionBean.m.formulario.modificaFecha ne 'S'}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Alumno *"
+                              url="#{movimientoEducacionBean.obtenerUrlMenu('SIS_00577','NROCTA',movimientoEducacionBean.m.alumno.nrocta)}" />
+
+        <p:autoComplete value="#{movimientoEducacionBean.m.alumno}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Alumno es obligatorio"
+                        completeMethod="#{movimientoEducacionBean.completeAlumno}"
+                        disabled="#{not empty movimientoEducacionBean.m.id}"
+                        var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.procesarAlumno()}"  />
+
+            <p:column headerText="Nro Legajo" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Nombre Completo">
+                <h:outputText value="#{e.apellido} #{e.nombre}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+
+        <h:outputText value="Nro Documento" />
+        <h:panelGroup layout="block">
+            <p:inputText value="#{movimientoEducacionBean.m.tipoDocumento.descripcion}" style="max-width: 30%"
+                         readonly="true" />
+            <p:inputMask value="#{movimientoEducacionBean.m.nrodoc}" style="max-width: 70%"
+                         mask="#{movimientoEducacionBean.m.tipoDocumento.mascara}"
+                         required="true"
+                         requiredMessage="El número de documento del Alumno es obligatorio"  />
+
+        </h:panelGroup>
+        <h:outputText value="Dirección " />
+        <p:inputText value="#{movimientoEducacionBean.m.direccion}"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+        <h:outputText value="Localidad*" />
+        <p:autoComplete value="#{movimientoEducacionBean.m.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        disabled="#{not empty movimientoEducacionBean.m.id}"
+                        required="true" requiredMessage="La Localidad es necesaria"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{movimientoEducacionBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Carrera *"
+                              url="#{movimientoEducacionBean.obtenerUrlMenu('SIS_00582','CODIGO',movimientoEducacionBean.m.carrera.codigo)}" />
+
+        <p:autoComplete value="#{movimientoEducacionBean.m.carrera}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="La Carrera es obligatoria"
+                        completeMethod="#{movimientoEducacionBean.completeCarrera}"
+                        disabled="#{not empty movimientoEducacionBean.m.id}"
+                        var="e" itemLabel="#{e.titulo}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.carrera}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.procesarCarrera()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.titulo}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea rows="1" value="#{movimientoEducacionBean.m.observaciones}" style="width: 100%" />
+
+        <bs:outputTexWhitLink value="Plan de estudio *"
+                              rendered="#{movimientoEducacionBean.muestroCampo('C','CODPLA')}"
+                              url="#{cursoBean.obtenerUrlMenu('SIS_00633','CODIGO',movimientoEducacionBean.m.planEstudio)}" />
+
+        <p:autoComplete value="#{movimientoEducacionBean.m.planEstudio}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoEducacionBean.muestroCampo('C','CODPLA')}"
+                        disabled="#{not empty movimientoEducacionBean.m.id}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar un plan de estudio"
+                        completeMethod="#{movimientoEducacionBean.completePlanEstudio}"
+                        converter="#{conversoresEducacion.planEstudio}"
+                        var="a" itemLabel="#{a.titulo}" itemValue="#{a}" >
+            <p:ajax event="itemSelect" process="@this" update="@form" />
+        </p:autoComplete>
+
+        <h:outputText value="% Bonificacion"  />
+        <p:inputText value="#{movimientoEducacionBean.m.porcentajeBonificacion}"  styleClass="TexAlRight"
+                     disabled="#{not empty movimientoEducacionBean.m.id}" >
+            <f:convertNumber pattern="###,###,##0.00" />
+            <f:validateDoubleRange minimum="0" maximum="100" />
+            <p:ajax event="keyup" delay="500"
+                    listener="#{movimientoEducacionBean.procesarBonificacion()}"
+                    process="@this"
+                    update="tb" />
+        </p:inputText>
+
+        <bs:outputTexWhitLink value="Arancel *"
+                              url="#{movimientoEducacionBean.obtenerUrlMenu('SIS_00634','CODIGO',movimientoEducacionBean.m.arancel.codigo)}"
+                              rendered="#{movimientoEducacionBean.muestroCampo('C','CODARA')}" />
+        <p:autoComplete value="#{movimientoEducacionBean.m.arancel}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoEducacionBean.muestroCampo('C','CODARA')}"
+                        disabled="#{not empty movimientoEducacionBean.m.id}"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{movimientoEducacionBean.completeArancel}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.arancel}"
+                        emptyMessage="No se encontraron aranceles para la carrera seleccionada">
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.procesarAranceles()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Año Referencia">
+                <h:outputText value="#{e.anioLectivo}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="" rendered="#{movimientoEducacionBean.muestroCampo('C','CODARA')}" />
+        <h:outputText value="" rendered="#{movimientoEducacionBean.muestroCampo('C','CODARA')}" />
+
+        <bs:outputTexWhitLink value="Curso *"
+                              url="#{movimientoEducacionBean.obtenerUrlMenu('SIS_00589','CODIGO',movimientoEducacionBean.m.curso.codigo)}"
+                              rendered="#{movimientoEducacionBean.muestroCampo('C','CODCUR')}" />
+
+        <p:autoComplete value="#{movimientoEducacionBean.m.curso}" dropdown="true" forceSelection="true"
+                        rendered="#{movimientoEducacionBean.muestroCampo('C','CODCUR')}"
+                        disabled="#{not empty movimientoEducacionBean.m.id}"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{movimientoEducacionBean.completeCurso}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.curso}"
+                        emptyMessage="No se encontraron cursos para la carrera seleccionada">
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.procesarAranceles()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Fecha Inicio">
+                <h:outputText value="#{e.fechaInicio}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="" rendered="#{movimientoEducacionBean.muestroCampo('C','CODCUR')}" />
+        <h:outputText value="" rendered="#{movimientoEducacionBean.muestroCampo('C','CODCUR')}" />
+
+
+    </p:panelGrid>
+
+
+
+</ui:composition>
+

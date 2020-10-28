@@ -1,0 +1,443 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Nro Legajo *" />
+        <p:inputText value="#{pacienteBean.entidad.nrocta}" readonly="true"  />
+
+        <h:outputText value="Estado *" />
+        <p:selectOneMenu value="#{pacienteBean.entidad.estado}"
+                         required="true" requiredMessage="Seleccione el estado"
+                         converter="#{conversoresEntidad.estadoEntidad}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" update="@form" />
+            <f:selectItems value="#{estadoEntidadBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Sucursal*" />
+        <p:autoComplete value="#{pacienteBean.entidad.sucursal}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar la sucursal"
+                        completeMethod="#{sucursalBean.complete}"
+                        converter="#{conversoresGeneral.sucursal}"
+                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Apellido *" />
+        <p:inputText id="apelliAl" value="#{pacienteBean.entidad.apellido}"
+                     required="true" requiredMessage="Debe ingresar el Apellido/s del paciente" />
+
+        <h:outputText value="Nombre *" />
+        <p:inputText id="nombAl" value="#{pacienteBean.entidad.nombre}"
+                     required="true" requiredMessage="Debe ingresar el nombre/s del paciente" />
+
+
+        <h:outputText value="Tipo/Nro Documento *" />
+        <h:panelGroup id="pnTipoDoc" layout="block"  >
+
+            <div class="Wid40 Responsive100 Fleft">
+                <p:autoComplete value="#{pacienteBean.entidad.tipoDocumento}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid60 Responsive100 Fright">
+                <p:inputMask value="#{pacienteBean.entidad.nrodoc}"
+                             mask="#{pacienteBean.entidad.tipoDocumento.mascara}"
+                             rendered="#{not empty pacienteBean.entidad.tipoDocumento}"
+                             required="true"
+                             requiredMessage="El número de documento del paciente es obligatorio"  />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Sexo*" />
+        <p:selectOneMenu value="#{pacienteBean.entidad.sexo}"
+                         required="true" requiredMessage="Seleccione Sexo"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Masculino" itemValue="M" />
+            <f:selectItem itemLabel="Femenino" itemValue="F" />
+            <f:selectItem itemLabel="No Definido" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Fecha de Nacimiento *"/>
+        <p:calendar value="#{pacienteBean.entidad.fechaNacimiento}"
+                    yearRange="c-120:c+0"
+                    required="true" requiredMessage="La fecha de nacimiento es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+        <h:outputText value=""/>
+        <h:outputText value=""/>
+
+        <h:outputText value="Dirección * " />
+        <p:inputText value="#{pacienteBean.entidad.direccion}" placeholder="Calle - Número - Depto - Piso"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{proveedorBean.obtenerUrlMenu('SIS_00126','IDLC',pacienteBean.entidad.localidad.id)}" />
+
+        </h:panelGroup>
+        <p:autoComplete id="localidad" value="#{pacienteBean.entidad.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{pacienteBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <h:outputText value="Teléfono" />
+        <p:inputText value="#{pacienteBean.entidad.telefono}"   />
+
+
+        <h:outputText value="Celular * " />
+        <p:inputText value="#{pacienteBean.entidad.ntelex}"
+                     required="true" requiredMessage="El celular es obligatorio" />
+
+        <h:outputText value="Dirección de email *" />
+        <p:inputText value="#{pacienteBean.entidad.email}"
+                     required="true" requiredMessage="El email es obligatorio"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateLength minimum="0" maximum="200" />
+            <!--
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+            -->
+        </p:inputText>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-2 ui-md-3 ui-lg-2, ui-g-10 ui-md-9 ui-lg-10" >
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{pacienteBean.entidad.notas}" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10"> </div>
+
+    <p:tabView id="tbDatosAsociados" activeIndex="#{pacienteBean.indexTab1}"  >
+
+        <p:ajax event="tabChange" listener="#{pacienteBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Datos Adicionales" >
+
+            <p:panelGrid columns="6" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+                <h:outputText value="Grupo Sanguineo*" />
+                <p:selectOneMenu value="#{pacienteBean.entidad.grupoSanguineo}" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="A" itemValue="A" />
+                    <f:selectItem itemLabel="B" itemValue="B" />
+                    <f:selectItem itemLabel="0" itemValue="0" />
+                    <f:selectItem itemLabel="AB" itemValue="AB" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Factor RH*" />
+                <p:selectOneMenu value="#{pacienteBean.entidad.factorRh}" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="+" itemValue="+" />
+                    <f:selectItem itemLabel="-" itemValue="-" />
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-6">
+
+                <h:outputText value="Alergias *" />
+
+                <p:selectOneMenu value="#{pacienteBean.entidad.alergia}"
+                                 required="true" requiredMessage="Seleccione si tiene Alergias"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="SI" itemValue="S" />
+                    <f:selectItem itemLabel="NO" itemValue="N" />
+                    <p:ajax event="itemSelect" process="@parent" update="@parent" listener="#{pacienteBean.borrarAlergia()}"/>
+                </p:selectOneMenu>
+
+
+                <h:outputText value="Detalle de Alergias *"  rendered="#{pacienteBean.entidad.alergia eq 'S'}" />
+                <h:panelGroup  id="detaAl" layout="block" rendered="#{pacienteBean.entidad.alergia eq 'S'}" >
+
+                    <p:inputTextarea   value="#{pacienteBean.entidad.detalleAlergia}"
+                                       required="true" requiredMessage="Debe ingresar el detalle de Alergias"
+                                       rendered="#{pacienteBean.entidad.alergia eq 'S' }" />
+                </h:panelGroup>
+
+                <h:outputText value=""  rendered="#{pacienteBean.entidad.alergia ne 'S'}" />
+                <h:outputText value=""  rendered="#{pacienteBean.entidad.alergia ne 'S'}" />
+
+
+                <h:outputText value="Tratamientos *" />
+                <p:selectOneMenu value="#{pacienteBean.entidad.tratamientoMedico}"
+                                 required="true" requiredMessage="Seleccione si tiene Tratamiento Médico"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="SI" itemValue="S" />
+                    <f:selectItem itemLabel="NO" itemValue="N" />
+                    <p:ajax event="itemSelect" process="@parent" update="@parent" listener="#{pacienteBean.borrarTratamiento()}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Detalle de tratamientos *"  rendered="#{pacienteBean.entidad.tratamientoMedico eq 'S'}" />
+                <h:panelGroup  id="detTrat" layout="block" rendered="#{pacienteBean.entidad.tratamientoMedico eq 'S'}"  >
+
+                    <p:inputTextarea   value="#{pacienteBean.entidad.detalleTratamientoMedico}"
+                                       required="true" requiredMessage="Debe ingresar Tratamiento Médico"
+                                       rendered="#{pacienteBean.entidad.tratamientoMedico eq 'S' }" />
+                </h:panelGroup>
+
+                <h:outputText value=""  rendered="#{pacienteBean.entidad.tratamientoMedico ne 'S'}" />
+                <h:outputText value=""  rendered="#{pacienteBean.entidad.tratamientoMedico ne 'S'}" />
+
+
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-9 ui-lg-10">
+
+                <h:outputText value="Datos Extras" />
+                <p:inputTextarea cols="80" rows="3" value="#{pacienteBean.entidad.datosExtras}" />
+
+
+            </p:panelGrid>
+
+
+        </p:tab>
+
+        <p:tab id="t1" title="Obras Sociales" >
+
+            <p:dataTable id="tablaOS" var="o"  style="max-width: 800px;"
+                         value="#{pacienteBean.entidad.obraSociales}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{pacienteBean.nuevoItemObraSocial()}"
+                                     value="Agregar Obra Social"
+                                     process="tablaOS"
+                                     update="tablaOS" />
+                </f:facet>
+
+
+                <p:column headerText="Obra Social" width="400" style="text-align: center;" >
+                    <div class="ui-inputgroup">
+                        <p:autoComplete value="#{o.obraSocial}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        required="true" requiredMessage="La obra social es obligatoria"
+                                        completeMethod="#{obraSocialBean.complete}"
+                                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                        converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                            <p:column headerText="Nro cuenta" width="100">
+                                <h:outputText value="#{e.nrocta}" />
+                            </p:column>
+
+                            <p:column headerText="Apellido">
+                                <h:outputText value="#{e.razonSocial}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{e.nombreFantasia}" />
+                            </p:column>
+                        </p:autoComplete>
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Obra Social"
+                                                url="#{clienteBean.obtenerUrlMenu('SIS_00697','NROCTA',o.obraSocial.nrocta)}" />
+                        </span>
+                    </div>
+                </p:column>
+
+                <p:column headerText="Nro. Afiliado" width="200" style="text-align: center;" >
+                    <p:inputText value="#{o.nroAfiliado}" required="true" requiredMessage="El nro. afiliado es obligatorio" />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaOS" update="@form"
+                                   actionListener="#{pacienteBean.eliminarItemObraSocial(o)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+        <p:tab id="t2" title="Datos de Facturación" >
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank" >
+
+                <h:outputText value="Razón Social " />
+                <p:inputText id="c2" value="#{pacienteBean.entidad.razonSocial}" />
+
+                <h:outputText  value="Nombre Fantasia " />
+                <p:inputText id="nombFanta" value="#{pacienteBean.entidad.nombreFantasia}" />
+
+                <h:outputText value="Dirección  " />
+                <p:inputText value="#{pacienteBean.entidad.direccionFactura}" placeholder="Calle - Número - Depto - Piso"
+                             />
+
+                <h:panelGroup layout="block" >
+
+                    <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                                   process="@this"
+                                   update="buscadorLocalidadFactura"
+                                   oncomplete="PF('dlgLocalidadFactura').show()"  >
+
+                        <i class="fa fa-search" ></i>
+                    </p:commandLink>
+
+                    <bs:outputTexWhitLink value="Localidad "
+                                          url="#{pacienteBean.obtenerUrlMenu('SIS_00126','IDLC',pacienteBean.entidad.localidadFactura.id)}" />
+
+                </h:panelGroup>
+                <p:autoComplete id="local" value="#{pacienteBean.entidad.localidadFactura}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{localidadBean.complete}"
+                                converter="#{conversoresGeneral.localidad}"
+                                var="l2" itemLabel="#{l2.descripcionComplete}" itemValue="#{l2}" >
+
+                    <p:ajax event="itemSelect" process="@this" listener="#{pacienteBean.procesarLocalidadFactura()}" />
+
+                    <p:column headerText="C.P." width="80">
+                        <h:outputText value="#{l2.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre" width="150">
+                        <h:outputText value="#{l2.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Provincia" width="150">
+                        <h:outputText value="#{l2.provincia.descripcion}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="Condición de IVA " />
+                <p:selectOneMenu value="#{pacienteBean.entidad.condicionDeIva}"
+                                 converter="#{conversoresGeneral.condicionDeIva}"
+                                 effect="fade" filter="true" >
+                    <p:ajax process="@this" />
+
+                    <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Tipo/Nro Documento" />
+                <h:panelGroup id="pnTipoDoc2" layout="block"  >
+
+                    <div class="Wid40 Responsive100 Fleft">
+                        <p:autoComplete value="#{pacienteBean.entidad.tipoDocumento1}" dropdown="true" forceSelection="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{tipoDocumentoBean.complete}"
+                                        converter="#{conversoresGeneral.tipoDocumento}"
+                                        var="p2" itemLabel="#{p2.descripcion}" itemValue="#{p2}" >
+                            <p:ajax event="itemSelect" process="@this" update="pnTipoDoc2" />
+                        </p:autoComplete>
+                    </div>
+
+                    <div class="Wid60 Responsive100 Fright">
+                        <p:inputMask value="#{pacienteBean.entidad.nrodo1}"
+                                     mask="#{pacienteBean.entidad.tipoDocumento1.mascara}"
+                                     rendered="#{not empty pacienteBean.entidad.tipoDocumento1}"
+                                     required="true"
+                                     requiredMessage="El número de documento del cliente es obligatorio"  />
+                    </div>
+                </h:panelGroup>
+
+                <bs:outputTexWhitLink value="Condición de Pago *"
+                                      url="#{pacienteBean.obtenerUrlMenu('SIS_00355','CODIGO',pacienteBean.entidad.condicionDePagoVentas.codigo)}" />
+                <p:autoComplete value="#{pacienteBean.entidad.condicionDePagoVentas}"
+                                required="true" requiredMessage="Seleccione la condición de pago por defecto del paciente para la facturación"
+                                dropdown="true" placeholder="Seleccionar"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{condicionPagoVentaBean.complete}"
+                                var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                converter="#{conversoresVenta.condicionDePagoVenta}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{l.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{l.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+
+
+            </p:panelGrid>
+
+        </p:tab>
+
+    </p:tabView>
+
+</ui:composition>
+

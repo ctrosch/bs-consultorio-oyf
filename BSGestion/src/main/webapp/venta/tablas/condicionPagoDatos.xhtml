@@ -1,0 +1,146 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-7 ui-md-12 ui-lg-6, ui-g-5 ui-md-12 ui-lg-6" >
+
+        <h:panelGroup layout="block" >
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-7 ui-md-12 ui-lg-6, ui-g-5 ui-md-12 ui-lg-6" >
+
+                <h:outputText value="Código" />
+                <p:inputText value="#{condicionPagoVentaBean.condicion.codigo}"
+                             readonly="#{not condicionPagoVentaBean.esNuevo}"
+                             required="true"
+                             requiredMessage="El código es necesario" />
+
+                <h:outputText value="Descripción" />
+                <p:inputText value="#{condicionPagoVentaBean.condicion.descripcion}"
+                             required="true"
+                             requiredMessage="La descripción es necesaria" />
+
+                <h:outputText value="Imputa en Cuenta Corriente" />
+                <p:selectOneRadio value="#{condicionPagoVentaBean.condicion.imputaCuentaCorriente}"
+                                  required="true"
+                                  requiredMessage="Seleccione si Imputa en Cuenta Corriente">
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneRadio>
+
+                <h:outputText value="Fecha Origen Cálculo" />
+                <p:selectOneRadio value="#{condicionPagoVentaBean.condicion.fechaOrigenCalculo}"
+                                  required="true"
+                                  requiredMessage="Seleccione Fecha Origen Cálculo">
+                    <f:selectItem itemLabel="Fecha Emisión" itemValue="FE" />
+                    <f:selectItem itemLabel="Fecha 1er Vencimiento" itemValue="FV" />
+                </p:selectOneRadio>
+
+                <h:outputText value="Tipo Cálculo" />
+                <p:selectOneRadio value="#{condicionPagoVentaBean.condicion.tipoCalculo}"
+                                  required="true"
+                                  requiredMessage="Seleccione Tipo Cálculo">>
+                    <f:selectItem itemLabel="Personalizado" itemValue="PER" />
+                    <f:selectItem itemLabel="Secuencial" itemValue="SEC" />
+                </p:selectOneRadio>
+
+                <h:outputText value="Frecuencia" />
+                <p:selectOneRadio value="#{condicionPagoVentaBean.condicion.frecuencia}"
+                                  required="true"
+                                  requiredMessage="Seleccione Frecuencia">
+                    <f:selectItem itemLabel="Diaria" itemValue="D" />
+                    <f:selectItem itemLabel="Semanal" itemValue="S" />
+                    <f:selectItem itemLabel="Mensual" itemValue="M" />
+                    <f:selectItem itemLabel="Anual" itemValue="A" />
+                </p:selectOneRadio>
+
+                <h:outputText value="Cantidad de Cuotas" />
+                <p:inputText value="#{condicionPagoVentaBean.condicion.cantidadCuotas}"
+                             required="true"
+                             requiredMessage="Ingrese la cantidad de cuotas" />
+
+                <h:outputText value="Día Vencimiento Según Frecuencia" />
+                <p:inputText value="#{condicionPagoVentaBean.condicion.diaSegunFrecuencia}"
+                             required="true"
+                             requiredMessage="Ingrese la cantidad de días" />
+
+                <h:outputText value="Toma Fecha Origen Como Primer Vencimiento" />
+                <p:selectOneRadio value="#{condicionPagoVentaBean.condicion.tomaFechaOrigenComoPrimerVencimiento}"
+                                  required="true"
+                                  requiredMessage="Seleccione si Toma Fecha Origen Como Primer Vencimiento">
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneRadio>
+
+            </p:panelGrid>
+        </h:panelGroup>
+
+
+        <p:tabView>
+            <p:tab title="Cuotas">
+
+                <p:dataTable id="tablaCondicionPago" value="#{condicionPagoVentaBean.condicion.cuotas}" var="i"
+                             resizeMode="expand" liveResize="true"
+                             emptyMessage="No se encontraron items. Haga clic en agregar items"
+                             rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+
+
+
+                    <f:facet name="footer" >
+
+                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                         actionListener="#{condicionPagoVentaBean.nuevoItemCondicionPagoVenta()}"
+                                         value="Agregar Condición"
+                                         process="tablaCondicionPago"
+                                         update="tablaCondicionPago" />
+
+                    </f:facet>
+
+
+                    <p:column headerText="Cant Días" width="50" style="text-align: center;"  >
+                        <p:inputText value="#{i.diasDePago}" >
+                            <f:convertNumber pattern="##" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="Nro Cuota"  >
+                        <p:inputText value="#{i.cuotas}" >
+                            <f:convertNumber pattern="##" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="Porcentaje"  >
+                        <p:inputText value="#{i.porcentaje}" >
+                            <f:convertNumber pattern="###.##" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="" width="50" style="text-align: center;" >
+
+                        <p:commandLink process="tablaCondicionPago" update="tablaCondicionPago,message,messageg"
+                                       actionListener="#{condicionPagoVentaBean.eliminarItemCondicionPago(i)}" >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                            <i class="fa fa-close fa-2x Red" ></i>
+                        </p:commandLink>
+
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:tab>
+
+        </p:tabView>
+
+    </p:panelGrid>
+
+</ui:composition>
+

@@ -1,0 +1,63 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorProcesoProduccion" header="Procesos pendientes" modal="true"
+              widgetVar="dlg_proceso_produccion"              
+              draggable="false"
+              position="top"
+              minHeight="400" 
+              width="600"
+              responsive="true" 
+              showEffect="fade" hideEffect="fade"> 
+
+        <h:form prependId="false" >
+
+            <p:dataTable id="tblDetalle" value="#{tareaBean.procesosPendientes}"                           
+                         var="i" scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true" reflow="true"
+                         emptyMessage="No se encontraron procesos pendientes" 
+                         selectionMode="single" 
+                         selection="#{tareaBean.itemPendiente}" rowKey="#{i}"
+                         rendered="#{not empty tareaBean.procesosPendientes}"  >
+
+                <p:ajax event="rowSelect" 
+                        update="@form: formulario" 
+                        listener="#{tareaBean.seleccionarProcesoProduccion}"
+                        oncomplete="PF('dlg_proceso_produccion').hide()" />
+
+                <p:column headerText="Código" width="50">
+                    <h:outputText value="#{i.producto.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" >
+                    <h:outputText value="#{i.producto.descripcion}" />
+                </p:column>
+
+
+                <p:column headerText="Programado" width="80" style="text-align: right;"  >
+                    <h:outputText value="#{i.cantidad}" style="text-align: right" >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Pendiente" width="80" style="text-align: right;"  >
+                    <h:outputText value="#{i.cantidadPendiente}" style="text-align: right" >
+                        <f:convertNumber pattern="#,###,##0.00" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="U.M." width="50" style="text-align: center;" >
+                    <h:outputText value="#{i.unidadMedida.codigo}" />
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Autorizar Facturas Electrónicas
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:panel header="Comprobantes a autorizar" >
+
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                <div class="EmptyBox10" />
+
+                <p:dataTable id="moviemientos" paginator="true" rows="10" value="#{autorizadorAFIP.lista}" var="d"
+                             resizeMode="expand" liveResize="true"
+                             emptyMessage="No se han encontrado comprobantes pendientes de autorizar">
+
+                    <f:facet name="header">
+                        <div class="headerTable">
+                            Comprobates para autorizar
+                        </div>
+                    </f:facet>
+
+                    <f:facet name="footer">
+
+                        <p:commandButton value="Ver comprobantes"
+                                         actionListener="#{autorizadorAFIP.verComprobantes()}"
+                                         process="@form"
+                                         update="@form" />
+
+                        <p:commandButton value="Autorizar seleccionados"
+                                         actionListener="#{autorizadorAFIP.autorizarComprobantes()}"
+                                         process="@form"
+                                         update="@form" />
+
+                        <p:commandButton value="Recuperar CAE"
+                                         actionListener="#{autorizadorAFIP.recuperarCAE()}"
+                                         process="@form"
+                                         update="@form" />
+                    </f:facet>
+
+                    <p:column headerText="Documento" style="text-align: center;" >
+                        <h:outputText value="#{d.formulario.codigo} " />
+                    </p:column>
+
+
+                    <p:column headerText="Pto. Venta" style="text-align: center;" >
+                        <h:outputText value="#{d.puntoVenta.codigo}" >
+                            <f:convertNumber pattern="0000" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Número" style="text-align: center;" >
+                        <h:outputText value="#{d.numeroFormulario}" >
+                            <f:convertNumber pattern="00000000" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Fecha" style="text-align: center;" >
+                        <h:outputText value="#{d.fechaMovimiento}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Cliente" >
+                        <h:outputText value="#{d.cliente.razonSocial} " />
+                    </p:column>
+
+                    <p:column headerText="Seleccionar" style="text-align: center;" >
+                        <p:selectBooleanCheckbox  value="#{d.seleccionado}" >
+                            <p:ajax update="@form" process="@this" />
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+        </ui:define>
+
+    </ui:composition>
+</html>

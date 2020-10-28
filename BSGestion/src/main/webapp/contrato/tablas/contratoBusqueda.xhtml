@@ -1,0 +1,212 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- BUSQUEDA -->
+    <p:focus for="txtBusqueda"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+        <h:panelGroup layout="block" >
+
+            <p:inputText id="txtBusqueda" value="#{contratoBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this,filtro" update="tabla" listener="#{contratoBean.buscar}"/>
+            </p:inputText>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+
+            <p:commandButton value="Filtro" icon="fa fa-filter" style="width:auto"
+                             onclick="PF('pFiltro').toggle()">
+            </p:commandButton>
+
+            <p:commandButton value="Nuevo" icon="fa fa-plus" styleClass="GreenBack" style="width:auto"
+                             actionListener="#{contratoBean.nuevo}"
+                             process="@this"
+                             update="@form" >
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <p:panel id="pFiltro" widgetVar="pFiltro" toggleable="true" collapsed="true" style="border:none;" >
+
+        <p:panelGrid id="filtro" columns="6" layout="grid" styleClass="ui-panelgrid-blank" >
+
+
+            <!-- filtros a agregar -->
+            <h:outputText value="Fecha Inicio de Contrato" />
+            <h:panelGroup layout="block">
+                <div class="Wid50 Fleft">
+                    <p:calendar value="#{contratoBean.fechaDesde}"
+                                placeholder="Desde"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"  >
+                        <p:ajax event="dateSelect"  process="@this" update="@form" listener="#{contratoBean.buscar()}" />
+
+                    </p:calendar>
+                </div>
+                <div class="Wid50 Fright">
+                    <p:calendar value="#{contratoBean.fechaHasta}"
+                                placeholder="Hasta"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" update="@form" listener="#{contratoBean.buscar()}" />
+                    </p:calendar>
+                </div>
+            </h:panelGroup>
+
+            <h:outputText value="" />
+
+            <h:outputText value="" />
+
+            <h:outputText value="" />
+
+            <h:outputText value="" />
+
+
+            <p:autoComplete value="#{contratoBean.tipoContrato}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Tipo de Contrato"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{tipoContratoBean.complete}"
+                            converter="#{conversoresContrato.tipoContrato}"
+                            var="t" itemLabel="#{t.descripcion}" itemValue="#{t}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{contratoBean.buscar}" />
+            </p:autoComplete>
+
+            <p:autoComplete value="#{contratoBean.cliente}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Cliente"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{clienteBean.complete}"
+                            converter="#{conversoresEntidad.entidadComercial}"
+                            var="c" itemLabel="#{c.nombreRazonComplete}" itemValue="#{c}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{contratoBean.buscar}" />
+            </p:autoComplete>
+
+            <p:autoComplete value="#{contratoBean.estadoContrato}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Estado"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{estadoContratoBean.complete}"
+                            converter="#{conversoresContrato.estado}"
+                            var="e" itemLabel="#{e.descripcion}" itemValue="#{e}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{contratoBean.buscar}" />
+            </p:autoComplete>
+
+            <p:autoComplete value="#{contratoBean.monedaRegistracion}" dropdown="true" forceSelection="true"
+                            placeholder="Buscar Moneda Registración"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{monedaBean.complete}"
+                            converter="#{conversoresGeneral.moneda}"
+                            var="m" itemLabel="#{m.descripcion}" itemValue="#{m}" >
+                <p:ajax event="itemSelect" process="@this,txtBusqueda" update="tabla" listener="#{contratoBean.buscar}" />
+            </p:autoComplete>
+
+
+            <h:panelGroup layout="block" >
+                <p:selectBooleanCheckbox value="#{contratoBean.mostrarDebaja}" >
+                    <p:ajax process="@this" update="@form" listener="#{contratoBean.buscar}" />
+                </p:selectBooleanCheckbox>
+                <h:outputText value="Mostrar registros deshabilitados" />
+            </h:panelGroup>
+
+            <h:outputText value="" />
+
+            <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" styleClass="RedBack" style="width:auto"
+                             actionListener="#{contratoBean.limpiarFiltroBusqueda()}"
+                             process="@this" update="@form" >
+            </p:commandButton>
+
+        </p:panelGrid>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tabla" value="#{contratoBean.lista}" var="i"
+                 emptyMessage="No se encontraron resultados"
+                 scrollable="true" scrollHeight="250" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{contratoBean.contrato}" rowKey="#{i}"
+                 rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{contratoBean.onSelect}" update="@form"  />
+
+        <p:column headerText="Estado" width="50" style="text-align: center; min-width: 60px;" >
+            <i class="fa fa-circle fa-2x #{ i.estado.color}" title="#{i.estado.descripcion}" ></i>
+        </p:column>
+
+        <p:column headerText="Nro. Contrato"
+                  sortBy="#{i.nroContrato}"  width="100" style="text-align: center;" >
+            <h:outputText value="#{i.nroContrato}" />
+        </p:column>
+
+        <p:column headerText="Moneda"
+                  sortBy="#{i.monedaRegistracion.codigo}"  width="100" style="text-align: center;" >
+            <h:outputText value="#{i.monedaRegistracion.codigo}" />
+        </p:column>
+
+        <p:column headerText="Cliente"
+                  sortBy="#{i.cliente.razonSocial}"  width="300" >
+            <h:outputText value="#{i.cliente.razonSocial}" />
+        </p:column>
+
+        <p:column headerText="Descripción"
+                  sortBy="#{i.descripcion}" >
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Tipo"  style="text-align: left;"
+                  sortBy="#{i.tipoContrato.descripcion}" >
+            <h:outputText value="#{i.tipoContrato.descripcion}" />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{contratoBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{contratoBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" styleClass="Fright" >
+
+            <p:commandButton value="Imprimir" icon="fa fa-print" style="width:auto"
+                             actionListener="#{reporteService.verReporte}"
+                             immediate="true"
+                             process="@this"
+                             update="@form">
+            </p:commandButton>
+
+            <p:commandButton value="A Excel" icon="fa fa-file-excel-o" style="width:auto"
+                             actionListener="#{reporteService.reporteToXls}"
+                             immediate="true"
+                             process="@this"
+                             update="@form"
+                             ajax="false">
+            </p:commandButton>
+
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+</ui:composition>

@@ -1,0 +1,70 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorClasificacion02" header="Estados" modal="true"
+              widgetVar="dlgClasificacion02"
+              resizable="false"
+              draggable="false"
+              minHeight="400" 
+              style="max-width: 650px;" responsive="true" 
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+
+            <p:inputText value="#{clasificacion02Bean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                <p:ajax event="keyup" delay="500"  process="@this" update="tablaClasificacion02" listener="#{clasificacion02Bean.buscar()}"/>
+            </p:inputText>
+            
+            <div class="EmptyBox10" />
+            
+            <p:dataTable id="tablaClasificacion02" value="#{clasificacion02Bean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{clasificacion02Bean.clasificacion02}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{clasificacion02Bean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgClasificacion02').hide(), procesarClasificacion02()" />
+                
+                <p:column headerText="Código" width="100" >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Descripción"  >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+            </p:dataTable>
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{clasificacion02Bean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaClasificacion02" listener="#{clasificacion02Bean.buscar()}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroClasificacion02" value="#{clasificacion02Bean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{clasificacion02Bean.buscar()}"
+                                     process="@this,cantRegistroClasificacion02" update="tablaClasificacion02" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

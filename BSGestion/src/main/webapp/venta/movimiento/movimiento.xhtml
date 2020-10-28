@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{movimientoVentaBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoVentaBean.titulo}"/>
+            <f:viewParam name="MODPV"  value="#{movimientoVentaBean.MODPV}"/>
+            <f:viewParam name="CODPV"  value="#{movimientoVentaBean.CODPV}"/>
+            <f:viewParam name="SUCURS" value="#{movimientoVentaBean.SUCURS}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoVentaBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoVentaBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{movimientoVentaBean.nuevaBusqueda}"
+                            immediate="true"
+                            update="@form" />
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{movimientoVentaBean.nuevoMovimiento}"
+                            process="@this"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{movimientoVentaBean.guardar(false)}"
+                            rendered="#{not movimientoVentaBean.m.persistido }"
+                            update="@form" />
+
+
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <h:form id="formulario" prependId="false" >
+
+                <p:remoteCommand name="procesarEntidad"           process="@this" update="@form" actionListener="#{movimientoVentaBean.procesarVenta}" />
+
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                <div class="EmptyBox10" />
+
+
+                <!-- BUSQUEDA -->
+                <p:panel id="panelBusqueda" header="Busqueda" rendered="#{movimientoVentaBean.buscaMovimiento}" >
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:outputText value="Formulario" />
+                        <h:panelGroup id="formularioVenta" layout="block" style="text-align: left;">
+                            <p:remoteCommand name="procesarFormularioVenta"
+                                             process="@this" update="formularioVenta"
+                                             actionListener="#{movimientoVentaBean.procesarFormulario}" />
+                            <p:commandButton icon="fa fa-search" process="@this" oncomplete="PF('dlg_formulario_proveedor').show()" />
+                            <h:outputText value="#{movimientoVentaBean.formulario.descripcion}" />
+                        </h:panelGroup>
+
+                        <h:outputText value="Fecha formulario" />
+                        <h:panelGroup layout="block" >
+                            <p:calendar value="#{movimientoVentaBean.fechaMovimientoDesde}"
+                                        placeholder="Desde"
+                                        pattern="dd/MM/yyyy"
+                                        showOn="button"
+                                        navigator="true"
+                                        mask="true"  >
+                                <p:ajax event="dateSelect"  process="@this" />
+                            </p:calendar>
+
+                            <p:calendar value="#{movimientoVentaBean.fechaMovimientoHasta}"
+                                        placeholder="Hasta"
+                                        pattern="dd/MM/yyyy"
+                                        showOn="button"
+                                        navigator="true"
+                                        mask="true"  >
+                                <p:ajax event="dateSelect"  process="@this" />
+                            </p:calendar>
+                        </h:panelGroup>
+
+                        <h:outputText value="Número formulario" />
+                        <h:panelGroup layout="block" >
+                            <p:inputText value="#{movimientoVentaBean.numeroFormularioDesde}"  placeholder="Desde"/>
+                            <p:inputText value="#{movimientoVentaBean.numeroFormularioHasta}"  placeholder="Hasta"/>
+                        </h:panelGroup>
+
+                    </p:panelGrid>
+
+                    <div class="EmptyBox10" />
+
+                    <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                        <p:commandButton value="Buscar" icon="fa fa-search" styleClass="BlueBack"
+                                         process="panelBusqueda"
+                                         update="@form"
+                                         actionListener="#{movimientoVentaBean.buscarMovimiento}"   />
+
+                        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="OrangeBack"
+                                         process="panelBusqueda"
+                                         update="@form"
+                                         actionListener="#{movimientoVentaBean.resetParametros}"   />
+
+                        <p:commandButton value="Cerrar" icon="fa fa-close" styleClass="RedBack"
+                                         process="panelBusqueda"
+                                         update="@form" >
+                            <f:setPropertyActionListener target="#{movimientoVentaBean.buscaMovimiento}" value="#{false}" />
+                        </p:commandButton>
+
+                    </p:panelGrid>
+
+                    <div class="EmptyBox10" />
+
+                    <p:dataTable id="movimientos" value="#{movimientoVentaBean.movimientos}" var="i"
+                                 resizableColumns="true" resizeMode="expand" liveResize="true"
+                                 rendered="#{not empty movimientoVentaBean.movimientos}"  >
+
+                        <f:facet name="header">
+                            Movimientos encontrados
+                        </f:facet>
+
+                        <p:column headerText="Formulario" >
+                            <h:outputText value="#{i.formulario.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Número" >
+                            <h:outputText value="#{i.numeroFormulario}" >
+                                <f:convertNumber pattern="00000000" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Fecha" >
+                            <h:outputText value="#{i.fechaMovimiento}"  >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Nro Cuenta"  >
+                            <h:outputText value="#{i.cliente.nrocta}" />
+                        </p:column>
+
+                        <p:column headerText="Razón social" width="40%"  >
+                            <h:outputText value="#{i.cliente.razonSocial}" />
+                        </p:column>
+
+                        <p:column headerText="" width="10%" style="text-align: center;">
+
+                            <p:commandLink title="Seleccionar movimiento"
+                                           actionListener="#{movimientoVentaBean.seleccionarMovimiento(i)}"
+                                           process="@this"
+                                           update="@form"  >
+                                <i class="fa fa-check fa-2x Green" ></i>
+                            </p:commandLink>
+
+                            <p:commandLink title="Anular o revertir movimiento"
+                                           actionListener="#{movimientoVentaBean.revertirMovimiento(i)}"
+                                           process="@this"
+                                           update="@form"  >
+                                <p:confirm header="Confirmación" message="¿Está seguro de anular o revertir el movimiento #{i.formulario.descripcion}  #{i.puntoVenta.codigo} #{i.numeroFormulario}?" icon="ui-icon-alert" />
+                                <i class="fa fa-close fa-2x Red" ></i>
+                            </p:commandLink>
+
+                        </p:column>
+
+                    </p:dataTable>
+
+
+                    <div class="EmptyBox10" />
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="Cantidad de Registros: " />
+                            <p:inputText id="cantRegistros" value="#{movimientoVentaBean.cantidadRegistros}" style="max-width: 80px;"/>
+                            <p:commandButton value="Aplicar" icon="fa fa-check"
+                                             style="max-width: 100px; margin-left: 1px;"
+                                             actionListener="#{movimientoVentaBean.buscarMovimiento()}"
+                                             process="@form" update="movimientos" />
+                        </h:panelGroup>
+                    </p:panelGrid>
+
+                </p:panel>
+
+                <p:spacer width="100%" height="1em" rendered="#{movimientoVentaBean.buscaMovimiento}" />
+
+                <!-- DATOS -->
+                <p:panel header="Datos" rendered="#{not empty movimientoVentaBean.m and not movimientoVentaBean.buscaMovimiento}" >
+
+                    <p:panelGrid columns="4" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"  >
+
+                        <h:outputText value="Formulario" />
+                        <h:outputText value="#{movimientoVentaBean.m.formulario.descripcion}" />
+
+                        <h:outputText value="Número"  />
+                        <h:outputText value="#{movimientoVentaBean.m.numeroFormulario}" >
+                            <f:convertNumber pattern="00000000" />
+                        </h:outputText>
+
+                        <h:outputText value="Fecha" />
+                        <h:outputText value="#{movimientoVentaBean.m.fechaMovimiento}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+
+                        <h:outputText value="Venta" />
+                        <h:panelGroup layout="block">
+                            <p:commandButton icon="fa fa-search"
+                                             actionListener="#{clienteBean.buscar()}"
+                                             update="buscadorEntidadComercial"
+                                             oncomplete="PF('dlgEntidadComercial').show()"
+                                             process="@this"  />
+                            <h:outputText value="#{movimientoVentaBean.m.razonSocial}"
+                                          rendered="#{not movimientoVentaBean.solicitaDatos}" />
+                            <p:inputText value="#{movimientoVentaBean.m.razonSocial}" style="width: 80%;"
+                                         rendered="#{movimientoVentaBean.solicitaDatos}" />
+                        </h:panelGroup>
+
+                        <h:outputText value="Situación IVA" />
+                        <h:outputText value="#{movimientoVentaBean.m.condicionDeIva.descripcion}" />
+
+                        <h:outputText value="Tipo/Nro Documento" />
+                        <h:panelGroup layout="block">
+                            <h:outputText value="#{movimientoVentaBean.m.tipoDocumento.descripcion} " />
+                            <h:outputText value="#{movimientoVentaBean.m.nrodoc}"
+                                          rendered="#{not movimientoVentaBean.solicitaDatos}" >
+                            </h:outputText>
+                            <p:inputText value="#{movimientoVentaBean.m.nrodoc}"
+                                         rendered="#{movimientoVentaBean.solicitaDatos}" />
+                        </h:panelGroup>
+
+                        <h:outputText value="Fecha" />
+                        <p:calendar value="#{movimientoVentaBean.m.fechaMovimiento}"
+                                    disabled="#{movimientoVentaBean.m.formulario.modificaFecha ne 'S'}"
+                                    required="true"
+                                    requiredMessage="La fecha del movimiento del comprobante es obligatoria"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true" >
+                            <p:ajax event="dateSelect"  process="@this" />
+                        </p:calendar>
+
+                        <h:outputText value="Observaciones" />
+                        <p:inputTextarea rows="3" value="#{movimientoVentaBean.m.observaciones}" style="width: 100%" />
+
+                        <bs:outputTexWhitLink value="Condición de Pago *"
+                                              rendered="#{movimientoFacturacionBean.muestroCampo('C','CNDPAG')}"
+                                              url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00355')}" />
+                        <p:autoComplete value="#{movimientoVentaBean.m.condicionDePago}"
+                                        rendered="#{movimientoVentaBean.muestroCampo('C','CNDPAG')}"
+                                        disabled="#{not empty movimientoVentaBean.m.id}"
+                                        required="true" requiredMessage="Seleccione la condición de pago del comprobante"
+                                        dropdown="true" placeholder="Seleccionar"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{condicionPagoVentaBean.complete}"
+                                        var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                        converter="#{conversoresVenta.condicionDePagoVenta}" forceSelection="true" >
+
+                            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoVentaBean.calcularImportes()}" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{l.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{l.descripcion}" />
+                            </p:column>
+
+                        </p:autoComplete>
+
+                        <h:outputText value="" />
+                        <h:outputText value="" />
+
+                    </p:panelGrid>
+
+                </p:panel>
+
+                <!-- CONCEPTOS -->
+                <p:panel header="Conceptos" rendered="#{not empty movimientoVentaBean.m.itemProducto and not movimientoVentaBean.buscaMovimiento}" >
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <p:dataTable id="dCompra" value="#{movimientoVentaBean.m.itemProducto}" var="i" style="max-width: 600px;"
+                                     resizeMode="expand" liveResize="true" >
+
+                            <p:column headerText="Concepto" width="70%" >
+                                <h:outputText value="#{i.concepto.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Importe"  width="30%" >
+                                <p:inputText id="precio"  value="#{i.importe}"
+                                             required="true"
+                                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                             style="width: 98%;text-align: right;" >
+                                    <f:convertNumber pattern="###,###,##0.00" />
+                                    <p:ajax listener="#{movimientoVentaBean.calcularImportes}" event="keyup" delay="500"
+                                            process="@this" update="dImpuesto,dPercepciones,dTotal" />
+                                </p:inputText>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dataTable id="dImpuesto" value="#{movimientoVentaBean.m.itemImpuesto}" var="i" style="max-width: 600px;"
+                                     resizeMode="expand" liveResize="true" >
+
+                            <p:column headerText="Concepto" width="70%" >
+                                <h:outputText value="#{i.concepto.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Importe"  width="30%" style="text-align: right;" >
+
+                                <h:outputText value="#{i.importe}" >
+                                    <f:convertNumber pattern="$ ###,###,##0.00" />
+                                </h:outputText>
+
+                                <!--
+                                <p:inputText id="precio"  value="#{i.importe}"
+                                             required="true"
+                                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                             style="width: 98%;text-align: right;" >
+                                    <f:convertNumber pattern="###,###,##0.00" />
+                                    <p:ajax listener="#{movimientoVentaBean.calcularImportes}" event="keyup" delay="500"  />
+                                </p:inputText>
+                                -->
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dataTable id="dPercepciones" value="#{movimientoVentaBean.m.itemPercepcion}" var="i" style="max-width: 600px;"
+                                     resizeMode="expand" liveResize="true" >
+
+                            <p:column headerText="Concepto" width="70%" >
+                                <h:outputText value="#{i.concepto.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Importe"  width="30%" >
+                                <p:inputText id="precio"  value="#{i.importe}"
+                                             required="true"
+                                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                             style="width: 98%;text-align: right;" >
+                                    <f:convertNumber pattern="###,###,##0.00" />
+                                    <p:ajax listener="#{movimientoVentaBean.calcularImportes}" event="keyup" delay="500"
+                                            process="@this" update="dTotal" />
+                                </p:inputText>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dataTable id="dTotal" value="#{movimientoVentaBean.m.itemTotal}" var="i" style="max-width: 600px;"
+                                     resizeMode="expand" liveResize="true" >
+
+                            <p:column headerText="Concepto" width="70%" >
+                                <h:outputText value="#{i.concepto.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Importe"  width="30%" style="text-align: right;" >
+
+                                <h:outputText value="#{i.importe}" >
+                                    <f:convertNumber pattern="$ ###,###,##0.00" />
+                                </h:outputText>
+
+                                <!--
+                                <p:inputText id="precio"  value="#{i.importe}"
+                                             required="true"
+                                             requiredMessage="Se necesita un valor igual o mayor a cero en importe efectivo"
+                                             style="width: 98%;text-align: right;" >
+                                    <f:convertNumber pattern="###,###,##0.00" />
+                                    <p:ajax listener="#{movimientoVentaBean.calcularImportes}" event="keyup" delay="500"  />
+                                </p:inputText>
+                                -->
+                            </p:column>
+                        </p:dataTable>
+
+
+                    </p:panelGrid>
+
+
+                </p:panel>
+
+                <ui:include src="movimientoAplicaciones.xhtml"  />
+
+                <!-- REPORTE -->
+                <bs:dialogoReporte muestraReporte="#{movimientoVentaBean.muestraReporte}"
+                                   nombreArchivo="#{movimientoVentaBean.nombreArchivo}" />
+
+
+            </h:form>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/proveedor/busqueda/buscadorFormulario.xhtml" />
+            <ui:include src="/entidad/busqueda/buscadorEntidadComercial.xhtml" />
+            <ui:include src="/global/busqueda/buscadorLocalidad.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

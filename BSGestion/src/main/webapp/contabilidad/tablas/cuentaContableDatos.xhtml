@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!--DATOS-->
+    <p:panelGrid id="panelDatos" columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank MaxWid900"
+                 columnClasses="ui-g-4,ui-g-8" >
+
+        <h:outputText value="Cuenta madre" />
+        <p:autoComplete value="#{cuentaContableBean.cuentaContable.cuentaContable}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        disabled="#{not cuentaContableBean.esNuevo}"
+                        completeMethod="#{cuentaContableBean.completeNoImputable}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresContabilidad.cuentaContable}" >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{cuentaContableBean.asignarNumeroCuenta}" />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Imputable">
+                <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Nro cuenta" />
+        <p:inputText value="#{cuentaContableBean.cuentaContable.nrocta}"
+                     readonly="#{not cuentaContableBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{cuentaContableBean.cuentaContable.descripcion}"
+                     required="true"
+                     requiredMessage="La descripción es necesaria" />
+
+        <h:outputText value="Imputable" />
+        <p:selectOneMenu value="#{cuentaContableBean.cuentaContable.imputable}"
+                         required="true" requiredMessage="Seleccione si la cuenta es imputable"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Imputa en Ventas" />
+        <p:selectOneMenu value="#{cuentaContableBean.cuentaContable.imputacionVenta}"
+                         required="true" requiredMessage="Seleccione si la cuenta imputa en ventas"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Imputa en Compras" />
+        <p:selectOneMenu value="#{cuentaContableBean.cuentaContable.imputacionCompras}"
+                         required="true" requiredMessage="Seleccione si la cuenta imputa en compras"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Imputa en Tesoreria" />
+        <p:selectOneMenu value="#{cuentaContableBean.cuentaContable.imputacionTesoreria}"
+                         required="true" requiredMessage="Seleccione si la cuenta imputa en tesoreria"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Imputa en Contabilidad" />
+        <p:selectOneMenu value="#{cuentaContableBean.cuentaContable.imputacionContabilidad}"
+                         required="true" requiredMessage="Seleccione si la cuenta imputa en contabilidad"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tablaDimesiones" styleClass="MaxWid900" var="i"  resizeMode="expand" liveResize="true"
+                 value="#{cuentaContableBean.cuentaContable.centrosCostos}"
+                 rendered="#{cuentaContableBean.cuentaContable.imputable eq 'S'}"
+                 emptyMessage="No se encontraron items. Haga clic en agregar items"
+                 rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+        <f:facet name="header" >
+            Distribución por centro de costo
+        </f:facet>
+
+        <f:facet name="footer" >
+
+            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                             actionListener="#{cuentaContableBean.nuevoItemCentroCosto()}"
+                             immediate="true"
+                             value="Agregar Distribución"
+                             process="tablaDimesiones"
+                             update="tablaDimesiones" />
+
+        </f:facet>
+
+        <p:column headerText="Centro de costo"  >
+
+            <p:autoComplete value="#{i.centroCosto}" dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{centroCostoBean.complete}"
+                            var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                            converter="#{conversoresContabilidad.centroCosto}" >
+
+                <p:ajax event="itemSelect" process="@this" update="tablaDimesiones"
+                        listener="#{cuentaContableBean.onCentroCostoSelect}"/>
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{p.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{p.descripcion}" />
+                </p:column>
+
+            </p:autoComplete>
+
+        </p:column>
+
+        <p:column headerText="Distribución"  >
+
+            <p:autoComplete value="#{i.distribucion}" dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{cuentaContableBean.completeDistribucion}"
+                            rendered="#{not empty i.centroCosto}"
+                            var="p" itemLabel="#{p.descripcionComplete}" itemValue="#{p}"
+                            converter="#{conversoresContabilidad.distribucion}" >
+
+                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{p.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{p.descripcion}" />
+                </p:column>
+
+            </p:autoComplete>
+
+        </p:column>
+
+        <p:column headerText="" width="50" style="text-align: center;" >
+
+            <p:commandLink process="tablaDimesiones" update="tablaDimesiones,message,messageg"
+                           actionListener="#{cuentaContableBean.eliminarItemCentroCosto(i)}" >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+    </p:dataTable>
+
+</html>
+

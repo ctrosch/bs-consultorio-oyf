@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU"  value="#{vistaBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{vistaBean.titulo}"/>
+            <f:viewParam name="CODIGO"  value="#{vistaBean.codigo}"/>
+
+            <f:event type="preRenderView" listener="#{vistaBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{vistaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            #{vistaBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <ui:fragment rendered="#{vistaBean.modoVista eq 'B'}">
+                <ui:include src="vistaBusqueda.xhtml"  />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{vistaBean.modoVista eq 'D'}">
+
+                <ui:include src="vistaMenu.xhtml"  />
+
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                <div class="EmptyBox10" />
+
+                <ui:include src="vistaDatos.xhtml"  />
+
+            </ui:fragment>
+
+        </ui:define>
+
+
+    </ui:composition>
+
+</html>
+

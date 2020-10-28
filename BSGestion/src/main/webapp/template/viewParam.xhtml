@@ -1,0 +1,15 @@
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <f:viewParam name="CODREP" value="#{reporteService.codigoReporte}"/>
+    <f:viewParam name="NOMARC" value="#{reporteService.nombreArchivo}"/>
+    <f:viewParam name="DEBUG" value="#{reporteService.DEBUG}"/>
+    <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+
+
+</ui:composition>

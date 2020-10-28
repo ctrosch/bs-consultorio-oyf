@@ -1,0 +1,143 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Tipo de concepto"
+                              url="#{conceptoProveedorBean.obtenerUrlMenu('SIS_00145','CODIGO',conceptoProveedorBean.concepto.tipoConcepto.codigo,'MODULO',conceptoProveedorBean.concepto.tipoConcepto.modulo)}" />
+        <p:inputText value="#{conceptoProveedorBean.concepto.tipoConcepto.descripcion}"
+                     readonly="true"
+                     rendered="#{not conceptoProveedorBean.esNuevo}" />
+
+        <p:selectOneMenu value="#{conceptoProveedorBean.concepto.tipoConcepto}" rendered="#{conceptoProveedorBean.esNuevo}"
+                         converter="#{conversoresGeneral.tipoConcepto}"
+                         required="true"
+                         requiredMessage="Seleccione el tipo de concepto" >
+            <p:ajax process="@this" listener="#{conceptoProveedorBean.onTipoChange}" />
+            <f:selectItem itemLabel="Selecccionar" itemValue="" />
+            <f:selectItems value="#{conceptoProveedorBean.tipos}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{conceptoProveedorBean.concepto.codigo}"
+                     readonly="#{not conceptoProveedorBean.esNuevo}"
+                     required="true" requiredMessage="El código de concepto es obligatorio" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{conceptoProveedorBean.concepto.descripcion}"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <bs:outputTexWhitLink value="Cuenta Contable"
+                              url="#{conceptoProveedorBean.obtenerUrlMenu('SIS_00420','NROCTA',conceptoProveedorBean.concepto.cuentaContable.nrocta)}" />
+        <p:autoComplete value="#{conceptoProveedorBean.concepto.cuentaContable}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresContabilidad.cuentaContable}" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Imputable">
+                <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+            </p:column>
+
+        </p:autoComplete>
+
+    </p:panelGrid>
+    <p:tabView activeIndex="#{conceptoProveedorBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{conceptoProveedorBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Impuestos asociados">
+
+            <p:dataTable id="tablaImpuesto" var="i"  resizeMode="expand" liveResize="true"
+                         value="#{conceptoProveedorBean.concepto.impuestos}"  style="max-width: 600px;"
+                         emptyMessage="No se encontraron items. Haga clic en agregar items" >
+
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{conceptoProveedorBean.nuevoItemImpuesto()}"
+                                     value="Agregar Impuesto"
+                                     process="tablaImpuesto"
+                                     update="tablaImpuesto" />
+
+                </f:facet>
+
+                <p:column headerText="Impuesto"  >
+
+                    <div class="ui-inputgroup">
+
+                        <p:autoComplete value="#{i.tipoImpuesto}" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{tipoImpuestoBean.complete}"
+                                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                        converter="#{conversoresGeneral.tipoImpuesto}" >
+
+                            <p:ajax event="itemSelect" process="@this"  listener="#{conceptoProveedorBean.asignarCodigoImpuesto(i)}" />
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{p.codigo}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{p.descripcion}" />
+                            </p:column>
+
+
+                        </p:autoComplete>
+
+                        <span class="ui-inputgroup-addon">
+                            <bs:linkMenuSistema title="Ver Impuesto" url="#{conceptoProveedorBean.obtenerUrlMenu('SIS_00147','CODIGO',i.tipoImpuesto.codigo)}" />
+                        </span>
+
+                    </div>
+
+                </p:column>
+
+                <p:column headerText="Tasa" >
+                    <p:inputText value="#{i.tasa}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                        <p:ajax event="keyup" delay="500" process="@this" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaImpuesto" update="tablaImpuesto"
+                                   actionListener="#{conceptoProveedorBean.eliminarItemImpuesto(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+    </p:tabView>
+
+</ui:composition>
+

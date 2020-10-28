@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"      value="#{movimientoTesoreriaBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{movimientoTesoreriaBean.titulo}"/>
+            <f:viewParam name="CODCJ"  value="#{movimientoTesoreriaBean.CODCJ}"/>
+            <f:viewParam name="SUCCJ" value="#{movimientoTesoreriaBean.SUCCJ}"/>
+            <f:viewParam name="CODVT"  value="#{movimientoTesoreriaBean.CODVT}"/>
+            <f:viewParam name="CODPV"  value="#{movimientoTesoreriaBean.CODPV}"/>
+            <f:viewParam name="CTAVAL"  value="#{movimientoTesoreriaBean.CTAVAL}"/>
+            <f:viewParam name="MODDE"  value="#{movimientoTesoreriaBean.modoVista}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoTesoreriaBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoTesoreriaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{movimientoTesoreriaBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu-right">
+            <p:commandLink actionListener="#{movimientoTesoreriaBean.addFavorito()}"
+                           process="@this"
+                           update="message,messageg"
+                           styleClass="Fs30 Fright" style="color: #0277bd;padding-right: 5px;" >
+                <i class="fa fa-star" ></i>
+            </p:commandLink>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <ui:include src="movimientoMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <ui:fragment rendered="#{movimientoTesoreriaBean.modoVista eq 'B'}" >
+                <ui:include src="movimientoBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{movimientoTesoreriaBean.modoVista eq 'D'}" >
+                <ui:include src="movimientoDatos.xhtml" />
+                <div class="EmptyBox10" />
+                <ui:include src="movimientoConcepto.xhtml" />
+                <div class="EmptyBox10" />
+                <ui:include src="movimientoTotales.xhtml" />
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoTesoreriaBean.muestraReporte}"
+                               nombreArchivo="#{movimientoTesoreriaBean.nombreArchivo}" />
+
+            <ui:include src="movimientoCentroCosto.xhtml" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/tesoreria/busqueda/buscadorValores.xhtml" />
+            <ui:include src="/tesoreria/busqueda/buscadorValoresDebe.xhtml" />
+            <ui:include src="/tesoreria/busqueda/buscadorPendiente.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+</html>
+

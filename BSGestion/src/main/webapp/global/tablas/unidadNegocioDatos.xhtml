@@ -1,0 +1,100 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- DATOS -->
+    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{unidadNegocioBean.unidadNegocio.codigo}" readonly="#{not unidadNegocioBean.esNuevo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Empresa *" />
+        <p:autoComplete value="#{unidadNegocioBean.unidadNegocio.empresa}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Empresa"
+                        completeMethod="#{empresaBean.complete}"
+                        converter="#{conversoresGeneral.empresa}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Nombre *" />
+        <p:inputText value="#{unidadNegocioBean.unidadNegocio.nombre}"
+                     required="true"
+                     requiredMessage="El nombre es necesaria" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="E-mail"  />
+        <p:inputText value="#{unidadNegocioBean.unidadNegocio.email}"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+        </p:inputText>
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <h:outputText value="Teléfono"  />
+        <p:inputText value="#{unidadNegocioBean.unidadNegocio.telefono}"  />
+
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+
+        <!--
+       <h:outputText value="Dirección" />
+       <p:inputText value="#{unidadNegocioBean.unidadNegocio.direccion}"  />
+
+       <h:outputText value="" />
+
+       <h:outputText value="" />
+
+       <h:outputText value="Ciudad" />
+       <p:inputText value="#{unidadNegocioBean.unidadNegocio.ciudad}"  />
+
+       <h:outputText value="" />
+
+       <h:outputText value="" />
+
+       <h:outputText value="Provincia" />
+       <p:inputText value="#{unidadNegocioBean.unidadNegocio.provincia}"  />
+
+       <h:outputText value="" />
+
+       <h:outputText value="" />
+
+       <h:outputText value="País" />
+       <p:inputText value="#{unidadNegocioBean.unidadNegocio.pais}"  />
+
+       <h:outputText value="" />
+
+       <h:outputText value="" />
+        -->
+        <h:outputText value="Path logo"  />
+        <p:inputTextarea rows="3" cols="100"
+                         value="#{unidadNegocioBean.unidadNegocio.logo}" title="Path Logo" />
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

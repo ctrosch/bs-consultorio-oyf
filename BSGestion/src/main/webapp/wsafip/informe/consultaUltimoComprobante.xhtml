@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <ui:define name="titulo" >
+            Consulta último comprobante autorizado
+        </ui:define>
+
+        <ui:define name="menu">
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:panel header="Consulta último comprobante autorizado" >
+
+                <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+                <div class="EmptyBox10" />
+
+                <p:panelGrid columns="2" layout="grid"
+                             style="max-width: 400px;"
+                             styleClass="ui-panelgrid-blank" >
+
+                    <h:outputText value="Formulario" />
+                    <p:autoComplete value="#{consultarComprobanteBean.formulario}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{formularioVentaBean.complete}"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresGeneral.formulario}"  >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Código" width="100">
+                            <h:outputText value="#{e.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Pto. Venta" styleClass="TexAlCenter"   >
+                            <h:outputText value="#{e.puntoVenta.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Letra" styleClass="TexAlCenter"  >
+                            <h:outputText value="#{e.letra}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <h:outputText value="Pto. Venta" />
+                    <p:autoComplete value="#{consultarComprobanteBean.puntoVenta}" dropdown="true" forceSelection="true"
+                                    completeMethod="#{puntoVentaBean.complete}"
+                                    converter="#{conversoresGeneral.puntoVenta}"
+                                    maxResults="8" queryDelay="1000"
+                                    var="e"  itemValue="#{e}" itemLabel="#{e.descripcion}" >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Código" width="100">
+                            <h:outputText value="#{e.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <p:commandButton value="Consultar"
+                                     actionListener="#{consultarComprobanteBean.consultarUltimoComprobante()}"
+                                     process="@form"
+                                     update="@form" />
+
+                    <h:outputText value="Último comprobante autorizado: #{consultarComprobanteBean.numeroComprobante}" />
+
+                </p:panelGrid>
+
+            </p:panel>
+
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,183 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- BUSQUEDA -->
+    <p:panelGrid id="panelBusqueda" columns="4" layout="grid" style="max-width: 900px;"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Fecha formulario" />
+        <h:panelGroup layout="block">
+            <div class="Wid50 Fleft">
+                <p:calendar value="#{movimientoTesoreriaBean.fechaMovimientoDesde}"
+                            placeholder="Desde"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax event="dateSelect"  process="@this" update="movimientos" listener="#{movimientoTesoreriaBean.buscar()}" />
+                </p:calendar>
+            </div>
+            <div class="Wid50 Fright">
+                <p:calendar value="#{movimientoTesoreriaBean.fechaMovimientoHasta}"
+                            placeholder="Hasta"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"   >
+                    <p:ajax event="dateSelect"  process="@this" update="movimientos" listener="#{movimientoTesoreriaBean.buscar()}" />
+                </p:calendar>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Número formulario" />
+        <h:panelGroup layout="block" >
+
+            <div class="Wid50 Fleft">
+                <p:inputText value="#{movimientoTesoreriaBean.numeroFormularioDesde}"  placeholder="Desde" >
+                    <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{movimientoTesoreriaBean.buscar()}"/>
+                </p:inputText>
+            </div>
+
+            <div class="Wid50 Fright">
+                <p:inputText value="#{movimientoTesoreriaBean.numeroFormularioHasta}"  placeholder="Hasta" >
+                    <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{movimientoTesoreriaBean.buscar()}"/>
+                </p:inputText>
+            </div>
+
+        </h:panelGroup>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Referencia " />
+        <p:inputText value="#{movimientoTesoreriaBean.referencia}" >
+            <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{movimientoTesoreriaBean.buscar()}"/>
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox5" />
+
+    <div class="Container100 TexAlLeft">
+
+        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="RedBack MaxWid100"
+                         process="@form"
+                         update="@form"
+                         actionListener="#{movimientoTesoreriaBean.limpiarFiltroBusqueda()}"   />
+
+    </div>
+
+    <div class="EmptyBox5" />
+
+    <p:dataTable id="movimientos" value="#{movimientoTesoreriaBean.movimientos}" var="i"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true" >
+
+        <f:facet name="header">
+            Movimientos encontrados
+        </f:facet>
+
+        <p:column headerText="Acciones" width="90" styleClass="TexAlCenter" >
+
+            <p:commandLink title="Seleccionar movimiento"
+                           actionListener="#{movimientoTesoreriaBean.seleccionarMovimiento(i)}"
+                           process="@this"
+                           update="@form"  >
+                <i class="fa fa-check fa-2x Green" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Imprimir Comprobante"
+                           actionListener="#{movimientoTesoreriaBean.imprimir(i)}"
+                           process="@this" >
+                <i class="fa fa-print fa-2x Orange" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Anular o revertir movimiento"
+                           actionListener="#{movimientoTesoreriaBean.revertirMovimiento(i)}"
+                           process="@this"
+                           update="@form"  >
+                <p:confirm header="Confirmación" message="¿Está seguro de anular o revertir el movimiento #{i.formulario.descripcion}  #{i.puntoVenta.codigo} #{i.numeroFormulario}?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+        <p:column headerText="Formulario" width="60" styleClass="TexAlCenter"  >
+            <h:outputText value="#{i.formulario.codigo}" />
+        </p:column>
+
+        <p:column headerText="Numero" width="80" styleClass="TexAlCenter"  >
+            <h:outputText value="#{i.numeroFormulario}" >
+                <f:convertNumber pattern="00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha" width="100" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Referencia" width="400" >
+            <h:outputText value="#{i.referencia}" />
+        </p:column>
+
+        <p:column headerText="Importe" width="100" >
+            <h:outputText value="#{i.importeTotal}" styleClass="Fright" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+        <f:facet name="footer">
+            <div class="p-grid" >
+
+                <div class="p-col-8 p-md-3 " >
+                    <!--
+                    <p:selectOneMenu value="#{movimientoTesoreriaBean.accionEnLote}"  >
+                        <p:ajax process="@this" update="movimientos" />
+                        <f:selectItem itemLabel="Acción en lote" itemValue="" />
+                        <f:selectItem itemLabel="Enviar Email"    itemValue="E" />
+                        <f:selectItem itemLabel="Anular Comprobante" itemValue="A" />
+                    </p:selectOneMenu>
+                    -->
+                </div>
+
+                <div class="p-col-4 p-md-1" >
+                    <p:commandButton value="Aplicar" icon="fa fa-check" styleClass="GreenBack"
+                                     rendered="#{not empty movimientoTesoreriaBean.accionEnLote}"
+                                     process="@form"
+                                     update="@form"
+                                     actionListener="#{movimientoTesoreriaBean.aplicarAccionEnLotes()}"   />
+                </div>
+
+                <div class="p-col-12 p-md-8 TexAlRight" >
+
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistros" value="#{movimientoTesoreriaBean.cantidadRegistros}" style="max-width: 80px;" styleClass="TexAlRight"/>
+                    <p:commandButton icon="fa fa-check" styleClass="GreenBack"
+                                     style="margin-left: 1px;"
+                                     actionListener="#{movimientoTesoreriaBean.buscar()}"
+                                     process="@form" update="movimientos" />
+
+                </div>
+            </div>
+        </f:facet>
+
+
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

@@ -1,0 +1,117 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"  >
+
+        <h:outputText value="Nombre*" />
+        <p:inputText value="#{contactoBean.contacto.nombre}"
+                     required="true" requiredMessage="El nombre es obligatorio" />
+
+
+
+
+        <h:panelGroup layout="block">
+            <h:outputText value="Entidad comercial *" />
+            <p:commandButton icon="fa fa-search" styleClass="Fright"
+                             rendered="#{contactoBean.esNuevo }"
+                             oncomplete="PF('dlgEntidadComercial').show()"
+                             process="@this"  />
+
+        </h:panelGroup>
+        <h:panelGroup layout="block">
+            <p:remoteCommand name="procesarEntidad" process="@this" update="razonSocial" actionListener="#{contactoBean.procesarEntidadComercial()}" />
+            <p:inputText id="razonSocial" value="#{contactoBean.contacto.entidadComercial.razonSocial}"
+                         readonly="true"/>
+        </h:panelGroup>
+        <h:outputText value="Dirección * " />
+        <p:inputText value="#{contactoBean.contacto.direccion}"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{contactoBean.obtenerUrlMenu('SIS_00126','IDLC',contactoBean.contacto.localidad.id)}" />
+
+        </h:panelGroup>
+        <p:autoComplete id="localidad" value="#{contactoBean.contacto.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{contactoBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <h:outputText value="Teléfono" />
+        <p:inputText value="#{contactoBean.contacto.telefono}"   />
+
+        <h:outputText value="Celular" />
+        <p:inputText value="#{contactoBean.contacto.celular}"  />
+
+        <h:outputText value="Dirección de email" />
+        <p:inputText value="#{contactoBean.contacto.email}"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateLength minimum="0" maximum="200" />
+        </p:inputText>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Sector" />
+        <p:autoComplete value="#{contactoBean.contacto.sector}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{contactoSectorBean.complete}"
+                        var="s" itemLabel="#{s.descripcion}" itemValue="#{s}"
+                        converter="#{conversoresEntidad.sector}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{s.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{contactoBean.contacto.notas}" />
+
+    </p:panelGrid>
+
+
+
+</ui:composition>
+

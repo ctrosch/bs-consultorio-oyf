@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Pasaje Contable
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Pasaje Contable
+        </ui:define>
+
+        <ui:define name="menu">
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:wizard id="pcWizard" widgetVar="pcWizard" flowListener="#{pasajeContableBean.procesoPasajeContable}"
+                      backLabel="Atrás" nextLabel="Siguiente" >
+
+                <p:tab id="inicio" title="Parámetros iniciales" >
+
+                    <div class="EmptyBox10" />
+                    <p:messages showDetail="true" />
+
+                    <p:panelGrid columns="2" layout="grid" style="max-width: 500px;"
+                                 styleClass="ui-panelgrid-blank " >
+
+                        <h:outputText value="Módulo" />
+                        <p:selectOneMenu value="#{pasajeContableBean.modulo}" filter="true"
+                                         required="true" requiredMessage="El módulo es obligatorio"
+                                         converter="#{conversoresGeneral.modulo}"  >
+                            <p:ajax process="@this" update="@form" />
+                            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                            <f:selectItems value="#{pasajeContableBean.modulos}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Mes" />
+                        <p:datePicker id="month" view="month" value="#{pasajeContableBean.fechaMovimientoDesde}"
+                                      pattern="MM/yyyy" yearNavigator="true"
+                                      yearRange="2000:2050" >
+                            <p:ajax event="dateSelect"  process="@this" listener="#{pasajeContableBean.setRangoFechaMovimiento}" />
+                        </p:datePicker>
+
+                        <!--
+                        <h:panelGroup id="fechas" layout="block">
+
+                            <div class="Wid50 Fleft">
+                                <p:calendar value="#{pasajeContableBean.fechaMovimientoDesde}"
+                                            placeholder="Desde"
+                                            pattern="dd/MM/yyyy"
+                                            showOn="button"
+                                            navigator="true"
+                                            mask="true"  >
+                                    <p:ajax event="dateSelect"  process="@this" />
+                                </p:calendar>
+                            </div>
+                            <div class="Wid50 Fright">
+                                <p:calendar value="#{pasajeContableBean.fechaMovimientoHasta}"
+                                            placeholder="Hasta"
+                                            pattern="dd/MM/yyyy"
+                                            showOn="button"
+                                            navigator="true"
+                                            mask="true" >
+                                    <p:ajax event="dateSelect"  process="@this" />
+                                </p:calendar>
+                            </div>
+                        </h:panelGroup>
+                        -->
+
+
+
+                    </p:panelGrid>
+                    <div class="EmptyBox20" />
+
+                </p:tab>
+
+                <p:tab id="pendiente" title="Detalle a procesar" >
+                    <div class="EmptyBox10" />
+                    <p:messages showDetail="true" />
+                    <div class="EmptyBox20" />
+
+                </p:tab>
+
+                <p:tab id="resultado" title="Resulado" >
+                    <div class="EmptyBox10" />
+                    <p:messages showDetail="true" />
+                    <div class="EmptyBox20" />
+                    <div class="MarAuto MarTop30 MaxWid300" >
+                        <p:commandButton value="Reiniciar Proceso" styleClass="RedBack"
+                                         oncomplete="PF('pcWizard').loadStep('inicio', false)" >
+                            <p:resetInput target="@form" />
+                        </p:commandButton>
+                    </div>
+
+                </p:tab>
+
+            </p:wizard>
+
+        </ui:define>
+
+        <ui:define name="dialogos">
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

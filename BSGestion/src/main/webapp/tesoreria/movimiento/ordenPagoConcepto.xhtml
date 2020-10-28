@@ -1,0 +1,163 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- CONCEPTOS -->
+    <p:tabView activeIndex="#{ordenPagoBean.indexTab1}"
+               rendered="#{not empty ordenPagoBean.m and not empty ordenPagoBean.m.entidad and (ordenPagoBean.facturasConfirmadas or not empty ordenPagoBean.m.id)}"  >
+
+        <p:ajax event="tabChange" listener="#{ordenPagoBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Conceptos Haber" >
+
+            <p:dataTable id="itemsHaber" value="#{ordenPagoBean.m.itemsHaber}"  var="i"
+                         resizeMode="expand" liveResize="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <p:column headerText="Concepto" width="265" rendered="#{ordenPagoBean.muestroCampo('D', 'CONDEB')}" >
+
+                    <p:commandLink styleClass="Fright" style="padding-left: 5px;"
+                                   actionListener="#{ordenPagoBean.asignarTotal(i)}"
+                                   process="itemsHaber"
+                                   update="@form" >
+                        <i class="fa fa-arrow-right fa-2x Orange" ></i>
+                    </p:commandLink>
+
+                    <p:commandLink styleClass="Fright"
+                                   actionListener="#{ordenPagoBean.agregarConcepto(ordenPagoBean.m.itemsHaber,i)}"
+                                   process="itemsHaber"
+                                   update="itemsHaber">
+                        <i class="fa fa-plus fa-2x Green" ></i>
+                    </p:commandLink>
+
+                    <p:remoteCommand name="procesarValorSeleccionado"
+                                     actionListener="#{ordenPagoBean.procesarValor()}"
+                                     process="itemsHaber" update="itemsHaber, :formulario:totales" />
+
+                    <p:commandLink styleClass="Fright" style="padding-left: 5px;"
+                                   rendered="#{i.concepto.pideNumeroCheque eq 'S'}"
+                                   actionListener="#{ordenPagoBean.buscarValores(i)}"
+                                   process="itemsHaber"  update=":fBuscadorCheque"
+                                   oncomplete="PF('dlgValores').show()" >
+
+                        <i class="fa fa fa-search fa-2x Blue" ></i>
+                    </p:commandLink>
+
+
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Importe"  width="80" rendered="#{ordenPagoBean.muestroCampo('D', 'IMPORD')}" >
+                    <p:inputText id="precio"  value="#{i.importe}"
+                                 readonly="#{(not empty i.cuentaTesoreria and i.cuentaTesoreria.codigoMoneda ne aplicacionBean.parametro.codigoMonedaPrimaria) or i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe"
+                                 style="text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{ordenPagoBean.calcularImportes}" event="keyup" delay="500"
+                                update=":formulario:totales,
+                                #{ordenPagoBean.muestroCampo('D','IMPSED')?'precioUsd':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Importe Ext"  width="80"  rendered="#{ordenPagoBean.muestroCampo('D', 'IMPSED')}">
+                    <p:inputText id="precioUsd"  value="#{i.importeMonedaSecundaria}"
+                                 readonly="#{i.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaPrimaria or i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                 rendered="#{not empty i.cuentaTesoreria and i.cuentaTesoreria.codigoMoneda ne aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe"
+                                 style="text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{ordenPagoBean.calcularImportes}" event="keyup" delay="500"
+                                update=":formulario:totales,
+                                #{ordenPagoBean.muestroCampo('D','IMPORD')?'precio':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Cheque|Trans.|Dep."  width="100" rendered="#{ordenPagoBean.muestroCampo('D', 'CHQDEB')}" >
+                    <p:inputText value="#{i.cheque}" rendered="#{i.concepto.tipo ne 'C'}"  />
+                </p:column>
+
+                <p:column headerText="F. Emisión"  width="100" rendered="#{ordenPagoBean.muestroCampo('D', 'FCHCHD')}" >
+                    <p:calendar value="#{i.fechaCheque}"
+                                style="text-align: center;"
+                                rendered="#{i.concepto.pideNumeroCheque eq 'S' or i.concepto.pideFechaEmision eq 'S' or i.concepto.tipo eq 'R' or i.concepto.tipo eq 'B'}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="F. Vto"  width="100" rendered="#{ordenPagoBean.muestroCampo('D', 'FCHVNC')}" >
+                    <p:calendar value="#{i.fechaVencimiento}"
+                                style="text-align: center;"
+                                rendered="#{i.concepto.pideNumeroCheque eq 'S' or i.concepto.tipo eq 'R'}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="Categoría"  width="100" style="min-width: 120px;" rendered="#{ordenPagoBean.muestroCampo('D', 'CATEGOD')}" >
+                    <p:selectOneMenu id="priori" value="#{i.categoriaCheque}"
+                                     rendered="#{i.concepto.pideNumeroCheque eq 'S'}" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Propio" itemValue="P" />
+                        <f:selectItem itemLabel="Terceros" itemValue="T" />
+                    </p:selectOneMenu>
+                </p:column>
+
+                <p:column headerText="Banco"  width="200" rendered="#{ordenPagoBean.muestroCampo('D', 'CODBCOD')}" >
+
+                    <p:autoComplete value="#{i.banco}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    rendered="#{i.concepto.pideNumeroCheque eq 'S'}"
+                                    completeMethod="#{bancoBean.complete}"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresTesoreria.banco}"  >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Código" width="100">
+                            <h:outputText value="#{e.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="Observaciones" width="150" rendered="#{ordenPagoBean.muestroCampo('D', 'OBSERD')}" >
+                    <p:inputText value="#{i.observaciones}"  />
+                </p:column>
+
+                <p:column width="30" styleClass="TexAlCenter" >
+                    <p:commandLink rendered="#{i.imputaCentroCosto}"
+                                   title="Imputación en Centros de Costo"
+                                   process="@this"
+                                   update="centroCosto"
+                                   oncomplete="PF('dlgCentroCostoTesoreria').show()" >
+                        <f:setPropertyActionListener value="#{i}" target="#{ordenPagoBean.itemMovimiento}" />
+                        <i class="fa fa-list-ul" ></i>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+    <div class="EmptyBox10" />
+</ui:composition>
+

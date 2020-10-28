@@ -1,0 +1,67 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+    <!-- MENU -->
+    <p:menubar id="menuBar"  >
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{movimientoSaludBean.buscar()}"
+                    immediate="true"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoSaludBean.modoVista eq 'B' or empty movimientoSaludBean.m.paciente  }"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{movimientoSaludBean.nuevo}"
+                    process="@this"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoSaludBean.modoVista eq 'B' or empty movimientoSaludBean.m.paciente }"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{movimientoSaludBean.guardar(false)}"
+                    rendered="#{not empty movimientoSaludBean.m and movimientoSaludBean.modoVista eq 'D'}"
+                    update="@form" />
+
+        <p:menuitem value="Pendientes" icon="fa fa-list-alt"
+                    actionListener="#{movimientoSaludBean.buscarPendientes() }"
+                    rendered="#{empty movimientoSaludBean.m.id and movimientoSaludBean.modoVista eq 'D'
+                                and (movimientoSaludBean.m.comprobante.tipoComprobante eq 'RT'
+                                or movimientoSaludBean.m.comprobante.tipoComprobante eq 'SA'
+                                or movimientoSaludBean.m.comprobante.tipoComprobante eq 'IA' ) }"
+                    oncomplete="PF('dlgPendiente').show()"
+                    process="@this" update="buscadorPendiente" >
+        </p:menuitem>
+
+        <p:menuitem value="Imprimir" icon="fa fa-print"
+                    actionListener="#{movimientoSaludBean.imprimir()}"
+                    rendered="#{not empty movimientoSaludBean.m.id and movimientoSaludBean.modoVista eq 'D'}"
+                    process="@this" >
+        </p:menuitem>
+
+        <p:menuitem value="Anular" icon="fa fa-close"
+                    actionListener="#{movimientoSaludBean.revertirMovimiento(movimientoSaludBean.m)}"
+                    rendered="#{not empty movimientoSaludBean.m.id and movimientoSaludBean.m.estado.codigo ne 'X' and movimientoSaludBean.modoVista eq 'D'}"
+                    update="@form"  >
+            <p:confirm header="Confirmación"
+                       message="¿Está seguro de anular o revertir el movimiento #{movimientoSaludBean.m.formulario.descripcion}  #{movimientoSaludBean.m.puntoVenta.codigo} #{movimientoSaludBean.m.numeroFormulario}?" icon="ui-icon-alert" />
+            <i class="fa fa-close fa-2x Red" ></i>
+        </p:menuitem>
+
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

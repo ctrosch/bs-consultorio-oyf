@@ -1,0 +1,419 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Nro Legajo *" />
+        <p:inputText value="#{alumnoBean.entidad.nrocta}" readonly="true"  />
+
+        <h:outputText value="Estado *" />
+        <p:selectOneMenu value="#{alumnoBean.entidad.estado}"
+                         required="true" requiredMessage="Seleccione el estado"
+                         converter="#{conversoresEntidad.estadoEntidad}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" update="@form" />
+            <f:selectItems value="#{estadoEntidadBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Sucursal*" />
+        <p:autoComplete value="#{alumnoBean.entidad.sucursal}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar la sucursal"
+                        completeMethod="#{sucursalBean.complete}"
+                        converter="#{conversoresGeneral.sucursal}"
+                        var="p" itemLabel="#{p.nombre}" itemValue="#{p}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Apellido *" />
+        <p:inputText id="apelliAl" value="#{alumnoBean.entidad.apellido}"
+                     required="true" requiredMessage="Debe ingresar el Apellido/s del Alumno" />
+
+        <h:outputText value="Nombre *" />
+        <p:inputText id="nombAl" value="#{alumnoBean.entidad.nombre}"
+                     required="true" requiredMessage="Debe ingresar el nombre/s del Alumno" />
+
+
+        <h:outputText value="Tipo/Nro Documento *" />
+        <h:panelGroup id="pnTipoDoc" layout="block"  >
+
+            <div class="Wid40 Responsive100 Fleft">
+                <p:autoComplete value="#{alumnoBean.entidad.tipoDocumento}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoDocumentoBean.complete}"
+                                converter="#{conversoresGeneral.tipoDocumento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" update="pnTipoDoc" />
+                </p:autoComplete>
+            </div>
+
+            <div class="Wid60 Responsive100 Fright">
+                <p:inputMask value="#{alumnoBean.entidad.nrodoc}"
+                             mask="#{alumnoBean.entidad.tipoDocumento.mascara}"
+                             rendered="#{not empty alumnoBean.entidad.tipoDocumento}"
+                             required="true"
+                             requiredMessage="El número de documento del alumno es obligatorio"  />
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Sexo*" />
+        <p:selectOneMenu value="#{alumnoBean.entidad.sexo}"
+                         required="true" requiredMessage="Seleccione Sexo"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Masculino" itemValue="M" />
+            <f:selectItem itemLabel="Femenino" itemValue="F" />
+            <f:selectItem itemLabel="No Definido" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Dirección * " />
+        <p:inputText value="#{alumnoBean.entidad.direccion}" placeholder="Calle - Número - Depto - Piso"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+
+        <h:panelGroup layout="block" >
+
+            <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                           process="@this"
+                           update="buscadorLocalidad"
+                           oncomplete="PF('dlgLocalidad').show()"  >
+
+                <i class="fa fa-search" ></i>
+            </p:commandLink>
+
+            <bs:outputTexWhitLink value="Localidad* "
+                                  url="#{proveedorBean.obtenerUrlMenu('SIS_00126','IDLC',alumnoBean.entidad.localidad.id)}" />
+
+        </h:panelGroup>
+        <p:autoComplete id="localidad" value="#{alumnoBean.entidad.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{alumnoBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <h:outputText value="Teléfono" />
+        <p:inputText value="#{alumnoBean.entidad.telefono}"   />
+
+
+        <h:outputText value="Celular * " />
+        <p:inputText value="#{alumnoBean.entidad.ntelex}"
+                     required="true" requiredMessage="El celular es obligatorio" />
+
+        <h:outputText value="Dirección de email *" />
+        <p:inputText value="#{alumnoBean.entidad.email}"
+                     required="true" requiredMessage="El email es obligatorio"
+                     validatorMessage="Ingrese un correo válido">
+            <f:validateLength minimum="0" maximum="200" />
+            <!--
+            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+            -->
+        </p:inputText>
+
+        <h:outputText value="Medio Publicitario por el que se suscribe *" />
+        <p:selectOneMenu value="#{alumnoBean.entidad.medioPublicitario}"
+                         required="true" requiredMessage="Seleccione Medio Publicitario"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Internet" itemValue="Internet" />
+            <f:selectItem itemLabel="Radio" itemValue="Radio" />
+            <f:selectItem itemLabel="Televisión" itemValue="Televisión" />
+            <f:selectItem itemLabel="Otros" itemValue="Otros" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Trabaja *" />
+        <p:selectOneMenu value="#{alumnoBean.entidad.trabajo}"
+                         required="true" requiredMessage="Seleccione si el Alumno Trabaja"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="SI" itemValue="S" />
+            <f:selectItem itemLabel="NO" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Estudios Realizados *" />
+        <p:selectOneMenu value="#{alumnoBean.entidad.estudioRealizado}"
+                         required="true" requiredMessage="Seleccione Estudio Realizados"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Primaria" itemValue="Primaria" />
+            <f:selectItem itemLabel="Secundario" itemValue="Secundario" />
+            <f:selectItem itemLabel="Terciario" itemValue="Terciario" />
+            <f:selectItem itemLabel="Universitario" itemValue="Universitario" />
+        </p:selectOneMenu>
+
+
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-2 ui-md-3 ui-lg-2, ui-g-10 ui-md-9 ui-lg-10" >
+
+        <h:outputText value="Notas" />
+        <p:inputTextarea cols="80" rows="3" value="#{alumnoBean.entidad.notas}" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10"> </div>
+
+    <p:tabView id="tbDatosAsociados" activeIndex="#{alumnoBean.indexTab1}"  >
+
+        <p:ajax event="tabChange" listener="#{alumnoBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Asistencia Médica" >
+
+            <p:panelGrid columns="6" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+                <h:outputText value="Servicio de Emergencia al cual es afiliado " />
+                <p:inputText id="nasist" value="#{alumnoBean.entidad.nombreAsistenciaMedica}" />
+
+                <h:outputText value="Teléfono Servicio de Emergencia " />
+                <p:inputText value="#{alumnoBean.entidad.nroAfiliadoAsistenciaMedica}" />
+
+                <h:outputText value="Nro de afiliado " />
+                <p:inputText value="#{alumnoBean.entidad.nroAfiliadoAsistenciaMedica}" />
+
+
+                <h:outputText value="Grupo Sanguineo*" />
+                <p:selectOneMenu value="#{alumnoBean.entidad.grupoSanguineo}" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="A" itemValue="A" />
+                    <f:selectItem itemLabel="B" itemValue="B" />
+                    <f:selectItem itemLabel="0" itemValue="0" />
+                    <f:selectItem itemLabel="AB" itemValue="AB" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Factor RH*" />
+                <p:selectOneMenu value="#{alumnoBean.entidad.factorRh}" >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="+" itemValue="+" />
+                    <f:selectItem itemLabel="-" itemValue="-" />
+                </p:selectOneMenu>
+
+                <h:outputText value=""  />
+                <h:outputText value=""  />
+
+                <h:outputText value="Contacto de Emergencia*" />
+                <p:inputText value="#{alumnoBean.entidad.contactoEmergencia}"
+                             required="true" requiredMessage="Debe ingresar Contacto de Emergencia" />
+
+                <h:outputText value="Telefono Contacto de Emergencia*" />
+                <p:inputText value="#{alumnoBean.entidad.telefonoContactoEmergencia}"
+                             required="true" requiredMessage="Debe ingresar Telefono Contacto de Emergencia" />
+
+                <h:outputText value=""  />
+                <h:outputText value=""  />
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-6">
+
+                <h:outputText value="Alergias *" />
+
+                <p:selectOneMenu value="#{alumnoBean.entidad.alergia}"
+                                 required="true" requiredMessage="Seleccione si tiene Alergias"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="SI" itemValue="S" />
+                    <f:selectItem itemLabel="NO" itemValue="N" />
+                    <p:ajax event="itemSelect" process="@parent" update="@parent" listener="#{alumnoBean.borrarAlergia()}"/>
+                </p:selectOneMenu>
+
+
+                <h:outputText value="Detalle de Alergias *"  rendered="#{alumnoBean.entidad.alergia eq 'S'}" />
+                <h:panelGroup  id="detaAl" layout="block" rendered="#{alumnoBean.entidad.alergia eq 'S'}" >
+
+                    <p:inputTextarea   value="#{alumnoBean.entidad.detalleAlergia}"
+                                       required="true" requiredMessage="Debe ingresar el detalle de Alergias"
+                                       rendered="#{alumnoBean.entidad.alergia eq 'S' }" />
+                </h:panelGroup>
+
+                <h:outputText value=""  rendered="#{alumnoBean.entidad.alergia ne 'S'}" />
+                <h:outputText value=""  rendered="#{alumnoBean.entidad.alergia ne 'S'}" />
+
+
+                <h:outputText value="Tratamientos *" />
+                <p:selectOneMenu value="#{alumnoBean.entidad.tratamientoMedico}"
+                                 required="true" requiredMessage="Seleccione si tiene Tratamiento Médico"  >
+                    <p:ajax process="@this" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                    <f:selectItem itemLabel="SI" itemValue="S" />
+                    <f:selectItem itemLabel="NO" itemValue="N" />
+                    <p:ajax event="itemSelect" process="@parent" update="@parent" listener="#{alumnoBean.borrarTratamiento()}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Detalle de tratamientos *"  rendered="#{alumnoBean.entidad.tratamientoMedico eq 'S'}" />
+                <h:panelGroup  id="detTrat" layout="block" rendered="#{alumnoBean.entidad.tratamientoMedico eq 'S'}"  >
+
+                    <p:inputTextarea   value="#{alumnoBean.entidad.detalleTratamientoMedico}"
+                                       required="true" requiredMessage="Debe ingresar Tratamiento Médico"
+                                       rendered="#{alumnoBean.entidad.tratamientoMedico eq 'S' }" />
+                </h:panelGroup>
+
+                <h:outputText value=""  rendered="#{alumnoBean.entidad.tratamientoMedico ne 'S'}" />
+                <h:outputText value=""  rendered="#{alumnoBean.entidad.tratamientoMedico ne 'S'}" />
+
+
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-9 ui-lg-10">
+
+                <h:outputText value="Datos Extras" />
+                <p:inputTextarea cols="80" rows="3" value="#{alumnoBean.entidad.datosExtras}" />
+
+
+            </p:panelGrid>
+
+
+        </p:tab>
+
+        <p:tab id="t1" title="Datos de Facturación" >
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank" >
+
+                <h:outputText value="Razón Social " />
+                <p:inputText id="c2" value="#{alumnoBean.entidad.razonSocial}" />
+
+                <h:outputText  value="Nombre Fantasia " />
+                <p:inputText id="nombFanta" value="#{alumnoBean.entidad.nombreFantasia}" />
+
+                <h:outputText value="Dirección  " />
+                <p:inputText value="#{alumnoBean.entidad.direccionFactura}" placeholder="Calle - Número - Depto - Piso"
+                             />
+
+                <h:panelGroup layout="block" >
+
+                    <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                                   process="@this"
+                                   update="buscadorLocalidadFactura"
+                                   oncomplete="PF('dlgLocalidadFactura').show()"  >
+
+                        <i class="fa fa-search" ></i>
+                    </p:commandLink>
+
+                    <bs:outputTexWhitLink value="Localidad "
+                                          url="#{alumnoBean.obtenerUrlMenu('SIS_00126','IDLC',alumnoBean.entidad.localidadFactura.id)}" />
+
+                </h:panelGroup>
+                <p:autoComplete id="local" value="#{alumnoBean.entidad.localidadFactura}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{localidadBean.complete}"
+                                converter="#{conversoresGeneral.localidad}"
+                                var="l2" itemLabel="#{l2.descripcionComplete}" itemValue="#{l2}" >
+
+                    <p:ajax event="itemSelect" process="@this" listener="#{alumnoBean.procesarLocalidadFactura()}" />
+
+                    <p:column headerText="C.P." width="80">
+                        <h:outputText value="#{l2.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre" width="150">
+                        <h:outputText value="#{l2.descripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Provincia" width="150">
+                        <h:outputText value="#{l2.provincia.descripcion}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="Condición de IVA " />
+                <p:selectOneMenu value="#{alumnoBean.entidad.condicionDeIva}"
+                                 converter="#{conversoresGeneral.condicionDeIva}"
+                                 effect="fade" filter="true" >
+                    <p:ajax process="@this" />
+
+                    <f:selectItems value="#{condicionDeIvaBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+                </p:selectOneMenu>
+
+                <h:outputText value="Tipo/Nro Documento" />
+                <h:panelGroup id="pnTipoDoc2" layout="block"  >
+
+                    <div class="Wid40 Responsive100 Fleft">
+                        <p:autoComplete value="#{alumnoBean.entidad.tipoDocumento1}" dropdown="true" forceSelection="true"
+                                        maxResults="8" queryDelay="1000"
+                                        completeMethod="#{tipoDocumentoBean.complete}"
+                                        converter="#{conversoresGeneral.tipoDocumento}"
+                                        var="p2" itemLabel="#{p2.descripcion}" itemValue="#{p2}" >
+                            <p:ajax event="itemSelect" process="@this" update="pnTipoDoc2" />
+                        </p:autoComplete>
+                    </div>
+
+                    <div class="Wid60 Responsive100 Fright">
+                        <p:inputMask value="#{alumnoBean.entidad.nrodo1}"
+                                     mask="#{alumnoBean.entidad.tipoDocumento1.mascara}"
+                                     rendered="#{not empty alumnoBean.entidad.tipoDocumento1}"
+                                     required="true"
+                                     requiredMessage="El número de documento del cliente es obligatorio"  />
+                    </div>
+                </h:panelGroup>
+
+                <bs:outputTexWhitLink value="Condición de Pago *"
+                                      url="#{alumnoBean.obtenerUrlMenu('SIS_00355','CODIGO',alumnoBean.entidad.condicionDePagoVentas.codigo)}" />
+                <p:autoComplete value="#{alumnoBean.entidad.condicionDePagoVentas}"
+                                required="true" requiredMessage="Seleccione la condición de pago por defecto del alumno para la facturación"
+                                dropdown="true" placeholder="Seleccionar"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{condicionPagoVentaBean.complete}"
+                                var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                converter="#{conversoresVenta.condicionDePagoVenta}" forceSelection="true" >
+
+                    <p:ajax event="itemSelect" process="@this" />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{l.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{l.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+
+
+
+            </p:panelGrid>
+
+        </p:tab>
+
+    </p:tabView>
+
+</ui:composition>
+

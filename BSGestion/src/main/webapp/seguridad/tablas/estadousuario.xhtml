@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            - Estado usuario
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            action="#{estadoUsuarioBean.nuevo}"
+                            process="@this"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{estadoUsuarioBean.guardar(false)}"
+                            update="@form" />
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            action="#{estadoUsuarioBean.imprimir}"
+                            ajax="false" target="blank" >
+                </p:menuitem>
+
+                <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                            actionListener="#{estadoUsuarioBean.habilitaDeshabilita ('S')}"
+                            rendered="#{not empty estadoUsuarioBean.estado and not estadoUsuarioBean.esNuevo and estadoUsuarioBean.estado.auditoria.debaja eq 'N'}"
+                            process="@this"
+                            update="@form" />
+
+                <p:menuitem value="Habilitar" icon="fa fa-check"
+                            actionListener="#{estadoUsuarioBean.habilitaDeshabilita ('N')}"
+                            rendered="#{not empty estadoUsuarioBean.estado and not estadoUsuarioBean.esNuevo and estadoUsuarioBean.estado.auditoria.debaja eq 'S'}"
+                            process="@this"
+                            update="@form" />
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <p:accordionPanel widgetVar="accordion" >
+
+                <!-- BUSQUEDA -->
+                <p:tab title="Busqueda" >
+
+                    <p:panelGrid columns="1" layout="grid"
+                                 style="max-width: 400px;"
+                                 styleClass="ui-panelgrid-blank" >
+
+                        <p:inputText value="#{estadoUsuarioBean.txtBusqueda}"  autocomplete="false"  placeholder="Ingrese busqueda" >
+                            <p:ajax event="keyup" delay="500"  process="@this" update="tablaEstadoUsuario" listener="#{estadoUsuarioBean.buscar}"/>
+                        </p:inputText>
+                    </p:panelGrid>
+
+                    <p:dataTable id="tablaEstadoUsuario" var="e" value="#{estadoUsuarioBean.lista}"
+                                 resizeMode="expand" liveResize="true"
+                                 emptyMessage="No se encontraron resultados"
+                                 rows="10" paginator="true"
+                                 >
+
+                        <!--
+                        selectionMode="single"
+                                 selection="#{vendedorBean.vendedor}" rowKey="#{e}"
+                        <p:ajax event="rowSelect" listener="#{vendedorBean.onSelect}" update="@form"
+                                />
+                        -->
+
+                        <p:column headerText="Id" width="10%" style="text-align: center;"
+                                  sortBy="#{e.id}"   >
+                            <h:outputText value="#{e.id}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                                  sortBy="#{e.descripcion}" >
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="" width="10%" style="text-align: center;" >
+                            <p:commandButton icon="fa fa-edit" styleClass="GreenBack"
+                                             actionListener="#{estadoUsuarioBean.seleccionar(e)}"
+                                             process="@this"
+                                             update="@form"
+                                             />
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <div class="EmptyBox10" />
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:panelGroup layout="block" >
+                            <p:selectBooleanCheckbox value="#{estadoUsuarioBean.mostrarDebaja}" >
+                                <p:ajax process="@this" update="tabla" listener="#{estadoUsuarioBean.buscar}" />
+                            </p:selectBooleanCheckbox>
+                            <h:outputText value="Mostrar registros deshabilitados" />
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="Cantidad de Registros: " />
+                            <p:inputText id="cantRegistrosEstadoUsuario" value="#{estadoUsuarioBean.cantidadRegistros}" style="max-width: 80px;"/>
+                            <p:commandButton value="Aplicar" icon="fa fa-check"
+                                             style="max-width: 100px; margin-left: 1px;"
+                                             actionListener="#{estadoUsuarioBean.buscar}"
+                                             process="@this,cantRegistrosEstadoUsuario" update="tabla" />
+                        </h:panelGroup>
+                    </p:panelGrid>
+
+                </p:tab>
+
+                <!-- DATOS -->
+                <p:tab title="Datos estado usuario" >
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:outputText value="Id" />
+                        <h:outputText value="#{estadoUsuarioBean.estado.id}" rendered="#{not estadoUsuarioBean.esNuevo}" />
+                        <p:inputText value="#{estadoUsuarioBean.estado.id}" rendered="#{estadoUsuarioBean.esNuevo}"
+                                     required="true"
+                                     requiredMessage="El id es necesario" />
+
+                        <h:outputText value="Descripción" />
+                        <p:inputText value="#{estadoUsuarioBean.estado.descripcion}"
+                                     required="true"
+                                     requiredMessage="La descripción es necesaria" />
+
+
+                    </p:panelGrid>
+
+                </p:tab>
+
+            </p:accordionPanel>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

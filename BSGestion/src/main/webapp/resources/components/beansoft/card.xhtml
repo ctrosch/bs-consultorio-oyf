@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+
+        <title></title>
+
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="Card" >
+            <composite:attribute name="title" required="true" />
+            <composite:attribute name="value" required="true" />
+            <composite:attribute name="color" default="BlueBack"  />
+            <composite:attribute name="url"  />
+            <composite:attribute name="rendered" type="boolean"  />
+        </composite:interface>
+
+        <composite:implementation>
+
+            <h:panelGroup rendered="#{cc.attrs.rendered}" layout="block" styleClass="p-col-6 p-md-3 p-lg-2" >
+
+                <h:outputLink value="#{not empty cc.attrs.url ? request.contextPath .concat(cc.attrs.url) : '#' }"
+                              styleClass="Wid100 onHover "
+                              target="#{aplicacionBean.parametro.tipoNavegacion eq 'U'? '_self': '_blank'}" >
+
+                    <div class="Card TexAlCenter onHover LightGrayBack " style="border: none;" >
+                        <div class="CardTopic Gray Fs13">#{ cc.attrs.title }</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock">
+                            <i class="fa fa-check Fs14 MarRight10 Green"></i>
+                            <span class="Fs14 FontVoltSemiBold Green">
+                                <h:outputText value="#{ cc.attrs.value }" >
+                                    <f:convertNumber pattern="0" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </h:outputLink>
+            </h:panelGroup>
+
+
+        </composite:implementation>
+
+    </h:body>
+
+</html>

@@ -1,0 +1,313 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Gestiona Stock *" />
+        <p:selectOneMenu value="#{productoBean.producto.gestionaStock}" style="min-width: 50px;"
+                         disabled="#{not productoBean.esNuevo}"
+                         required="true" requiredMessage="Seleccione si gestiona stock"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Stock mínimo " />
+        <p:inputText value="#{productoBean.producto.stockMinimo}"  styleClass="TexAlRight" >
+            <f:convertNumber pattern="0"  />
+        </p:inputText>
+
+        <h:outputText value="Stock máximo " />
+        <p:inputText value="#{productoBean.producto.stockMaximo}"  styleClass="TexAlRight" >
+            <f:convertNumber pattern="0"  />
+        </p:inputText>
+
+        <h:outputText value="Gestiona atributo 1"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo1 ne 'S'}" />
+        <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo1}"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo1 eq 'S'}"/>
+        <p:selectOneRadio value="#{productoBean.producto.administraAtributo1}"
+                          disabled="#{not productoBean.esNuevo or aplicacionBean.parametroStock.administraAtributo1 ne 'S'}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="Gestiona atributo 2"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo2 ne 'S'}" />
+        <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo2}"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo2 eq 'S'}"/>
+        <p:selectOneRadio value="#{productoBean.producto.administraAtributo2}"
+                          disabled="#{not productoBean.esNuevo or aplicacionBean.parametroStock.administraAtributo2 ne 'S'}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="Gestiona atributo 3"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo3 ne 'S'}" />
+        <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo3}"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo3 eq 'S'}"/>
+        <p:selectOneRadio value="#{productoBean.producto.administraAtributo3}"
+                          disabled="#{not productoBean.esNuevo or  aplicacionBean.parametroStock.administraAtributo3 ne 'S'}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="Gestiona atributo 4"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo4 ne 'S'}" />
+        <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo4}"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo4 eq 'S'}"/>
+        <p:selectOneRadio value="#{productoBean.producto.administraAtributo4}"
+                          disabled="#{not productoBean.esNuevo or aplicacionBean.parametroStock.administraAtributo4 ne 'S'}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="Gestiona atributo 5" />
+        <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo5}"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo5 eq 'S'}"/>
+        <p:selectOneRadio value="#{productoBean.producto.administraAtributo5}"
+                          disabled="#{not productoBean.esNuevo or aplicacionBean.parametroStock.administraAtributo5 ne 'S'}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="Gestiona atributo 6"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo6 ne 'S'}" />
+        <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo6}"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo6 eq 'S'}"/>
+        <p:selectOneRadio value="#{productoBean.producto.administraAtributo6}"
+                          disabled="#{not productoBean.esNuevo or aplicacionBean.parametroStock.administraAtributo6 ne 'S'}" >
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+        <h:outputText value="Gestiona atributo 7"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo7 ne 'S'}" />
+        <h:outputText value="Gestiona #{aplicacionBean.parametroStock.descripcionAtributo7}"
+                      rendered="#{aplicacionBean.parametroStock.administraAtributo7 eq 'S'}"/>
+        <p:selectOneRadio value="#{productoBean.producto.administraAtributo7}"
+                          disabled="#{not productoBean.esNuevo or aplicacionBean.parametroStock.administraAtributo7 ne 'S'}">
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneRadio>
+
+
+    </p:panelGrid>
+
+    <div class="EmptyBox20" />
+
+    <div class="p-grid p-col-align-center" >
+
+        <div class="p-col-12 " >
+
+            <p:dataTable id="tablaPR" var="p" style="max-width: 1000px;" styleClass="MarAuto"
+                         value="#{productoBean.producto.presentaciones}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10"  >
+
+                <f:facet name="header">
+                    Presentación
+                </f:facet>
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{productoBean.nuevoItemPresentacion()}"
+                                     value="Agregar"
+                                     process="tablaPR"
+                                     update="tablaPR" />
+
+
+                </f:facet>
+                <p:column headerText="Tipo Envase" width="100" style="text-align: center;">
+                    <p:selectOneMenu value="#{p.tipoEnvase}">
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="1er Envase" itemValue="1er Envase" />
+                        <f:selectItem itemLabel="2do Envase" itemValue="2do Envase" />
+                        <f:selectItem itemLabel="3er Envase" itemValue="3er Envase" />
+                        <f:selectItem itemLabel="4to Envase" itemValue="4to Envase" />
+                    </p:selectOneMenu>
+                </p:column>
+
+                <p:column headerText="Cantidad Unitaria" width="100" style="text-align: center;">
+                    <p:inputText value="#{p.cantidadUnitaria}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Unidad de Medida" width="100" style="text-align: center;">
+                    <p:selectOneMenu value="#{p.unidadMedida}">
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Cajas" itemValue="Cajas" />
+                    </p:selectOneMenu>
+                </p:column>
+
+                <p:column headerText="Código Barra" width="150" style="text-align: center;">
+                    <p:inputText value="#{p.codigoBarra}" />
+                </p:column>
+
+                <p:column headerText="Alto" width="60" style="text-align: center;">
+                    <p:inputText value="#{p.alto}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Ancho" width="60" style="text-align: center;">
+                    <p:inputText value="#{p.ancho}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Profundidad" width="60" style="text-align: center;">
+                    <p:inputText value="#{p.profundidad}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                    </p:inputText>
+                </p:column>
+
+
+                <p:column headerText="Peso" width="60" style="text-align: center;">
+                    <p:inputText value="#{p.peso}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Unidad Peso" width="100" style="text-align: center;">
+                    <p:selectOneMenu value="#{p.unidadPeso}">
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Kilogramos" itemValue="Kilogramos" />
+                        <f:selectItem itemLabel="Gramos" itemValue="Gramos" />
+                    </p:selectOneMenu>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaPR" update="tablaPR,message,messageg"
+                                   actionListener="#{productoBean.eliminarItemPresentacion(p)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </div>
+
+        <div class="EmptyBox20" />
+
+        <div class="p-col-12" >
+
+            <p:dataTable id="tablaDF" var="d" style="max-width: 1000px;" styleClass="MarAuto"
+                         value="#{productoBean.producto.atributosPorDefecto}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" >
+
+                <f:facet name="header">
+                    Atributos por defecto
+                </f:facet>
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{productoBean.nuevoItemAtributoPorDefecto()}"
+                                     value="Agregar"
+                                     process="tablaDF"
+                                     update="tablaDF" />
+                </f:facet>
+
+                <p:column headerText="Depósito" width="100">
+
+                    <p:autoComplete value="#{d.deposito}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{depositoBean.complete}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.deposito}" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@this"  />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}" width="100"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAtributo1}" >
+                    <p:inputText value="#{d.atributo1}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}" width="100"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAtributo2}">
+
+                    <p:inputText value="#{d.atributo2}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo3}" width="100"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAtributo3}">
+                    <p:inputText value="#{d.atributo3}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo4}" width="100"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAtributo4}">
+                    <p:inputText value="#{d.atributo4}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo5}" width="100"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAtributo5}">
+                    <p:inputText value="#{d.atributo5}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo6}" width="100"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAtributo6}">
+                    <p:inputText value="#{d.atributo6}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo7}" width="100"
+                          rendered="#{not empty aplicacionBean.parametroStock.descripcionAtributo7}">
+                    <p:inputText value="#{d.atributo7}" />
+                </p:column>
+
+                <p:column headerText="Stock Mínimo" width="60" style="text-align: center;">
+                    <p:inputText value="#{d.stockMinimo}" style="text-align: right;" >
+                        <f:convertNumber pattern="##0.00" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaDF" update="tablaDF,message,messageg"
+                                   actionListener="#{productoBean.eliminarItemAtributoPorDefecto(d)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </div>
+
+
+    </div>
+
+</ui:composition>
+

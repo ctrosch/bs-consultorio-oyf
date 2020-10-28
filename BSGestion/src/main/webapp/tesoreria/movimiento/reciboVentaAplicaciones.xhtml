@@ -1,0 +1,56 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- APLICACIONES -->
+    <p:dataTable id="tAplicaciones"
+                 value="#{reciboBean.m.movimientoVenta.itemCuentaCorriente}" var="d"
+                 rendered="#{not empty reciboBean.m.movimientoVenta.itemCuentaCorriente}"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado aplicaciones">
+
+        <f:facet name="header" >
+            <h:outputText value="Aplicaciones de cuenta corriente" />
+        </f:facet>
+
+        <p:column headerText="Documento" style="text-align: center;" >
+            <h:outputText value="#{d.movimientoAplicacion.formulario.codigo} " />
+            <h:outputText value="#{d.movimientoAplicacion.puntoVenta.codigo}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+            <h:outputText value="#{d.movimientoAplicacion.numeroFormulario}" >
+                <f:convertNumber pattern="-00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Vencimiento" style="text-align: center;" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Cuota" style="text-align: center;" >
+            <h:outputText value="#{d.cuota}" />
+        </p:column>
+
+        <p:column headerText="Importe Aplicado" style="text-align: right;" >
+
+            <h:outputText value="#{d.importe*-1}" rendered="#{reciboBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+            <h:outputText value="#{d.importeSecundario*-1}" rendered="#{reciboBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                <f:convertNumber pattern="#,###,##0.00" />
+            </h:outputText>
+
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

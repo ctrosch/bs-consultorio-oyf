@@ -1,0 +1,92 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorConceptoTesoreria" header="Conceptos de Tesorería" modal="true"
+              widgetVar="dlgConceptoTesoreria"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 750px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaConceptoTesoreria"/>
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaConceptoTesoreria" value="#{conceptoTesoreriaBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,tipoConceptoTesoreria" update="tablaConceptoTesoreria" listener="#{conceptoTesoreriaBean.buscar}"/>
+                </p:inputText>
+
+                <p:selectOneMenu id="tipoConceptoTesoreria" value="#{conceptoTesoreriaBean.tipoConcepto}"
+                                 converter="#{conversoresGeneral.tipoConcepto}"  >
+                    <f:selectItem itemLabel="Todos" itemValue="" />
+                    <f:selectItems value="#{conceptoTesoreriaBean.tipos}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaConceptoTesoreria" update="tablaConceptoTesoreria" listener="#{conceptoTesoreriaBean.buscar}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaConceptoTesoreria" value="#{conceptoTesoreriaBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{conceptoTesoreriaBean.concepto}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{conceptoTesoreriaBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgConceptoTesoreria').hide(), procesarConceptoTesoreria()" />
+
+                <p:column headerText="Código" width="100" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción"  style="text-align: left;"
+                          sortBy="#{e.descripcion}" >
+                    <h:outputText value="#{e.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Tipo"  >
+                    <h:outputText value="#{e.tipoConcepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Cuenta Contable"  >
+                    <h:outputText value="#{e.cuentaContable.descripcionComplete}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{conceptoTesoreriaBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaConceptoTesoreria" listener="#{conceptoTesoreriaBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistrosConceptoTesoreria" value="#{conceptoTesoreriaBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{conceptoTesoreriaBean.buscar}"
+                                     process="@this,cantRegistrosConceptoTesoreria" update="tablaConceptoTesoreria" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,310 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- CONCEPTOS -->
+    <p:tabView id="tabConceptos" activeIndex="#{movimientoPrestamoBean.indexTab2}"
+               rendered="#{not empty movimientoPrestamoBean.m.movimientoTesoreria}"  >
+
+        <p:ajax event="tabChange" listener="#{movimientoPrestamoBean.onTab2Change}" />
+
+        <p:tab id="t11" title="Conceptos Debe"
+               rendered="#{not empty movimientoPrestamoBean.m.movimientoTesoreria.itemsDebe}" >
+
+            <p:dataTable id="itemsDebe" value="#{movimientoPrestamoBean.m.movimientoTesoreria.itemsDebe}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <p:column headerText="Conceptos" width="210" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'CONDEB')}" >
+
+                    <p:commandLink styleClass="Fright" style="padding-left: 5px;"
+                                   actionListener="#{movimientoPrestamoBean.asignarTotal(i)}"
+                                   process="itemsHaber"
+                                   update="@form">
+                        <i class="fa fa-arrow-right fa-2x Orange" ></i>
+                    </p:commandLink>
+
+
+                    <p:commandLink styleClass="Fright"
+                                   actionListener="#{movimientoPrestamoBean.agregarConcepto(movimientoPrestamoBean.m.itemsDebe,i)}"
+                                   process="itemsDebe"
+                                   update="itemsDebe">
+                        <i class="fa fa-plus fa-2x Green" ></i>
+                    </p:commandLink>
+                    <h:outputText value="#{i.concepto.descripcion}" />
+
+                </p:column>
+
+                <p:column headerText="Importe" width="100" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'IMPORD')}" >
+                    <p:inputText id="precio" value="#{i.importe}"
+                                 readonly="#{not empty i.cuentaTesoreria and i.cuentaTesoreria.codigoMoneda ne aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe"
+                                 style="text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoPrestamoBean.calcularImportes}" event="keyup"  delay="500"
+                                update="#{movimientoPrestamoBean.muestroCampo('D','IMPSED')?'precioUsd':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Importe Ext"  width="100"  rendered="#{movimientoPrestamoBean.muestroCampo('D', 'IMPSED')}">
+                    <p:inputText id="precioUsd"  value="#{i.importeMonedaSecundaria}"
+                                 rendered="#{not empty i.cuentaTesoreria and i.cuentaTesoreria.codigoMoneda ne aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe"
+                                 style="text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoPrestamoBean.calcularImportes}" event="keyup"  delay="500"
+                                update="#{movimientoPrestamoBean.muestroCampo('D','IMPORD')?'precio':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Cheque|Trans.|Dep."  width="100" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'CHQDEB')}" >
+                    <p:inputText value="#{i.cheque}" rendered="#{i.concepto.tipo ne 'C'}"   />
+                </p:column>
+
+                <p:column headerText="F. Emisión"  width="100" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'FCHCHD')}" >
+                    <p:calendar value="#{i.fechaCheque}"
+                                style="text-align: center;"
+                                rendered="#{i.concepto.pideNumeroCheque eq 'S' or i.concepto.tipo eq 'R' or i.concepto.tipo eq 'B'}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="F. Vto"  width="100" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'FCHVND')}" >
+                    <p:calendar value="#{i.fechaVencimiento}"
+                                style="text-align: center;"
+                                rendered="#{i.concepto.pideNumeroCheque eq 'S' or i.concepto.tipo eq 'R'}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="Categoría"  width="120" style="min-width: 120px;" rendered="#{reciboBean.muestroCampo('D', 'CATEGOD')}" >
+                    <p:selectOneMenu id="priori" value="#{i.categoriaCheque}"
+                                     rendered="#{i.concepto.pideNumeroCheque eq 'S'}" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Propio" itemValue="P" />
+                        <f:selectItem itemLabel="Terceros" itemValue="T" />
+                    </p:selectOneMenu>
+                </p:column>
+
+                <p:column headerText="Banco"  width="200" rendered="#{reciboBean.muestroCampo('D', 'CODBCOD')}" >
+
+                    <p:autoComplete value="#{i.banco}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    rendered="#{i.concepto.pideNumeroCheque eq 'S'}"
+                                    completeMethod="#{bancoBean.complete}"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresTesoreria.banco}"  >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Código" width="100">
+                            <h:outputText value="#{e.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="CUIT Firmante" width="150" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'DOCFIR')}" >
+                    <p:inputText value="#{i.firmanteDocumento}" rendered="#{i.concepto.pideNumeroCheque eq 'S'}"  />
+                </p:column>
+
+                <p:column headerText="Observaciones" width="150" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'OBSERD')}" >
+                    <p:inputText value="#{i.observaciones}"  />
+                </p:column>
+
+                <p:column width="30" styleClass="TexAlCenter" >
+                    <p:commandLink rendered="#{i.imputaCentroCosto}"
+                                   title="Imputación en Centros de Costo"
+                                   process="@this"
+                                   update="centroCosto"
+                                   oncomplete="PF('dlgCentroCostoTesoreria').show()" >
+                        <f:setPropertyActionListener value="#{i}" target="#{movimientoPrestamoBean.itemMovimiento}" />
+                        <i class="fa fa-list-ul" ></i>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t12"  title="Conceptos Haber"
+               rendered="#{not empty movimientoPrestamoBean.m.movimientoTesoreria.itemsHaber}" >
+
+            <p:dataTable id="itemsHaber" value="#{movimientoPrestamoBean.m.movimientoTesoreria.itemsHaber}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <p:column headerText="Concepto" width="265" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'CONHAB')}" >
+
+                    <p:commandLink styleClass="Fright" style="padding-left: 5px;"
+                                   actionListener="#{movimientoPrestamoBean.asignarTotal(i)}"
+                                   process="itemsHaber"
+                                   update="@form">
+                        <i class="fa fa-arrow-right fa-2x Orange" ></i>
+                    </p:commandLink>
+
+                    <p:commandLink styleClass="Fright"
+                                   actionListener="#{movimientoPrestamoBean.agregarConcepto(movimientoPrestamoBean.m.itemsHaber,i)}"
+                                   process="itemsHaber"
+                                   update="itemsHaber">
+                        <i class="fa fa-plus fa-2x Green" ></i>
+                    </p:commandLink>
+
+                    <!--
+                    <p:remoteCommand name="procesarValorSeleccionado"
+                                     actionListener="#{movimientoPrestamoBean.procesarValor(i)}"
+                                     process="itemsHaber" update="itemsHaber" />
+
+                    <p:commandLink styleClass="Fright" style="padding-left: 5px;"
+                                   rendered="#{empty movimientoPrestamoBean.m.id and i.concepto.pideNumeroCheque eq 'S'}"
+                                   actionListener="#{movimientoPrestamoBean.buscarValores(i)}"
+                                   process="itemsHaber"  update=":fBuscadorCheque"
+                                   oncomplete="PF('dlgValores').show()" >
+                        <i class="fa fa fa-search fa-2x Blue" ></i>
+                    </p:commandLink>
+                    -->
+
+                    <h:outputText value="#{i.concepto.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Importe"  width="80" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'IMPOH')}" >
+                    <p:inputText id="precio"  value="#{i.importe}"
+                                 readonly="#{(not empty i.cuentaTesoreria and i.cuentaTesoreria.codigoMoneda ne aplicacionBean.parametro.codigoMonedaPrimaria) or i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe"
+                                 style="text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoPrestamoBean.calcularImportes}" event="keyup" delay="500"
+                                update="#{movimientoPrestamoBean.muestroCampo('D','IMPSEH')?'precioUsd':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Importe Ext"  width="80"  rendered="#{movimientoPrestamoBean.muestroCampo('D', 'IMPSEH')}">
+                    <p:inputText id="precioUsd"  value="#{i.importeMonedaSecundaria}"
+                                 readonly="#{i.cuentaTesoreria.codigoMoneda eq aplicacionBean.parametro.codigoMonedaPrimaria or i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                 rendered="#{not empty i.cuentaTesoreria and i.cuentaTesoreria.codigoMoneda ne aplicacionBean.parametro.codigoMonedaPrimaria}"
+                                 required="true"
+                                 requiredMessage="Se necesita un valor igual o mayor a cero en importe"
+                                 style="text-align: right;" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                        <p:ajax listener="#{movimientoPrestamoBean.calcularImportes}" event="keyup" delay="500"
+                                update="#{movimientoPrestamoBean.muestroCampo('D','IMPORH')?'precio':''}" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Cheque|Trans.|Dep."  width="100" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'CHQHAB')}" >
+                    <p:inputText value="#{i.cheque}"
+                                 readonly="#{i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                 rendered="#{i.concepto.tipo ne 'C'}"   />
+                </p:column>
+
+                <p:column headerText="F. Emisión"  width="100" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'FCHCHH')}" >
+                    <p:calendar value="#{i.fechaCheque}"
+                                style="text-align: center;"
+                                disabled="#{i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                rendered="#{i.concepto.pideNumeroCheque eq 'S' or i.concepto.tipo eq 'R' or i.concepto.tipo eq 'B'}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="F. Vto"  width="100" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'FCHVNH')}" >
+                    <p:calendar value="#{i.fechaVencimiento}"
+                                style="text-align: center;"
+                                disabled="#{i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                rendered="#{i.concepto.pideNumeroCheque eq 'S' or i.concepto.tipo eq 'R'}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="Categoría"  width="100" style="min-width: 120px;" rendered="#{reciboBean.muestroCampo('D', 'CATEGOH')}" >
+                    <p:selectOneMenu id="priori" value="#{i.categoriaCheque}"
+                                     disabled="#{i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                     rendered="#{i.concepto.pideNumeroCheque eq 'S'}" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Propio" itemValue="P" />
+                        <f:selectItem itemLabel="Terceros" itemValue="T" />
+                    </p:selectOneMenu>
+                </p:column>
+
+                <p:column headerText="Banco"  width="200" rendered="#{reciboBean.muestroCampo('D', 'CODBCOH')}" >
+
+                    <p:autoComplete value="#{i.banco}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    disabled="#{i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                    rendered="#{i.concepto.pideNumeroCheque eq 'S'}"
+                                    completeMethod="#{bancoBean.complete}"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresTesoreria.banco}"  >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Código" width="100">
+                            <h:outputText value="#{e.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+                </p:column>
+
+                <p:column headerText="CUIT Firmante" width="150" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'DOCFIR')}" >
+                    <p:inputText value="#{i.firmanteDocumento}"
+                                 readonly="#{i.cuentaTesoreria.tipoCuenta.codigo eq '2'}"
+                                 rendered="#{i.concepto.pideNumeroCheque eq 'S'}"  />
+                </p:column>
+
+                <p:column headerText="Observaciones" width="150" rendered="#{movimientoPrestamoBean.muestroCampo('D', 'OBSERH')}" >
+                    <p:inputText value="#{i.observaciones}"  />
+                </p:column>
+
+                <p:column width="30" styleClass="TexAlCenter" >
+                    <p:commandLink rendered="#{i.imputaCentroCosto}"
+                                   title="Imputación en Centros de Costo"
+                                   process="@this"
+                                   update="centroCosto"
+                                   oncomplete="PF('dlgCentroCostoTesoreria').show()" >
+                        <f:setPropertyActionListener value="#{i}" target="#{movimientoPrestamoBean.itemMovimiento}" />
+                        <i class="fa fa-list-ul" ></i>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+</ui:composition>
+

@@ -1,0 +1,94 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:hotkey bind="shift+n" actionListener="#{movimientoProduccionBean.nuevo()}" process="@this"  update="@form" />
+    <p:hotkey bind="shift+s" actionListener="#{movimientoProduccionBean.guardar(false)}"
+              rendered="#{not empty movimientoProduccionBean.m}"
+              update="@form" />
+
+    <p:sticky target="menuBar" />
+
+    <!-- MENU -->
+    <p:menubar id="menuBar" >
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{movimientoProduccionBean.nuevaBusqueda}"
+                    immediate="true"
+                    update="@form" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{movimientoProduccionBean.nuevo()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoFacturacionBean.modoVista eq 'B' or empty movimientoFacturacionBean.m.itemsProducto}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{movimientoProduccionBean.guardar(false)}"
+                    rendered="#{not empty movimientoProduccionBean.m}"
+                    update="@form" />
+
+        <p:submenu label="Pendientes" icon="fa fa-list-alt"
+                   rendered="#{empty movimientoProduccionBean.m.id and not empty movimientoProduccionBean.circuito.circuitosRelacionados}" >
+
+            <p:menuitem value="#{movimientoProduccionBean.circuito.circuitosRelacionados[0].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoProduccionBean.verPendientes(movimientoProduccionBean.circuito.circuitosRelacionados[0])}"
+                        rendered="#{not empty movimientoProduccionBean.circuito.circuitosRelacionados[0]}"
+                        process="@this"
+                        update="@form, buscadorPendiente">
+            </p:menuitem>
+
+            <p:menuitem value="#{movimientoProduccionBean.circuito.circuitosRelacionados[1].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoProduccionBean.verPendientes(movimientoProduccionBean.circuito.circuitosRelacionados[1])}"
+                        rendered="#{not empty movimientoProduccionBean.circuito.circuitosRelacionados[1]}"
+                        process="@this"
+                        update="@form, buscadorPendiente">
+            </p:menuitem>
+
+            <p:menuitem value="#{movimientoProduccionBean.circuito.circuitosRelacionados[2].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoProduccionBean.verPendientes(movimientoProduccionBean.circuito.circuitosRelacionados[2])}"
+                        rendered="#{not empty movimientoProduccionBean.circuito.circuitosRelacionados[2]}"
+                        process="@this"
+                        update="@form, buscadorPendiente">
+            </p:menuitem>
+
+            <p:menuitem value="#{movimientoProduccionBean.circuito.circuitosRelacionados[3].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoProduccionBean.verPendientes(movimientoProduccionBean.circuito.circuitosRelacionados[3])}"
+                        rendered="#{not empty movimientoProduccionBean.circuito.circuitosRelacionados[3]}"
+                        process="@this"
+                        update="@form, buscadorPendiente">
+            </p:menuitem>
+
+        </p:submenu>
+
+        <p:submenu label="Imprimir" icon="fa fa-print" rendered="#{not empty movimientoProduccionBean.m.id}" >
+
+            <p:menuitem value="Comprobante de Producción" icon="fa fa-print"
+                        actionListener="#{movimientoProduccionBean.imprimir('PD')}"
+                        rendered="#{movimientoProduccionBean.m.comprobante.modulo eq 'PD'}"
+                        process="@this" >
+            </p:menuitem>
+
+            <p:menuitem value="Comprobante de Stock" icon="fa fa-print"
+                        actionListener="#{movimientoProduccionBean.imprimir('ST')}"
+                        rendered="#{not empty movimientoProduccionBean.m.movimientoStock}"
+                        process="@this" >
+            </p:menuitem>
+
+        </p:submenu>
+
+    </p:menubar>
+
+</ui:composition>
+

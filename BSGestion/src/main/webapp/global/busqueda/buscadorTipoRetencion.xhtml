@@ -1,0 +1,53 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorTipoRetencion" header="Tipo Retencion" modal="true"
+              widgetVar="dlg_tipoRetencion"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 650px;" responsive="true">
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusqueda"/>
+            
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+                
+                <p:inputText id="txtBusqueda" value="#{tipoRetencionBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaTipoRetencion" listener="#{tipoRetencionBean.buscar}"/>
+                </p:inputText>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaTipoRetencion" value="#{tipoRetencionBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{tipoRetencionBean.tipoRetencion}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+                
+                <p:ajax event="rowSelect" listener="#{tipoRetencionBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlg_tipoRetencion').hide(), procesarTipoRetencion()" />
+                    
+                <p:column headerText="Código" width="20%" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >                         
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="40%" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+
+            </p:dataTable>      
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

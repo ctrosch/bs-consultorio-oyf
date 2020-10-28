@@ -1,0 +1,84 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorEquipoModelo" header="Modelo de equipos"
+              widgetVar="dlgEquipoModelo" resizable="false" draggable="false" modal="true" position="top"
+              minHeight="400" style="max-width: 800px;" responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaEquipoModelo"/>
+
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:autoComplete id="marca" value="#{equipoModeloBean.codMarca}" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                placeholder="Seleccione la marca"
+                                completeMethod="#{equipoMarcaBean.complete}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p.codigo}"
+                                forceSelection="true" >
+                    <p:ajax event="itemSelect" listener="#{equipoModeloBean.buscar}" process="@this,txtBusquedaEquipoModelo" update="tablaEquipoModelo" />
+
+                </p:autoComplete>
+
+                <p:inputText id="txtBusquedaEquipoModelo" value="#{equipoModeloBean.txtBusqueda}" autocomplete="false"  placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,marca" update="tablaEquipoModelo" listener="#{equipoModeloBean.buscar}"/>
+                </p:inputText>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaEquipoModelo" value="#{equipoModeloBean.lista}" var="i"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{equipoModeloBean.equipoModelo}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{equipoModeloBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgEquipoModelo').hide(), procesarEquipoModelo()" />
+
+                <p:column headerText="Código" sortBy="#{i.codigo}"  width="100" style="text-align: center;"  >
+                    <h:outputText value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" sortBy="#{i.descripcion}" >
+                    <h:outputText value="#{i.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Marca" sortBy="#{i.marca.descripcion}" >
+                    <h:outputText value="#{i.marca.descripcion}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{equipoModeloBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaEquipoModelo" listener="#{equipoModeloBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistroEquipoModelo" value="#{equipoModeloBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{equipoModeloBean.buscar}"
+                                     process="@this,cantRegistroEquipoModelo" update="tablaEquipoModelo" />
+                </h:panelGroup>
+            </p:panelGrid>
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

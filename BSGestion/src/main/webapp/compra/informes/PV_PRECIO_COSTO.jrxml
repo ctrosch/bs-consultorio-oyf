@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListaCosto" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="CODLPV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COTIZA" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[BigDecimal.ONE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPPRO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RU1DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RU1HAS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["9999"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RU2DES" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RU2HAS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="INCIMP" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+pv_lista_precio.CODIGO AS pv_lista_precio_CODIGO,
+pv_lista_precio.DESCRP AS pv_lista_precio_DESCRP,
+pv_lista_precio.CODCOF AS pv_lista_precio_MONEDA,
+pv_lista_precio.PRIMPR AS PRIORIZA_MONEDA_PRODUCTO,
+st_producto.CODIGO As st_producto_CODIGO,
+st_producto.DESCRP As st_producto_DESCRP,
+st_rubro01.CODIGO AS st_rubro01_CODIGO,
+st_rubro01.DESCRP  As st_rubro01_DESCRP,
+st_rubro02.DESCRP  As st_rubro02_DESCRP,
+st_producto.MONREP AS st_producto_MONREP,
+st_producto.UNIMED As st_producto_UNIMED,
+pv_lista_precio_item.PRECIO AS pv_lista_precio_item_PRECIO,
+pv_lista_precio_item.FECLIS AS pv_lista_precio_item_FECLIS,
+CASE st_producto.CODCPT
+	WHEN 'V001' THEN 1.21
+	WHEN 'V002' THEN 1.105
+	WHEN 'V000' THEN 1
+  END AS IVA,
+(SELECT gr_moneda_valores.COTIZ
+   FROM gr_moneda_valores
+	WHERE gr_moneda_valores.FCHALT <= CURRENT_DATE()
+	AND gr_moneda_valores.CODCOF = 'USD'
+	ORDER BY gr_moneda_valores.FCHALT DESC LIMIT 1 ) AS COTIZACION
+
+FROM pv_lista_precio Inner Join
+  pv_lista_precio_item On pv_lista_precio_item.CODLIS = pv_lista_precio.CODIGO
+  Inner Join
+  st_producto On pv_lista_precio_item.ARTCOD = st_producto.CODIGO Inner Join
+  st_rubro01 On st_producto.TIPPRO = st_rubro01.TIPPRO And st_producto.RUBR01 =
+    st_rubro01.CODIGO Inner Join
+  st_rubro02 On st_producto.TIPPRO = st_rubro02.TIPPRO And st_producto.RUBR02 =
+    st_rubro02.CODIGO
+WHERE pv_lista_precio.CODIGO = $P{CODLPV}
+AND pv_lista_precio_item.FECLIS <= $P{FECHA}
+AND st_producto.TIPPRO = $P{TIPPRO}
+AND st_producto.RUBR01 BETWEEN  $P{RU1DES} AND $P{RU1HAS}
+AND st_producto.RUBR02 BETWEEN  $P{RU2DES} AND $P{RU2HAS}
+GROUP BY
+pv_lista_precio.CODIGO,
+pv_lista_precio.DESCRP,
+st_producto.CODIGO,
+st_producto.DESCRP,
+st_rubro01.CODIGO,
+st_rubro01.DESCRP,
+st_rubro02.DESCRP,
+st_producto.MONREP
+ORDER BY pv_lista_precio.CODIGO,
+st_rubro01.CODIGO,
+st_producto.CODIGO,
+pv_lista_precio_item.FECLIS DESC]]>
+	</queryString>
+	<field name="pv_lista_precio_CODIGO" class="java.lang.String"/>
+	<field name="pv_lista_precio_DESCRP" class="java.lang.String"/>
+	<field name="pv_lista_precio_MONEDA" class="java.lang.String"/>
+	<field name="PRIORIZA_MONEDA_PRODUCTO" class="java.lang.String"/>
+	<field name="st_producto_CODIGO" class="java.lang.String"/>
+	<field name="st_producto_DESCRP" class="java.lang.String"/>
+	<field name="st_rubro01_CODIGO" class="java.lang.String"/>
+	<field name="st_rubro01_DESCRP" class="java.lang.String"/>
+	<field name="st_rubro02_DESCRP" class="java.lang.String"/>
+	<field name="st_producto_MONREP" class="java.lang.String"/>
+	<field name="st_producto_UNIMED" class="java.lang.String"/>
+	<field name="pv_lista_precio_item_PRECIO" class="java.math.BigDecimal"/>
+	<field name="pv_lista_precio_item_FECLIS" class="java.sql.Date"/>
+	<field name="IVA" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="COTIZACION" class="java.math.BigDecimal"/>
+	<group name="RUBRO01">
+		<groupExpression><![CDATA[$F{st_rubro01_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField pattern="0000000">
+					<reportElement x="0" y="0" width="221" height="12" uuid="68b805f5-14c2-471f-9492-4e5fa433182a"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{st_rubro01_DESCRP}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="32">
+			<line>
+				<reportElement x="0" y="30" width="555" height="1" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="417" y="0" width="1" height="30" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="0" y="0" width="70" height="25" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="429" y="14" width="114" height="11" uuid="0427b782-8e84-49fb-8bce-824533e57710"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="0" width="114" height="13" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="144" y="0" width="273" height="30" uuid="a2170831-50a6-4035-a08e-f5d766cf6464"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Precios de Costo Histórico]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="35">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="15" width="555" height="15" backcolor="#CAE5FF" uuid="39db9433-79e0-4113-923e-b3a83bb5f042"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="25"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="15" width="58" height="15" uuid="1e7cd8af-97ac-4ede-9580-1f2a9dda18c7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="15" width="315" height="15" uuid="35e4e3d2-17f2-469c-aa24-6adab9f3516b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="2" width="555" height="13" forecolor="#FFFFFF" backcolor="#99CCFF" uuid="91bdde75-5359-48f1-902b-bd293e968cb1"/>
+			</rectangle>
+			<textField pattern="">
+				<reportElement x="2" y="2" width="34" height="12" uuid="dbaecef5-82e9-4631-8c7a-1ba13fa50a50"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_lista_precio_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="0000000">
+				<reportElement x="36" y="3" width="221" height="12" uuid="1f081d16-92a0-4dca-b5e7-0b791ab037eb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_lista_precio_DESCRP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="375" y="15" width="63" height="15" uuid="7dde2f69-ad37-4ac6-9b42-01109a1aa3be"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fec. Vigencia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="15" width="25" height="15" uuid="c032c1ce-4859-4080-8572-625e293a615c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[U.M.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="528" y="15" width="25" height="15" uuid="5cdbd65d-d3b6-4249-937c-cb9c244209b6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mon.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="465" y="15" width="63" height="15" uuid="e2df35c3-0821-4231-8042-6d996caf3d65"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Precio]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" forecolor="#999999" uuid="4f90148f-f430-4eb9-baf2-e871628e03eb"/>
+			</line>
+			<textField>
+				<reportElement x="2" y="1" width="58" height="12" uuid="98577cd0-0711-4b45-88c7-f395f1e397fb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{st_producto_CODIGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="1" width="315" height="12" uuid="5adcf248-fefc-4d7d-8271-158002f1355b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{st_producto_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="375" y="1" width="63" height="12" uuid="786138c5-c7f2-46d8-845f-5ac0203cff82"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pv_lista_precio_item_FECLIS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="528" y="1" width="26" height="12" uuid="6f1ae5e2-1a2b-4d40-aff9-11d8ede2f723"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{PRIORIZA_MONEDA_PRODUCTO}.equals("S")?$F{st_producto_MONREP}:$F{pv_lista_precio_MONEDA})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="439" y="1" width="25" height="12" uuid="73e651ed-9d43-4a7a-816b-68c000798bca"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{st_producto_UNIMED}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="465" y="1" width="63" height="12" uuid="cb2662d5-c583-4ac5-b8c1-0de651c10784"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{PRIORIZA_MONEDA_PRODUCTO}.equals("S")?$F{pv_lista_precio_item_PRECIO}:($F{pv_lista_precio_MONEDA}.equals("ARS")&&$F{st_producto_MONREP}.equals("ARS")?$F{pv_lista_precio_item_PRECIO}:$F{pv_lista_precio_item_PRECIO}.multiply($F{COTIZACION}))
+).multiply(($P{INCIMP}.equals("S")?$F{IVA}:BigDecimal.ONE))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="16" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" forecolor="#999999" uuid="9de11e19-2d1d-4b03-9d8c-121667c3d4b5"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="441" y="0" width="114" height="10" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="114" height="10" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

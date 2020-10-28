@@ -1,0 +1,273 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <!-- DATOS -->
+
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <p:panelGrid columns="2" layout="grid"
+                     styleClass="ui-panelgrid-blank"
+                     columnClasses="Container40, Container60" >
+
+            <h:outputText value="Usuario *" />
+            <p:inputText value="#{usuarioBean.usuario.usuario}" rendered="#{not usuarioBean.esNuevo}" readonly="true"/>
+            <p:inputText value="#{usuarioBean.usuario.usuario}" rendered="#{usuarioBean.esNuevo}"
+                         required="true"
+                         requiredMessage="El usuario es necesario" />
+
+            <h:outputText value="Clave *" />
+            <p:inputText value="#{usuarioBean.usuario.password}"
+                         required="true"
+                         requiredMessage="La clave es necesaria" />
+
+            <h:outputText value="Nombre *" />
+            <p:inputText value="#{usuarioBean.usuario.nombre}"
+                         required="true"
+                         requiredMessage="El nombre es necesario" />
+
+            <h:outputText value="E-mail" />
+            <p:inputText value="#{usuarioBean.usuario.email}"   />
+
+            <h:outputText value="Tipo *" />
+            <p:inputText value="#{usuarioBean.usuario.tipo.descripcion}" readonly="true" rendered="#{not usuarioBean.esNuevo}"   />
+            <p:selectOneMenu value="#{usuarioBean.usuario.tipo}" rendered="#{usuarioBean.esNuevo}"
+                             required="true" requiredMessage="Seleccione el tipo"
+                             converter="#{conversoresSeguridad.tipo}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{tipoUsuarioBean.lista}" var="t" itemLabel="#{t.descripcion}" itemValue="#{t}" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Estado *" />
+            <p:selectOneMenu value="#{usuarioBean.usuario.estado}"
+                             required="true" requiredMessage="Seleccione el estado"
+                             converter="#{conversoresSeguridad.estado}"
+                             effect="fade" filter="true" >
+                <p:ajax process="@this" />
+                <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                <f:selectItems value="#{estadoUsuarioBean.lista}" var="e" itemLabel="#{e.descripcion}" itemValue="#{e}" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Favoritos Visible *" />
+            <p:selectOneMenu value="#{usuarioBean.usuario.favoritosVisible}"
+                             required="true" requiredMessage="Seleccione si Favoritos es Visible"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <h:outputText value="Historial Visible *" />
+            <p:selectOneMenu value="#{usuarioBean.usuario.historialVisible}"
+                             required="true" requiredMessage="Seleccione si Historial es Visible"  >
+                <p:ajax process="@this" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItem itemLabel="Si" itemValue="S" />
+                <f:selectItem itemLabel="No" itemValue="N" />
+            </p:selectOneMenu>
+
+            <bs:outputTexWhitLink value="Técnico taller "
+                                  url="#{usuarioBean.obtenerUrlMenu('SIS_00348','CODIGO',usuarioBean.usuario.tecnico.codigo)}" />
+
+            <p:selectOneMenu value="#{usuarioBean.usuario.tecnico}"
+                             placeholder="Seleccionar"
+                             converter="#{conversoresTaller.tecnico}" >
+
+                <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                <f:selectItems value="#{tecnicoBean.lista}"
+                               var="i" itemLabel="#{i.nombre}" itemValue="#{i}"/>
+                <p:ajax process="@this" />
+            </p:selectOneMenu>
+
+            <bs:outputTexWhitLink value="Promotor "
+                                  url="#{usuarioBean.obtenerUrlMenu('SIS_00396','IDP',usuarioBean.usuario.promotor.id)}" />
+            <p:autoComplete value="#{usuarioBean.usuario.promotor}"  dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            placeholder="Seleccionar"
+                            completeMethod="#{promotorBean.complete}"
+                            var="p" itemLabel="#{p.nombre}" itemValue="#{p}"
+                            converter="#{conversoresPrestamo.promotor}" forceSelection="true" >
+
+                <p:ajax event="itemSelect" process="@this" />
+            </p:autoComplete>
+
+            <h:outputText value="Operario"   />
+            <p:autoComplete value="#{usuarioBean.usuario.operario}"    dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            placeholder="Seleccionar"
+                            completeMethod="#{operarioBean.complete}"
+                            var="p" itemLabel="#{p.nombre}" itemValue="#{p}"
+                            converter="#{conversoresProduccion.operario}" forceSelection="true" >
+
+                <p:ajax event="itemSelect" process="@this" />
+
+                <p:column>
+                    <h:outputText value="#{p.codigo}" />
+                </p:column>
+
+                <p:column>
+                    <h:outputText value="#{p.nombre}" />
+                </p:column>
+
+            </p:autoComplete>
+
+
+            <bs:outputTexWhitLink value="Profesional Médico "
+                                  url="#{usuarioBean.obtenerUrlMenu('SIS_00696','NROCTA',usuarioBean.usuario.profesionalMedico.nrocta)}" />
+            <p:autoComplete value="#{usuarioBean.usuario.profesionalMedico}"    dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            placeholder="Seleccionar"
+                            completeMethod="#{profesionalMedicoBean.complete}"
+                            var="h" itemLabel="#{h.nombreComplete}"  itemValue="#{h}"
+                            converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                <p:ajax event="itemSelect" process="@this" />
+
+                <p:column>
+                    <h:outputText value="#{h.nrocta}" />
+                </p:column>
+
+                <p:column>
+                    <h:outputText value="#{h.apellido} #{h.nombre}" />
+                </p:column>
+
+            </p:autoComplete>
+
+            <bs:outputTexWhitLink value="Perfil Cuentas de Email"
+                                  url="#{usuarioBean.obtenerUrlMenu('SIS_00562','IDP',usuarioBean.usuario.perfilCuentaEmail.id)}" />
+            <p:autoComplete value="#{usuarioBean.usuario.perfilCuentaEmail}"  dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            placeholder="Seleccionar"
+                            completeMethod="#{perfilCuentaBean.complete}"
+                            var="pe" itemLabel="#{pe.usuario}" itemValue="#{pe}"
+                            converter="#{conversoresSeguridad.perfilCuenta}" forceSelection="true" >
+
+            </p:autoComplete>
+
+
+        </p:panelGrid>
+
+        <p:tabView>
+            <p:tab title="Grupos">
+
+                <p:dataTable id="tablaGrupo" value="#{usuarioBean.usuario.grupos}" var="i"
+                             resizeMode="expand" liveResize="true"
+                             emptyMessage="No se encontraron resultados"
+                             rows="50" paginator="false">
+
+                    <f:facet name="footer" >
+
+                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                         actionListener="#{usuarioBean.nuevoItemGrupo()}"
+                                         immediate="true"
+                                         value="Agregar grupo"
+                                         process="tablaGrupo"
+                                         update="tablaGrupo" />
+
+                    </f:facet>
+
+                    <p:column headerText="Grupo" >
+                        <div class="ui-inputgroup">
+                            <p:autoComplete value="#{i.grupo}" dropdown="true"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{grupoBean.complete}"
+                                            var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                            converter="#{conversoresSeguridad.grupo}" >
+
+                                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{p.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Descripción">
+                                    <h:outputText value="#{p.descripcion}" />
+                                </p:column>
+
+                            </p:autoComplete>
+
+                            <span class="ui-inputgroup-addon">
+                                <bs:linkMenuSistema title="Ver grupo"
+                                                    url="#{usuarioBean.obtenerUrlMenu('SIS_00338','CODIGO',i.grupo.codigo)}" />
+                            </span>
+                        </div>
+
+                    </p:column>
+
+                    <p:column headerText="" width="50" style="text-align: center;" >
+
+                        <p:commandLink process="tablaGrupo" update="tablaGrupo,message,messageg"
+                                       actionListener="#{usuarioBean.eliminarItemGrupo(i)}"
+                                       immediate="true" >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                            <i class="fa fa-close fa-2x Red" ></i>
+                        </p:commandLink>
+
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:tab>
+
+            <p:tab title="Sucursales">
+
+                <p:dataTable id="tablaSucursal" value="#{usuarioBean.usuario.sucursales}" var="i"
+                             resizeMode="expand" liveResize="true"
+                             emptyMessage="No se encontraron resultados"
+                             rows="50" paginator="false">
+
+                    <f:facet name="footer" >
+
+                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                         actionListener="#{usuarioBean.nuevoItemSucursal() }"
+                                         immediate="true"
+                                         value="Agregar Sucursal"
+                                         process="tablaSucursal"
+                                         update="tablaSucursal" />
+
+                    </f:facet>
+
+                    <p:column headerText="Sucursal" >
+
+                        <p:selectOneMenu value="#{i.sucursal}"
+                                         required="true" requiredMessage="Seleccione la sucursal"
+                                         converter="#{conversoresGeneral.sucursal}"
+                                         effect="fade"  >
+                            <p:ajax process="@this"  />
+                            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                            <f:selectItems value="#{sucursalBean.lista}"
+                                           var="c" itemLabel="#{c.nombre}" itemValue="#{c}" />
+                        </p:selectOneMenu>
+
+                    </p:column>
+
+                    <p:column headerText="" width="50" style="text-align: center;" >
+
+                        <p:commandLink process="tablaSucursal" update="tablaSucursal,message,messageg"
+                                       actionListener="#{usuarioBean.eliminarItemSucursal(i)}"
+                                       immediate="true" >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar la sucursal?" icon="ui-icon-alert" />
+                            <i class="fa fa-close fa-2x Red" ></i>
+                        </p:commandLink>
+
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:tab>
+
+        </p:tabView>
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

@@ -1,0 +1,468 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <div class="EmptyBox10" />
+    <!-- DETALLE -->
+    <p:tabView id="tb" activeIndex="#{movimientoCompraBean.indexTab1}"
+               rendered="#{not empty movimientoCompraBean.m and not movimientoCompraBean.buscaMovimiento}" >
+
+        <p:ajax event="tabChange" listener="#{movimientoCompraBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Items" >
+
+            <p:dataTable id="detalle" value="#{movimientoCompraBean.m.itemsProducto}" var="i"
+                         scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron items. Haga clic en agregar items"
+                         rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer">
+
+                    <h:panelGroup id="footerDetalle" layout="block" styleClass="p-grid" >
+
+                        <div class="p-col" >
+
+                            <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                             value="Agregar item"
+                                             disabled="#{movimientoCompraBean.CIRCOM ne movimientoCompraBean.CIRAPL and empty movimientoCompraBean.m.itemsProducto}"
+                                             rendered="#{movimientoCompraBean.circuito.permiteAgregarItems eq 'S'}"
+                                             actionListener="#{movimientoCompraBean.nuevoItem()}"
+                                             process="detalle"
+                                             update="detalle,message,messageg" />
+
+                        </div>
+
+                        <div class="p-col" >
+
+                            <p:commandButton icon="fa fa-plus" styleClass="OrangeBack"
+                                             value="Selección múltiple"
+                                             disabled="#{movimientoCompraBean.CIRCOM ne movimientoCompraBean.CIRAPL and empty movimientoCompraBean.m.itemsProducto}"
+                                             rendered="#{movimientoCompraBean.circuito.permiteAgregarItems eq 'S'}"
+                                             actionListener="#{movimientoCompraBean.preparoBusquedaProductos()}"
+                                             oncomplete="PF('dlgProductoNew').show();"
+                                             process="detalle" update="@form,buscadorProductoNew" />
+
+                        </div>
+
+                    </h:panelGroup>
+
+                </f:facet>
+
+                <p:column headerText="" width="65"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','IMAGEN')}"  >
+
+                    <h:outputLink value="/#{aplicacionBean.parametro.nombreCarpetaArchivos}/productos/#{i.producto.imagenChica}"
+                                  rendered="#{not empty i.producto.imagenChica}" target="_blank" >
+
+                        <h:graphicImage value="/#{aplicacionBean.parametro.nombreCarpetaArchivos}/productos/#{i.producto.imagenChica}"
+                                        width="100%" />
+                    </h:outputLink>
+
+                    <h:graphicImage name="image/noimage.png" styleClass="TexAlCenter MarAuto" width="100%"
+                                    rendered="#{empty i.producto.imagenChica}" />
+                </p:column>
+
+                <p:column headerText="Código" width="70" styleClass="TexAlCenter"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','ARTCOD')}"  >
+
+                    <h:outputText value="#{i.producto.codigo}" rendered="#{not empty i.producto}" />
+
+                </p:column>
+
+                <p:column headerText="Producto" width="400" >
+
+                    <div class="ui-inputgroup">
+                        <span class="ui-inputgroup-addon">
+                            <p:commandLink process="@this"
+                                           title="Buscar producto"
+                                           styleClass="Fs18 Fright" style="color: #0277bd; padding-left: 5px;"
+                                           actionListener="#{productoBean.buscar()}"
+                                           oncomplete="PF('dlgProducto').show()"
+                                           rendered="#{not empty movimientoCompraBean.m.listaCosto}" >
+                                <f:setPropertyActionListener value="#{i}" target="#{movimientoCompraBean.item}" />
+                                <i class="fa fa-search" ></i>
+                            </p:commandLink>
+                        </span>
+
+                        <p:inputText value="#{i.descripcion}"
+                                     readonly="#{movimientoCompraBean.circuito.editaDescripcion eq 'N'}"
+                                     rendered="#{not empty i.producto}" >
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputText>
+
+                        <h:panelGroup styleClass="ui-inputgroup-addon"
+                                      rendered="#{not empty i.producto and i.producto.gestionaStock eq 'S' and movimientoCompraBean.muestroCampo('D','STOCK')}" >
+
+                            <p:commandLink id="btnStock"
+                                           title="Ver stock"
+                                           styleClass="icono-link"
+                                           actionListener="#{consultaStock.verStockPorProducto(i.producto)}"
+                                           process="@this"
+                                           update="consultaStock"
+                                           oncomplete="PF('dlgConsultaStock').show()" >
+                                <i class="fa fa-cubes Blue" ></i>
+                            </p:commandLink>
+
+                        </h:panelGroup>
+
+                        <h:panelGroup styleClass="ui-inputgroup-addon"
+                                      rendered="#{not empty i.producto}" >
+                            <bs:linkMenuSistema url="#{movimientoCompraBean.obtenerUrlMenu('SIS_00138','CODIGO',i.producto.codigo)}" />
+                        </h:panelGroup>
+
+                    </div>
+
+                </p:column>
+
+                <p:column headerText="Observaciones/Detalle" width="300"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','OBSERVA')}" >
+                    <p:inputTextarea value="#{i.observaciones}" rows="2"
+                                     rendered="#{not empty i.producto and not empty movimientoCompraBean.m.listaCosto}" />
+                </p:column>
+
+                <p:column headerText="Cod. Prov." width="70" rendered="#{movimientoCompraBean.muestroCampo('D','CODPRO')}" >
+                    <h:outputText value="#{i.codigoProveedor}"
+                                  rendered="#{not empty i.producto}"/>
+                </p:column>
+
+                <!--
+                <p:column headerText="Stock" width="30" styleClass="TexAlCenter"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','STOCK')}">
+
+                    <p:commandButton icon="fa fa-search"
+                                     actionListener="#{movimientoCompraBean.setearStockPorProducto(i, null)}"
+                                     update="buscadorStock,message,messageg"
+                                     process="@this" oncomplete="PF('dlgStock').show()"  >
+                    </p:commandButton>
+                </p:column>
+                -->
+
+                <p:column headerText="Cantidad" width="70"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','CANTID')}" >
+
+                    <p:inputText value="#{i.cantidad}"
+                                 rendered="#{not empty i.producto}" style="text-align: right;"
+                                 readonly="#{movimientoCompraBean.circuito.editaCantidad ne 'S'}" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                        <p:ajax listener="#{movimientoCompraBean.modificarCantidad(i)}" event="keyup" delay="500"
+                                update="detalleItem,
+                                total,
+                                :formulario:totales,
+                                #{movimientoCompraBean.muestroCampo('D','PRESEC')?'txtPrecioSec':''},
+                                #{movimientoCompraBean.muestroCampo('D','TOTSEC')?'totalsec':''}" />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="U.M." width="30" styleClass="TexAlCenter"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','UNIMED')}" >
+
+                    <h:outputText  value="#{i.unidadMedida.codigo}"  />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}" width="120"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','NATRI1') and movimientoCompraBean.circuito.administraAtributo1 eq 'S'}" >
+
+                    <p:inputText value="#{i.atributo1}" readonly="#{empty i.producto or i.producto.administraAtributo1 eq 'N'}" >
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo(i)}" event="keyup" delay="500"
+                                update="detalleItem" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}" width="120"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','NATRI2') and movimientoCompraBean.circuito.administraAtributo1 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo2}" readonly="#{empty i.producto or i.producto.administraAtributo2 eq 'N'}"  >
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo(i)}" event="keyup" delay="500"
+                                update="detalleItem" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo3}" width="120"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','NATRI3') and movimientoCompraBean.circuito.administraAtributo3 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo3}" readonly="#{empty i.producto or i.producto.administraAtributo3 eq 'N'}">
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo(i)}" event="keyup" delay="500"
+                                update="detalleItem" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo4}" width="120"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','NATRI4') and movimientoCompraBean.circuito.administraAtributo4 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo4}" readonly="#{empty i.producto or i.producto.administraAtributo4 eq 'N'}">
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo(i)}" event="keyup" delay="500"
+                                update="detalleItem" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo5}" width="120"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','NATRI5') and movimientoCompraBean.circuito.administraAtributo5 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo5}"  readonly="#{empty i.producto or i.producto.administraAtributo5 eq 'N'}">
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo(i)}" event="keyup" delay="500"
+                                update="detalleItem" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo6}" width="120"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','NATRI6') and movimientoCompraBean.circuito.administraAtributo6 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo6}" readonly="#{empty i.producto or i.producto.administraAtributo6 eq 'N'}">
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo(i)}" event="keyup" delay="500"
+                                update="detalleItem" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo7}" width="120"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','NATRI7') and movimientoCompraBean.circuito.administraAtributo7 eq 'S'}">
+
+                    <p:inputText  value="#{i.atributo7}" readonly="#{empty i.producto or i.producto.administraAtributo7 eq 'N'}">
+                        <p:ajax listener="#{movimientoCompraBean.modificarAtributo(i)}" event="keyup" delay="500"
+                                update="detalleItem" />
+                    </p:inputText>
+                </p:column>
+
+                <p:column headerText="Detalle" style="width: 50px; text-align: center;"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','DETALL')}"   >
+                    <p:rowToggler  />
+                </p:column>
+
+                <p:column headerText="Precio"  width="90"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','PRECIO')}" >
+
+                    <h:outputText id="txtPrecio" value="#{i.precio}" styleClass="Fright"
+                                  rendered="#{movimientoCompraBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                    </h:outputText>
+
+                    <p:inputText id="precio"  value="#{i.precio}" styleClass="TexAlRight"
+                                 rendered="#{movimientoCompraBean.m.monedaRegistracion.codigo ne aplicacionBean.parametro.codigoMonedaSecundaria and not empty i.producto}"
+                                 readonly="#{movimientoCompraBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoCompraBean.calcularImportes()}" event="keyup" delay="500"
+                                update="total,:formulario:totales,
+                                #{movimientoCompraBean.muestroCampo('D','PRESEC')?'txtPrecioSec':''},
+                                #{movimientoCompraBean.muestroCampo('D','TOTSEC')?'totalsec':''}" />
+                    </p:inputText>
+
+                </p:column>
+
+                <p:column headerText="Precio Sec." width="90" style="text-align: right;"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','PRESEC')}">
+
+                    <h:outputText id="txtPrecioSec" value="#{i.precioSecundario}" styleClass="Fright"
+                                  rendered="#{movimientoCompraBean.m.monedaRegistracion.codigo ne aplicacionBean.parametro.codigoMonedaSecundaria}"  >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                    </h:outputText>
+
+                    <p:inputText id="preciosec"  value="#{i.precioSecundario}" styleClass="TexAlRight"
+                                 rendered="#{movimientoCompraBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria and not empty i.producto}"
+                                 readonly="#{movimientoCompraBean.circuito.editaImporte ne 'S'}" >
+                        <f:convertNumber pattern="###,###,##0.0000" />
+                        <p:ajax listener="#{movimientoCompraBean.calcularImportes()}" event="keyup" delay="500"
+                                update="total,:formulario:totales,
+                                #{movimientoCompraBean.muestroCampo('D','PRECIO')?'txtPrecio':''},
+                                #{movimientoCompraBean.muestroCampo('D','TOTSEC')?'totalsec':''}" />
+                    </p:inputText>
+
+
+                </p:column>
+
+                <p:column headerText="F. Entrega" width="80" rendered="#{movimientoCompraBean.muestroCampo('D','FCHENT')}" >
+
+                    <f:facet name="header">
+
+                        <p:calendar value="#{movimientoCompraBean.m.fechaEntrega}"
+                                    rendered="#{movimientoCompraBean.muestroCampo('D','FCHENT')}"
+                                    placeholder="Fecha Entrega"
+                                    pattern="dd/MM/yyyy"
+                                    showOn="button"
+                                    navigator="true"
+                                    mask="true"  >
+                            <p:ajax event="dateSelect" process="@this" update="detalle" listener="#{movimientoCompraBean.onChangeFechaEntrega()}" />
+                        </p:calendar>
+
+                    </f:facet>
+
+                    <p:calendar value="#{i.fechaEntregaDesde}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"  >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="Total"  width="90"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','TOTLIN')}" >
+
+                    <h:outputText id="total" value="#{i.totalLinea}" styleClass="Fright"
+                                  rendered="#{not empty i.producto}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="Total Sec."  width="90"
+                          rendered="#{movimientoCompraBean.muestroCampo('D','TOTSEC')}" >
+
+                    <h:outputText id="totalsec" value="#{i.totalLineaSecundario}" styleClass="Fright"
+                                  rendered="#{not empty i.producto}" >
+                        <f:convertNumber pattern="###,###,##0.00" />
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="" style="max-width: 30px;" width="30" styleClass="TexAlCenter" >
+
+                    <p:commandLink process="detalle" update="@form"
+                                   actionListener="#{movimientoCompraBean.eliminarItem(i)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar #{i.producto.descripcion}?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+                <p:rowExpansion>
+
+                    <div class="Wid80 Fright MarAuto WidAutoOnMobile">
+
+                        <p:dataTable id="detalleItem" value="#{i.itemsDetalle}" var="d"
+                                     resizeMode="expand" liveResize="true" >
+
+                            <f:facet name="footer">
+                                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                                 value="Agregar item"
+                                                 process="detalleItem" update="detalleItem,message,messageg"
+                                                 actionListener="#{movimientoCompraBean.nuevoItemDetalle(i)}" />
+                            </f:facet>
+
+                            <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}" width="120"
+                                      rendered="#{movimientoCompraBean.circuito.administraAtributo1 eq 'S'}" >
+
+                                <p:inputText value="#{d.atributo1}" readonly="#{empty d.producto or d.producto.administraAtributo1 eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}" width="120"
+                                      rendered="#{movimientoCompraBean.circuito.administraAtributo2 eq 'S'}">
+
+                                <p:inputText  value="#{d.atributo2}" readonly="#{empty d.producto or d.producto.administraAtributo2 eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo3}" width="120"
+                                      rendered="#{movimientoCompraBean.circuito.administraAtributo3 eq 'S'}">
+
+                                <p:inputText  value="#{d.atributo3}" readonly="#{empty d.producto or d.producto.administraAtributo3 eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo4}" width="120"
+                                      rendered="#{movimientoCompraBean.circuito.administraAtributo4 eq 'S'}">
+
+                                <p:inputText  value="#{d.atributo4}" readonly="#{empty d.producto or d.producto.administraAtributo4 eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo5}" width="120"
+                                      rendered="#{movimientoCompraBean.circuito.administraAtributo5 eq 'S'}">
+
+                                <p:inputText  value="#{d.atributo5}" readonly="#{empty d.producto or d.producto.administraAtributo5 eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo6}" width="120"
+                                      rendered="#{movimientoCompraBean.circuito.administraAtributo6 eq 'S'}">
+
+                                <p:inputText  value="#{d.atributo6}" readonly="#{empty d.producto or d.producto.administraAtributo6 eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo7}" width="150"
+                                      rendered="#{movimientoCompraBean.circuito.administraAtributo7 eq 'S'}">
+
+                                <p:inputText  value="#{d.atributo7}" readonly="#{empty d.producto or d.producto.administraAtributo7 eq 'N'}" />
+                            </p:column>
+
+                            <p:column headerText="Cantidad" width="70" >
+                                <p:inputText value="#{d.cantidad}" required="true" styleClass="TexAlRight"
+                                             rendered="#{not empty d.producto}"  >
+                                    <f:convertNumber pattern="#{d.producto.unidadDeMedida.formato}" />
+                                </p:inputText>
+                            </p:column>
+
+                            <p:column headerText="Stock" width="50" styleClass="TexAlCenter" >
+                                <p:commandButton icon="fa fa-search"
+                                                 actionListener="#{movimientoCompraBean.setearStockPorProducto(i, d)}"
+                                                 update="buscadorStock, message,messageg"
+                                                 process="@this" oncomplete="PF('dlgStock').show();"
+                                                 rendered="#{not empty movimientoCompraBean.m.deposito}" >
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                                <p:commandLink process="detalleItem" update="detalleItem,message,messageg"
+                                               actionListener="#{movimientoCompraBean.eliminarItemDetalle(i,d)}"  >
+                                    <p:confirm header="Confirmación" message="Está seguro que desea borrar el item #{d.producto.descripcion}?" icon="ui-icon-alert" />
+                                    <i class="fa fa-close fa-2x Red" ></i>
+                                </p:commandLink>
+
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+
+                </p:rowExpansion>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+
+            <div class="p-grid" >
+
+                <div class="p-col-6 p-md-4 p-lg-3" >
+
+
+                    <!--
+
+                    <p:inputText id="txtCodigoBarra" style="margin-right:10px; max-width: 300px;" styleClass="Fs15"
+                                 placeholder="Ingrese código de barra"
+                                 value="#{movimientoCompraBean.codigoBarra}" />
+
+                    <p:commandButton id="btnBuscar" icon="fa fa-barcode" styleClass="GreenBack Fs15"
+                                     actionListener="#{movimientoCompraBean.procesarCodigoBarra}"
+                                     process="@this,txtCodigoBarra"
+                                     update="detalle,message,messageg,txtCodigoBarra,totales" />
+                    <p:defaultCommand target="btnBuscar"  />
+                    <p:focus for="txtCodigoBarra" />
+
+                    -->
+
+                </div>
+
+                <div class="p-col-6 p-md-4 p-lg-3" >
+
+
+                </div>
+
+            </div>
+
+
+            <div class="EmptyBox10" />
+
+        </p:tab>
+
+        <p:tab id="t1" title="Medios de pago" rendered="#{not empty movimientoCompraBean.m and movimientoCompraBean.circuito.actualizaTesoreria eq 'S'}" >
+
+            <ui:include src="movimientoConcepto.xhtml" />
+
+        </p:tab>
+
+
+
+    </p:tabView>
+
+
+</ui:composition>
+

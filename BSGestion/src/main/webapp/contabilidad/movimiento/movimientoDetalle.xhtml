@@ -1,0 +1,155 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DETALLE -->
+    <p:dataTable id="detalle" value="#{movimientoContabilidadBean.m.itemsDetalle}" var="i"
+                 rendered="#{not empty movimientoContabilidadBean.m}"
+                 resizeMode="expand" liveResize="true"
+                 emptyMessage="No se encontraron items. Haga clic en agregar items"
+                 rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+        <f:facet name="footer">
+
+            <h:panelGroup id="footerDetalle" layout="block" styleClass="p-grid" >
+
+                <div class="p-col" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     value="Agregar item"
+                                     actionListener="#{movimientoContabilidadBean.nuevoItem()}"
+                                     process="detalle"
+                                     update="detalle,message,messageg" />
+
+                </div>
+
+
+                <div class="p-col" >
+
+                    <p:commandButton icon="fa fa-arrow-up" styleClass="GreenBack"
+                                     value="Importar Archivo"
+                                     process="detalle"
+                                     update="detalle,message,messageg"
+                                     oncomplete="PF('dlgImportar').show()"/>
+
+                </div>
+            </h:panelGroup>
+
+        </f:facet>
+
+        <p:column headerText="Código" width="70"
+                  rendered="#{movimientoContabilidadBean.muestroCampo('D','NROCTA')}"  >
+
+            <p:autoComplete value="#{i.cuentaContable}" forceSelection="true"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{cuentaContableBean.completeImputable}"
+                            converter="#{conversoresContabilidad.cuentaContable}"
+                            var="p" itemValue="#{p}" itemLabel="#{p.nrocta}" >
+
+                <p:ajax event="itemSelect" process="@this" update="detalle"
+                        listener="#{movimientoContabilidadBean.cargarImputacionCentroCosto()}" />
+
+                <p:column headerText="Nro cuenta">
+                    <h:outputText value="#{p.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{p.descripcion}" />
+                </p:column>
+            </p:autoComplete>
+
+        </p:column>
+
+        <p:column headerText="Descripción" width="300" >
+
+            <!--
+            <p:commandButton icon="fa fa-search"
+                             process="@this" oncomplete="PF('dlgCuentaContable').show()"  />
+            -->
+            <div class="ui-inputgroup">
+                <p:autoComplete value="#{i.cuentaContable}" forceSelection="true" dropdown="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{cuentaContableBean.completeImputable}"
+                                converter="#{conversoresContabilidad.cuentaContable}"
+                                var="p" itemValue="#{p}" itemLabel="#{p.descripcion}" >
+
+                    <p:ajax event="itemSelect" process="@this" update="detalle"
+                            listener="#{movimientoContabilidadBean.cargarImputacionCentroCosto()}" />
+
+                    <p:column headerText="Nro cuenta">
+                        <h:outputText value="#{p.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{p.descripcion}" />
+                    </p:column>
+                </p:autoComplete>
+                <span class="ui-inputgroup-addon">
+                    <bs:linkMenuSistema title="Ver Cuenta Contable"
+                                        url="#{movimientoContabilidadBean.obtenerUrlMenu('SIS_00420','NROCTA',i.cuentaContable.nrocta)}" />
+                </span>
+            </div>
+
+        </p:column>
+
+        <p:column headerText="Importe Debe" width="80"
+                  rendered="#{movimientoContabilidadBean.muestroCampo('D','IMPDEB')}" >
+
+            <p:inputText  value="#{i.importeDebe}" styleClass="TexAlRight"
+                          readonly="#{not empty movimientoContabilidadBean.m.id}">
+                <f:convertNumber pattern="###,###,##0.0000" />
+                <p:ajax listener="#{movimientoContabilidadBean.calcularImportes()}" event="keyup" delay="500"
+                        update="totales" />
+
+            </p:inputText>
+
+        </p:column>
+
+        <p:column headerText="Importe Haber" width="80"
+                  rendered="#{movimientoContabilidadBean.muestroCampo('D','IMPHAB')}" >
+
+            <p:inputText  value="#{i.importeHaber}" styleClass="TexAlRight"
+                          readonly="#{not empty movimientoContabilidadBean.m.id}">
+                <f:convertNumber pattern="###,###,##0.0000" />
+                <p:ajax listener="#{movimientoContabilidadBean.calcularImportes()}" event="keyup" delay="500"
+                        update="totales"  />
+            </p:inputText>
+
+        </p:column>
+
+        <p:column headerText="" width="50" style="text-align: center;" >
+
+            <p:commandLink rendered="#{i.imputaCentroCosto}"
+                           title="Imputación en Centros de Costo"
+                           process="@this"
+                           update="centroCosto"
+                           oncomplete="PF('dlgCentroCostoContabilidad').show()" >
+                <f:setPropertyActionListener value="#{i}" target="#{movimientoContabilidadBean.item}" />
+                <i class="fa fa-list-ul fa-2x" ></i>
+            </p:commandLink>
+
+            <p:commandLink process="detalle" update="@form"
+                           actionListener="#{movimientoContabilidadBean.eliminarItem(i)}" >
+                <p:confirm header="Confirmación" message="Está seguro que desea borrar #{i.cuentaContable.descripcion}?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+        <p:columnGroup id="totales" type="footer">
+            <p:row>
+                <p:column colspan="2" footerText="Totales" styleClass="TexAlRight" />
+                <p:column footerText="#{movimientoContabilidadBean.m.importeTotalDebe}" styleClass="TexAlRight"  />
+                <p:column footerText="#{movimientoContabilidadBean.m.importeTotalHaber}" styleClass="TexAlRight" />
+                <p:column footerText="" />
+            </p:row>
+        </p:columnGroup>
+
+    </p:dataTable>
+
+</ui:composition>
+

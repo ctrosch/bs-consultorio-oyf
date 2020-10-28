@@ -1,0 +1,65 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"
+                 rendered="#{not empty movimientoContabilidadBean.m}" >
+
+        <h:outputText value="Formulario" />
+        <p:inputText value="#{movimientoContabilidadBean.m.formulario.descripcion}" readonly="true" />
+
+        <h:outputText value="Período Contable" />
+        <p:inputText value="#{movimientoContabilidadBean.m.periodoContable.descripcion}" readonly="true" />
+
+
+        <h:outputText value="Número" />
+        <p:inputText value="#{movimientoContabilidadBean.m.numeroFormulario}" readonly="true" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha" />
+        <p:calendar value="#{movimientoContabilidadBean.m.fechaMovimiento}"
+                    disabled="#{movimientoContabilidadBean.m.formulario.modificaFecha ne 'S'}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{movimientoContabilidadBean.fechaMovimientoMaxima}">
+            <p:ajax process="@this" event="dateSelect" update="@form" listener="#{movimientoContabilidadBean.onFechaSelect}" />
+        </p:calendar>
+
+        <bs:outputTexWhitLink value="Máscara de contabilidad"
+                              url="#{movimientoContabilidadBean.obtenerUrlMenu('SIS_00374','CODIGO',movimientoContabilidadBean.m.mascaraContabilidad.codigo)}" />
+        <p:autoComplete value="#{movimientoContabilidadBean.m.mascaraContabilidad}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{mascaraContabilidadBean.complete}"
+                        var="p"
+                        itemLabel="#{p.descripcion}"
+                        itemValue="#{p}" converter="#{conversoresContabilidad.mascaraContabilidad}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@form"
+                    listener="#{movimientoContabilidadBean.onMascaraSelect}" />
+
+            <p:column>
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column>
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="2" value="#{movimientoContabilidadBean.m.observaciones}" />
+
+    </p:panelGrid>
+
+</ui:composition>
+

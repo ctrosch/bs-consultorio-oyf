@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{saldosPendienteVenta.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{saldosPendienteVenta.titulo}"/>
+            <f:viewParam name="CODREP" value="#{saldosPendienteVenta.codigoReporte}"/>
+            <f:viewParam name="NOMARC" value="#{saldosPendienteVenta.nombreArchivo}"/>
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Saldos pendientes en cuenta corriente
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Saldos pendientes en cuenta corriente
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:panelGrid id="informePanelGrid" columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank informePanelGrid500"
+                         columnClasses="Container40, Container60" >
+
+                <h:outputText value="Cliente" />
+                <p:autoComplete value="#{saldosPendienteVenta.cliente}" dropdown="true" forceSelection="true"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{clienteBean.complete}"
+                                var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                converter="#{conversoresEntidad.entidadComercial}"  >
+
+                    <p:ajax event="itemSelect" process="@this" />
+
+                    <p:column headerText="Nro cuenta" width="100">
+                        <h:outputText value="#{e.nrocta}" />
+                    </p:column>
+
+                    <p:column headerText="Razón social">
+                        <h:outputText value="#{e.razonSocial}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre Fantasía">
+                        <h:outputText value="#{e.nombreFantasia}" />
+                    </p:column>
+                </p:autoComplete>
+
+                <h:outputText value="Moneda de Registración" />
+                <p:selectOneMenu value="#{saldosPendienteVenta.codigoMonedaRegistracion}"  >
+                    <f:selectItems value="#{monedaBean.lista}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i.codigo}"/>
+                    <p:ajax process="@this"  />
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                 actionListener="#{saldosPendienteVenta.verReporte}"
+                                 update="@form"  />
+
+                <p:commandButton value="A Excel" icon="fa fa-file-excel-o"
+                                 actionListener="#{saldosPendienteVenta.reporteToXls}"
+                                 update="@form"
+                                 ajax="false" />
+
+                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" process="@this"
+                                 actionListener="#{saldosPendienteVenta.resetParametros}"
+                                 update="@form" />
+            </p:panelGrid>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{saldosPendienteVenta.muestraReporte}"
+                               nombreArchivo="#{saldosPendienteVenta.nombreArchivo}" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

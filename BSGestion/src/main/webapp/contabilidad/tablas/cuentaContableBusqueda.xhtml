@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <p:focus for="txtBusquedaCuCon"/>
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <p:inputText id="txtBusquedaCuCon" value="#{cuentaContableBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+            <p:ajax event="keyup" delay="500"  process="@this" update="tablaCuentaContable" listener="#{cuentaContableBean.buscar}"/>
+        </p:inputText>
+    </p:panelGrid>
+
+    <p:dataTable id="tablaCuentaContable" value="#{cuentaContableBean.lista}"  var="i"
+                 emptyMessage="No se encontraron datos"
+                 resizableColumns="true" resizeMode="expand" liveResize="true"
+                 scrollable="true" scrollHeight="300"
+                 selectionMode="single" selection="#{cuentaContableBean.cuentaContable}" rowKey="#{i}"
+                 rowStyleClass="#{i.imputable eq 'N'  ? 'origenUsuario' : null}" >
+
+        <p:ajax event="rowSelect" listener="#{cuentaContableBean.onSelect}" update="@form" />
+
+        <p:column headerText="Nro cuenta" sortBy="#{i.nrocta}"  width="100"  >
+            <h:outputText value="#{i.nrocta}" />
+            <p:commandLink styleClass="Fright"
+                           title="Agregar Cuenta Hija"
+                           actionListener="#{cuentaContableBean.nuevoHijo(i)}"
+                           rendered="#{i.imputable eq 'N'}"
+                           process="@this"
+                           update="@form">
+                <i class="fa fa-arrow-down fa-2x" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+        <p:column headerText="Descripción" width="300" sortBy="#{i.descripcion}"   >
+            <h:outputText value="#{i.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Imputable" width="50" styleClass="TexAlCenter" >
+            <h:outputText value="Si" rendered="#{i.imputable eq 'S' }"   />
+            <h:outputText value="No" rendered="#{i.imputable eq 'N' }"   />
+        </p:column>
+
+        <p:column headerText="Imp. Contabilidad" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="Si" rendered="#{i.imputacionContabilidad eq 'S' }"   />
+            <h:outputText value="No" rendered="#{i.imputacionContabilidad eq 'N' }"   />
+        </p:column>
+
+        <p:column headerText="Imp. Compras" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="Si" rendered="#{i.imputacionCompras}"   />
+            <h:outputText value="No" rendered="#{i.imputacionCompras eq 'N' }"   />
+        </p:column>
+
+        <p:column headerText="Imp. Tesoreria" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="Si" rendered="#{i.imputacionTesoreria eq 'S' }"   />
+            <h:outputText value="No" rendered="#{i.imputacionTesoreria eq 'N' }"   />
+        </p:column>
+
+        <p:column headerText="Imp. Ventas" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="Si" rendered="#{i.imputacionVenta eq 'S' }"   />
+            <h:outputText value="No" rendered="#{i.imputacionVenta eq 'N' }"   />
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <h:panelGroup layout="block" >
+            <p:selectBooleanCheckbox value="#{cuentaContableBean.mostrarDebaja}" >
+                <p:ajax process="@this" update="@form" listener="#{cuentaContableBean.buscar}" />
+            </p:selectBooleanCheckbox>
+            <h:outputText value="Mostrar registros deshabilitados" />
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" >
+            <h:outputText value="Cantidad de Registros: " />
+            <p:inputText id="cantRegistro" value="#{cuentaContableBean.cantidadRegistros}" style="max-width: 80px;">
+                <f:convertNumber pattern="0" />
+            </p:inputText>
+            <p:commandButton value="Aplicar" icon="fa fa-check"
+                             style="max-width: 100px; margin-left: 1px;"
+                             actionListener="#{cuentaContableBean.buscar}"
+                             process="@this,cantRegistro" update="@form" />
+        </h:panelGroup>
+    </p:panelGrid>
+
+</html>
+

@@ -1,0 +1,93 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario"
+                      rendered="#{reciboEducacionBean.muestroCampo('C','CODFOR')}" />
+        <p:inputText value="#{reciboEducacionBean.m.formulario.descripcion}"
+                     rendered="#{reciboEducacionBean.muestroCampo('C','CODFOR')}"
+                     readonly="true" />
+
+        <h:outputText value="Pto. Venta" rendered="#{reciboEducacionBean.muestroCampo('C','SUCURS')}" />
+        <p:inputText value="#{reciboEducacionBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{reciboEducacionBean.muestroCampo('C','SUCURS')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" rendered="#{reciboEducacionBean.muestroCampo('C','NROFOR')}" />
+        <p:inputText value="#{reciboEducacionBean.m.numeroFormulario}"
+                     readonly="#{reciboEducacionBean.m.formulario.modificaNumeracion eq 'N'}"
+                     rendered="#{reciboEducacionBean.muestroCampo('C','NROFOR')}" >
+            <p:ajax event="blur"  process="@this" />
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha"
+                      rendered="#{reciboEducacionBean.muestroCampo('C','FCHMOV')}" />
+        <p:calendar value="#{reciboEducacionBean.m.fechaMovimiento}"
+                    disabled="#{reciboEducacionBean.m.formulario.modificaFecha ne 'S' or not empty reciboEducacionBean.m.entidad }"
+                    rendered="#{reciboEducacionBean.muestroCampo('C','FCHMOV')}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true"
+                    maxdate="#{reciboEducacionBean.fechaMovimientoMaxima}" >
+            <p:ajax event="dateSelect"  process="@this" />
+        </p:calendar>
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,
+                 ui-g-6 ui-md-4 ui-lg-5,
+                 ui-g-6 ui-md-2 ui-lg-1,
+                 ui-g-6 ui-md-4 ui-lg-5" >
+
+        <bs:outputTexWhitLink value="Alumno *"
+                              url="#{reciboEducacionBean.obtenerUrlMenu('SIS_00577','NROCTA',reciboEducacionBean.m.entidad.nrocta)}" />
+
+        <p:autoComplete value="#{reciboEducacionBean.m.entidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El Alumno es obligatorio"
+                        completeMethod="#{reciboEducacionBean.completeAlumno}"
+                        disabled="#{not empty reciboEducacionBean.m.id}"
+                        var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{reciboEducacionBean.procesarAlumno()}"  />
+
+            <p:column headerText="Nro Legajo" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Nombre Completo">
+                <h:outputText value="#{e.apellido} #{e.nombre}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea style="width: 100%" rows="2" value="#{reciboEducacionBean.m.observaciones}" />
+
+        <h:outputText value="Cuotas vencidas" />
+        <h:outputText value="#{reciboEducacionBean.cantidadCuotasVencidas}" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

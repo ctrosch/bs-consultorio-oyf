@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Productos" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="PROHAB" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+  st_producto.CODIGO As Codigo,
+  st_producto.CODBAR As `Codigo de barra`,
+  st_producto.TIPPRO As `Codigo tipo de producto`,
+  st_tipo_producto.DESCRP As `Tipo de producto`,
+  st_producto.DESCRP As Descripcion,
+  st_producto.UNIMED As `Unidad de Medida`,
+  st_producto.NROPAR As `Numero de Parte`,
+  st_producto.UTILID As Utilidad,
+  st_producto.RUBR01 As `Código Rubro 1`,
+  st_rubro01_A.DESCRP As `Rubro 1`,
+  st_producto.RUBR02 As `Código Rubro 2`,
+  st_rubro02.DESCRP As `Rubro 2`,
+  st_producto.RUBR03 As `Código Rubro 3`,
+  st_rubro03.DESCRP As `Rubro 3`,
+  st_producto.RUBR04 As `Código Rubro 4`,
+  st_producto.RUBR05 As `Código Rubro 5`,
+  st_producto.RUBR06 As `Código Rubro 6`,
+  st_producto.RUBR07 As `Código Rubro 7`,
+  st_producto.RUBR08 As `Código Rubro 8`,
+  st_producto.PROHAB As `Codigo Proveedor Habitual`,
+  en_entidad.RAZONS As Proveedor,
+  st_producto.PREPRD As `Precio Producción`,
+  st_producto.MONPRD As `Moneda Producción`,
+  st_producto.PREREP As `Precio Reposición`,
+  st_producto.MONREP As `Moneda Reposición`,
+  st_producto.FECREP As `Fecha Reposicion`,
+  st_producto.PREUCO As `Precio Ultima compra`,
+  st_producto.MONUCO As `Moneda Ultima compra`,
+  st_producto.FECUCO As `Fecha Ultima Compra`,
+  st_producto.OBSERV As  Observaciones,
+  st_producto.PESONT As `Peso Neto`,
+  st_producto.UNIPES As `Unidad de Peso`,
+  st_producto.PESMIN As `Peso Mínimo`,
+  st_producto.PESMAX As `Peso Máximo`,
+  st_producto.IMGCHI As Imagen,
+  st_producto.PNUEVO As `Es Nuevo`,
+  st_producto.MODCPC As `Modulo concepto de compra`,
+  st_producto.TIPCPC As `Tipo concepto de compra`,
+  st_producto.CODCPC As `Código concepto de compra`,
+  st_producto.MODCPT As `Modulo concepto de venta`,
+  st_producto.TIPCPT As `Tipo concepto de venta`,
+  st_producto.CODCPT As `Código concepto de venta`,
+  gr_concepto.DESCRP As `Concepto de Venta`,
+  st_producto.STOCKS As `Gestiona Stock`,
+  st_producto.STKMIN As `Stock Mínimo`,
+  st_producto.STKMAX As `Stock Máximo`,
+  st_producto.DIAENT As `Dias de entrega`,
+  st_producto.PTOPED As `Punto de Pedido`,
+  st_producto.ADATR1 As `Administra Atributo 1`,
+  st_producto.ADATR2 As `Administra Atributo 2`,
+  st_producto.ADATR3 As `Administra Atributo 3`,
+  st_producto.ADATR4 As `Administra Atributo 4`,
+  st_producto.GARAN As Garantia,
+  st_producto.UNIGAR As `Unidad Medida Garantia`,
+  st_producto.CODREF As `Codigo de Referencia`,
+  (select a.nombre from st_producto_atributo a where a.NROITM = 1 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 1',
+  (select a.valor from st_producto_atributo a where a.NROITM = 1 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 1',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 2 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 2',
+  (select a.valor from st_producto_atributo a where a.NROITM = 2 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 2',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 3 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 3',
+  (select a.valor from st_producto_atributo a where a.NROITM = 3 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 3',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 4 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 4',
+  (select a.valor from st_producto_atributo a where a.NROITM = 4 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 4',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 5 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 5',
+  (select a.valor from st_producto_atributo a where a.NROITM = 5 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 5',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 6 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 6',
+  (select a.valor from st_producto_atributo a where a.NROITM = 6 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 6',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 7 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 7',
+  (select a.valor from st_producto_atributo a where a.NROITM = 7 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 7',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 8 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 8',
+  (select a.valor from st_producto_atributo a where a.NROITM = 8 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 8',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 9 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 9',
+  (select a.valor from st_producto_atributo a where a.NROITM = 9 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 9',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 10 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 10',
+  (select a.valor from st_producto_atributo a where a.NROITM = 10 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 10',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 11 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 11',
+  (select a.valor from st_producto_atributo a where a.NROITM = 11  and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 11',
+
+  (select a.nombre from st_producto_atributo a where a.NROITM = 12 and a.artcod = st_producto.CODIGO) as 'Nombre Atributo 12',
+  (select a.valor from st_producto_atributo a where a.NROITM = 12 and  a.artcod = st_producto.CODIGO) as 'Valor Atributo 12'
+
+
+From st_tipo_producto st_tipo_producto
+Inner Join st_producto st_producto On st_tipo_producto.TIPPRO = st_producto.TIPPRO
+Inner Join st_rubro01 st_rubro01_A On st_producto.TIPPRO = st_rubro01_A.TIPPRO And st_producto.RUBR01 = st_rubro01_A.CODIGO
+left Join  st_rubro02 st_rubro02 On st_producto.RUBR02 = st_rubro02.CODIGO And st_producto.TIPPRO = st_rubro02.TIPPRO
+left Join gr_concepto gr_concepto On st_producto.CODCPT = gr_concepto.CODIGO And gr_concepto.MODULO = st_producto.MODCPT And gr_concepto.TIPCPT = st_producto.TIPCPT
+left Join st_rubro03 On st_rubro03.TIPPRO = st_producto.TIPPRO And st_rubro03.CODIGO = st_producto.RUBR03
+left Join en_entidad On st_producto.PROHAB = en_entidad.NROCTA
+WHERE IF(LENGTH($P{PROHAB}) > 0, st_producto.PROHAB = $P{PROHAB},1=1)]]>
+	</queryString>
+	<field name="Codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[Código ]]></fieldDescription>
+	</field>
+	<field name="Codigo de barra" class="java.lang.String"/>
+	<field name="Codigo tipo de producto" class="java.lang.String"/>
+	<field name="Tipo de producto" class="java.lang.String"/>
+	<field name="Descripcion" class="java.lang.String"/>
+	<field name="Unidad de Medida" class="java.lang.String"/>
+	<field name="Numero de Parte" class="java.lang.String"/>
+	<field name="Utilidad" class="java.math.BigDecimal"/>
+	<field name="Código Rubro 1" class="java.lang.String"/>
+	<field name="Rubro 1" class="java.lang.String"/>
+	<field name="Código Rubro 2" class="java.lang.String"/>
+	<field name="Rubro 2" class="java.lang.String"/>
+	<field name="Código Rubro 3" class="java.lang.String"/>
+	<field name="Rubro 3" class="java.lang.String"/>
+	<field name="Código Rubro 4" class="java.lang.String"/>
+	<field name="Código Rubro 5" class="java.lang.String"/>
+	<field name="Código Rubro 6" class="java.lang.String"/>
+	<field name="Código Rubro 7" class="java.lang.String"/>
+	<field name="Código Rubro 8" class="java.lang.String"/>
+	<field name="Codigo Proveedor Habitual" class="java.lang.String"/>
+	<field name="Proveedor" class="java.lang.String"/>
+	<field name="Precio Producción" class="java.math.BigDecimal"/>
+	<field name="Moneda Producción" class="java.lang.String"/>
+	<field name="Precio Reposición" class="java.math.BigDecimal"/>
+	<field name="Moneda Reposición" class="java.lang.String"/>
+	<field name="Fecha Reposicion" class="java.sql.Date"/>
+	<field name="Precio Ultima compra" class="java.math.BigDecimal"/>
+	<field name="Moneda Ultima compra" class="java.lang.String"/>
+	<field name="Fecha Ultima Compra" class="java.sql.Date"/>
+	<field name="Observaciones" class="java.lang.String"/>
+	<field name="Peso Neto" class="java.math.BigDecimal"/>
+	<field name="Unidad de Peso" class="java.lang.String"/>
+	<field name="Peso Mínimo" class="java.math.BigDecimal"/>
+	<field name="Peso Máximo" class="java.math.BigDecimal"/>
+	<field name="Imagen" class="java.lang.String"/>
+	<field name="Es Nuevo" class="java.lang.String"/>
+	<field name="Modulo concepto de compra" class="java.lang.String"/>
+	<field name="Tipo concepto de compra" class="java.lang.String"/>
+	<field name="Código concepto de compra" class="java.lang.String"/>
+	<field name="Modulo concepto de venta" class="java.lang.String"/>
+	<field name="Tipo concepto de venta" class="java.lang.String"/>
+	<field name="Código concepto de venta" class="java.lang.String"/>
+	<field name="Concepto de Venta" class="java.lang.String"/>
+	<field name="Gestiona Stock" class="java.lang.String"/>
+	<field name="Stock Mínimo" class="java.math.BigDecimal"/>
+	<field name="Stock Máximo" class="java.math.BigDecimal"/>
+	<field name="Dias de entrega" class="java.lang.Integer"/>
+	<field name="Punto de Pedido" class="java.math.BigDecimal"/>
+	<field name="Administra Atributo 1" class="java.lang.String"/>
+	<field name="Administra Atributo 2" class="java.lang.String"/>
+	<field name="Administra Atributo 3" class="java.lang.String"/>
+	<field name="Administra Atributo 4" class="java.lang.String"/>
+	<field name="Garantia" class="java.lang.Integer"/>
+	<field name="Unidad Medida Garantia" class="java.lang.String"/>
+	<field name="Codigo de Referencia" class="java.lang.String"/>
+	<field name="Nombre Atributo 1" class="java.lang.String"/>
+	<field name="Valor Atributo 1" class="java.lang.String"/>
+	<field name="Nombre Atributo 2" class="java.lang.String"/>
+	<field name="Valor Atributo 2" class="java.lang.String"/>
+	<field name="Nombre Atributo 3" class="java.lang.String"/>
+	<field name="Valor Atributo 3" class="java.lang.String"/>
+	<field name="Nombre Atributo 4" class="java.lang.String"/>
+	<field name="Valor Atributo 4" class="java.lang.String"/>
+	<field name="Nombre Atributo 5" class="java.lang.String"/>
+	<field name="Valor Atributo 5" class="java.lang.String"/>
+	<field name="Nombre Atributo 6" class="java.lang.String"/>
+	<field name="Valor Atributo 6" class="java.lang.String"/>
+	<field name="Nombre Atributo 7" class="java.lang.String"/>
+	<field name="Valor Atributo 7" class="java.lang.String"/>
+	<field name="Nombre Atributo 8" class="java.lang.String"/>
+	<field name="Valor Atributo 8" class="java.lang.String"/>
+	<field name="Nombre Atributo 9" class="java.lang.String"/>
+	<field name="Valor Atributo 9" class="java.lang.String"/>
+	<field name="Nombre Atributo 10" class="java.lang.String"/>
+	<field name="Valor Atributo 10" class="java.lang.String"/>
+	<field name="Nombre Atributo 11" class="java.lang.String"/>
+	<field name="Valor Atributo 11" class="java.lang.String"/>
+	<field name="Nombre Atributo 12" class="java.lang.String"/>
+	<field name="Valor Atributo 12" class="java.lang.String"/>
+	<group name="TIPPRO">
+		<groupExpression><![CDATA[$F{Codigo tipo de producto}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#99CCFF" uuid="02a95a47-2308-4e51-b920-63a7257e8d7e"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="25"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="2" y="0" width="553" height="15" uuid="fb580ea8-7c3e-4e90-8478-decab6030aeb"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Tipo de producto}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="0" y="15" width="555" height="13" backcolor="#CCCCCC" uuid="770d1246-b502-4f0d-92ee-3d0af8cc639f"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="0" y="15" width="48" height="13" uuid="94c1a56b-f23b-434a-ab5e-7f800dc987a6"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Código]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="49" y="15" width="227" height="13" uuid="7951de5d-875d-4c8f-adb6-758988c35a0b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Descripción]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="276" y="15" width="25" height="13" uuid="3a78df7b-1d85-451a-becc-a305480210e2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[U.M.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="301" y="15" width="100" height="13" uuid="d699c2db-c9aa-4716-a473-346d7f888f27"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rubro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="401" y="15" width="103" height="13" uuid="67c6fedf-45a6-4b49-9958-cfcde3d6d4c6"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sub Rubro]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="504" y="15" width="25" height="13" uuid="fee446bd-a5e9-485b-80e6-df294aed176f"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Mon.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="530" y="15" width="25" height="13" uuid="bdbaf5e7-3d0f-4753-bba6-87e91643441f"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[G.S.]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="5"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="32">
+			<staticText>
+				<reportElement x="145" y="0" width="273" height="30" uuid="a2170831-50a6-4035-a08e-f5d766cf6464"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Listado de Productos]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="5" width="114" height="13" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="19" width="114" height="11" uuid="0427b782-8e84-49fb-8bce-824533e57710"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="0" y="0" width="83" height="30" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="30" width="555" height="1" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="417" y="0" width="1" height="30" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<textField>
+				<reportElement x="48" y="0" width="228" height="12" uuid="e24c80c2-5a97-4c8d-9d0d-57c6bf46fcc3"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="0" width="46" height="12" uuid="a36b24ca-b06b-4b9a-94a3-771f08add99f"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="301" y="0" width="100" height="12" uuid="09fe3181-96a8-4f57-add2-77054cc8476e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Rubro 1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="401" y="0" width="103" height="12" uuid="df9c337a-56e7-452b-8f14-0fc3d2370c33"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Rubro 2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="0" width="25" height="12" uuid="6aeb4e22-3a3b-49c9-a3ea-5884813c7ce8"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Unidad de Medida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="505" y="0" width="25" height="12" uuid="e821dff4-3fae-44ad-896c-bb68a39f92cc"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="530" y="0" width="25" height="12" uuid="fbb65885-21e8-4d5c-97db-15901df2eb0a"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Gestiona Stock}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="441" y="0" width="114" height="10" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="114" height="10" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+
+    <h:head>
+
+        <f:facet name="first">
+            <link rel="shortcut icon" href="#{resource['image/favicon.ico']}" type="image/x-icon" />
+            <link rel="icon" href="#{resource['image/favicon.ico']}" type="image/x-icon" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="robots" content="NoIndex, NoFollow" />
+
+            <c:if test="#{not empty aplicacionBean.parametro.pathImagenInicio}" >
+                <style>
+
+                    .body {
+                        background-image: url(#{aplicacionBean.parametro.pathImagenInicio});
+                        background-repeat: no-repeat;
+                        background-position: center top;
+                        background-size: 100%;
+                        background-attachment: fixed;
+                    }
+                </style>
+            </c:if>
+
+        </f:facet>
+
+        <title>
+            <ui:insert name="titulo">
+                #{aplicacionBean.organizacion.nombreFantasia}
+            </ui:insert>
+        </title>
+
+        <script type="text/javascript" language="javascript" src="#{request.contextPath}/resources/js/calendar_es.js" />
+        <h:outputScript name="js/layout.js" library="volt-layout" />
+        <h:outputScript name="js/utiles.js" />
+
+        <h:outputStylesheet library="css" name="estilos.css"/>
+        <h:outputStylesheet library="css" name="primeflex.css"/>
+
+        <ui:insert name="head"></ui:insert>
+
+        <ui:insert name="script" >
+            <script type="text/javascript">
+
+                function heightSize() {
+
+                    f = document.getElementById('frame');
+
+                    if (f !== null) {
+                        f.height = screen.height - 200;
+                    } else {
+
+                    }
+                }
+            </script>
+        </ui:insert>
+
+    </h:head>
+
+    <h:body styleClass="#{aplicacionBean.parametro.fondo} body" style="zoom: #{aplicacionBean.parametro.zoom} !important;" >
+
+        <p:tooltip />
+
+        <h:form id="formulario" prependId="false">
+            <!--
+            <ui:include src="topbar.xhtml" />
+            -->
+            <!-- TOPBAR START -->
+            <div id="layout-topbar">
+                <div id="layout-topbar-indent">
+
+                    <h:outputLink value="#{request.contextPath}/principal"
+                                  rendered="#{aplicacionBean.parametro.tipoNavegacion eq 'U'}"
+                                  style="display: block;width: 27px;height: 27px;float: left;margin: 18px 0px 0px 15px;overflow: hidden;cursor: pointer;border-radius: 3px;" >
+
+                        <i class="fa fa-home" style="font-size: 26px;
+                           color: rgba(68, 77, 88, 0.7);
+                           -webkit-transition: all 0.3s ease;
+                           -moz-transition: all 0.3s ease;
+                           -ms-transition: all 0.3s ease;
+                           -o-transition: all 0.3s ease;
+                           transition: all 0.3s ease;"></i>
+                    </h:outputLink>
+
+                    <span class="DispInlBlock Fleft" >
+                        <p:graphicImage value="#{aplicacionBean.organizacion.logo}" style="max-width: 200px; max-height: 50px; margin-right: 10px; padding: 5px;"   />
+                    </span>
+
+                    <span class="BoxSizeBorder Fleft "  style="margin:10px 10px 0px 0px;">
+                        <ui:insert name="menu" />
+                    </span>
+
+                    <span class="BoxSizeBorder Fleft "  style="margin:10px 10px 0px 0px;">
+                        <h1 class="LightGray" ><ui:insert name="titulo-header" >#{TITULO}</ui:insert></h1>
+                    </span>
+
+                    <!--
+                     - Reporte  #{CODREP} - Menu #{ID_MENU} - Vista #{CODVIS}
+                    -->
+
+                    <h:panelGroup styleClass="BoxSizeBorder Fright ShowOnDesktop"
+                                  style="margin:10px 10px 0px 0px;"
+                                  rendered="#{usuarioSessionBean.usuario.tipo.id eq 1}" >
+
+                        <h:outputLink value="#{request.contextPath}#{principalBean.obtenerUrlMenu('SIS_00062','CODIGO', CODREP)}"
+                                      title="Reportes"
+                                      target="_blank"
+                                      styleClass="Fs30 Fright" style="color: #0277bd; padding-right: 5px;" >
+                            <i class="fa fa-bars" ></i>
+                        </h:outputLink>
+
+                        <h:outputLink value="#{request.contextPath}#{principalBean.obtenerUrlMenu('SIS_00279','CODIGO',CODVIS)}"
+                                      title="Vista"
+                                      target="_blank"
+                                      styleClass="Fs30 Fright" style="color: #0277bd;padding-right: 5px;" >
+                            <i class="fa fa-eye" ></i>
+                        </h:outputLink>
+
+                        <h:outputLink value="#{request.contextPath}#{principalBean.obtenerUrlMenu('SIS_00315')}"
+                                      title="Menú"
+                                      target="_blank"
+                                      styleClass="Fs30 Fright" style="color: #0277bd;padding-right: 5px;" >
+                            <i class="fa fa-gear" ></i>
+                        </h:outputLink>
+
+                        <ui:insert name="menu-right" />
+
+                    </h:panelGroup>
+
+                    <span class="BoxSizeBorder Fright ShowOnDesktop" style="margin:10px 10px 0px 0px;">
+                        <p:ajaxStatus widgetVar="ajaxStatus" >
+                            <f:facet name="default" />
+                            <f:facet name="start">
+                                <span>
+                                    <p:graphicImage value="/resources/ajax/ajax02.GIF"                                                 />
+                                </span>
+                            </f:facet>
+                            <f:facet name="complete" />
+                        </p:ajaxStatus>
+
+
+                        <!--
+                        <p:menuButton icon="fa fa-history Fs20"  >
+                            <p:menuitem value="Save" action="#{menuView.save}"  icon="pi pi-save"/>
+                            <p:menuitem value="Update" action="#{menuView.update}" icon="pi pi-refresh"/>
+                            <p:menuitem value="Delete" action="#{menuView.delete}" ajax="false" icon="pi pi-times"/>
+                            <p:separator />
+                            <p:menuitem value="Homepage" url="http://www.primefaces.org" icon="pi pi-home"/>
+                        </p:menuButton>
+
+                        <p:commandLink title="Agregar a favorito"
+                                       actionListener="#{principalBean.agregarFavorito()}" update="@form"  >
+                            <i class="fa fa-star Fs30" style="margin-left: 10px;"></i>
+                        </p:commandLink>
+                        -->
+
+                    </span>
+                </div>
+            </div>
+
+            <div class="EmptyBox70"></div>
+
+            <div id="layout-portlets-cover">
+                <div id="layout-portlets-cover-indent">
+                    <div id="layout-portlets-table">
+                        <div id="layout-portlets-tablerow">
+                            <div class="Container100">
+                                <div class="ui-fluid MarAuto" style="max-width: 98%;">
+                                    <ui:insert name="contenido" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+        <h:panelGroup id="dialogos" layout="block" styleClass="ui-fluid" >
+            <ui:insert name="dialogos" >
+            </ui:insert>
+        </h:panelGroup>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes GreenButton" icon="ui-icon-check fa fa-check Fs14 white" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no RedButton" icon="ui-icon-close fa fa-close Fs14 white" />
+        </p:confirmDialog>
+
+
+        <ui:include src="/template/exceptionHandler.xhtml" />
+
+        <h:outputStylesheet name="css/core-layout.css" library="volt-layout" />
+        <h:outputStylesheet name="css/animate.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-font.css" library="volt-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="volt-layout" />
+        <h:outputStylesheet name="css/volt-layout.css" library="volt-layout" />
+
+        <ui:include src="/resources/general/inspectlet.xhtml" rendered="#{request.contextPath ne '/bs-base'}" />
+        <ui:include src="/resources/general/analytics.xhtml" rendered="#{request.contextPath ne '/bs-base'}" />
+        <ui:include src="/resources/general/soporte.xhtml" />
+
+
+    </h:body>
+
+</html>

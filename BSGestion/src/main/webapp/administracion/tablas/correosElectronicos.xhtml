@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Correos electrónicos
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Correos electrónicos
+        </ui:define>
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="contenido">
+
+            <p:panel header="Correos electrónicos" style="width:100%;" styleClass="panel">
+
+                <p:messages showDetail="true" />
+
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                    <p:inputText id="txtBusquedaCorreoElectronico" value="#{correoElectronicoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                        <p:ajax event="keyup" delay="500"  process="@this,tipoCorreoElectronico" update="correos" listener="#{correoElectronicoBean.buscar}"/>
+                    </p:inputText>
+
+                    <p:selectOneMenu id="tipoCorreoElectronico" value="#{correoElectronicoBean.enviado}"  >
+                        <f:selectItem itemLabel="Enviados" itemValue="S" />
+                        <f:selectItem itemLabel="No Enviados" itemValue="N" />
+                        <p:ajax process="@this" update="correos" listener="#{correoElectronicoBean.buscar}" />
+                    </p:selectOneMenu>
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                    <p:commandButton icon="fa fa-refresh fa-lg" id="seleMovim"
+                                     value="Actualizar Lista"
+                                     actionListener="#{correoElectronicoBean.actualizarLista}"
+                                     update="@form"
+                                     process="@this" styleClass="btnTabla" />
+
+                    <p:commandButton icon="fa fa-send fa-lg"
+                                     value="Re-enviar todo"
+                                     actionListener="#{correoElectronicoBean.enviarTodo}"
+                                     update="@form"
+                                     process="@this" styleClass="btnTabla" />
+
+                </p:panelGrid>
+
+
+                <p:dataTable id="correos" value="#{correoElectronicoBean.lista}"
+                             var="o" style="padding-top:  10px;"
+                             resizeMode="expand" liveResize="true"
+                             paginator="true" rows="50" paginatorAlwaysVisible="true" >
+
+                    <f:facet name="header" >
+                        Lista de correos no enviados
+                    </f:facet>
+
+                    <p:column headerText="Número" width="50">
+                        <h:outputText value="#{o.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha" style="text-align:center; width:100px;">
+                        <h:outputText value="#{o.fechaEnvio}" >
+                            <f:convertDateTime parent="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Destinatario" style="width: 450px;">
+                        <h:outputText value="#{o.destinatarios}"/>
+                    </p:column>
+
+                    <p:column headerText="Asunto" style="text-align: left; width:200px;">
+                        <h:outputText value="#{o.asunto}">
+                            <f:convertNumber pattern="0" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Detalle" style="width:40px">
+                        <p:rowToggler />
+                    </p:column>
+
+                    <p:column headerText="Re-enviar" style="text-align:center;" >
+
+                        <p:commandButton icon="fa fa-send-o fa-lg" id="seleMovim"
+                                         actionListener="#{correoElectronicoBean.enviarCorreo(o)}"
+                                         update="@form"
+                                         process="@this" styleClass="btnTabla" />
+                    </p:column>
+
+                    <p:rowExpansion>
+                        <p:editor value="#{o.contenido}" disabled="true" />
+                    </p:rowExpansion>
+
+                </p:dataTable>
+
+
+                <div class="EmptyBox10" />
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="Container40, Container60" >
+
+                    <h:panelGroup layout="block" >
+
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block" >
+                        <h:outputText value="Cantidad de Registros: " />
+                        <p:inputText id="cantRegistrosCorreo" value="#{correoElectronicoBean.cantidadRegistros}" style="max-width: 80px;"/>
+                        <p:commandButton value="Aplicar" icon="fa fa-check"
+                                         style="max-width: 100px; margin-left: 1px;"
+                                         actionListener="#{correoElectronicoBean.buscar}"
+                                         process="@this,cantRegistrosCorreo" update="correos" />
+                    </h:panelGroup>
+                </p:panelGrid>
+
+            </p:panel>
+
+        </ui:define>
+
+    </ui:composition>
+</html>
+
+

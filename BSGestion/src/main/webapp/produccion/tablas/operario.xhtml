@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Operario
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Buscar" icon="fa fa-search"
+                            actionListener="#{operarioBean.buscar()}"
+                            update="buscadorOperario"
+                            process="@this"
+                            oncomplete="PF('dlg_operario').show()"
+                            immediate="true" /> 
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{operarioBean.nuevo}"
+                            process="@this"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{operarioBean.guardar(false)}"
+                            rendered="#{not operarioBean.buscaMovimiento}"
+                            process="@form"
+                            update="@form" />
+                <p:menuitem value="Guardar y Nuevo" icon="fa fa-clipboard"
+                            actionListener="#{operarioBean.guardar(true)}"
+                            rendered="#{not operarioBean.buscaMovimiento}"
+                            update="@form" />
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            actionListener="#{operarioBean.imprimir}"
+                            rendered="#{not empty operarioBean.operario}"
+                            ajax="false" target="blank" >
+                </p:menuitem>
+
+                <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                            actionListener="#{operarioBean.habilitaDeshabilita('S')}"
+                            rendered="#{not empty operarioBean.operario and not operarioBean.esNuevo and operarioBean.operario.auditoria.debaja eq 'N'}"
+                            process="@this"
+                            update="@form" />
+
+                <p:menuitem value="Habilitar" icon="fa fa-check"
+                            actionListener="#{operarioBean.habilitaDeshabilita('N')}"
+                            rendered="#{not empty operarioBean.operario and not operarioBean.esNuevo and operarioBean.operario.auditoria.debaja eq 'S'}"
+                            process="@this"
+                            update="@form" />
+
+
+            </p:menubar>
+        </ui:define>
+
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarOperario" process="@this" update="@form" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+            <p:spacer width="100%" height="1em" />
+
+            <!-- DATOS -->
+            <p:panel header="Datos" >
+
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="Container40, Container60 ui-datafield" >
+
+                    <h:outputText value="Código" />
+                    <p:inputText value="#{operarioBean.operario.codigo}"
+                                 readonly="#{not operarioBean.esNuevo}"
+                                 required="true"
+                                 requiredMessage="El código es necesario" />
+
+                    <h:outputText value="Nombre" />
+                    <p:inputText value="#{operarioBean.operario.nombre}"
+                                 required="true"
+                                 requiredMessage="El nombre es necesario" />
+
+                    <h:outputText value="Tipo de operario" />
+                    <p:selectOneMenu value="#{operarioBean.operario.tipo}"
+                                     required="false" requiredMessage="Seleccione el tipo"
+                                     converter="#{conversoresProduccion.tipoOperario}"
+                                     effect="fade" filter="true" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{tipoOperarioBean.lista}" var="a" itemLabel="#{a.descripcion}" itemValue="#{a}" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Planta" />
+                    <p:selectOneMenu value="#{operarioBean.operario.planta}"
+                                     required="false" requiredMessage="Seleccione la planta"
+                                     converter="#{conversoresProduccion.planta}"
+                                     effect="fade" filter="true" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{plantaBean.lista}" var="a" itemLabel="#{a.descripcion}" itemValue="#{a}" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Sector" />
+                    <p:selectOneMenu value="#{operarioBean.operario.sector}"
+                                     required="false" requiredMessage="Seleccione el sector"
+                                     converter="#{conversoresProduccion.sector}"
+                                     effect="fade" filter="true" >
+                        <p:ajax process="@this" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{sectorBean.lista}" var="a" itemLabel="#{a.descripcion}" itemValue="#{a}" />
+                    </p:selectOneMenu>
+
+                </p:panelGrid>
+
+            </p:panel>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/produccion/busqueda/buscadorOperario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+
+
+</html>
+

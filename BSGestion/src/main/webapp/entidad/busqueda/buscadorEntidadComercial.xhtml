@@ -1,0 +1,111 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorEntidadComercial" header="Entidades" modal="true"
+              widgetVar="dlgEntidadComercial"
+              resizable="false"
+              draggable="false" minHeight="400"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaEntidadComercial"/>
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaEntidadComercial" value="#{entidadComercialBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaEntidadComercial" listener="#{entidadComercialBean.buscar}"/>
+                </p:inputText>
+
+                <p:autoComplete id="tipoEntidad" value="#{entidadComercialBean.tipoEntidad}" dropdown="true" forceSelection="true" placeholder="Buscar Tipo de Entidad"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoEntidadBean.complete}"
+                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                converter="#{conversoresEntidad.tipoEntidad}"  >
+
+                    <p:ajax event="itemSelect" process="@this,txtBusquedaEntidadComercial" update="tablaEntidadComercial" listener="#{entidadComercialBean.buscar}" />
+
+                    <p:column headerText="Código" width="100">
+                        <h:outputText value="#{e.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{e.descripcion}" />
+                    </p:column>
+
+                </p:autoComplete>
+            </p:panelGrid>
+            <p:dataTable id="tablaEntidadComercial" value="#{entidadComercialBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{entidadComercialBean.entidad}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{entidadComercialBean.onSelect}" update="@form"
+                        oncomplete="PF('dlgEntidadComercial').hide(), procesarEntidad()" />
+
+                <p:column headerText="Cuenta" width="50" style="text-align: center;"
+                          sortBy="#{e.nrocta}"   >
+                    <h:outputText value="#{e.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Razón social" width="200" style="text-align: left;"
+                          sortBy="#{e.razonSocial}" >
+                    <h:outputText value="#{e.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Nombre Fantasía" width="200" style="text-align: left;"
+                          sortBy="#{e.nombreFantasia}" >
+                    <h:outputText value="#{e.nombreFantasia}" />
+                </p:column>
+
+                <p:column headerText="Nro documento" width="150" style="text-align: center;" >
+                    <h:outputText value="#{e.nrodoc}" >
+                        <f:convertNumber pattern="00-00000000-0" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Dirección" width="200" style="text-align: left;" >
+                    <h:outputText value="#{e.direccion} #{e.numero}" />
+                </p:column>
+
+                <p:column headerText="Localidad" width="200" style="text-align: left;" >
+                    <h:outputText value="#{e.localidad.descripcion}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{entidadComercialBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaEntidadComercial" listener="#{entidadComercialBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistroEntidadComercial" value="#{entidadComercialBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{entidadComercialBean.buscar}"
+                                     process="@this,cantRegistroEntidadComercial" update="tablaEntidadComercial" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="TITULO"  value="#{permisosGrupoBean.titulo}"/>
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{permisosGrupoBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{permisosGrupoBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido">
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:contextMenu for="treeSingle">
+                <p:menuitem value="Habilitar" update="treeSingle,messageg" actionListener="#{permisosGrupoBean.habilitarMenu}" icon="ui-icon-check" />
+                <p:menuitem value="Bloquear"  update="treeSingle,messageg" actionListener="#{permisosGrupoBean.bloquearMenu}" icon="fa fa-close"/>
+            </p:contextMenu>
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank" >
+
+                <p:dataTable id="datos" value="#{permisosGrupoBean.lista}" var="u"
+                             resizeMode="expand" liveResize="true" >
+
+                    <p:column headerText="Grupo" style="text-align: center;"
+                              filterBy="#{u.descripcion}">
+                        <h:outputText value="#{u.descripcion}" style="text-align: left;" />
+                    </p:column>
+
+                    <p:column  headerText="Seleccionar" style="text-align: center;"  >
+                        <p:commandButton icon="ui-icon-check" actionListener="#{permisosGrupoBean.seleccionar(u)}"
+                                         process="@this"
+                                         update="@form" />
+                    </p:column>
+
+                </p:dataTable>
+
+                <h:panelGroup layout="block">
+
+                    <h:panelGroup id="titulo" layout="block" >
+
+                        <div class="EmptyBox10"></div>
+                        <div class="CardTopic Opac100 OvHidden WhiteBack" >
+                            <i class="fa fa-users Fleft Fs30"></i>
+                            <h:outputText value="#{permisosGrupoBean.grupo.codigo} - #{permisosGrupoBean.grupo.descripcion}" style="padding-left: 10px;" />
+                        </div>
+
+                        <div class="Separator"></div>
+
+                    </h:panelGroup>
+                    <div class="EmptyBox10"></div>
+
+                    <p:sticky target="titulo" />
+                    <p:sticky target="datos" />
+
+                    <p:selectOneMenu id="selectModuloVista" value="#{permisosGrupoBean.modulo}" filter="true"
+                                     converter="#{conversoresGeneral.modulo}"  >
+                        <f:selectItem itemLabel="Filtrar Módulo" itemValue="" />
+                        <f:selectItems value="#{moduloBean.lista}"
+                                       var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                        <p:ajax process="@this" update="treeSingle" listener="#{permisosGrupoBean.cargarMenu()}"/>
+                    </p:selectOneMenu>
+
+                    <div class="EmptyBox10"></div>
+
+
+                    <p:tree id="treeSingle" value="#{permisosGrupoBean.menu}"
+                            var="node" rendered="#{not empty permisosGrupoBean.grupo}"
+                            dynamic="true" cache="false"
+                            selectionMode="single"
+                            selection="#{permisosGrupoBean.nodoSeleccionado}"
+                            filterBy="#{node}" >
+
+                        <p:treeNode type="habilitado" icon="ui-icon-check"  >
+                            <h:outputText value="#{node} - #{node.origen}" styleClass="#{i.origen eq 'USR'  ? 'origenUsuario' : null}" />
+                        </p:treeNode>
+
+                        <p:treeNode type="bloqueado" icon="ui-icon-close" styleClass="Red" >
+                            <h:outputText value="#{node} - #{node.origen}" styleClass="#{i.origen eq 'USR'  ? 'origenUsuario' : null}" />
+                        </p:treeNode>
+
+                    </p:tree>
+
+                </h:panelGroup>
+
+            </p:panelGrid>
+
+            <p:sticky target="datos" />
+
+        </ui:define>
+
+    </ui:composition>
+</html>
+
+

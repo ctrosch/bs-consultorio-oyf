@@ -1,0 +1,326 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- BUSQUEDA -->
+    <p:panelGrid id="panelBusqueda" columns="4" layout="grid" style="max-width: 900px;"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+
+        <h:outputText value="Fecha formulario" />
+        <h:panelGroup layout="block">
+            <div class="Wid50 Fleft">
+                <p:calendar value="#{movimientoEducacionBean.fechaMovimientoDesde}"
+                            placeholder="Desde"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax event="dateSelect"  process="@this" update="@form" listener="#{movimientoEducacionBean.buscar()}" />
+
+                </p:calendar>
+            </div>
+            <div class="Wid50 Fright">
+                <p:calendar value="#{movimientoEducacionBean.fechaMovimientoHasta}"
+                            placeholder="Hasta"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true" >
+                    <p:ajax event="dateSelect"  process="@this" update="@form" listener="#{movimientoEducacionBean.buscar()}" />
+                </p:calendar>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Estado" />
+        <p:autoComplete value="#{movimientoEducacionBean.estado}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{estadoEducacionBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.estado }"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.buscar()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <!--
+       <h:outputText value="Mostrar anulados" />
+       <p:selectBooleanCheckbox value="#{movimientoEducacionBean.mostrarDebaja}" >
+           <p:ajax process="@this" update="@form" listener="#{movimientoEducacionBean.buscar()}" />
+       </p:selectBooleanCheckbox>
+        -->
+
+        <h:outputText value="Alumno" />
+        <p:autoComplete value="#{movimientoEducacionBean.alumno}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{alumnoBean.complete}"
+                        var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.buscar()}"  />
+
+            <p:column headerText="Nro Legajo" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Nombre Completo">
+                <h:outputText value="#{e.apellido} #{e.nombre}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <h:outputText value="Carrera" />
+        <p:autoComplete value="#{movimientoEducacionBean.carrera}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{carreraBean.complete}"
+                        var="e" itemLabel="#{e.titulo}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.carrera}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.buscar()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.titulo}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Plan de estudio *" />
+        <p:autoComplete value="#{movimientoEducacionBean.planEstudio}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{movimientoEducacionBean.completePlanEstudioBusqueda}"
+                        converter="#{conversoresEducacion.planEstudio}"
+                        var="a" itemLabel="#{a.titulo}" itemValue="#{a}" >
+            <p:ajax event="itemSelect" process="@this" update="@form" />
+        </p:autoComplete>
+
+        <h:outputText value="Arancel *" />
+        <p:autoComplete value="#{movimientoEducacionBean.arancel}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{movimientoEducacionBean.completeArancelBusqueda}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.arancel}"
+                        emptyMessage="No se encontraron aranceles para la carrera seleccionada">
+
+            <p:ajax event="itemSelect" process="@this"   />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Año Referencia">
+                <h:outputText value="#{e.anioLectivo}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="Curso" />
+        <p:autoComplete value="#{movimientoEducacionBean.curso}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cursoBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresEducacion.curso}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoEducacionBean.buscar()}"  />
+
+            <p:column headerText="Código" width="100">
+                <h:outputText value="#{e.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{e.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Fecha Inicio">
+                <h:outputText value="#{e.fechaInicio}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+
+        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="RedBack MaxWid100"
+                         process="@form"
+                         update="@form"
+                         actionListener="#{movimientoEducacionBean.limpiarFiltroBusqueda()}"   />
+
+    </p:panelGrid>
+
+    <p:dataTable id="movimientos" value="#{movimientoEducacionBean.movimientos}" var="i"
+                 rendered="#{not empty movimientoEducacionBean.movimientos}"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se encontraron movimientos" >
+
+        <f:facet name="header">
+            Movimientos encontrados
+        </f:facet>
+
+        <p:column headerText="Sel." width="50" styleClass="TexAlCenter" >
+            <p:selectBooleanCheckbox  value="#{i.seleccionado}" >
+                <p:ajax update="@form"  />
+            </p:selectBooleanCheckbox>
+        </p:column>
+
+        <p:column headerText="Acciones" width="80" style="text-align: center; min-width: 80px;" >
+
+            <p:commandLink title="Seleccionar movimiento" styleClass="icono-datatable"
+                           actionListener="#{movimientoEducacionBean.seleccionarMovimiento(i)}"
+                           process="@this"
+                           update="@form"  >
+                <i class="fa fa-check fa-2x Green" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Imprimir Comprobante" styleClass="icono-datatable"
+                           actionListener="#{movimientoEducacionBean.imprimir(i)}"
+                           process="@this" >
+                <i class="fa fa-print fa-2x Orange" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Anular o revertir movimiento" styleClass="icono-datatable"
+                           actionListener="#{movimientoEducacionBean.revertirMovimiento(i)}"
+                           rendered="#{i.estado.codigo ne 'X'}"
+                           process="@this"
+                           update="@form"  >
+                <p:confirm header="Confirmación" message="¿Está seguro de anular o revertir el movimiento #{i.formulario.descripcion}  #{i.puntoVenta.codigo} #{i.numeroFormulario}?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+        <p:column headerText="Estado" width="50" style="text-align: center; min-width: 60px;" >
+
+            <i class="fa fa-circle fa-2x #{ i.estado.color}" title="#{i.estado.descripcion}" ></i>
+
+            <h:outputText value=" #{i.estado.descripcion}" />
+
+        </p:column>
+
+        <!--
+        <p:column headerText="Formulario" width="60" styleClass="TexAlCenter"  >
+            <h:outputText value="#{i.formulario.codigo}" />
+        </p:column>
+
+        <p:column headerText="Pto. Venta" width="50" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.puntoVenta.codigo}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+        </p:column>
+        -->
+
+        <p:column headerText="Número" width="100" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.puntoVenta.codigo}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+            -
+            <h:outputText value="#{i.numeroFormulario}" >
+                <f:convertNumber pattern="00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Alumno" width="200" >
+            <h:outputText value="#{i.alumno.nombreComplete}" />
+        </p:column>
+
+        <p:column headerText="Carrera" width="200" >
+            <h:outputText value="#{i.carrera.titulo}" />
+        </p:column>
+
+        <p:column headerText="Arancel" width="200" >
+            <h:outputText value="#{i.arancel.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Curso" width="200" >
+            <h:outputText value="#{i.curso.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Mov. Relacionados" width="60" styleClass="TexAlRight" >
+            <h:outputText value="#{i.movimientosRelacionados.size()}" />
+        </p:column>
+
+        <f:facet name="footer">
+            <div class="p-grid" >
+
+                <div class="p-col-8 p-md-3 " >
+                    <p:selectOneMenu value="#{movimientoEducacionBean.accionEnLote}"  >
+                        <p:ajax process="@this" update="movimientos" />
+                        <f:selectItem itemLabel="Acción en lote" itemValue="" />
+                        <f:selectItem itemLabel="Generar Reinscripción"    itemValue="R" />
+                        <f:selectItem itemLabel="Generar Baja Inscripción" itemValue="B" />
+                    </p:selectOneMenu>
+                </div>
+
+                <div class="p-col-4 p-md-1" >
+                    <p:commandButton value="Aplicar" icon="fa fa-check" styleClass="GreenBack"
+                                     rendered="#{not empty movimientoEducacionBean.accionEnLote}"
+                                     process="@form"
+                                     update="@form"
+                                     actionListener="#{movimientoEducacionBean.aplicarAccionEnLotes()}"   />
+                </div>
+
+                <div class="p-col-12 p-md-8 TexAlRight" >
+
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistros" value="#{movimientoEducacionBean.cantidadRegistros}" style="max-width: 80px;" styleClass="TexAlRight"/>
+                    <p:commandButton icon="fa fa-check" styleClass="GreenBack"
+                                     style="margin-left: 1px;"
+                                     actionListener="#{movimientoEducacionBean.buscar()}"
+                                     process="@form" update="movimientos" />
+
+                </div>
+            </div>
+        </f:facet>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="Container40, Container60" >
+
+        <h:panelGroup layout="block" >
+
+        </h:panelGroup>
+    </p:panelGrid>
+
+
+
+
+</ui:composition>
+

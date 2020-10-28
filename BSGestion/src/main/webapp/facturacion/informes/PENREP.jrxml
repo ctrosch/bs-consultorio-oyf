@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PendienteRepartidor" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86fa7a8a-9e1b-4494-9289-7091d25b277c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="CIRDES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CIRHAS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FCHDES" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FCHHAS" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ARTCOD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NROCTA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMINT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="VNDDOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="UNINEG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODPRV" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPPRO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RUBR01" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RUBR02" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RUBR03" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="VATRI1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="VATRI2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="VATRI3" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATRI1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATRI2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NATRI3" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPDOR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODZON" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+  m.CIRCOM As CIRCOM,
+  cir.DESCRP AS CIRCUITO_DESCRIPCION,
+  m.CIRAPL As CIRAPL,
+  m.NROCTA As NROCTA,
+  i.ID_IAPL As ID_IAPL,
+  m.CODFOR As CODFOR,
+  m.NROFOR As NROFOR,
+  m.FCHMOV As FCHMOV,
+  i.ARTCOD As ARTCOD,
+  i.DESCRP As PRODUCTO_DESCRIPCION,
+  IFNULL(d.NATRI1,'') AS NATRI1,
+  IFNULL(d.NATRI2,'') AS NATRI2,
+  IFNULL(d.NATRI3,'') AS NATRI3,
+  IFNULL(d.NATRI4,'') AS NATRI4,
+  par.DESAT1 AS DESAT1,
+  par.DESAT2 AS DESAT2,
+  par.DESAT3 AS DESAT3,
+  par.DESAT4 AS DESAT4,
+  i.OBSERVA As OBSERVA,
+  i.CNTPEN As PENDIENTE,
+  i.PRECIO As PRECIO,
+  i.PCTBFN as BONIFICACION,
+  i.CNTPEN*i.PRECIO + i.CNTPEN*i.PRECIO*i.PCTBFN/100 As TOTAL,
+  e.RAZONS,
+  i.PCTBFN,
+  i.UNIMED,
+  vt_vendedor.NOMBRE,
+  m.VNDDOR,
+  m.REPDOR AS REPARTIDOR_CODIGO,
+  vt_repartidor.NOMBRE as REPARTIDOR_NOMBRE
+From fc_movimiento_item i
+Inner Join fc_movimiento m On i.ID_MCAB = m.ID
+left Join fc_movimiento_item_detalle d On i.ID = d.ID_IDET
+Inner Join st_producto p On i.ARTCOD = p.CODIGO
+Inner Join en_entidad e On m.NROCTA = e.NROCTA
+Inner Join vt_vendedor On m.VNDDOR = vt_vendedor.CODIGO
+Inner Join vt_repartidor On m.REPDOR = vt_repartidor.CODIGO
+Inner Join gr_comprobante On m.MODCOM = gr_comprobante.MODCOM AND m.CODCOM = gr_comprobante.CODCOM
+Inner Join fc_circuito c On c.CIRCOM = m.CIRCOM AND c.CIRAPL = m.CIRAPL
+Inner Join fc_circuito_codigo cir On m.CIRCOM = cir.CODIGO,
+st_parametro par
+Where m.CIRCOM BETWEEN $P{CIRDES} AND $P{CIRHAS}
+and m.FCHMOV BETWEEN $P{FCHDES} AND $P{FCHHAS}
+AND IF(LENGTH($P{COMPST}) > 0, c.COMPST = $P{COMPST},1=1)
+AND IF(LENGTH($P{NROCTA}) > 0, m.NROCTA = $P{NROCTA},1=1)
+AND IF(LENGTH($P{CODZON}) > 0, e.CODZON = $P{CODZON},1=1)
+AND IF(LENGTH($P{ARTCOD}) > 0, i.ARTCOD = $P{ARTCOD},1=1)
+AND IF(LENGTH($P{COMINT}) > 0, gr_comprobante.COMINT = $P{COMINT},1=1)
+AND IF(LENGTH($P{VNDDOR}) > 0, m.VNDDOR = $P{VNDDOR},1=1)
+AND IF(LENGTH($P{REPDOR}) > 0, m.REPDOR = $P{REPDOR},1=1)
+AND IF(LENGTH($P{UNINEG}) > 0, m.UNINEG = $P{UNINEG},1=1)
+AND IF(LENGTH($P{CODSUC}) > 0, m.CODSUC = $P{CODSUC},1=1)
+AND IF(LENGTH($P{CODPRV}) > 0, m.CODPRO = $P{CODPRV},1=1)
+AND IF(LENGTH($P{TIPPRO}) > 0, p.TIPPRO = $P{TIPPRO},1=1)
+AND IF(LENGTH($P{RUBR01}) > 0, p.RUBR01 = $P{RUBR01},1=1)
+AND IF(LENGTH($P{RUBR02}) > 0, p.RUBR02 = $P{RUBR02},1=1)
+AND IF(LENGTH($P{RUBR03}) > 0, p.RUBR03 = $P{RUBR03},1=1)
+AND IF(LENGTH($P{VATRI1}) > 0, EXISTS(SELECT * FROM st_producto_atributo WHERE st_producto_atributo.NOMBRE = $P{NATRI1} AND st_producto_atributo.VALOR = $P{VATRI1} AND st_producto_atributo.ARTCOD = p.CODIGO),1=1)
+AND IF(LENGTH($P{VATRI2}) > 0, EXISTS(SELECT * FROM st_producto_atributo WHERE st_producto_atributo.NOMBRE = $P{NATRI2} AND st_producto_atributo.VALOR = $P{VATRI2} AND st_producto_atributo.ARTCOD = p.CODIGO),1=1)
+AND IF(LENGTH($P{VATRI3}) > 0, EXISTS(SELECT * FROM st_producto_atributo WHERE st_producto_atributo.NOMBRE = $P{NATRI3} AND st_producto_atributo.VALOR = $P{VATRI3} AND st_producto_atributo.ARTCOD = p.CODIGO),1=1)
+AND m.CODSUC IN(SELECT n.CODSUC FROM sg_usuario_sucursal n inner join sg_usuario u on n.CODUSU = u.ID WHERE u.USUARIO = $P{USUARIO})
+AND i.cntpen > 0
+ORDER BY m.CIRCOM, m.CIRAPL, m.REPDOR, m.NROCTA,m.CODFOR,m.NROFOR,i.ARTCOD,d.NATRI1,d.NATRI2,d.NATRI3]]>
+	</queryString>
+	<field name="CIRCOM" class="java.lang.String">
+		<fieldDescription><![CDATA[Circuito comienzo]]></fieldDescription>
+	</field>
+	<field name="CIRCUITO_DESCRIPCION" class="java.lang.String"/>
+	<field name="CIRAPL" class="java.lang.String">
+		<fieldDescription><![CDATA[Circuito aplicación]]></fieldDescription>
+	</field>
+	<field name="NROCTA" class="java.lang.String">
+		<fieldDescription><![CDATA[Entidad]]></fieldDescription>
+	</field>
+	<field name="ID_IAPL" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Id item que aplica]]></fieldDescription>
+	</field>
+	<field name="CODFOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Código formulario]]></fieldDescription>
+	</field>
+	<field name="NROFOR" class="java.lang.Integer">
+		<fieldDescription><![CDATA[Número formulario]]></fieldDescription>
+	</field>
+	<field name="FCHMOV" class="java.sql.Date">
+		<fieldDescription><![CDATA[Fecha movimiento]]></fieldDescription>
+	</field>
+	<field name="ARTCOD" class="java.lang.String">
+		<fieldDescription><![CDATA[Código de producto]]></fieldDescription>
+	</field>
+	<field name="PRODUCTO_DESCRIPCION" class="java.lang.String"/>
+	<field name="NATRI1" class="java.lang.String">
+		<fieldDescription><![CDATA[Atributo 1]]></fieldDescription>
+	</field>
+	<field name="NATRI2" class="java.lang.String">
+		<fieldDescription><![CDATA[Atributo 2]]></fieldDescription>
+	</field>
+	<field name="NATRI3" class="java.lang.String">
+		<fieldDescription><![CDATA[Atributo 3]]></fieldDescription>
+	</field>
+	<field name="NATRI4" class="java.lang.String">
+		<fieldDescription><![CDATA[Atributo 4]]></fieldDescription>
+	</field>
+	<field name="DESAT1" class="java.lang.String">
+		<fieldDescription><![CDATA[Descripción Atributo 1]]></fieldDescription>
+	</field>
+	<field name="DESAT2" class="java.lang.String">
+		<fieldDescription><![CDATA[Descripción Atributo 2]]></fieldDescription>
+	</field>
+	<field name="DESAT3" class="java.lang.String">
+		<fieldDescription><![CDATA[Descripción Atributo 3]]></fieldDescription>
+	</field>
+	<field name="DESAT4" class="java.lang.String">
+		<fieldDescription><![CDATA[Descripción Atributo 4]]></fieldDescription>
+	</field>
+	<field name="OBSERVA" class="java.lang.String">
+		<fieldDescription><![CDATA[Observaciones]]></fieldDescription>
+	</field>
+	<field name="PENDIENTE" class="java.math.BigDecimal"/>
+	<field name="PRECIO" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Precio unitario]]></fieldDescription>
+	</field>
+	<field name="BONIFICACION" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="RAZONS" class="java.lang.String">
+		<fieldDescription><![CDATA[Razón Social]]></fieldDescription>
+	</field>
+	<field name="PCTBFN" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Porcentaje bonificacion total]]></fieldDescription>
+	</field>
+	<field name="UNIMED" class="java.lang.String">
+		<fieldDescription><![CDATA[Unidad de medida]]></fieldDescription>
+	</field>
+	<field name="NOMBRE" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="VNDDOR" class="java.lang.String">
+		<fieldDescription><![CDATA[Vendedor]]></fieldDescription>
+	</field>
+	<field name="REPARTIDOR_CODIGO" class="java.lang.String"/>
+	<field name="REPARTIDOR_NOMBRE" class="java.lang.String"/>
+	<variable name="SUM_PRODUCTO" class="java.math.BigDecimal" resetType="Group" resetGroup="NRO_CTA" calculation="Sum">
+		<variableExpression><![CDATA[$F{PENDIENTE}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL" class="java.math.BigDecimal" resetType="Group" resetGroup="NRO_CTA" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_PRODUCTO_T" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PENDIENTE}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL_T" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL_C" class="java.math.BigDecimal" resetType="Group" resetGroup="CIRCOM" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_PRODUCTO_C" class="java.math.BigDecimal" resetType="Group" resetGroup="CIRCOM" calculation="Sum">
+		<variableExpression><![CDATA[$F{PENDIENTE}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL_R" class="java.math.BigDecimal" resetType="Group" resetGroup="REPDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_PRODUCTO_R" class="java.math.BigDecimal" resetType="Group" resetGroup="REPDOR" calculation="Sum">
+		<variableExpression><![CDATA[$F{PENDIENTE}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<filterExpression><![CDATA[( $P{NROCTA}.equals("")? !$F{NROCTA}.equals("") : $F{NROCTA}.equals($P{NROCTA}))
+&& ( $P{ARTCOD}.equals("")? !$F{ARTCOD}.equals("") : $F{ARTCOD}.equals($P{ARTCOD}))]]></filterExpression>
+	<group name="CIRCOM" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{CIRCOM}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="15" width="555" height="15" backcolor="#CCCCCC" uuid="2679d6e2-8078-4048-8e9b-e094c8c48eb2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CIRCOM}+" - "+$F{CIRCUITO_DESCRIPCION}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="15" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="42b1924d-33ca-493a-9ee6-25f61834f35a"/>
+				</rectangle>
+				<textField pattern="#,##0.00">
+					<reportElement x="478" y="0" width="77" height="15" uuid="45992661-d20d-47bb-92b2-83a92846f90a"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL_C}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="352" y="0" width="53" height="15" uuid="90a21a2a-5297-4a25-a870-b5ce86f7b3e7"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_PRODUCTO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="0" y="0" width="352" height="15" backcolor="#CCCCCC" uuid="9c734eb8-76ee-47b2-a3e7-3d23b14321f2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL " + $F{CIRCUITO_DESCRIPCION}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="REPDOR">
+		<groupExpression><![CDATA[$F{REPARTIDOR_CODIGO}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="19" forecolor="#FFFFFF" backcolor="#99CCFF" uuid="9caa6f8f-9c4f-4762-995a-92ea9112f3e5"/>
+				</rectangle>
+				<textField>
+					<reportElement x="99" y="1" width="168" height="18" uuid="7cfdad8d-fbeb-4c7c-996e-0993b1b87146"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{REPARTIDOR_NOMBRE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="1" width="99" height="18" uuid="c324f244-6355-402c-92bc-6685e8385c40"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="7"/>
+					</textElement>
+					<text><![CDATA[REPARTIDOR]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<textField pattern="#,##0.00">
+					<reportElement x="478" y="0" width="77" height="12" uuid="6284b479-12da-4a4b-a94b-285d5a247738"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="352" y="0" width="53" height="12" uuid="54d1ff01-3e69-418d-b82d-801d92c8cd4e"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_PRODUCTO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="119" y="0" width="233" height="12" uuid="61447726-690b-4552-86ab-23752d175f9a"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total Repartidor" + $F{REPARTIDOR_NOMBRE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="NRO_CTA">
+		<groupExpression><![CDATA[$F{NROCTA}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="13" forecolor="#FFFFFF" backcolor="#CAE5FF" uuid="91bdde75-5359-48f1-902b-bd293e968cb1"/>
+				</rectangle>
+				<textField>
+					<reportElement x="0" y="1" width="35" height="12" uuid="4079e1c8-0dcb-4a73-821d-2d4f021f09c4"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NROCTA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="34" y="1" width="233" height="12" uuid="8919296c-8ac7-4554-aab9-ee4a0a9bea19"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RAZONS}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField pattern="#,##0.00">
+					<reportElement x="352" y="0" width="53" height="12" uuid="058599e6-7abf-4a71-96dd-afdc81d61c00"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_PRODUCTO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="478" y="0" width="77" height="12" uuid="85484129-8988-4c56-9ca1-e6826042c371"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="160" y="0" width="192" height="12" uuid="00c02cac-76b3-4fbd-afe2-663b8ecbba5a"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+						<paragraph rightIndent="7"/>
+					</textElement>
+					<text><![CDATA[Total por Cliente]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="0" width="555" height="1" forecolor="#999999" uuid="a0ed3e01-1b94-4013-9521-2bc6ff2ed594"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="32">
+			<line>
+				<reportElement x="0" y="30" width="555" height="1" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="417" y="0" width="1" height="30" uuid="24624d49-6ced-443f-849c-11d10cc02327"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement x="0" y="0" width="85" height="30" uuid="411b89eb-8d1a-4b4f-ba3c-e11c42fcc945"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="429" y="14" width="114" height="11" uuid="0427b782-8e84-49fb-8bce-824533e57710"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="0" width="114" height="13" uuid="b524773c-d3aa-458b-9d7e-5c6549723db1"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{EMP_NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="144" y="0" width="273" height="30" uuid="a2170831-50a6-4035-a08e-f5d766cf6464"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Pendientes por Repartidor]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="15" backcolor="#99CCFF" uuid="451e940c-56ea-4a6c-a813-c5b9ded3681a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="15" width="555" height="15" backcolor="#CAE5FF" uuid="39db9433-79e0-4113-923e-b3a83bb5f042"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="25"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="69" height="15" uuid="1e7cd8af-97ac-4ede-9580-1f2a9dda18c7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Formulario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="69" y="15" width="46" height="15" uuid="758d88fe-a15b-4632-8198-99b35c930074"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="178" y="15" width="192" height="15" uuid="f8838dae-6124-4849-857e-029e2179b065"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="15" width="35" height="15" uuid="e642f52b-2eef-48df-a14e-9551c1e7934c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="15" width="61" height="15" uuid="2203eed4-eed7-44e0-a28d-1fb75e435fdd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Precio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="495" y="15" width="60" height="15" uuid="37dd8c9b-122c-4be5-abf3-e31a7e7518b9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe Tot.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="115" y="15" width="63" height="15" uuid="c4237638-315b-42df-b256-04c898c4e311"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="466" y="15" width="29" height="15" uuid="3d2e0430-4576-44c7-ba62-32a022444af2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[% Bon.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<textField pattern="#,##0.00">
+				<reportElement x="370" y="0" width="35" height="12" uuid="1ce3ba65-a347-449c-bb08-621b58ac25d5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PENDIENTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="405" y="0" width="61" height="12" uuid="c9388153-d25b-4119-91d1-f969cb148d3f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRECIO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" forecolor="#999999" uuid="4f90148f-f430-4eb9-baf2-e871628e03eb"/>
+			</line>
+			<textField>
+				<reportElement x="115" y="0" width="63" height="12" uuid="98577cd0-0711-4b45-88c7-f395f1e397fb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARTCOD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="178" y="0" width="192" height="12" uuid="5adcf248-fefc-4d7d-8271-158002f1355b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRODUCTO_DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="0000000">
+				<reportElement x="34" y="0" width="35" height="12" uuid="1f081d16-92a0-4dca-b5e7-0b791ab037eb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NROFOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="69" y="0" width="46" height="12" uuid="799a9a6e-932f-48c3-a730-262dcf30a846"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FCHMOV}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="34" height="12" uuid="dbaecef5-82e9-4631-8c7a-1ba13fa50a50"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODFOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="495" y="0" width="60" height="12" uuid="ad1ecf28-2ba7-42cc-9cad-97fa8dbc4272"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="466" y="0" width="29" height="12" uuid="818f4979-7f9d-486c-86fb-02b24c86e082"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCTBFN}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="115" y="12" width="440" height="0" uuid="16b04127-a908-442a-a709-c062e07ca180"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{NATRI1}==null || $F{NATRI1}.isEmpty()?"":$F{DESAT1}+" "+$F{NATRI1}+" | ")
++($F{NATRI2}==null || $F{NATRI2}.isEmpty()?"":$F{DESAT2}+" "+$F{NATRI2}+" | ")
++($F{NATRI3}==null || $F{NATRI3}.isEmpty()?"":$F{DESAT3}+" "+$F{NATRI3}+" | ")
++($F{NATRI4}==null || $F{NATRI4}.isEmpty()?"":$F{DESAT4}+" "+$F{NATRI4}+" | ")
++($F{OBSERVA}==null || $F{OBSERVA}.isEmpty()?"":"\n"+$F{OBSERVA})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="160" y="0" width="192" height="14" uuid="d37a7ef9-6bd6-4dcd-a801-bebe7c40be91"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+					<paragraph rightIndent="7"/>
+				</textElement>
+				<text><![CDATA[Total General]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="478" y="0" width="77" height="14" uuid="d0676455-47b1-4448-a381-fe55eea5be8f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TOTAL_T}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="352" y="0" width="53" height="14" uuid="aa5313cd-c03c-4bde-8049-270343eb9aab"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_PRODUCTO_T}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" forecolor="#999999" uuid="b083c26a-4e23-454a-9c96-928eed1760cb"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="441" y="17" width="114" height="10" uuid="8212ba1a-b294-499c-8696-fa465f6759d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="17" width="114" height="10" uuid="90cd5f53-8515-4c59-bb63-1ab7cb64205a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="58" height="14" uuid="1b29d5ef-972a-4135-ade8-c7e0584b0821"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="0" width="64" height="14" uuid="bcc2ac4a-ca03-4a7f-8d24-47ed8af203b1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="178" y="0" width="57" height="14" uuid="e30d0bcc-8ed2-47d4-9162-b4202cf6bb18"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FCHHAS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="58" y="0" width="57" height="14" uuid="939934ec-70e7-4bee-a63a-3b9f5b5bfa00"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FCHDES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

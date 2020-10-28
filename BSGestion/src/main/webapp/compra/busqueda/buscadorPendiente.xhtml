@@ -1,0 +1,297 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <p:dialog id="buscadorPendiente" header="Selección de pendientes" modal="true"
+              widgetVar="dlgPendiente"
+              resizable="false"
+              draggable="false"
+              position="top"
+              closable="#{movimientoCompraBean.circuito.circom eq movimientoCompraBean.circuito.circom ? 'true':'false'}"
+              showEffect="fade" hideEffect="fade"
+              style="min-width: 100%; min-height: 100%;"
+              styleClass="Hei100 Wid100"
+              responsive="true"
+              visible="#{movimientoCompraBean.seleccionaPendiente}">
+
+        <h:form id="fPendiente" prependId="false" rendered="#{movimientoCompraBean.seleccionaPendiente}" >
+
+            <p:wizard id="wizPendiente" widgetVar="wizPendiente" styleClass="Wid100" style="min-height: 100%; height: 100%;"
+                      backLabel="Atras" nextLabel="Siguiente" flowListener="#{movimientoCompraBean.procesoSeleccionPendientes}" >
+
+                <p:tab id="filtro" title="Filtros" >
+
+                    <p:messages showDetail="true" /><p:growl showDetail="true" life="4000" />
+
+                    <div class="ui-g Hei100 Wid100">
+                        <div class="ui-g-12 Hei100">
+                            <p:outputPanel style="min-height: 350px;">
+
+                                <p:panelGrid columns="2" layout="grid" style="max-width: 700px;"
+                                             styleClass="ui-panelgrid-blank" >
+
+                                    <h:outputText value="Fecha formulario" />
+                                    <h:panelGroup layout="block">
+
+                                        <div class="Wid50 Fleft">
+                                            <p:calendar value="#{movimientoCompraBean.fechaMovimientoDesde}"
+                                                        placeholder="Desde"
+                                                        pattern="dd/MM/yyyy"
+                                                        showOn="button"
+                                                        navigator="true"
+                                                        mask="true" >
+                                                <p:ajax event="dateSelect"  process="@this" />
+                                            </p:calendar>
+                                        </div>
+                                        <div class="Wid50 Fright">
+                                            <p:calendar value="#{movimientoCompraBean.fechaMovimientoHasta}"
+                                                        placeholder="Hasta"
+                                                        pattern="dd/MM/yyyy"
+                                                        showOn="button"
+                                                        navigator="true"
+                                                        mask="true" >
+                                                <p:ajax event="dateSelect"  process="@this" />
+                                            </p:calendar>
+                                        </div>
+                                    </h:panelGroup>
+
+                                    <h:outputText value="Número formulario" />
+                                    <h:panelGroup layout="block" >
+
+                                        <div class="Wid50 Fleft">
+                                            <p:inputText value="#{movimientoCompraBean.numeroFormularioDesde}"  placeholder="Desde"/>
+                                        </div>
+
+                                        <div class="Wid50 Fright">
+                                            <p:inputText value="#{movimientoCompraBean.numeroFormularioHasta}"  placeholder="Hasta"/>
+                                        </div>
+
+                                    </h:panelGroup>
+
+                                    <h:outputText value="Proveedor" />
+                                    <p:autoComplete value="#{movimientoCompraBean.proveedor}" dropdown="true"
+                                                    maxResults="8" queryDelay="1000"
+                                                    placeholder="Seleccionar Proveedor"
+                                                    completeMethod="#{proveedorBean.complete}"
+                                                    var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                                    converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                                        <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                                        <p:column headerText="Nro cuenta" width="100">
+                                            <h:outputText value="#{e.nrocta}" />
+                                        </p:column>
+
+                                        <p:column headerText="Razón social">
+                                            <h:outputText value="#{e.razonSocial}" />
+                                        </p:column>
+
+                                        <p:column headerText="Nombre Fantasía">
+                                            <h:outputText value="#{e.nombreFantasia}" />
+                                        </p:column>
+
+                                    </p:autoComplete>
+                                </p:panelGrid>
+
+                                <!--
+                                <h:outputText value="Actualiza Cotización " />
+                                <p:selectOneButton  value="#{movimientoCompraBean.congelaCotizacion}"
+                                                    required="true" requiredMessage="Seleccione debe/haber"  >
+                                    <p:ajax process="@this" />
+                                    <f:selectItem itemLabel="Si" itemValue="S" />
+                                    <f:selectItem itemLabel="N" itemValue="N" />
+                                </p:selectOneButton >
+                                -->
+
+                            </p:outputPanel>
+
+                            <div class="Wid100 TexAlCenter" >
+
+                                <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" process="@this" styleClass="MaxWid500"
+                                                 actionListener="#{movimientoCompraBean.resetParametros}"
+                                                 update="@form" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </p:tab>
+
+                <p:tab id="pendiente_grupo" title="Grupo de pendientes">
+
+                    <p:messages showDetail="true" /><p:growl showDetail="true" life="4000" />
+
+                    <div class="ui-g Hei100">
+                        <div class="ui-g-12">
+
+                            <p:accordionPanel id="accordion" widgetVar="accordion" >
+
+                                <p:tab title="Detalle de grupo">
+
+                                    <div class="ui-g Hei100">
+                                        <div class="ui-g-12">
+                                            <p:dataTable value="#{movimientoCompraBean.movimientosPendientes}"  var="m"
+                                                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                                                         scrollable="true" scrollHeight="250"
+                                                         emptyMessage="No se encontraron documentos - HAGA CLIC EN VER PENDIENTES"  >
+
+                                                <p:column headerText="Proveedor"  width="200" >
+                                                    <h:outputText value="#{m.proveedor.nrocta} - #{m.razonSocial}" />
+                                                </p:column>
+
+                                                <p:column headerText="Condición Pago" width="100"  >
+                                                    <h:outputText value="#{m.condicionDePago.descripcion}" />
+                                                </p:column>
+
+                                                <p:column headerText="Moneda Reg." width="50"  >
+                                                    <h:outputText value="#{m.monedaRegistracion.codigo}" />
+                                                </p:column>
+
+                                                <p:column headerText="Cant. Pendientes" width="80" >
+                                                    <h:outputText value="#{m.pendiente}" styleClass="TexAlRight" >
+                                                        <f:convertNumber pattern="#,###,##0.00" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Seleccionar" width="60" >
+                                                    <p:commandButton icon="fa fa-search" id="seleMovim"
+                                                                     actionListener="#{movimientoCompraBean.seleccionarItemPendiente(m, true)}"
+                                                                     update="@form" process="@this"
+                                                                     oncomplete="PF('accordion').select(1)" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </div>
+                                    </div>
+                                </p:tab>
+
+                                <p:tab title="Detalle de items" >
+
+                                    <div class="ui-g Hei100">
+                                        <div class="ui-g-12">
+
+                                            <p:dataTable id="tblDetalle" value="#{movimientoCompraBean.itemsPendiente}"
+                                                         var="i" scrollable="true" scrollHeight="250"
+                                                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                                                         emptyMessage="No se encontraron items pendientes" >
+
+                                                <p:column headerText="Tipo" width="40" >
+                                                    <h:outputText value="#{i.codfor}" />
+                                                </p:column>
+
+                                                <p:column headerText="Número" width="70"  >
+                                                    <h:outputText value="#{i.nrofor}" >
+                                                        <f:convertNumber pattern="00000000"  />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Fecha" width="80" style="text-align: center;" >
+                                                    <h:outputText value="#{i.fchmov}" >
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Código" width="80" styleClass="TexAlCenter">
+                                                    <h:outputText value="#{i.producto.codigo}" />
+                                                </p:column>
+
+                                                <p:column headerText="Descripción" >
+                                                    <h:outputText value="#{i.descripcion}" />
+                                                </p:column>
+
+                                                <p:column headerText="Cód. Proveedor" width="80" styleClass="TexAlCenter" >
+                                                    <h:outputText value="#{i.producto.codigoProveedor}" />
+                                                </p:column>
+
+                                                <p:column headerText="Observacion/Detalle" >
+                                                    <h:outputText value="#{i.observacion}" />
+                                                </p:column>
+
+                                                <p:column headerText="F. Entrega" width="80" style="text-align: center;" >
+                                                    <h:outputText value="#{i.fechaEntrega}" >
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Cantidad" width="80" style="text-align: right;"  >
+                                                    <h:outputText value="#{i.cantidad}" style="text-align: right" >
+                                                        <f:convertNumber pattern="#,###,##0.00" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="U.M." width="50" style="text-align: center;" >
+                                                    <h:outputText value="#{i.unidadMedida.codigo}" />
+                                                </p:column>
+
+                                                <p:column headerText="Pcio Nac." width="80" style="text-align: right;"  >
+                                                    <h:outputText value="#{i.precio}" style="text-align: right" >
+                                                        <f:convertNumber pattern="#,###,##0.00" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Pcio Ext." width="80" style="text-align: right;"  >
+                                                    <h:outputText value="#{i.precioSecundario}" style="text-align: right" >
+                                                        <f:convertNumber pattern="#,###,##0.00" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="Pcio Total" width="80" style="text-align: right;"  >
+                                                    <h:outputText value="#{i.cantidad*i.precio}" style="text-align: right" >
+                                                        <f:convertNumber pattern="#,###,##0.00" />
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column width="20" style="text-align: center; " >
+                                                    <f:facet name="header" >
+                                                        <p:selectBooleanCheckbox value="#{movimientoCompraBean.seleccionaTodo}" >
+                                                            <p:ajax event="change" listener="#{movimientoCompraBean.seleccionarTodo}"
+                                                                    update="tblDetalle" process="@this"/>
+                                                        </p:selectBooleanCheckbox>
+                                                    </f:facet>
+
+                                                    <p:selectBooleanCheckbox value="#{i.seleccionado}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+
+                                            <div class="EmptyBox20" />
+
+                                            <div class="Wid100 TexAlCenter">
+
+                                                <p:commandButton icon="ui-icon-check"  value="Finalizar" styleClass="MaxWid500 GreenButton"
+                                                                 process="@form" update="@form :formulario"
+                                                                 rendered="#{not empty movimientoCompraBean.itemsPendiente}"
+                                                                 actionListener="#{movimientoCompraBean.finalizarProcesoSeleccionPendiente}"
+                                                                 oncomplete="handlePendienteRequest(xhr, status, args)" />
+
+                                                <script type="text/javascript">
+                                                    function handlePendienteRequest(xhr, status, args) {
+                                                        if (args.validationFailed || !args.todoOk) {
+                                                            PF('dlgPendiente').show();
+                                                        } else {
+                                                            PF('dlgPendiente').hide();
+                                                        }
+                                                    }
+                                                </script>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </p:tab>
+                            </p:accordionPanel>
+                        </div>
+                    </div>
+                </p:tab>
+
+            </p:wizard>
+
+            <div class="EmptyBox20" />
+
+
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

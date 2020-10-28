@@ -1,0 +1,193 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- CENTRO COSTO -->
+    <p:dialog id="detalleKit" header="Composición de kit" modal="true"
+              widgetVar="dlgDetalleKit"
+              resizable="false"
+              position="top"
+              closable="false"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 1100px;" responsive="true" >
+
+        <p:dataTable id="tablaDetalleKit" value="#{movimientoFacturacionBean.item.itemsKit}" var="k"
+                     resizeMode="expand" liveResize="true"
+                     scrollable="true" scrollHeight="300"
+                     rowStyleClass="#{k.conError  ? 'conError' : null}"  >
+
+
+            <f:facet name="footer">
+                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                 value="Agregar item"
+                                 actionListener="#{movimientoFacturacionBean.nuevoItemKit(movimientoFacturacionBean.item)}"
+                                 process="tablaDetalleKit"
+                                 update="tablaDetalleKit,message,messageg" />
+            </f:facet>
+
+            <p:column headerText="Código" width="80" styleClass="TexAlCenter"  >
+                <h:outputText value="#{k.producto.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción"  >
+                <!--
+                <h:outputText value="#{k.producto.descripcion}" />
+                -->
+
+                <p:autoComplete value="#{k.producto}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{productoBean.complete}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+                    <p:ajax event="itemSelect" listener="#{movimientoFacturacionBean.procesarProductoKit}"
+                            process="@this" update="tablaDetalleKit,tb:detalle,totales" />
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{p.codigo}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{p.descripcion}" />
+                    </p:column>
+                </p:autoComplete>
+
+            </p:column>
+
+            <p:column headerText="Cant. Nominal" width="90" >
+
+                <p:inputText value="#{k.cantidadNominal}" styleClass="TexAlRight" >
+                    <p:ajax listener="#{movimientoFacturacionBean.modificarCantidadItemKit(k)}" event="keyup" delay="500"
+                            process="@this"
+                            update="cantidadTotal,tb:detalle,totales" />
+                    <f:convertNumber pattern="###,###,##0.0000" />
+                </p:inputText>
+            </p:column>
+
+            <p:column headerText="Cant. Total" width="90" >
+                <h:outputText id="cantidadTotal" value="#{k.cantidad}" styleClass="Fright"  >
+                    <f:convertNumber pattern="###,###,##0.0000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="U.M." width="60" styleClass="TexAlCenter"
+                      rendered="#{movimientoFacturacionBean.muestroCampo('K','UNIMED')}">
+                <h:outputText value="#{k.unidadMedida.codigo}" />
+            </p:column>
+
+            <p:column headerText="Stock" width="60" styleClass="TexAlCenter"
+                      rendered="#{movimientoFacturacionBean.muestroCampo('K','CSTOCK')}">
+                <h:outputText value="#{k.stock}" />
+            </p:column>
+
+            <p:column headerText="Costo Unit." width="90"
+                      rendered="#{movimientoFacturacionBean.muestroCampo('K','PCOSTO')}">
+
+                <p:inputText value="#{k.precioCosto}" styleClass="TexAlRight" >
+                    <f:convertNumber pattern="###,###,##0.00" />
+                    <p:ajax listener="#{movimientoFacturacionBean.modificarCantidadItemKit(k)}" event="keyup" delay="500"
+                            process="@this"
+                            update="tb:detalle,totales" />
+                </p:inputText>
+            </p:column>
+
+            <!--
+            <p:column headerText="Precio" width="90"
+                      rendered="#{movimientoFacturacionBean.muestroCampo('K','PRECIO')}">
+
+                <h:outputText value="#{k.precio}" styleClass="Fright" >
+                    <f:convertNumber pattern="###,###,##0.00" />
+                </h:outputText>
+
+            </p:column>
+            -->
+
+            <!--
+            <p:column headerText="Total" width="90"
+                      rendered="#{movimientoFacturacionBean.muestroCampo('K','PREIMP')}">
+
+                <h:outputText id="importeTotalKit" value="#{k.totalLinea}" styleClass="Fright" >
+                    <f:convertNumber pattern="###,###,##0.00" />
+                </h:outputText>
+            </p:column>
+            -->
+
+            <p:column headerText="" width="60" style="text-align: right;" >
+
+                <p:commandLink id="btnStock"
+                               title="Ver stock"
+                               rendered="#{not empty k.producto and k.producto.gestionaStock eq 'S'}"
+                               actionListener="#{consultaStock.verStockPorProducto(k.producto)}"
+                               process="@this"
+                               update="consultaStock"
+                               oncomplete="PF('dlgConsultaStock').show()" >
+                    <i class="fa fa-cubes fa-2x" ></i>
+                </p:commandLink>
+
+                <p:commandLink id="btnAtri"
+                               title="Ver Atributos"
+                               rendered="#{not empty k.producto}"
+                               actionListener="#{consultaAtributosBean.verAtributosPorProducto(k.producto)}"
+                               process="@this"
+                               update="consultaAtributos"
+                               oncomplete="PF('dlgConsultaAtributos').show()" >
+                    <i class="fa fa-archive fa-2x Orange" ></i>
+                </p:commandLink>
+
+                <p:commandLink title="Eliminar item"
+                               process="tablaDetalleKit,tb:detalle,totales" update="tablaDetalleKit"
+                               actionListener="#{movimientoFacturacionBean.eliminarItemKit(k)}" >
+                    <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                    <i class="fa fa-close fa-2x Red" ></i>
+                </p:commandLink>
+
+            </p:column>
+
+            <!--
+            <p:summaryRow>
+                <p:column colspan="5" style="text-align:right">
+                    <h:outputText value="Total:" />
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{movimientoFacturacionBean.item.precioCosto}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column>
+                    <h:outputText value="#{movimientoFacturacionBean.item.precio}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column>
+                    <h:outputText value="#{movimientoFacturacionBean.item.totalLinea}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column></p:column>
+            </p:summaryRow>
+            -->
+
+        </p:dataTable>
+
+        <div class="EmptyBox10" />
+
+        <div class="Wid100 TexAlCenter">
+
+            <p:commandButton icon="fa fa-close"  value="Cerrar" styleClass="MaxWid500 RedButton"
+                             actionListener="#{movimientoFacturacionBean.calcularImportes()}"
+                             process="@this" update="@form"   />
+        </div>
+
+
+
+
+
+    </p:dialog>
+
+</ui:composition>
+

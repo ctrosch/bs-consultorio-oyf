@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{cronologiaBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{cronologiaBean.titulo}"/>
+            <f:viewParam name="NROCTA" value="#{cronologiaBean.ARTCOD}"/>
+
+            <f:event type="preRenderView" listener="#{cronologiaBean.iniciarVariables()}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{cronologiaBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{cronologiaBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="p-grid p-justify-center">
+
+                <div class="p-col-12 p-md-6 p-lg-4 ">
+
+                    <div class="EmptyBox10"></div>
+
+                    <p:autoComplete id="tipoProducto" value="#{cronologiaBean.tipoProducto}" dropdown="true" forceSelection="true"
+                                    placeholder="Tipo de producto"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{tipoProductoBean.complete}"
+                                    var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                    converter="#{conversoresStock.tipoProducto}"  >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{cronologiaBean.limpiarProducto}" />
+
+                        <p:column headerText="Código" width="100">
+                            <h:outputText value="#{e.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{e.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <div class="EmptyBox5"></div>
+
+                    <p:autoComplete value="#{cronologiaBean.producto}" dropdown="true" forceSelection="true"
+                                    placeholder="Producto"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{cronologiaBean.completeProducto}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}"  >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{cronologiaBean.limpiarMovimientos}" />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                    <div class="EmptyBox5"></div>
+
+
+                    <p:autoComplete value="#{cronologiaBean.deposito}" dropdown="true" forceSelection="true"
+                                    required="true" requiredMessage="El depósito es obligatorio"
+                                    placeholder="Depósito"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{depositoBean.complete}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.deposito}"  >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{cronologiaBean.limpiarMovimientos}" />
+
+                        <p:column>
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                </div>
+
+
+            </div>
+
+            <div class="p-grid p-justify-center" >
+
+                <div class="p-col-6 p-md-2 p-lg-2" >
+
+                    <h:outputText value="Fecha Desde:" />
+                    <p:calendar value="#{cronologiaBean.fechaDesde}"
+                                required="true" requiredMessage="La fecha desde es obligatoria"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"
+                                maxdate="#{cronologiaBean.fechaMaxima}" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+
+                </div>
+                <div class="p-col-6 p-md-3 p-lg-2" >
+
+                    <h:outputText value="Fecha Hasta:" />
+                    <p:calendar value="#{cronologiaBean.fechaHasta}"
+                                required="true" requiredMessage="La fecha hasta es obligatoria"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"
+                                maxdate="#{cronologiaBean.fechaMaxima}" >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+
+                </div>
+
+                <div class="p-col-12 EmptyBox10"></div>
+
+                <div class="p-col-4">
+
+                    <p:commandButton value="Consultar" icon="fa fa-check"
+                                     actionListener="#{cronologiaBean.verCronologia}"
+                                     update="@form" />
+
+                </div>
+
+            </div>
+
+            <div class="EmptyBox10"/>
+
+            <p:dataTable id="movimientos" value="#{cronologiaBean.movimientos}" var="i"
+                         scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                         emptyMessage="Haga clic en consultar para ver los movimientos" >
+
+                <p:column headerText="Documento" styleClass="TexAlCenter"
+                          sortBy="#{i.movimiento.numeroFormulario}" >
+                    <h:outputText value="#{i.movimiento.formulario.codigo} " />
+
+                    <h:outputText value="#{i.movimiento.puntoVenta.codigo}" >
+                        <f:convertNumber pattern="0000" />
+                    </h:outputText>
+                    <h:outputText value="#{i.movimiento.numeroFormulario}" >
+                        <f:convertNumber pattern="-00000000" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Número" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.movimiento.numeroFormulario}" />
+                </p:column>
+
+                <p:column headerText="Fecha" width="100" styleClass="TexAlCenter" >
+                    <h:outputText value="#{i.movimiento.fechaMovimiento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo1}"
+                          width="120" styleClass="TexAlCenter"
+                          rendered="#{cronologiaBean.producto.administraAtributo1 eq 'S'}">
+                    <h:outputText value="#{i.atributo1}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo2}"
+                          width="120" styleClass="TexAlCenter"
+                          rendered="#{cronologiaBean.producto.administraAtributo2 eq 'S'}">
+                    <h:outputText value="#{i.atributo2}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo3}"
+                          width="120" styleClass="TexAlCenter"
+                          rendered="#{cronologiaBean.producto.administraAtributo5 eq 'S'}">
+                    <h:outputText value="#{i.atributo3}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo4}"
+                          width="120" styleClass="TexAlCenter"
+                          rendered="#{cronologiaBean.producto.administraAtributo7 eq 'S'}">
+                    <h:outputText value="#{i.atributo4}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo5}"
+                          width="120" styleClass="TexAlCenter"
+                          rendered="#{cronologiaBean.producto.administraAtributo6 eq 'S'}">
+                    <h:outputText value="#{i.atributo5}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo6}"
+                          width="120" styleClass="TexAlCenter"
+                          rendered="#{cronologiaBean.producto.administraAtributo3 eq 'S'}">
+                    <h:outputText value="#{i.atributo6}" />
+                </p:column>
+
+                <p:column headerText="#{aplicacionBean.parametroStock.descripcionAtributo7}"
+                          width="120" styleClass="TexAlCenter"
+                          rendered="#{cronologiaBean.producto.administraAtributo4 eq 'S'}">
+                    <h:outputText value="#{i.atributo7}" />
+                </p:column>
+
+                <p:column headerText="Ingreso" width="100" styleClass="TexAlRight"  >
+                    <h:outputText value="#{i.stocks}" rendered="#{i.stocks > 0 }" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Egreso" width="100" styleClass="TexAlRight"  >
+                    <h:outputText value="#{i.stocks*(-1)}" rendered="#{0 > i.stocks }" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Saldo" width="100" styleClass="TexAlRight"  >
+
+                    <h:outputText value="#{i.saldoInicial}" >
+                        <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                    </h:outputText>
+
+                </p:column>
+
+            </p:dataTable>
+
+
+        </ui:define>
+
+    </ui:composition>
+</html>

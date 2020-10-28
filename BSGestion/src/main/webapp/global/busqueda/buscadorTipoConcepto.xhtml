@@ -1,0 +1,102 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorTipoConcepto" header="Tipo de Concepto" modal="true"
+              widgetVar="dlg_tipo_concepto"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 900px;" responsive="true" >
+
+        <h:form prependId="false" >
+
+            <p:focus for="txtBusquedaTipoConcepto"/>
+
+            <p:panelGrid columns="2" layout="grid"
+                         style="max-width: 400px;"
+                         styleClass="ui-panelgrid-blank" >
+
+                <p:inputText id="txtBusquedaTipoConcepto" value="#{tipoConceptoBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this,selectTipoConcepto" update="tablaTipoConcepto" listener="#{tipoConceptoBean.buscar}"/>
+                </p:inputText>
+
+                <p:selectOneMenu id="selectTipoConcepto" value="#{tipoConceptoBean.modulo}"
+                                 converter="#{conversoresGeneral.modulo}"  >
+                    <f:selectItem itemLabel="Todos" itemValue="" />
+                    <f:selectItems value="#{moduloBean.lista}"
+                                   var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+                    <p:ajax process="@this,txtBusquedaTipoConcepto" update="tablaTipoConcepto" listener="#{tipoConceptoBean.buscar}"/>
+                </p:selectOneMenu>
+
+            </p:panelGrid>
+
+            <p:dataTable id="tablaTipoConcepto" var="e" value="#{tipoConceptoBean.lista}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{tipoConceptoBean.tipoDeConcepto}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+
+                <p:ajax event="rowSelect" listener="#{tipoConceptoBean.onSelect}" update="@form"
+                        oncomplete="PF('dlg_tipo_concepto').hide(), procesarTipoConcepto()" />
+
+
+                <p:column headerText="Orden" width="20%" style="text-align: left;"
+                          sortBy="#{e.orden}" >
+                    <h:outputText value="#{e.orden}" />
+                </p:column>
+
+                <p:column headerText="Módulo" width="10%" style="text-align: center;"
+                          sortBy="#{e.modulo}"   >
+                    <h:outputText value="#{e.modulo}" />
+                </p:column>
+
+                <p:column headerText="Código" width="10%" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="25%" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >
+                    <h:outputText value="#{e.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Máscara" width="15%" style="text-align: left;"
+                          sortBy="#{e.mascara}" >
+                    <h:outputText value="#{e.mascara}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <div class="EmptyBox10" />
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >
+                    <p:selectBooleanCheckbox value="#{tipoConceptoBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaTipoConcepto" listener="#{tipoConceptoBean.buscar}" />
+                    </p:selectBooleanCheckbox>
+                    <h:outputText value="Mostrar registros deshabilitados" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistrosTipoConcepto" value="#{tipoConceptoBean.cantidadRegistros}" style="max-width: 80px;"/>
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{tipoConceptoBean.buscar}"
+                                     process="@this,cantRegistrosTipoConcepto" update="tablaTipoConcepto" />
+                </h:panelGroup>
+            </p:panelGrid>
+
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

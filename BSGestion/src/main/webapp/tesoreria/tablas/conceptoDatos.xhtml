@@ -1,0 +1,122 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Tipo de concepto"
+                              url="#{conceptoTesoreriaBean.obtenerUrlMenu('SIS_00145','CODIGO',conceptoTesoreriaBean.concepto.tipoConcepto.codigo,'MODULO',conceptoTesoreriaBean.concepto.tipoConcepto.modulo)}" />
+        <p:selectOneMenu value="#{conceptoTesoreriaBean.concepto.tipoConcepto}"
+                         disabled="#{not conceptoTesoreriaBean.esNuevo}"
+                         converter="#{conversoresGeneral.tipoConcepto}"
+                         required="true"
+                         requiredMessage="Seleccione el tipo de concepto" >
+            <p:ajax process="@this" listener="#{conceptoTesoreriaBean.onTipoChange}" />
+            <f:selectItem itemLabel="Selecccionar" itemValue="" />
+            <f:selectItems value="#{conceptoTesoreriaBean.tipos}" var="i" itemLabel="#{i.descripcion}" itemValue="#{i}"/>
+        </p:selectOneMenu>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código" />
+        <p:inputText value="#{conceptoTesoreriaBean.concepto.codigo}"
+                     readonly="#{not conceptoTesoreriaBean.esNuevo}"
+                     required="true" requiredMessage="El código de concepto es obligatorio" />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{conceptoTesoreriaBean.concepto.descripcion}"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <bs:outputTexWhitLink value="Cuenta de Tesorería"
+                              url="#{conceptoTesoreriaBean.obtenerUrlMenu('SIS_00201','CODIGO',conceptoTesoreriaBean.concepto.cuentaTesoreria.codigo)}" />
+        <p:autoComplete value="#{conceptoTesoreriaBean.concepto.cuentaTesoreria}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaTesoreriaBean.complete}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresTesoreria.cuentaTesoreria}" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Tipo ">
+                <h:outputText value="#{p.tipoCuenta.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Código">
+                <h:outputText value="#{p.codigo}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Moneda">
+                <h:outputText value="#{p.codigoMoneda}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Cuenta Contable"
+                              url="#{conceptoTesoreriaBean.obtenerUrlMenu('SIS_00420','NROCTA',conceptoTesoreriaBean.concepto.cuentaContable.nrocta)}" />
+        <p:autoComplete value="#{conceptoTesoreriaBean.concepto.cuentaContable}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{cuentaContableBean.completeImputable}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresContabilidad.cuentaContable}" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta">
+                <h:outputText value="#{p.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Descripción">
+                <h:outputText value="#{p.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Imputable">
+                <h:outputText value="Si" rendered="#{p.imputable eq 'S'}" />
+                <h:outputText value="No" rendered="#{p.imputable eq 'N'}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Medio de pago" />
+        <p:inputText value="#{conceptoTesoreriaBean.concepto.medioPago}"  />
+
+        <h:outputText value="Pide número de cheque" />
+        <p:selectOneMenu value="#{conceptoTesoreriaBean.concepto.pideNumeroCheque}"
+                         required="true" requiredMessage="Seleccione si pide número de cheque"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Pide fecha emisión" />
+        <p:selectOneMenu value="#{conceptoTesoreriaBean.concepto.pideFechaEmision}"
+                         required="true" requiredMessage="Seleccione si pide fecha de emisión"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+
+        <h:outputText value="% Comisión cobranza " />
+        <p:inputText value="#{conceptoTesoreriaBean.concepto.porcentajeComision}"  >
+            <f:convertNumber pattern="#,##0.00" />
+            <f:validateDoubleRange minimum="0" maximum="100"  />
+        </p:inputText>
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

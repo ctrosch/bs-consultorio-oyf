@@ -1,0 +1,143 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:tabView id="totales" >
+
+
+
+        <p:tab id="t0" title="Importes" >
+
+            <div>
+                <div class="ui-g-6 Fleft">
+
+                </div>
+                <div class="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria?'ui-g-3':'ui-g-6'}">
+                    Importe Nac.
+                </div>
+
+                <ui:fragment rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}">
+                    <div class="ui-g-3 Fright">
+                        Importe Ext.
+                    </div>
+                </ui:fragment>
+            </div>
+
+            <div class="EmptyBox5" />
+
+            <ui:repeat value="#{movimientoFacturacionBean.m.itemsProductoVenta}" var="i"
+                       rendered="#{not empty movimientoFacturacionBean.m.itemsProductoVenta}" >
+
+                <h:panelGroup layout="block" styleClass="ui-g" rendered="#{i.importe > 0}" >
+                    <div class="ui-g-6 Fleft">
+                        <h:outputText value="#{i.concepto.descripcion}" />
+                    </div>
+                    <div class="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria?'ui-g-3':'ui-g-6'} Fright">
+                        <p:inputText value="#{i.importe}" style="text-align: right;" readonly="true" >
+                            <f:convertNumber pattern="###,###,##0.00" />
+                        </p:inputText>
+                    </div>
+
+                    <ui:fragment rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}">
+                        <div class="ui-g-3 Fright">
+                            <p:inputText value="#{i.importeSecundario}" style="text-align: right;" readonly="true" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </p:inputText>
+                        </div>
+                    </ui:fragment>
+
+                </h:panelGroup>
+            </ui:repeat>
+            <p:separator rendered="#{movimientoFacturacionBean.m.itemsProductoVenta.size() > 0}" />
+
+            <ui:repeat value="#{movimientoFacturacionBean.m.itemsImpuestoVenta}" var="i"
+                       rendered="#{not empty movimientoFacturacionBean.m.itemsImpuestoVenta}" >
+
+                <h:panelGroup layout="block" styleClass="ui-g" rendered="#{i.importe > 0 or i.editaImporte eq 'S'}" >
+                    <div class="ui-g-6 Fleft">
+                        <h:outputText value="#{i.concepto.descripcion}" />
+                    </div>
+                    <div class="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria?'ui-g-3':'ui-g-6'} Fright">
+                        <p:inputText value="#{i.importe}" style="text-align: right;" readonly="#{i.editaImporte eq 'N'}" >
+                            <f:convertNumber pattern="###,###,##0.00" />
+                            <p:ajax listener="#{movimientoFacturacionBean.calcularImportes()}" event="keyup" delay="500"
+                                    update="@form" />
+                        </p:inputText>
+                    </div>
+
+                    <ui:fragment rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}">
+                        <div class="ui-g-3 Fright">
+                            <p:inputText value="#{i.importeSecundario}" style="text-align: right;" readonly="true" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </p:inputText>
+                        </div>
+                    </ui:fragment>
+                </h:panelGroup>
+
+            </ui:repeat>
+
+            <ui:repeat value="#{movimientoFacturacionBean.m.itemsPercepcionVenta}" var="i"
+                       rendered="#{not empty movimientoFacturacionBean.m.itemsPercepcionVenta}" >
+
+                <h:panelGroup layout="block" styleClass="ui-g" rendered="#{i.importe > 0 or i.editaImporte eq 'S'}" >
+                    <div class="ui-g-6 Fleft">
+                        <h:outputText value="#{i.concepto.descripcion}" />
+                    </div>
+                    <div class="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria?'ui-g-3':'ui-g-6'} Fright">
+                        <p:inputText value="#{i.importe}" style="text-align: right;" readonly="#{i.editaImporte eq 'N'}" >
+                            <f:convertNumber pattern="###,###,##0.00" />
+                            <p:ajax listener="#{movimientoFacturacionBean.calcularImportes()}" event="keyup" delay="500"
+                                    update="@form" />
+                        </p:inputText>
+                    </div>
+
+                    <ui:fragment rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}">
+                        <div class="ui-g-3 Fright">
+                            <p:inputText value="#{i.importeSecundario}" style="text-align: right;" readonly="true" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </p:inputText>
+                        </div>
+                    </ui:fragment>
+                </h:panelGroup>
+            </ui:repeat>
+
+
+            <ui:repeat value="#{movimientoFacturacionBean.m.itemsTotalVenta}" var="i"
+                       rendered="#{not empty movimientoFacturacionBean.m.itemsTotalVenta}" >
+
+                <h:panelGroup id="pgTotal" layout="block" styleClass="ui-g" >
+                    <div class="ui-g-6 Fleft Fs16">
+                        <h:outputText value="Total" />
+                    </div>
+                    <div class="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria?'ui-g-3':'ui-g-6'} Fright">
+                        <p:inputText id="precio"  value="#{i.importe}" style="text-align: right;" readonly="true" >
+                            <f:convertNumber pattern="###,###,##0.00" />
+                        </p:inputText>
+                    </div>
+
+                    <ui:fragment rendered="#{movimientoFacturacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}">
+                        <div class="ui-g-3 Fright">
+                            <p:inputText value="#{i.importeSecundario}" style="text-align: right;" readonly="true" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </p:inputText>
+                        </div>
+                    </ui:fragment>
+                </h:panelGroup>
+            </ui:repeat>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Vencimientos"
+               rendered="#{not empty movimientoFacturacionBean.m and movimientoFacturacionBean.circuito.actualizaVenta eq 'S' and movimientoFacturacionBean.m.comprobante.tipoImputacion eq 'CC'}" >
+            <ui:include src="movimientoVencimiento.xhtml" />
+        </p:tab>
+    </p:tabView>
+
+
+
+</ui:composition>
+

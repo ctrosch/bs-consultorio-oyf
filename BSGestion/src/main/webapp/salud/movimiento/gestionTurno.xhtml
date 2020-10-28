@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <ui:define name="meta-data" >
+
+        </ui:define>
+
+        <ui:define name="titulo" >
+            Turnos
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Turnos
+        </ui:define>
+
+        <ui:define name="menu">
+
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+
+
+
+            <p:growl id="messageg" showDetail="true" life="4000" />
+
+
+            <div class="EmptyBox10" />
+
+            <h:panelGroup id="calendario" layout="block"  >
+                <!-- DATOS -->
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank MaxWid700 MarAuto NoPadding"
+                             columnClasses="ui-g-5,ui-g-7" >
+
+                    <h:outputText value="Profesional"  />
+
+                    <p:autoComplete value="#{gestionReservaTurnoBean.profesional}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{profesionalMedicoBean.complete}"
+                                    var="p" itemLabel="#{p.nombreComplete}" itemValue="#{p}"
+                                    converter="#{conversoresEntidad.entidadComercial}"  >
+
+                        <p:ajax event="itemSelect" process="@this"  update="schedule" listener="#{gestionReservaTurnoBean.actualizarCalendario()}" />
+
+
+                        <p:column headerText="Apellido">
+                            <h:outputText value="#{p.apellido}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{p.nombre}" />
+                        </p:column>
+
+
+                    </p:autoComplete>
+
+                </p:panelGrid>
+
+
+                <p:schedule id="schedule"  value="#{gestionReservaTurnoBean.eventModel}" styleClass="MaxWid600"
+                            widgetVar="myschedule"
+                            clientTimeZone="local" timeZone="America/Buenos_Aires" timeFormat="HH:mm">
+
+                    <p:ajax event="dateSelect" listener="#{gestionReservaTurnoBean.onDateSelect}" update="registrarTurno" oncomplete="PF('dlgTurno').show()" />
+                    <p:ajax event="eventSelect" listener="#{gestionReservaTurnoBean.onEventSelect}" update="registrarTurno" oncomplete="PF('dlgTurno').show()" />
+
+                </p:schedule>
+
+
+                <div class="EmptyBox10" />
+
+            </h:panelGroup>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/salud/movimiento/registrarTurno.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

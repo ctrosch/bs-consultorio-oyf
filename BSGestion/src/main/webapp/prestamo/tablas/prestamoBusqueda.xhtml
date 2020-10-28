@@ -1,0 +1,212 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- BUSQUEDA -->
+    <p:panelGrid id="panelBusqueda" columns="4" layout="grid" style="max-width: 1000px;"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4"  >
+
+        <h:outputText value="Fecha Entrega" />
+        <h:panelGroup layout="block">
+            <div class="Wid50 Fleft">
+                <p:calendar value="#{prestamoBean.fechaMovimientoDesde}"
+                            placeholder="Desde"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax event="dateSelect"  process="@this" />
+                </p:calendar>
+            </div>
+            <div class="Wid50 Fright">
+                <p:calendar value="#{prestamoBean.fechaMovimientoHasta}"
+                            placeholder="Hasta"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax event="dateSelect"  process="@this" />
+                </p:calendar>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Estado" />
+        <p:selectOneMenu value="#{prestamoBean.estado}"
+                         converter="#{conversoresPrestamo.estadoPrestamo}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Todos" />
+            <f:selectItems value="#{estadoPrestamoBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Destinatario" />
+        <p:autoComplete value="#{prestamoBean.destinatario}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{destinatarioBean.complete}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Línea de crédito" />
+        <p:selectOneMenu value="#{prestamoBean.lineaCredito}"
+                         converter="#{conversoresPrestamo.lineaCredito}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Todas" />
+            <f:selectItems value="#{lineaCreditoBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Financiador" />
+        <p:selectOneMenu value="#{prestamoBean.financiador}"
+                         converter="#{conversoresPrestamo.financiador}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Todos" />
+            <f:selectItems value="#{financiadorBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Promotor" />
+        <p:selectOneMenu value="#{prestamoBean.promotor}"
+                         converter="#{conversoresPrestamo.promotor}"
+                         effect="fade"  filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Todos" />
+            <f:selectItems value="#{promotorBean.lista}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" >
+
+        <p:commandButton value="Buscar" icon="fa fa-search" styleClass="GreenBack"
+                         process="@form"
+                         update="@form"
+                         actionListener="#{prestamoBean.buscar()}"   />
+
+        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="OrangeBack"
+                         process="panelBusqueda"
+                         update="@form"
+                         actionListener="#{prestamoBean.resetParametros}"   />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="movimientos" value="#{prestamoBean.lista}" var="i"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 selectionMode="single" selection="#{prestamoBean.prestamo}" rowKey="#{i}" >
+
+        <!--
+        <p:ajax event="rowSelect" listener="#{prestamoBean.onSelect}" update="@form" />
+        -->
+
+        <f:facet name="header">
+            Préstamos encontrados
+        </f:facet>
+
+        <p:column headerText="" width="50" style="text-align: center;">
+
+            <p:commandLink title="Seleccionar"
+                           actionListener="#{prestamoBean.seleccionar(i)}"
+                           process="@this"
+                           update="@form"  >
+                <i class="fa fa-check fa-2x Green" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+        <p:column headerText="Estado" width="80" styleClass="TexAlCenter" >
+
+            <i class="fa fa-circle fa-2x #{(i.estado.codigo eq 'A'  ? 'Orange' : (i.estado.codigo eq 'B'  ? 'Blue' : (i.estado.codigo eq 'C'  ? 'Green' : null)))}" ></i>
+
+            <h:outputText value="#{i.estado.descripcion}" style="padding-left: 5px;"  />
+        </p:column>
+
+        <p:column headerText="Código" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.codigo}" >
+                <f:convertNumber pattern="00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha préstamo" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaCredito}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Destinatario" width="160" >
+            <h:outputText value="#{i.destinatario.razonSocial}" />
+        </p:column>
+
+        <p:column headerText="Financiador" width="160"  >
+            <h:outputText value="#{i.financiador.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Linea de crédito" width="180"  >
+            <h:outputText value="#{i.lineaCredito.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Cuotas" width="50" styleClass="TexAlRight" >
+            <h:outputText value="#{i.cantidadCuotas}" class="Fright" >
+                <f:convertNumber pattern="0" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Capital" width="80" styleClass="TexAlRight" >
+            <h:outputText value="#{i.importeCapital}" class="Fright" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Intereses" width="80" styleClass="TexAlRight"  >
+            <h:outputText value="#{i.importeInteres}" class="Fright" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Gastos O." width="80" styleClass="TexAlRight"  >
+            <h:outputText value="#{i.gastosOtorgamiento}" class="Fright" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Microseguro" width="80" styleClass="TexAlRight"  >
+            <h:outputText value="#{i.importeMicroseguros}" class="Fright" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Monto Total" width="80" styleClass="TexAlRight"  >
+            <h:outputText value="#{i.importeTotal}" class="Fright" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+    </p:dataTable>
+
+</ui:composition>
+

@@ -1,0 +1,229 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:panelGrid columns="2" layout="grid" style="max-width: 700px;"
+                 styleClass="ui-panelgrid-blank"  >
+
+        <h:outputText value="Código *" />
+        <p:inputText value="#{tipoProductoBean.tipoProducto.codigo}"
+                     readonly="#{not tipoProductoBean.esNuevo}"
+                     required="true" requiredMessage="El código de tipoProducto es obligatorio" />
+
+        <h:outputText value="Descripción *" />
+        <p:inputText value="#{tipoProductoBean.tipoProducto.descripcion}"
+                     required="true" requiredMessage="La descripción es obligatoria" />
+
+        <h:outputText value="Gestiona stock *" />
+        <p:selectOneMenu value="#{tipoProductoBean.tipoProducto.gestionaStock}"
+                         required="true" requiredMessage="Seleccione el tipo de gestión de stock"  >
+            <p:ajax process="@this" />
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <f:selectItem itemLabel="Si" itemValue="S" />
+            <f:selectItem itemLabel="No" itemValue="N" />
+        </p:selectOneMenu>
+    </p:panelGrid>
+
+    <p:tabView activeIndex="#{tipoProductoBean.indexTab2}">
+
+        <p:ajax event="tabChange" listener="#{tipoProductoBean.onTab2Change}" />
+
+        <p:tab id="t0" title="Rubro">
+
+            <p:dataTable id="rubro01" style="max-width: 700px;" var="e" value="#{tipoProductoBean.tipoProducto.rubro01}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{tipoProductoBean.nuevoRubro01()}"
+                                     value="Agregar rubro"
+                                     process="rubro01"
+                                     update="rubro01" />
+
+                </f:facet>
+
+                <p:column headerText="Código" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >
+                    <p:inputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" style="text-align: left;"
+                          filterBy="#{e.descripcion}" filterMatchMode="contains"
+                          sortBy="#{e.descripcion}" >
+                    <p:inputText value="#{e.descripcion}" />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandButton icon="fa fa-close" styleClass="RedBack" process="rubro01" update="rubro01,message,messageg"
+                                     actionListener="#{tipoProductoBean.eliminarRubro01(e)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t1" title="Sub - Rubro">
+
+            <p:dataTable id="rubro02" style="max-width: 700px;" var="e" value="#{tipoProductoBean.tipoProducto.rubro02}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{tipoProductoBean.nuevoRubro02()}"
+                                     value="Agregar sub-rubro"
+                                     process="rubro02"
+                                     update="rubro02" />
+
+                </f:facet>
+
+                <p:column headerText="Código" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >
+                    <p:inputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" style="text-align: left;"
+                          filterBy="#{e.descripcion}" filterMatchMode="contains"
+                          sortBy="#{e.descripcion}" >
+                    <p:inputText value="#{e.descripcion}" />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandButton icon="fa fa-close" styleClass="RedBack" process="rubro02" update="rubro02,message,messageg"
+                                     actionListener="#{tipoProductoBean.eliminarRubro02(e)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t2" title="Familia">
+
+            <p:dataTable id="rubro03" style="max-width: 700px;" var="e" value="#{tipoProductoBean.tipoProducto.rubro03}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{tipoProductoBean.nuevoRubro03()}"
+                                     value="Agregar familia"
+                                     process="rubro03"
+                                     update="rubro03" />
+
+                </f:facet>
+
+                <p:column headerText="Código" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >
+                    <p:inputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" style="text-align: left;"
+                          filterBy="#{e.descripcion}" filterMatchMode="contains"
+                          sortBy="#{e.descripcion}" >
+                    <p:inputText value="#{e.descripcion}" />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandButton icon="fa fa-close" styleClass="RedBack" process="rubro03" update="rubro03,message,messageg"
+                                     actionListener="#{tipoProductoBean.eliminarRubro03(e)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+        <p:tab id="t3" title="Atributos">
+
+            <p:dataTable id="atributo" style="max-width: 700px;" var="e" value="#{tipoProductoBean.tipoProducto.atributos}"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{tipoProductoBean.nuevoAtributo()}"
+                                     value="Agregar atributo"
+                                     process="atributo"
+                                     update="atributo" />
+
+                </f:facet>
+
+                <p:column headerText="Nombre"
+                          sortBy="#{e.nombre}"   >
+                    <p:inputText value="#{e.nombre}" />
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandButton icon="fa fa-close" styleClass="RedBack" process="atributo" update="atributo,message,messageg"
+                                     actionListener="#{tipoProductoBean.eliminarAtributo(e)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                </p:column>
+
+                <p:column headerText="Valores" width="50" styleClass="TexAlCenter"   >
+                    <p:rowToggler  />
+                </p:column>
+
+                <p:rowExpansion>
+
+                    <div class="Wid80 Fright MarAuto WidAutoOnMobile">
+
+                        <p:dataTable id="detalleValores" value="#{e.valores}" var="d"
+                                     resizeMode="expand" liveResize="true" >
+
+                            <f:facet name="footer">
+                                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                                 value="Agregar item"
+                                                 process="detalleValores" update="detalleValores,message,messageg"
+                                                 actionListener="#{tipoProductoBean.nuevoAtributoValor(e)}" />
+                            </f:facet>
+
+                            <p:column headerText="Valor" width="120" >
+                                <p:inputText value="#{d.valor}"  />
+                            </p:column>
+
+                            <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                                <p:commandButton icon="fa fa-close" styleClass="RedBack" process="detalleValores" update="detalleValores,message,messageg"
+                                                 actionListener="#{tipoProductoBean.eliminarAtributoValor(e, d)}"  >
+                                    <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+
+                </p:rowExpansion>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+</ui:composition>
+

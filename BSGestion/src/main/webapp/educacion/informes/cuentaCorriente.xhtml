@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{cuentaCorrienteEducacionBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{cuentaCorrienteEducacionBean.titulo}"/>
+            <f:viewParam name="NROCTA" value="#{cuentaCorrienteEducacionBean.NROCTA}"/>
+
+            <f:event type="preRenderView" listener="#{cuentaCorrienteEducacionBean.iniciarVariables()}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{cuentaCorrienteEducacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{cuentaCorrienteEducacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <div class="p-grid p-justify-center">
+
+                <div class="p-col-6 p-md-4 p-lg-3" >
+
+                    <div class="EmptyBox10"></div>
+
+                    <p:autoComplete value="#{cuentaCorrienteEducacionBean.alumno}" dropdown="true" forceSelection="true"
+                                    placeholder="Seleccione un alumno"
+                                    maxResults="8" queryDelay="1000"
+                                    required="true" requiredMessage="El Alumno es obligatorio"
+                                    completeMethod="#{alumnoBean.complete}"
+                                    var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                                    converter="#{conversoresEntidad.entidadComercial}"  >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{cuentaCorrienteEducacionBean.procesarAlumno()}"  />
+
+                        <p:column headerText="Nro Legajo" width="100">
+                            <h:outputText value="#{e.nrocta}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre Completo">
+                            <h:outputText value="#{e.apellido} #{e.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Nro doc">
+                            <h:outputText value="#{e.nrodoc}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                </div>
+
+                <div class="p-col-12 Separator"></div>
+
+                <div class="p-col-12 p-md-4 p-lg-4">
+                    <div class="Card BlueBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Saldo Actual</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="icon-meter Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{cuentaCorrienteEducacionBean.saldoActual}"
+                                              rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                                    <f:convertNumber pattern="#,###,##0.00" />
+                                </h:outputText>
+
+                                <h:outputText value="#{cuentaCorrienteEducacionBean.saldoActualSecundario}"
+                                              rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                                    <f:convertNumber pattern="#,###,##0.00" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-12 p-md-4 p-lg-4">
+                    <div class="Card RedBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Comprobantes Vencidos</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-thumbs-down Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{cuentaCorrienteEducacionBean.cantVencidos}" />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-12 p-md-4 p-lg-4">
+                    <div class="Card GreenBack">
+                        <div class="EmptyBox5"></div>
+                        <div class="CardTopic White Fs12">Comprobantes a vencer</div>
+                        <div class="EmptyBox5"></div>
+                        <div class="DispBlock Opac50">
+                            <i class="fa fa-thumbs-up Fs16 White MarRight10"></i>
+                            <span class="Fs16 White FontVoltSemiBold">
+                                <h:outputText value="#{cuentaCorrienteEducacionBean.cantVencer}" />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="p-col-12 EmptyBox10"></div>
+
+                <div class="p-col-12" >
+
+                    <p:tabView widgetVar="tabViewCta" activeIndex="#{cuentaCorrienteEducacionBean.indexTab1}">
+
+                        <p:ajax event="tabChange" listener="#{cuentaCorrienteEducacionBean.onTab1Change}" />
+
+                        <p:tab id="t0" title="Pendientes ">
+
+                            <div class="p-grid" >
+
+                                <div class="p-col-12 p-lg-6">
+
+                                    <p:dataTable id="tDebitos" value="#{cuentaCorrienteEducacionBean.debitos}" var="d"
+                                                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                                                 emptyMessage="No se han encontrado débitos pendientes">
+
+                                        <f:facet name="header" >
+
+                                            Saldos pendientes de cobrar
+
+                                        </f:facet>
+
+                                        <f:facet name="footer">
+                                            <!--
+                                            <div style="width: 100%; text-align: right;">
+
+                                                <h:commandLink>
+                                                    <i class="fa fa-file-excel-o fa-2x Green" />
+                                                    <p:dataExporter type="xls" target="tDebitos" fileName="debitos_pendientes"
+                                                                    preProcessor="#{customizeDocument.postProcessXLS}"  />
+                                                </h:commandLink>
+
+                                                <h:commandLink>
+                                                    <i class="fa fa-file-pdf-o fa-2x Red" />
+                                                    <p:dataExporter type="pdf" target="tDebitos" fileName="debitos_pendientes"
+                                                                    preProcessor="#{customizeDocument.preProcessPDF}"/>
+                                                </h:commandLink>
+                                            </div>
+                                            -->
+
+                                        </f:facet>
+
+                                        <p:column headerText="Documento"
+                                                  sortBy="#{d.numeroFormulario}" >
+                                            <h:outputText value="#{d.comprobante} " />
+
+                                            <h:outputText value="#{d.puntoVenta}" >
+                                                <f:convertNumber pattern="0000" />
+                                            </h:outputText>
+                                            <h:outputText value="#{d.numeroFormulario}" >
+                                                <f:convertNumber pattern="-00000000" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Vencimiento" width="100" style="text-align: center;"
+                                                  sortBy="#{d.fechaVencimiento}" >
+                                            <h:outputText value="#{d.fechaVencimiento}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Cuota" width="50" style="text-align: center;" >
+                                            <h:outputText value="#{d.cuotas}" />
+                                        </p:column>
+
+                                        <p:column headerText="Pendiente" width="100" style="text-align: right;"
+                                                  sortBy="#{d.pendiente}" >
+
+                                            <h:outputText value="#{d.pendiente}" rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+
+                                            <h:outputText value="#{d.pendienteSecundario}" rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+
+                                        </p:column>
+
+                                        <p:column headerText="Ver" width="50" style="text-align: center;" >
+
+                                            <p:commandLink title="Imprimir Comprobante" styleClass="icono-datatable"
+                                                           actionListener="#{cuentaCorrienteEducacionBean.imprimir(d.codigoFormulario,d.numeroFormulario)}"
+                                                           process="@this" >
+                                                <i class="fa fa-print fa-2x Orange" ></i>
+                                            </p:commandLink>
+
+                                        </p:column>
+
+                                    </p:dataTable>
+
+
+
+                                </div>
+
+                                <div class="p-col-12 p-lg-6">
+
+                                    <p:dataTable id="tCreditos" value="#{cuentaCorrienteEducacionBean.creditos}" var="c"
+                                                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                                                 emptyMessage="No se han encontrado créditos pendientes">
+
+                                        <f:facet name="header" >
+
+                                            Saldos a favor del alumno
+
+                                        </f:facet>
+
+                                        <f:facet name="footer">
+                                            <!--
+                                            <div style="width: 100%; text-align: right;">
+
+                                                <h:commandLink>
+                                                    <i class="fa fa-file-excel-o fa-2x Green" />
+                                                    <p:dataExporter type="xls" target="tCreditos" fileName="creditos_pendientes"
+                                                                    preProcessor="#{cuentaCorrienteEducacionBean.verReporte}"  />
+                                                </h:commandLink>
+
+                                                <h:commandLink>
+                                                    <i class="fa fa-file-pdf-o fa-2x Red" />
+                                                    <p:dataExporter type="pdf" target="tCreditos" fileName="creditos_pendientes"
+                                                                    preProcessor="#{cuentaCorrienteEducacionBean.reporteToXls}"/>
+                                                </h:commandLink>
+                                            </div>
+                                            -->
+
+                                        </f:facet>
+
+                                        <p:column headerText="Documento"
+                                                  sortBy="#{c.numeroFormulario}" >
+                                            <h:outputText value="#{c.comprobante} " />
+
+                                            <h:outputText value="#{c.puntoVenta}" >
+                                                <f:convertNumber pattern="0000" />
+                                            </h:outputText>
+                                            <h:outputText value="#{c.numeroFormulario}" >
+                                                <f:convertNumber pattern="-00000000" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Vencimiento" width="100" style="text-align: center;"
+                                                  sortBy="#{c.fechaVencimiento}" >
+                                            <h:outputText value="#{c.fechaVencimiento}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Cuota" width="50" style="text-align: center;" >
+                                            <h:outputText value="#{c.cuotas}" />
+                                        </p:column>
+
+                                        <p:column headerText="Pendiente" width="100" style="text-align: right;" sortBy="#{c.pendiente}" >
+
+                                            <h:outputText value="#{c.pendiente}" rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+
+                                            <h:outputText value="#{c.pendienteSecundario}" rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                                                <f:convertNumber pattern="#,###,##0.00"  />
+                                            </h:outputText>
+
+                                        </p:column>
+
+                                        <p:column headerText="Ver" width="50" style="text-align: center;" >
+
+                                            <p:commandLink title="Imprimir Comprobante" styleClass="icono-datatable"
+                                                           actionListener="#{cuentaCorrienteEducacionBean.imprimir(c.codigoFormulario,c.numeroFormulario)}"
+                                                           process="@this" >
+                                                <i class="fa fa-print fa-2x Orange" ></i>
+                                            </p:commandLink>
+
+                                        </p:column>
+
+
+                                    </p:dataTable>
+
+                                </div>
+
+                                <div class="p-col-12EmptyBox10" />
+                            </div>
+
+
+                        </p:tab>
+
+                        <p:tab id="t1" title="Historial">
+
+                            <div class="p-grid">
+
+                                <div class="p-col-3">
+
+                                </div>
+                                <div class="p-col-3">
+                                    <h:outputText value="Desde" />
+                                    <p:calendar value="#{cuentaCorrienteEducacionBean.fechaDesde}"
+                                                required="true" requiredMessage="La fecha desde es obligatoria"
+                                                pattern="dd/MM/yyyy"
+                                                showOn="button"
+                                                navigator="true"
+                                                mask="true"
+                                                mindate="#{cuentaCorrienteEducacionBean.fechaMinima}"
+                                                maxdate="#{cuentaCorrienteEducacionBean.fechaMaxima}" >
+                                        <p:ajax event="dateSelect"  process="@this" />
+                                    </p:calendar>
+                                </div>
+                                <div class="p-col-3">
+                                    <h:outputText value="Hasta " />
+                                    <p:calendar value="#{cuentaCorrienteEducacionBean.fechaHasta}"
+                                                required="true" requiredMessage="La fecha hasta es obligatoria"
+                                                pattern="dd/MM/yyyy"
+                                                showOn="button"
+                                                navigator="true"
+                                                mask="true"
+                                                mindate="#{cuentaCorrienteEducacionBean.fechaMinima}"
+                                                maxdate="#{cuentaCorrienteEducacionBean.fechaMaxima}" >
+                                        <p:ajax event="dateSelect"  process="@this" />
+                                    </p:calendar>
+
+                                </div>
+
+                                <div class="p-col-3">
+
+                                </div>
+
+                                <div class="p-col-6 p-offset-3">
+
+                                    <p:commandButton value="Consultar" icon="fa fa-search"
+                                                     actionListener="#{cuentaCorrienteEducacionBean.consultarHistorial}"
+                                                     update="tablaHistorial"/>
+                                </div>
+
+                                <div class="p-col-12  p-md-8 p-md-offset-2">
+
+                                    <div class="EmptyBox10"></div>
+
+                                    <p:message for="tablaHistorial" showDetail="true" />
+
+                                    <p:dataTable id="tablaHistorial" value="#{cuentaCorrienteEducacionBean.historial}"
+                                                 var="i" paginator="true" rows="20"
+                                                 emptyMessage="No se han encontrado documentos en el historial"  >
+
+                                        <f:facet name="footer">
+                                            <!--
+                                            <div style="width: 100%; text-align: right;">
+                                                <h:commandLink>
+                                                    <i class="fa fa-file-excel-o fa-2x Green" />
+                                                    <p:dataExporter type="xls" target="tablaHistorial" fileName="movimientos-ctacte"
+                                                                    preProcessor="#{customizeDocument.postProcessXLS}"  />
+                                                </h:commandLink>
+
+                                                <h:commandLink>
+                                                    <i class="fa fa-file-pdf-o fa-2x Red" />
+                                                    <p:dataExporter type="pdf" target="tablaHistorial" fileName="movimientos-ctacte"
+                                                                    preProcessor="#{customizeDocument.preProcessPDF}"/>
+                                                </h:commandLink>
+                                            </div>
+                                            -->
+                                        </f:facet>
+
+                                        <p:column headerText="Documento"  >
+
+                                            <h:outputText value="#{i.comprobante} " />
+
+                                            <h:outputText value="#{i.puntoVenta}" >
+                                                <f:convertNumber pattern="0000" />
+                                            </h:outputText>
+
+                                            <h:outputText value="#{i.numeroFormulario}" >
+                                                <f:convertNumber pattern="-00000000" />
+                                            </h:outputText>
+
+                                        </p:column>
+
+                                        <p:column headerText="Fecha" width="100" style="text-align: center;" >
+                                            <h:outputText value="#{i.fchmov}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Debe" width="100" style="text-align: right" >
+                                            <h:outputText value="#{i.debe}"
+                                                          rendered="#{i.debe > 0 and cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaPrimaria}">
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Haber" width="100" style="text-align: right;" >
+                                            <h:outputText value="#{i.haber}" rendered="#{i.haber > 0 and cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+
+                                        </p:column>
+
+                                        <p:column headerText="Saldo" width="100" style="text-align: right;" >
+
+                                            <h:outputText value="#{i.saldo}" rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaPrimaria}" >
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+
+                                            <h:outputText value="#{i.saldoSecundario}" rendered="#{cuentaCorrienteEducacionBean.codigoMonedaRegistracion eq aplicacionBean.parametro.codigoMonedaSecundaria}" >
+                                                <f:convertNumber pattern="#,###,##0.00" />
+                                            </h:outputText>
+
+                                        </p:column>
+
+                                        <p:column headerText="Ver" width="50" style="text-align: center;" >
+
+                                            <p:commandLink title="Imprimir Comprobante" styleClass="icono-datatable"
+                                                           actionListener="#{cuentaCorrienteEducacionBean.imprimir(c.codigoFormulario,c.numeroFormulario)}"
+                                                           process="@this" >
+                                                <i class="fa fa-print fa-2x Orange" ></i>
+                                            </p:commandLink>
+
+                                        </p:column>
+
+                                    </p:dataTable>
+
+                                </div>
+
+
+                            </div>
+
+                        </p:tab>
+
+                    </p:tabView>
+
+                </div>
+
+            </div>
+
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{cuentaCorrienteEducacionBean.muestraReporte}"
+                               nombreArchivo="#{cuentaCorrienteEducacionBean.nombreArchivo}" />
+
+        </ui:define>
+
+    </ui:composition>
+</html>

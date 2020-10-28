@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"      value="#{movimientoFacturacionBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{movimientoFacturacionBean.titulo}"/>
+            <f:viewParam name="CIRCOM"  value="#{movimientoFacturacionBean.CIRCOM}"/>
+            <f:viewParam name="CIRAPL"  value="#{movimientoFacturacionBean.CIRAPL}"/>
+
+            <f:viewParam name="CODFC"   value="#{movimientoFacturacionBean.CODFC}"/>
+            <f:viewParam name="SUCFC"   value="#{movimientoFacturacionBean.SUCFC}"/>
+            <f:viewParam name="CODVT"   value="#{movimientoFacturacionBean.CODVT}"/>
+            <f:viewParam name="SUCVT"   value="#{movimientoFacturacionBean.SUCFC}"/>
+            <f:viewParam name="CODCJ"   value="#{movimientoFacturacionBean.CODCJ}"/>
+            <f:viewParam name="SUCCJ"   value="#{movimientoFacturacionBean.SUCFC}"/>
+            <f:viewParam name="SUCST"   value="#{movimientoFacturacionBean.SUCST}"/>
+            <f:viewParam name="CODST"   value="#{movimientoFacturacionBean.CODST}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoFacturacionBean.iniciarVariables()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoFacturacionBean.titulo}
+        </ui:define>
+
+        <ui:define name="menu">
+            <!-- MENU -->
+            <p:menubar id="menuBar">
+
+                <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                            actionListener="#{movimientoFacturacionBean.nuevoMovimiento}"
+                            process="@this"
+                            update="@form" >
+                    <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+                </p:menuitem>
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{movimientoFacturacionBean.guardar(false)}"
+                            rendered="#{not movimientoFacturacionBean.m.persistido }"
+                            update="@form" />
+
+                <p:menuitem value="Imprimir" icon="fa fa-print"
+                            actionListener="#{movimientoFacturacionBean.imprimir}"
+                            rendered="#{movimientoFacturacionBean.m.persistido }"
+                            process="@this"
+                            update="@form"
+                            oncomplete="PF('dlg_reporte').show()">
+                </p:menuitem>
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarRemitente"            process="@this" update="@form" actionListener="#{movimientoFacturacionBean.procesarRemitente}" />
+            <p:remoteCommand name="procesarDestinatario"         process="@this" update="@form" actionListener="#{movimientoFacturacionBean.procesarDestinatario}" />
+            <p:remoteCommand name="procesarProducto"             process="@this" update="tb" actionListener="#{movimientoFacturacionBean.procesarProducto}" />
+            <p:remoteCommand name="procesarDireccionEntregaRem"  process="@this" update="@form" actionListener="#{movimientoFacturacionBean.procesarDireccionEntregaRemitente}" />
+            <p:remoteCommand name="procesarDireccionEntregaDes"  process="@this" update="@form" actionListener="#{movimientoFacturacionBean.procesarDireccionEntregaDestinatario}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <!-- DATOS -->
+            <p:panel header="Datos" rendered="#{not movimientoFacturacionBean.m.persistido}" >
+
+                <p:panelGrid columns="4" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:outputText value="Formulario" />
+                    <h:outputText value="#{movimientoFacturacionBean.m.formulario.descripcion}" />
+
+                    <h:outputText value="Número" />
+                    <h:outputText value="#{movimientoFacturacionBean.m.numeroFormulario}" >
+                        <f:convertNumber pattern="00000000" />
+                    </h:outputText>
+
+                    <h:outputText value="Fecha" />
+                    <h:outputText value="#{movimientoFacturacionBean.m.fechaMovimiento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+
+                    <h:outputText value="Flete pago *" />
+                    <p:selectOneMenu value="#{movimientoFacturacionBean.m.pagoFlete}"
+                                     required="true" requiredMessage="Seleccione el tipo de pago del flete"
+                                     effect="fade"  >
+
+                        <p:ajax listener="#{movimientoFacturacionBean.onFleteChange}" update="@form" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItem itemValue="O" itemLabel="Origen" />
+                        <f:selectItem itemValue="D" itemLabel="Destino" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                </p:panelGrid>
+
+                <div class="EmptyBox10" />
+
+                <p:fieldset legend="Remitente" >
+                    <p:panelGrid columns="4" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                        <h:outputText value="Cliente" />
+
+                        <h:panelGroup layout="block">
+                            <p:commandButton icon="fa fa-search" oncomplete="PF('dlg_remitente').show()" process="@this" />
+                            <h:outputText value="#{movimientoFacturacionBean.m.remitenteRazonSocial}"
+                                          rendered="#{not movimientoFacturacionBean.solicitaDatosRemitente}" />
+                            <p:inputText value="#{movimientoFacturacionBean.m.remitenteRazonSocial}" style="width: 80%;"
+                                         rendered="#{movimientoFacturacionBean.solicitaDatosRemitente}" />
+                        </h:panelGroup>
+
+                        <h:outputText value="Situación IVA" />
+                        <h:outputText value="#{movimientoFacturacionBean.m.remitenteCondicionDeIva.descripcion}" />
+
+                        <h:outputText value="Tipo/Nro Documento" />
+                        <h:panelGroup layout="block">
+                            <h:outputText value="#{movimientoFacturacionBean.m.remitenteTipoDocumento.descripcion} " />
+                            <h:outputText value="#{movimientoFacturacionBean.m.remitenteNrodoc}"
+                                          rendered="#{not movimientoFacturacionBean.solicitaDatosRemitente}" />
+                            <p:inputText value="#{movimientoFacturacionBean.m.remitenteNrodoc}"
+                                         rendered="#{movimientoFacturacionBean.solicitaDatosRemitente}" />
+                        </h:panelGroup>
+
+                        <h:outputText value="Calle *" />
+                        <h:panelGroup layout="block">
+                            <p:commandButton icon="fa fa-search"
+                                             title="Buscar dirección de entrega del remitente"
+                                             update="buscadorDireccionEntregaRem"
+                                             actionListener="#{movimientoFacturacionBean.seleccionarDireccionEntregaRemitente()}"
+                                             oncomplete="PF('dlg_direccion_entrega_rem').show()"
+                                             rendered="#{not empty movimientoFacturacionBean.m.remitenteCliente}" process="@this"  />
+
+                            <h:outputText value="#{movimientoFacturacionBean.m.remitenteDireccion}"
+                                          rendered="#{not movimientoFacturacionBean.solicitaDatosRemitente}" />
+                            <p:inputText value="#{movimientoFacturacionBean.m.remitenteDireccion}" style="width: 80%;"
+                                         required="true" requiredMessage="La calle es obligatoria"
+                                         rendered="#{movimientoFacturacionBean.solicitaDatosRemitente}"/>
+
+                        </h:panelGroup>
+
+                        <h:outputText value="Número *" />
+                        <h:outputText value="#{movimientoFacturacionBean.m.remitenteNumero}"
+                                      rendered="#{not movimientoFacturacionBean.solicitaDatosRemitente}" />
+                        <p:inputText value="#{movimientoFacturacionBean.m.remitenteNumero}"
+                                     required="true" requiredMessage="El número es obligatorio"
+                                     rendered="#{movimientoFacturacionBean.solicitaDatosRemitente}"/>
+
+                        <h:outputText value="Localidad *" />
+                        <h:panelGroup id="pgLocalidad"  layout="block">
+                            <p:remoteCommand name="procesarLocalidad"  process="@this"
+                                             update="pgLocalidad"
+                                             actionListener="#{movimientoFacturacionBean.procesarLocalidad}"
+                                             rendered="#{movimientoFacturacionBean.solicitaDatos}" />
+
+                            <p:commandButton icon="fa fa-search" oncomplete="PF('dlgLocalidad').show()" process="@this"
+                                             rendered="#{movimientoFacturacionBean.solicitaDatos}" />
+                            <h:outputText value="#{movimientoFacturacionBean.m.localidad.descripcion}" />
+
+                        </h:panelGroup>
+
+                        <h:outputText value="Referencia " />
+                        <h:outputText value="#{movimientoFacturacionBean.m.remitenteCliente.notas}" />
+
+                        <h:outputText value="" />
+                        <h:outputText value="" />
+
+                        <h:outputText value="" />
+                        <h:outputText value="" />
+
+
+                    </p:panelGrid>
+                </p:fieldset>
+
+                <div class="EmptyBox10" />
+
+                <p:fieldset legend="Destinatario" >
+                    <p:panelGrid columns="4" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                        <h:outputText value="Cliente" />
+                        <h:panelGroup layout="block">
+                            <p:commandButton icon="fa fa-search" oncomplete="PF('dlg_destinatario').show()" process="@this" />
+                            <h:outputText value="#{movimientoFacturacionBean.m.destinatarioRazonSocial}"
+                                          rendered="#{not movimientoFacturacionBean.solicitaDatosDestinatario}" />
+                            <p:inputText value="#{movimientoFacturacionBean.m.destinatarioRazonSocial}" style="width: 80%;"
+                                         rendered="#{movimientoFacturacionBean.solicitaDatosDestinatario}" />
+                        </h:panelGroup>
+
+                        <h:outputText value="Situación IVA" />
+                        <h:outputText value="#{movimientoFacturacionBean.m.destinatarioCondicionDeIva.descripcion}" />
+
+                        <h:outputText value="Tipo/Nro Documento" />
+                        <h:panelGroup layout="block">
+                            <h:outputText value="#{movimientoFacturacionBean.m.destinatarioTipoDocumento.descripcion} " />
+                            <h:outputText value="#{movimientoFacturacionBean.m.destinatarioNrodoc}"
+                                          rendered="#{not movimientoFacturacionBean.solicitaDatosDestinatario}" />
+                            <p:inputText value="#{movimientoFacturacionBean.m.destinatarioNrodoc}"
+                                         rendered="#{movimientoFacturacionBean.solicitaDatosDestinatario}" />
+                        </h:panelGroup>
+
+                        <h:outputText value="Calle *" />
+                        <h:panelGroup layout="block">
+                            <p:commandButton icon="fa fa-search"
+                                             title="Buscar dirección de entrega del destinatario"
+                                             update="buscadorDireccionEntregaDes"
+                                             actionListener="#{movimientoFacturacionBean.seleccionarDireccionEntregaDestinatario()}"
+                                             oncomplete="PF('dlg_direccion_entrega_des').show()"
+                                             rendered="#{not empty movimientoFacturacionBean.m.destinatarioCliente}" process="@this"  />
+
+                            <h:outputText value="#{movimientoFacturacionBean.m.destinatarioDireccion}"
+                                          rendered="#{not movimientoFacturacionBean.solicitaDatosDestinatario}" />
+
+                            <p:inputText value="#{movimientoFacturacionBean.m.destinatarioDireccion}" style="width: 80%;"
+                                         required="true" requiredMessage="La calle es obligatoria"
+                                         rendered="#{movimientoFacturacionBean.solicitaDatosDestinatario}"/>
+
+                        </h:panelGroup>
+
+
+                        <h:outputText value="Número *" />
+                        <h:outputText value="#{movimientoFacturacionBean.m.destinatarioNumero}"
+                                      rendered="#{not movimientoFacturacionBean.solicitaDatosDestinatario}" />
+                        <p:inputText value="#{movimientoFacturacionBean.m.destinatarioNumero}"
+                                     required="true" requiredMessage="El número es obligatorio"
+                                     rendered="#{movimientoFacturacionBean.solicitaDatosDestinatario}"/>
+
+                        <h:outputText value="Localidad *" />
+                        <h:outputText value="#{movimientoFacturacionBean.m.destinatarioLocalidad.descripcion}"
+                                      rendered="#{not movimientoFacturacionBean.solicitaDatosDestinatario}" />
+                        <p:autoComplete value="#{movimientoFacturacionBean.m.destinatarioLocalidad}" style="width: 80%;" dropdown="true"
+                                        maxResults="8" queryDelay="1000"
+                                        rendered="#{movimientoFacturacionBean.solicitaDatosDestinatario}"
+                                        required="true" requiredMessage="Ingrese la localidad"
+                                        forceSelection="true"
+                                        placeholder="Ingrese código o descripción"
+                                        completeMethod="#{localidadBean.complete}"
+                                        converter="#{conversoresGeneral.localidad}"
+                                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"  >
+
+                            <p:ajax event="itemSelect" listener="#{movimientoFacturacionBean.onSelectLocalidadDestinatario}"
+                                    process="@form" update="@form"  />
+
+                            <p:column>
+                                <h:outputText value="#{e.codigo}" />
+                            </p:column>
+
+                            <p:column>
+                                <h:outputText value="#{e.descripcion}" />
+                            </p:column>
+
+                            <p:column>
+                                <h:outputText value="#{e.provincia.descripcion}" />
+                            </p:column>
+                        </p:autoComplete>
+
+                        <h:outputText value="Referencia " />
+                        <h:outputText value="#{movimientoFacturacionBean.m.destinatarioCliente.notas}" />
+
+                        <h:outputText value="" />
+                        <h:outputText value="" />
+
+                        <h:outputText value="" />
+                        <h:outputText value="" />
+
+                    </p:panelGrid>
+                </p:fieldset>
+
+                <div class="EmptyBox10" />
+
+                <p:panelGrid columns="4" layout="grid"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <h:outputText value="Condición de pago *" />
+                    <bs:outputTexWhitLink value="Condición de Pago *"
+                                          rendered="#{movimientoFacturacionBean.muestroCampo('C','CNDPAG')}"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00355')}" />
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.condicionDePago}"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','CNDPAG')}"
+                                    disabled="#{not empty movimientoFacturacionBean.m.id}"
+                                    required="true" requiredMessage="Seleccione la condición de pago del comprobante"
+                                    dropdown="true" placeholder="Seleccionar"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{condicionPagoVentaBean.complete}"
+                                    var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                    converter="#{conversoresVenta.condicionDePagoVenta}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoFacturacionBean.calcularImportes()}" />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoFacturacionBean.muestraReporte}"
+                               nombreArchivo="#{movimientoFacturacionBean.nombreArchivo}" />
+
+            <!-- DETALLE -->
+            <p:tabView id="tb" rendered="#{not movimientoFacturacionBean.m.persistido}">
+                <p:tab title="Items" >
+
+                    <p:dataTable id="detalle" value="#{movimientoFacturacionBean.m.itemsProducto}" var="i"
+                                 resizeMode="expand" liveResize="true" >
+                        <p:column headerText="Item" width="5%" >
+                            <h:outputText value="#{i.nroitm}" />
+                        </p:column>
+
+                        <p:column headerText="Producto" width="45%" >
+                            <p:commandButton icon="fa fa-search"
+                                             process="@this" oncomplete="PF('dlgProducto').show()"
+                                             rendered="#{not i.todoOk and not empty movimientoFacturacionBean.m.listaDePrecio}" />
+
+                            <p:inputText value="#{i.descripcion}" style="width: 90%;"
+                                         rendered="#{not i.todoOk and not empty i.producto and not empty movimientoFacturacionBean.m.listaDePrecio}" />
+
+                            <p:inputText value="#{i.descripcion}" style="width: 90%;" rendered="#{i.todoOk}" >
+                                <p:ajax event="blur" process="@this" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="Cantidad" width="7%" >
+
+                            <p:inputText value="#{i.cantidad}"
+                                         rendered="#{not empty i.producto and not i.todoOk}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                                <p:ajax listener="#{movimientoFacturacionBean.calcularImportesLineaByPrecio(i)}" event="keyup" delay="500"
+                                        update="total,:formulario:totales" />
+                            </p:inputText>
+
+                            <p:inputText  value="#{i.cantidad}"
+                                          rendered="#{not empty i.producto and i.todoOk}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="#{i.producto.unidadDeMedida.formato}" />
+                                <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                        update="total2,:formulario:totales" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="U.M." width="5%" style="text-align: center;" >
+                            <h:outputText  value="#{i.unidadMedida.codigo}" rendered="#{not empty i.producto}" />
+                        </p:column>
+
+                        <p:column headerText="Kg. Aforado"  width="10%" >
+                            <p:inputText value="#{i.kilogramosAforado}" rendered="#{not empty i.producto}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="Kg. Efectivo"  width="10%" >
+                            <p:inputText value="#{i.kilogramosEfectivo}" rendered="#{not empty i.producto}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="Valor D."  width="10%" >
+                            <p:inputText  value="#{i.valorDeclarado}" rendered="#{not empty i.producto}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="Precio"  width="7%" >
+                            <p:inputText id="precio"  value="#{i.precio}"
+                                         rendered="#{not empty i.producto and not i.todoOk}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                                <p:ajax listener="#{movimientoFacturacionBean.calcularImportesLineaByPrecio(i)}" event="keyup" delay="500"
+                                        update="total,:formulario:totales" />
+                            </p:inputText>
+
+                            <p:inputText id="precio2"  value="#{i.precio}"
+                                         rendered="#{not empty i.producto and i.todoOk}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                                <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                        update="total2,:formulario:totales" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="% Bonif." width="7%" style="text-align: right;" >
+
+                            <!-- BONIF DEL ITEM QUE AÚN NO SE AGREGÓ -->
+                            <p:inputText value="#{i.porcentajeBonificacion1}"
+                                         rendered="#{not empty i.producto and not i.todoOk}"
+                                         style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                                <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                        update="total,:formulario:totales" />
+                            </p:inputText>
+
+
+
+                            <p:inputText  value="#{i.porcentajeBonificacion1}"
+                                          rendered="#{not empty i.producto and i.todoOk}"
+                                          style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                                <p:ajax listener="#{movimientoFacturacionBean.calcularImportes}" event="keyup" delay="500"
+                                        update="total2,:formulario:totales" />
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column headerText="Total" width="10%" style="text-align: right;" >
+                            <p:inputText id="total"  value="#{i.totalLinea}"
+                                         rendered="#{not empty i.producto and not i.todoOk}" style="width: 98%;text-align: right;" >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                                <p:ajax listener="#{movimientoFacturacionBean.calcularImportesLineaByTotal(i)}" event="keyup" delay="500"
+                                        update="precio,:formulario:totales" />
+                            </p:inputText>
+
+                            <h:outputText id="total2" value="#{i.totalLinea}"
+                                          rendered="#{not empty i.producto and i.todoOk}"  >
+                                <f:convertNumber pattern="###,###,##0.00" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="" width="5%" style="text-align: center;" >
+
+                            <p:commandButton icon="fa fa-plus" process="detalle" update="@form"
+                                             title="Agregar item a la lista"
+                                             actionListener="#{movimientoFacturacionBean.agregarItem(i)}"
+                                             rendered="#{not i.todoOk}" />
+
+                            <p:commandLink process="detalle" update="@form"
+                                           title="Eliminar item de la lista"
+                                           actionListener="#{movimientoFacturacionBean.eliminarItem(i)}"
+                                           rendered="#{i.todoOk}" >
+                                <p:confirm header="Confirmación" message="Está seguro que desea borrar #{i.descripcion}?" icon="ui-icon-alert" />
+                                <i class="fa fa-close fa-2x Red" ></i>
+                            </p:commandLink>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:tab>
+
+                <!--
+                <p:tab title="Cotización">
+                    <h:outputText value="Cotización" />
+                    <h:outputText value="#{movimientoFacturacionBean.m.cotizacion}" />
+                </p:tab>
+                -->
+
+            </p:tabView>
+
+            <div class="EmptyBox10" />
+
+            <div class="Container70 Responsive50 ">
+                <p:panel  header="" rendered="#{not movimientoFacturacionBean.m.persistido}">
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:outputText value="Observaciones" />
+                        <p:inputTextarea style="width: 100%" rows="3" value="#{movimientoFacturacionBean.m.observaciones}" >
+                            <p:ajax event="blur" process="@this" />
+                        </p:inputTextarea>
+
+                    </p:panelGrid>
+
+                </p:panel>
+            </div>
+            <div class="Container30 Responsive50 " >
+                <p:panel id="totales" header="Importes" rendered="#{not movimientoFacturacionBean.m.persistido}">
+
+                    <p:panelGrid columns="2" layout="grid"
+                                 styleClass="ui-panelgrid-blank"
+                                 columnClasses="Container40, Container60" >
+
+                        <h:outputText value="Subtotal   " />
+                        <h:outputText value="#{movimientoFacturacionBean.m.impBruto}" styleClass="textoImporte" >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+
+                        <h:outputText value="IVA 10.5%" />
+                        <h:outputText value="#{movimientoFacturacionBean.m.impIva1050}" styleClass="textoImporte" >
+                            <f:convertNumber pattern=" $ ###,###,##0.00" />
+                        </h:outputText>
+
+                        <h:outputText value="IVA 21 % " />
+                        <h:outputText value="#{movimientoFacturacionBean.m.impIva2100}" styleClass="textoImporte" >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+
+                        <p:separator />
+                        <p:separator />
+
+                        <h:outputText value="Total" />
+                        <h:outputText value="#{movimientoFacturacionBean.m.importeTotal}" styleClass="textoImporte"  >
+                            <f:convertNumber pattern="$ ###,###,##0.00" />
+                        </h:outputText>
+
+                    </p:panelGrid>
+
+                </p:panel>
+            </div>
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/entidad/busqueda/buscadorDestinatario.xhtml" />
+            <ui:include src="/entidad/busqueda/buscadorRemitente.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorProducto.xhtml" />
+            <ui:include src="/global/busqueda/buscadorLocalidad.xhtml" />
+            <ui:include src="/entidad/busqueda/buscadorDireccionEntregaDestinatario.xhtml" />
+            <ui:include src="/entidad/busqueda/buscadorDireccionEntregaRemitente.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,249 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-12 ui-lg-8,ui-g-12 ui-lg-4" >
+
+        <h:panelGroup layout="block" >
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-3,ui-g-3,ui-g-3,ui-g-3">
+
+                <h:outputText value="Número" rendered="#{tareaBean.muestroCampo('C','NROFOR')}" />
+                <p:inputText value="#{tareaBean.tarea.numeroFormulario}" readonly="true"
+                             rendered="#{tareaBean.muestroCampo('C','NROFOR')}" >
+                    <f:convertNumber pattern="00000000" />
+                </p:inputText>
+
+                <h:outputText value="Fecha"
+                              rendered="#{tareaBean.muestroCampo('C','FCHMOV')}" />
+                <p:calendar value="#{tareaBean.tarea.fechaMovimiento}"
+                            required="true"
+                            requiredMessage="La fecha es obligatoria"
+                            pattern="dd/MM/yyyy"
+                            rendered="#{tareaBean.muestroCampo('C','FCHMOV') and empty tareaBean.tarea.formulario or tareaBean.tarea.formulario.modificaFecha ne 'S'}">
+                    <p:ajax event="dateSelect" listener="#{tareaBean.onFechaSelect}" update="@form" />
+                </p:calendar>
+
+                <h:outputText value="Hora inicio " />
+                <p:calendar value="#{tareaBean.tarea.horaInicio}"
+                            required="true"
+                            requiredMessage="La hora de inicio es obligatoria"
+                            pattern="dd/MM/yyyy HH:mm:ss" />
+
+                <h:outputText value="Hora fin " />
+                <p:calendar value="#{tareaBean.tarea.horaFin}"
+                            required="true"
+                            requiredMessage="La hora de fin es obligatoria"
+                            pattern="dd/MM/yyyy HH:mm:ss" >
+                    <p:ajax event="change" listener="#{tareaBean.calcularTiempo}" update="tiempo" />
+                </p:calendar>
+
+                <h:outputText value="Tiempo" />
+                <p:inputText id="tiempo" value="#{tareaBean.tarea.tiempo} Min." readonly="true" />
+
+                <h:outputText value=""  />
+                <h:outputText value=""  />
+
+                <h:outputText value="Area" />
+                <p:selectOneMenu id="area" value="#{tareaBean.tarea.area}"
+                                 rendered="#{tareaBean.tarea.estado eq 'A' or tareaBean.tarea.estado eq 'C'}"
+                                 required="true" requiredMessage="Seleccione el área"
+                                 converter="#{conversoresTarea.area}"
+                                 effect="fade" >
+
+                    <p:ajax process="@this" update="@form" listener="#{tareaBean.onSelectArea}" />
+                    <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                    <f:selectItems value="#{areaBean.lista}" var="a" itemLabel="#{a.descripcion}" itemValue="#{a}" />
+                </p:selectOneMenu>
+                <p:inputText value="#{tareaBean.tarea.area.descripcion} " readonly="true"
+                             rendered="#{tareaBean.tarea.estado ne 'A' and tareaBean.tarea.estado ne 'C'}" />
+
+
+                <h:outputText value="" />
+                <h:outputText value="" />
+
+                <!-- PROYECTO -->
+                <h:outputText value="Proyecto" rendered="#{tareaBean.tarea.area.codigo eq 'PRY' }" />
+                <p:autoComplete value="#{tareaBean.tarea.proyecto}" dropdown="true" forceSelection="true"
+                                rendered="#{tareaBean.tarea.area.codigo eq 'PRY' }"
+                                readonly="#{tareaBean.tarea.estado ne 'A'}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{proyectoBean.complete}"
+                                converter="#{conversoresInversiones.proyecto}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" />
+                </p:autoComplete>
+
+                <h:outputText value="" rendered="#{tareaBean.tarea.area.codigo eq 'PRY' }"  />
+                <h:outputText value="" rendered="#{tareaBean.tarea.area.codigo eq 'PRY' }"  />
+
+                <!-- MANTENIMIENTO -->
+                <h:outputText value="Tipo de mantenimiento" rendered="#{tareaBean.tarea.area.codigo eq 'MAN' }" />
+                <p:autoComplete value="#{tareaBean.tarea.tipoMantenimiento}" dropdown="true" forceSelection="true"
+                                rendered="#{tareaBean.tarea.area.codigo eq 'MAN' }"
+                                readonly="#{tareaBean.tarea.estado ne 'A'}"
+                                maxResults="8" queryDelay="1000"
+                                completeMethod="#{tipoMantenimiento2Bean.complete}"
+                                converter="#{conversoresTaller.tipoMantenimiento}"
+                                var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" >
+                    <p:ajax event="itemSelect" process="@this" />
+                </p:autoComplete>
+
+
+                <h:panelGroup layout="block"
+                              rendered="#{tareaBean.tarea.area.codigo eq 'MAN' }" >
+
+                    <h:outputText value="Bien de uso" />
+                    <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                     rendered="#{tareaBean.tarea.estado eq 'A'}"
+                                     process="@this"
+                                     update="buscadorProducto"
+                                     oncomplete="PF('dlgProducto').show()" />
+                </h:panelGroup>
+
+                <p:inputText value="#{tareaBean.tarea.producto.descripcion}"  readonly="true"
+                             rendered="#{tareaBean.tarea.area.codigo eq 'MAN' and not empty tareaBean.tarea.producto }" />
+
+                <p:inputText value=""  readonly="true"
+                             rendered="#{tareaBean.tarea.area.codigo eq 'MAN' and empty tareaBean.tarea.producto }" />
+
+
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-3,ui-g-9">
+
+                <h:panelGroup layout="block"
+                              rendered="#{not empty tareaBean.tarea.area and tareaBean.tarea.area.codigo eq 'PRD'}">
+
+                    <h:outputText value="Orden de producción" />
+                    <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                     rendered="#{tareaBean.tarea.estado eq 'A'}"
+                                     actionListener="#{tareaBean.buscarOrdenesProduccionPendientes()}"
+                                     process="@this"
+                                     update="buscadorOrdenesProduccion"
+                                     oncomplete="PF('dlg_orden_produccion').show()" />
+                </h:panelGroup>
+
+                <h:panelGroup layout="block"
+                              rendered="#{not empty tareaBean.tarea.area and tareaBean.tarea.area.codigo eq 'PRD'}" >
+
+                    <p:inputText value="#{tareaBean.tarea.movimientoProduccion.formulario.codigo}-#{tareaBean.tarea.movimientoProduccion.numeroFormulario} - #{tareaBean.mostrarProductoProducir()}"
+                                 readonly="true"
+                                 rendered="#{not empty tareaBean.tarea.movimientoProduccion}"/>
+
+                    <p:inputText value=""
+                                 readonly="true"
+                                 rendered="#{empty tareaBean.tarea.movimientoProduccion}"/>
+
+                </h:panelGroup>
+
+            </p:panelGrid>
+
+            <p:panelGrid columns="4" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-3,ui-g-3,ui-g-3,ui-g-3">
+
+
+                <h:panelGroup layout="block"
+                              rendered="#{not empty tareaBean.tarea.movimientoProduccion}">
+
+                    <h:outputText value="Proceso" />
+                    <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                     rendered="#{tareaBean.tarea.estado eq 'A'}"
+                                     process="@this"
+                                     update="buscadorProcesoProduccion"
+                                     oncomplete="PF('dlg_proceso_produccion').show()" />
+                </h:panelGroup>
+
+
+                <p:inputText value="#{tareaBean.tarea.producto.descripcion}"  readonly="true"
+                             rendered="#{tareaBean.tarea.area.codigo eq 'PRD' and not empty tareaBean.tarea.movimientoProduccion and not empty tareaBean.tarea.producto }" />
+
+                <p:inputText value=""  readonly="true"
+                             rendered="#{tareaBean.tarea.area.codigo eq 'PRD' and not empty tareaBean.tarea.movimientoProduccion and empty tareaBean.tarea.producto }" />
+
+
+                <h:outputText value="Cant. Realizado"
+                              rendered="#{tareaBean.tarea.area.codigo eq 'PRD' and tareaBean.tarea.estado ne 'A' and not empty tareaBean.tarea.movimientoProduccion and not empty tareaBean.tarea.producto }" />
+                <p:inputText value="#{tareaBean.tarea.cantidad}"
+                             rendered="#{tareaBean.tarea.area.codigo eq 'PRD' and tareaBean.tarea.estado ne 'A' and not empty tareaBean.tarea.movimientoProduccion and not empty tareaBean.tarea.producto }" />
+
+
+
+            </p:panelGrid>
+
+        </h:panelGroup>
+
+
+
+
+        <h:panelGroup layout="block" >
+
+            <ui:include src="tareasOperario.xhtml" />
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-4,ui-g-8" >
+
+                <h:outputText value="Observaciones" />
+                <p:inputTextarea style="width: 100%" rows="3" value="#{tareaBean.tarea.observaciones}" >
+                    <p:ajax event="blur" process="@this" />
+                </p:inputTextarea>
+            </p:panelGrid>
+        </h:panelGroup>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox10" />
+
+    <ui:include src="tareasParteProduccion.xhtml" />
+
+    <div class="EmptyBox10" />
+
+    <ui:include src="tareasValeConsumo.xhtml" />
+
+    <div class="EmptyBox20" />
+
+    <p:dataTable id="detalle" value="#{tareaBean.tarea.movimientosProduccion}" var="i" reflow="true"
+                 paginator="true" rows="15"
+                 rendered="#{not empty tareaBean.tarea.movimientosProduccion}" >
+
+        <f:facet name="header">
+            Movimientos generados
+        </f:facet>
+
+        <p:column headerText="Id" width="100" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.id}" />
+        </p:column>
+
+        <p:column headerText="Comprobante" width="100" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.formulario.descripcion}" />
+        </p:column>
+
+        <p:column headerText="Número" width="100" styleClass="TexAlCenter" filterMatchMode="contains" >
+            <h:outputText value="#{i.numeroFormulario}" >
+                <f:convertNumber pattern="00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha" width="100" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+    </p:dataTable>
+
+</ui:composition>
+

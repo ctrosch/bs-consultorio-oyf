@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+
+        <title></title>
+
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="itemMenu" >
+            <composite:attribute name="codigo" required="true" />
+            <composite:attribute name="title" required="true" />
+            <composite:attribute name="icono" required="true" />
+            <composite:attribute name="url" required="true" />
+
+        </composite:interface>
+
+        <composite:implementation>
+
+            <p:panel style="text-align:center; border: none; vertical-align: middle; " styleClass="p-col-6 p-md-4 p-lg-3  p-col-align-center"  >
+
+                <h:outputLink id="menu" style="vertical-align: middle;"
+                              value="#{request.contextPath}#{cc.attrs.url}"
+                              target="#{aplicacionBean.parametro.tipoNavegacion eq 'U'? '_self': '_blank'}" >
+                    <h:panelGroup layout="block" style="padding:6px 1px; min-height: 63px; border: none;"
+                                  styleClass="Card TexAlCenter Wid100 onHover p-col-align-center ">
+                        <span class="Fs12">
+                            <i class="fa #{cc.attrs.icono} fa-2x" style="margin-right: auto; margin-left: auto;"></i>
+                        </span>
+                        <br/>
+                        <span class="Fs12">
+                            <h:outputText value="#{cc.attrs.title}" />
+                        </span>
+                    </h:panelGroup>
+                </h:outputLink>
+
+                <p:contextMenu for="menu">
+                    <p:menuitem value="Quitar de favoritos" icon="ui-icon-close"
+                                actionListener="#{principalBean.quitarFavorito(r)}"
+                                process="@this"
+                                update="@form" />
+                </p:contextMenu>
+
+            </p:panel>
+
+        </composite:implementation>
+
+    </h:body>
+
+</html>

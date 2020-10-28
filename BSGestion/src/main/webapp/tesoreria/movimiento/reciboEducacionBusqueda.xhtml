@@ -1,0 +1,212 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- BUSQUEDA -->
+    <p:panelGrid id="panelBusqueda" columns="4" layout="grid" style="max-width: 900px;"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Fecha formulario" />
+        <h:panelGroup layout="block">
+
+            <div class="Wid50 Fleft">
+                <p:calendar value="#{reciboEducacionBean.fechaMovimientoDesde}"
+                            placeholder="Desde"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax event="dateSelect"  process="@this" update="movimientos" listener="#{reciboEducacionBean.buscar()}" />
+                </p:calendar>
+            </div>
+            <div class="Wid50 Fright">
+                <p:calendar value="#{reciboEducacionBean.fechaMovimientoHasta}"
+                            placeholder="Hasta"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"   >
+                    <p:ajax event="dateSelect"  process="@this" update="movimientos" listener="#{reciboEducacionBean.buscar()}" />
+                </p:calendar>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Número formulario" />
+        <h:panelGroup layout="block" >
+
+            <div class="Wid50 Fleft">
+                <p:inputText value="#{reciboEducacionBean.numeroFormularioDesde}"  placeholder="Desde" >
+                    <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{reciboEducacionBean.buscar()}"/>
+                </p:inputText>
+            </div>
+
+            <div class="Wid50 Fright">
+                <p:inputText value="#{reciboEducacionBean.numeroFormularioHasta}"  placeholder="Hasta" >
+                    <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{reciboEducacionBean.buscar()}"/>
+                </p:inputText>
+            </div>
+
+        </h:panelGroup>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Alumno " />
+        <p:autoComplete value="#{reciboEducacionBean.entidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{alumnoBean.complete}"
+                        var="e" itemLabel="#{e.nombreComplete}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="movimientos" listener="#{reciboEducacionBean.buscar()}"  />
+
+            <p:column headerText="Nro Legajo" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Nombre Completo">
+                <h:outputText value="#{e.apellido} #{e.nombre}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+    </p:panelGrid>
+
+    <div class="EmptyBox5" />
+
+    <div class="Container100 TexAlLeft">
+
+        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="RedBack MaxWid100"
+                         process="@form"
+                         update="@form"
+                         actionListener="#{reciboEducacionBean.limpiarFiltroBusqueda()}"   />
+
+    </div>
+
+    <div class="EmptyBox5" />
+
+    <p:dataTable id="movimientos" value="#{reciboEducacionBean.movimientos}" var="i"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 rendered="#{not empty reciboEducacionBean.movimientos}"  >
+
+        <f:facet name="header">
+            Movimientos encontrados
+        </f:facet>
+
+        <p:column headerText="Acciones" width="90" styleClass="TexAlCenter" >
+
+            <p:commandLink title="Seleccionar movimiento"
+                           actionListener="#{reciboEducacionBean.seleccionarMovimiento(i)}"
+                           process="@this"
+                           update="@form"  >
+                <i class="fa fa-check fa-2x Green" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Imprimir Comprobante"
+                           actionListener="#{reciboEducacionBean.imprimir(i)}"
+                           process="@this" >
+                <i class="fa fa-print fa-2x Orange" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Anular o revertir movimiento"
+                           actionListener="#{reciboEducacionBean.revertirMovimiento(i)}"
+                           process="@this"
+                           update="@form"  >
+                <p:confirm header="Confirmación" message="¿Está seguro de anular o revertir el movimiento #{i.formulario.descripcion}  #{i.puntoVenta.codigo} #{i.numeroFormulario}?" icon="ui-icon-alert" />
+                <i class="fa fa-close fa-2x Red" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Emitir Factura"
+                           actionListener="#{reciboEducacionBean.generarMovimientoVenta(i)}"
+                           process="@this"
+                           update="@form"  >
+                <p:confirm header="Confirmación" message="¿Está seguro de generar el movimiento de venta de #{i.formulario.descripcion}  #{i.puntoVenta.codigo} #{i.numeroFormulario}?" icon="ui-icon-alert" />
+                <i class="fa fa-copy fa-2x Blue" ></i>
+            </p:commandLink>
+
+        </p:column>
+
+        <p:column headerText="Formulario" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.formulario.codigo}" />
+        </p:column>
+
+        <p:column headerText="Número" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.numeroFormulario}" >
+                <f:convertNumber pattern="00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Nro Cuenta" width="80"  styleClass="TexAlCenter" >
+            <h:outputText value="#{i.entidad.nrocta}" />
+        </p:column>
+
+        <p:column headerText="Alumno" width="300"  >
+            <h:outputText value="#{i.entidad.nombreComplete}" />
+        </p:column>
+
+        <p:column headerText="Importe" width="100" styleClass="TexAlRight" >
+            <h:outputText value="#{i.importeTotal}" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+        <f:facet name="footer">
+            <div class="p-grid" >
+
+                <div class="p-col-8 p-md-3 " >
+                    <!--
+                    <p:selectOneMenu value="#{reciboEducacionBean.accionEnLote}"  >
+                        <p:ajax process="@this" update="movimientos" />
+                        <f:selectItem itemLabel="Acción en lote" itemValue="" />
+                        <f:selectItem itemLabel="Enviar Email"    itemValue="E" />
+                        <f:selectItem itemLabel="Anular Comprobante" itemValue="A" />
+                    </p:selectOneMenu>
+                    -->
+                </div>
+
+                <div class="p-col-4 p-md-1" >
+                    <p:commandButton value="Aplicar" icon="fa fa-check" styleClass="GreenBack"
+                                     rendered="#{not empty reciboEducacionBean.accionEnLote}"
+                                     process="@form"
+                                     update="@form"
+                                     actionListener="#{reciboEducacionBean.aplicarAccionEnLotes()}"   />
+                </div>
+
+                <div class="p-col-12 p-md-8 TexAlRight" >
+
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistros" value="#{reciboEducacionBean.cantidadRegistros}" style="max-width: 80px;" styleClass="TexAlRight"/>
+                    <p:commandButton icon="fa fa-check" styleClass="GreenBack"
+                                     style="margin-left: 1px;"
+                                     actionListener="#{reciboEducacionBean.buscar()}"
+                                     process="@form" update="movimientos" />
+
+                </div>
+            </div>
+        </f:facet>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

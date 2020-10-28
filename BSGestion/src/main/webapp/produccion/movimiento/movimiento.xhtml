@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"      value="#{movimientoProduccionBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{movimientoProduccionBean.titulo}"/>
+
+            <f:viewParam name="CIRCOM"  value="#{movimientoProduccionBean.CIRCOM}"/>
+            <f:viewParam name="CIRAPL"  value="#{movimientoProduccionBean.CIRAPL}"/>
+
+            <f:viewParam name="SUCPD"  value="#{movimientoProduccionBean.SUCPD}"/>
+            <f:viewParam name="MODPD"   value="#{movimientoProduccionBean.MODPD}"/>
+            <f:viewParam name="CODPD"   value="#{movimientoProduccionBean.CODPD}"/>
+
+            <f:viewParam name="SUCST"  value="#{movimientoProduccionBean.SUCST}"/>
+            <f:viewParam name="MODST"   value="#{movimientoProduccionBean.MODST}"/>
+            <f:viewParam name="CODST"   value="#{movimientoProduccionBean.CODST}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoProduccionBean.iniciarVariables}" />
+
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoProduccionBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{movimientoProduccionBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <ui:include src="movimientoMenu.xhtml" />
+
+            <p:remoteCommand name="procesarProducto"
+                             process="@this"
+                             update="tb:detalle"
+                             actionListener="#{movimientoProduccionBean.procesarProducto()}" />
+
+            <p:remoteCommand name="procesarFormula"
+                             process="@this"
+                             update="tb"
+                             actionListener="#{movimientoProduccionBean.procesarFormula()}" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="7000" />
+
+            <p:spacer width="100%" height="1em" />
+
+            <ui:include src="movimientoBusqueda.xhtml" />
+
+            <ui:include src="movimientoDatos.xhtml" />
+
+            <div class="EmptyBox10" />
+            <ui:include src="movimientoDetalle.xhtml" />
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoProduccionBean.muestraReporte}"
+                               nombreArchivo="#{movimientoProduccionBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <ui:include src="/stock/busqueda/buscadorFormula.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorProducto.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorStock.xhtml" />
+            <ui:include src="/produccion/busqueda/buscadorPendiente.xhtml" />
+            <ui:include src="/facturacion/busqueda/buscadorFormulario.xhtml" />
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+

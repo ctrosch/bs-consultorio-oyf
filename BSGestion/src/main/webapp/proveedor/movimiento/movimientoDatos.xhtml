@@ -1,0 +1,243 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="8" layout="grid"
+                 rendered="#{not empty movimientoProveedorBean.m}"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+        <h:outputText value="Formulario" />
+        <p:inputText value="#{movimientoProveedorBean.m.formulario.descripcion}" readonly="true" />
+
+        <h:outputText value="Pto. Venta"
+                      rendered="#{movimientoProveedorBean.muestroCampo('C','SUCURS')}" />
+        <p:inputText value="#{movimientoProveedorBean.m.puntoVenta.codigo}" readonly="true"
+                     rendered="#{movimientoProveedorBean.muestroCampo('C','SUCURS')}" >
+            <f:convertNumber pattern="00000" />
+        </p:inputText>
+
+        <h:outputText value="Número" rendered="#{empty movimientoProveedorBean.CODPV}" />
+        <h:outputText value="Nro de Carga" rendered="#{not empty movimientoProveedorBean.CODPV}" />
+        <p:inputText value="#{movimientoProveedorBean.m.numeroFormulario}" readonly="true" >
+            <f:convertNumber pattern="00000000" />
+        </p:inputText>
+
+        <h:outputText value="Fecha" rendered="#{empty movimientoProveedorBean.CODPV}" />
+        <h:outputText value="Fecha de Contabilización" rendered="#{not empty movimientoProveedorBean.CODPV}" />
+        <p:calendar value="#{movimientoProveedorBean.m.fechaMovimiento}"
+                    disabled="#{movimientoProveedorBean.m.formulario.modificaFecha ne 'S'}"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+        <h:outputText value="Fecha emisión"  />
+        <p:calendar value="#{movimientoProveedorBean.m.fechaEmision}"
+                    required="true"
+                    requiredMessage="La fecha de emisión del comprobante es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true" >
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+
+        <h:outputText value="Comp. Original"  />
+        <h:panelGroup layout="block"  >
+            <p:inputText value="#{movimientoProveedorBean.m.puntoVentaOriginal}" style="max-width: 30%"
+                         placeholder="Pto. Venta"
+                         required="true"
+                         requiredMessage="El punto de venta del comprobante es obligatoria" >
+                <p:ajax process="@this" />
+            </p:inputText>
+
+            <p:inputText value="#{movimientoProveedorBean.m.numeroOriginal}" style="max-width: 70%"
+                         placeholder="Número"
+                         required="true"
+                         requiredMessage="El número del comprobante es obligatoria" >
+                <p:ajax process="@this" />
+            </p:inputText>
+        </h:panelGroup>
+
+        <!--
+        <h:outputText value="Fecha recepción" />
+        <p:calendar value="#{movimientoProveedorBean.m.fechaRecepcion}"
+                    required="true"
+                    requiredMessage="La fecha de recepción del comprobante es obligatoria"
+                    pattern="dd/MM/yyyy"
+                    showOn="button"
+                    navigator="true"
+                    mask="true">
+            <p:ajax process="@this" event="dateSelect" />
+        </p:calendar>
+        -->
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <bs:outputTexWhitLink value="Proveedor *"
+                              url="#{movimientoProveedorBean.obtenerUrlMenu('SIS_00161','NROCTA',movimientoProveedorBean.m.proveedor.nrocta)}" />
+
+        <p:autoComplete value="#{movimientoProveedorBean.m.proveedor}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="El proveedor es obligatorio"
+                        completeMethod="#{proveedorBean.complete}"
+                        disabled="#{not empty movimientoProveedorBean.m.id}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}"  >
+
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoProveedorBean.procesarProveedor()}"  />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+            <p:column headerText="Nro doc">
+                <h:outputText value="#{e.nrodoc}" />
+            </p:column>
+        </p:autoComplete>
+
+        <h:outputText value="" rendered="#{not movimientoProveedorBean.solicitaDatos}" />
+        <h:outputText value="" rendered="#{not movimientoProveedorBean.solicitaDatos}" />
+
+        <h:outputText value="Nombre o Razón Soc." rendered="#{movimientoProveedorBean.solicitaDatos}" />
+        <p:inputText value="#{movimientoProveedorBean.m.razonSocial}"
+                     required="true" requiredMessage="La razón social es obligatoria"
+                     rendered="#{movimientoProveedorBean.solicitaDatos}" />
+
+        <h:outputText value="Situación IVA" />
+        <p:inputText value="#{movimientoProveedorBean.m.condicionDeIva.descripcion}" readonly="true" />
+
+        <h:outputText value="Tipo/Nro Documento" />
+        <h:panelGroup layout="block">
+            <p:inputText value="#{movimientoProveedorBean.m.tipoDocumento.descripcion}" style="max-width: 30%"
+                         readonly="true" />
+            <p:inputMask value="#{movimientoProveedorBean.m.nrodoc}" style="max-width: 70%"
+                         mask="#{movimientoProveedorBean.m.tipoDocumento.mascara}"
+                         readonly="#{not movimientoProveedorBean.solicitaDatos}"
+                         required="true"
+                         requiredMessage="El número de documento del proveedor es obligatorio"  />
+
+        </h:panelGroup>
+
+        <h:outputText value="Dirección *" rendered="#{movimientoProveedorBean.muestroCampo('C','DIRECC')}" />
+        <p:selectOneMenu value="#{movimientoProveedorBean.m.direccion}"
+                         rendered="#{not movimientoProveedorBean.solicitaDatos and movimientoProveedorBean.muestroCampo('C','DIRECC')}"
+                         disabled="#{not empty movimientoProveedorBean.m.id}"
+                         required="true" requiredMessage="Seleccione una dirección de entrega"
+                         effect="fade"  >
+            <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoProveedorBean.procesarDireccionEntrega()}"  />
+            <f:selectItems value="#{movimientoProveedorBean.m.proveedor.direccionesDeEntrega}" var="c" itemLabel="#{c.direccion}" itemValue="#{c.direccion}" />
+        </p:selectOneMenu>
+
+        <p:inputText value="#{movimientoProveedorBean.m.direccion}"
+                     rendered="#{movimientoProveedorBean.solicitaDatos and movimientoProveedorBean.muestroCampo('C','DIRECC')}"
+                     required="true" requiredMessage="La dirección es obligatoria" />
+
+
+        <bs:outputTexWhitLink value="Localidad* "
+                              url="#{movimientoProveedorBean.obtenerUrlMenu('SIS_00126','IDLC',movimientoProveedorBean.m.localidad.id)}" />
+        <p:autoComplete value="#{movimientoProveedorBean.m.localidad}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        disabled="#{not empty movimientoProveedorBean.m.id}"
+                        required="true" requiredMessage="La Localidad es necesaria"
+                        completeMethod="#{localidadBean.complete}"
+                        converter="#{conversoresGeneral.localidad}"
+                        var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+            <p:ajax event="itemSelect" process="@this" listener="#{movimientoProveedorBean.procesarLocalidad()}" />
+
+            <p:column headerText="C.P." width="80">
+                <h:outputText value="#{l.codigo}" />
+            </p:column>
+
+            <p:column headerText="Nombre" width="150">
+                <h:outputText value="#{l.descripcion}" />
+            </p:column>
+
+            <p:column headerText="Provincia" width="150">
+                <h:outputText value="#{l.provincia.descripcion}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Condición de pago *" />
+        <p:selectOneMenu value="#{movimientoProveedorBean.m.condicionDePago}"
+                         required="true" requiredMessage="Seleccione la condición de pago del comprobante"
+                         converter="#{conversoresProveedor.condicionPagoProveedor}"
+                         effect="fade" filter="true" >
+            <p:ajax process="@this" />
+            <f:selectItem itemValue="" itemLabel="Seleccionar" />
+            <f:selectItems value="#{condicionPagoProveedorBean.lista}" var="c" itemLabel="#{c.descripcion}" itemValue="#{c}" />
+        </p:selectOneMenu>
+
+        <h:outputText value="Cotización" />
+        <h:panelGroup layout="block">
+            <div class="Wid70 Fleft">
+                <p:inputText value="#{movimientoProveedorBean.m.monedaSecundaria.descripcion}" readonly="true" />
+            </div>
+
+            <div class="Wid30 Fright">
+                <p:inputText id="txtCotizacion" value="#{movimientoProveedorBean.m.cotizacion}" style="text-align: right;"
+                             required="true"
+                             requiredMessage="La cotización es necesaria" >
+                    <f:convertNumber pattern="#,###,##0.00" />
+                    <p:ajax process="@form" listener="#{movimientoProveedorBean.calcularImportes(true)}"
+                            update="@form" />
+                </p:inputText>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Vencimiento/Nro CAI/CAE" />
+
+        <h:panelGroup layout="block">
+            <div class="Wid30 Fleft">
+
+                <p:calendar value="#{movimientoProveedorBean.m.vencae}"
+                            required="#{movimientoProveedorBean.m.comprobante.comprobanteInterno eq 'N' and movimientoProveedorBean.m.proveedor.pideCodigoAutorizacion eq 'S'}"
+                            requiredMessage="El número de CAI/CAE es obligatorio"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true" >
+                    <p:ajax process="@this" event="dateSelect" />
+                </p:calendar>
+
+            </div>
+
+            <div class="Wid70 Fright">
+                <p:inputText value="#{movimientoProveedorBean.m.nrocae}"
+                             required="#{movimientoProveedorBean.m.comprobante.comprobanteInterno eq 'N' and movimientoProveedorBean.m.proveedor.pideCodigoAutorizacion eq 'S'}"
+                             requiredMessage="El número de CAI/CAE es obligatorio" />
+
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Observaciones" />
+        <p:inputTextarea rows="3" value="#{movimientoProveedorBean.m.observaciones}" style="width: 100%" />
+
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

@@ -1,0 +1,487 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:dialog id="dlgCliente" header="Datos cliente" modal="true" width="100%"  style="max-width: 900px;"
+              widgetVar="dlgCliente"
+              resizable="false"
+              draggable="false"
+              closeOnEscape="true"
+              minHeight="400"
+              position="top"
+              responsive="true"
+              showEffect="fade" hideEffect="fade">
+
+        <!-- DATOS -->
+        <p:tabView id="tbPrincipal" dynamic="true">
+
+            <p:tab title="Datos Principales" >
+
+                <p:panelGrid columns="8" layout="grid" styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2,ui-g-6 ui-md-2 ui-lg-1,ui-g-6 ui-md-4 ui-lg-2" >
+
+                    <h:outputText value="Formulario"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','CODFOR')}" />
+                    <p:inputText value="#{movimientoFacturacionBean.m.formulario.descripcion} - #{movimientoFacturacionBean.m.formulario.letra}"
+                                 rendered="#{movimientoFacturacionBean.muestroCampo('C','CODFOR')}"
+                                 readonly="true" />
+
+                    <h:outputText value="Pto. Venta"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','SUCURS')}" />
+                    <p:inputText value="#{movimientoFacturacionBean.m.puntoVenta.codigo}" readonly="true"
+                                 rendered="#{movimientoFacturacionBean.muestroCampo('C','SUCURS')}" >
+                        <f:convertNumber pattern="00000" />
+                    </p:inputText>
+
+                    <h:outputText value="Número" rendered="#{movimientoFacturacionBean.muestroCampo('C','NROFOR')}" />
+                    <p:inputText value="#{movimientoFacturacionBean.m.numeroFormulario}" readonly="true"
+                                 rendered="#{movimientoFacturacionBean.muestroCampo('C','NROFOR')}" >
+                        <f:convertNumber pattern="00000000" />
+                    </p:inputText>
+
+                    <h:outputText value="Fecha"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','FCHMOV')}" />
+
+                    <p:calendar value="#{movimientoFacturacionBean.m.fechaMovimiento}"
+                                disabled="#{movimientoFacturacionBean.m.formulario.modificaFecha ne 'S'}"
+                                rendered="#{movimientoFacturacionBean.muestroCampo('C','FCHMOV')}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"
+                                maxdate="#{movimientoFacturacionBean.fechaMovimientoMaxima}" >
+                        <p:ajax process="@this" event="dateSelect" listener="#{movimientoFacturacionBean.onChageFechaMovimiento}" />
+                    </p:calendar>
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="4" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-5 ui-md-4 ui-lg-2,ui-g-7 ui-md-8 ui-lg-4,ui-g-5 ui-md-4 ui-lg-2,ui-g-7 ui-md-8 ui-lg-4" >
+
+                    <bs:outputTexWhitLink value="Cliente *"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00083','NROCTA',movimientoFacturacionBean.m.cliente.nrocta)}" />
+
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.cliente}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{clienteBean.complete}"
+                                    disabled="#{(not empty movimientoFacturacionBean.m.id or not movimientoFacturacionBean.detalleVacio) and movimientoFacturacionBean.circuito.editaEntidad eq 'N'}"
+                                    var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                    converter="#{conversoresEntidad.entidadComercial}"  >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoFacturacionBean.procesarCliente()}"  />
+
+                        <p:column headerText="Nro cuenta" width="100">
+                            <h:outputText value="#{e.nrocta}" />
+                        </p:column>
+
+                        <p:column headerText="Razón social">
+                            <h:outputText value="#{e.razonSocial}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre Fantasía">
+                            <h:outputText value="#{e.nombreFantasia}" />
+                        </p:column>
+
+                        <p:column headerText="Nro doc">
+                            <h:outputText value="#{e.nrodoc}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                    <h:outputText value="" rendered="#{not movimientoFacturacionBean.solicitaDatos}" />
+                    <h:outputText value="" rendered="#{not movimientoFacturacionBean.solicitaDatos}" />
+
+                    <h:outputText value="Nombre o Razón Soc." rendered="#{movimientoFacturacionBean.solicitaDatos}" />
+                    <p:inputText value="#{movimientoFacturacionBean.m.razonSocial}"
+                                 rendered="#{movimientoFacturacionBean.solicitaDatos}" />
+
+                    <h:outputText value="Situación IVA"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','CNDIVA')}" />
+                    <p:inputText value="#{movimientoFacturacionBean.m.condicionDeIva.descripcion}"
+                                 rendered="#{movimientoFacturacionBean.muestroCampo('C','CNDIVA')}"
+                                 readonly="true" />
+
+                    <h:outputText value="Tipo/Nro Documento"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','TIPDOC')}" />
+                    <h:panelGroup layout="block"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','TIPDOC')}" >
+
+                        <div class="Wid50 Fleft">
+                            <p:inputText value="#{movimientoFacturacionBean.m.tipoDocumento.descripcion} " readonly="true" />
+                        </div>
+
+                        <div class="Wid50 Fright">
+
+                            <p:inputMask value="#{movimientoFacturacionBean.m.nrodoc}"
+                                         readonly="#{not movimientoFacturacionBean.solicitaDatos}"
+                                         mask="#{movimientoFacturacionBean.m.tipoDocumento.mascara}"
+                                         required="true"
+                                         requiredMessage="El número de documento del cliente es obligatorio" />
+                        </div>
+
+                    </h:panelGroup>
+
+                    <h:outputText value="Dirección *" rendered="#{movimientoFacturacionBean.muestroCampo('C','DIRECC')}" />
+                    <p:selectOneMenu value="#{movimientoFacturacionBean.m.direccionEntrega}"
+                                     rendered="#{not movimientoFacturacionBean.solicitaDatos and movimientoFacturacionBean.muestroCampo('C','DIRECC')}"
+                                     disabled="#{not empty movimientoFacturacionBean.m.id}"
+                                     required="true" requiredMessage="Seleccione una dirección de entrega"
+                                     converter="#{conversoresEntidad.direccionEntrega}"  effect="fade"  >
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoFacturacionBean.procesarDireccionEntrega()}"  />
+                        <f:selectItems value="#{movimientoFacturacionBean.m.cliente.direccionesDeEntrega}" var="c" itemLabel="#{c.direccion}" itemValue="#{c}" />
+                    </p:selectOneMenu>
+
+                    <p:inputText value="#{movimientoFacturacionBean.m.direccion}" placeholder="Calle Altura Depto Piso"
+                                 rendered="#{movimientoFacturacionBean.solicitaDatos and movimientoFacturacionBean.muestroCampo('C','DIRECC')}"
+                                 required="true" requiredMessage="La calle es obligatoria" />
+
+                    <h:panelGroup layout="block"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','CODLOC')}" >
+
+                        <p:commandLink styleClass="Fs18 Fright" style="padding-left: 3px;"
+                                       rendered="#{movimientoFacturacionBean.solicitaDatos and empty movimientoFacturacionBean.m.id}"
+                                       process="@this"
+                                       update="buscadorLocalidad"
+                                       oncomplete="PF('dlgLocalidad').show()"  >
+
+                            <i class="fa fa-search" ></i>
+                        </p:commandLink>
+
+                        <bs:outputTexWhitLink value="Localidad* "
+                                              url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00126')}" />
+                    </h:panelGroup>
+
+
+                    <p:autoComplete id="localidad" value="#{movimientoFacturacionBean.m.localidad}" dropdown="true" forceSelection="true"
+                                    maxResults="8" queryDelay="1000"
+                                    disabled="#{not movimientoFacturacionBean.solicitaDatos  or not empty movimientoFacturacionBean.m.id}"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','CODLOC')}"
+                                    completeMethod="#{localidadBean.complete}"
+                                    converter="#{conversoresGeneral.localidad}"
+                                    var="l" itemLabel="#{l.descripcionComplete}" itemValue="#{l}" >
+
+                        <p:ajax event="itemSelect" process="@this" listener="#{movimientoFacturacionBean.procesarLocalidad()}" />
+
+                        <p:column headerText="C.P." width="80">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre" width="150">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Provincia" width="150">
+                            <h:outputText value="#{l.provincia.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <bs:outputTexWhitLink value="Vendedor *"
+                                          rendered="#{movimientoFacturacionBean.muestroCampo('C','VNDDOR')}"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00084')}" />
+
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.vendedor}"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','VNDDOR')}"
+                                    dropdown="true" placeholder="Seleccionar"
+                                    disabled="#{not empty movimientoFacturacionBean.m.id}"
+                                    maxResults="8" queryDelay="1000"
+                                    required="true" requiredMessage="El vendedor es obligatorio"
+                                    completeMethod="#{vendedorBean.complete}"
+                                    var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                    converter="#{conversoresVenta.vendedor}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <bs:outputTexWhitLink value="Lista de Precios *"
+                                          rendered="#{movimientoFacturacionBean.muestroCampo('C','CODLIS')}"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00087')}" />
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.listaDePrecio}"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','CODLIS')}"
+                                    disabled="#{not empty movimientoFacturacionBean.m.id}"
+                                    required="true" requiredMessage="Seleccione la lista de precio del comprobante"
+                                    dropdown="true" placeholder="Seleccionar"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{listaPrecioVentaBean.complete}"
+                                    var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                    converter="#{conversoresVenta.listaPrecioVenta}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoFacturacionBean.procesarListaPrecios}" />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+
+                    <bs:outputTexWhitLink value="Condición de Pago *"
+                                          rendered="#{movimientoFacturacionBean.muestroCampo('C','CNDPAG')}"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00355')}" />
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.condicionDePago}"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','CNDPAG')}"
+                                    disabled="#{not empty movimientoFacturacionBean.m.id}"
+                                    required="true" requiredMessage="Seleccione la condición de pago del comprobante"
+                                    dropdown="true" placeholder="Seleccionar"
+                                    maxResults="8" queryDelay="1000"
+                                    completeMethod="#{condicionPagoVentaBean.complete}"
+                                    var="l" itemLabel="#{l.descripcion}" itemValue="#{l}"
+                                    converter="#{conversoresVenta.condicionDePagoVenta}" forceSelection="true" >
+
+                        <p:ajax event="itemSelect" process="@this" update="@form" listener="#{movimientoFacturacionBean.calcularImportes()}" />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.descripcion}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <h:outputText value="Cotización"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','COTIZA')}" />
+                    <h:panelGroup layout="block"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','COTIZA')}" >
+                        <div class="Wid70 Fleft">
+                            <p:inputText value="#{movimientoFacturacionBean.m.monedaSecundaria.descripcion}" readonly="true" />
+                        </div>
+
+                        <div class="Wid30 Fright">
+                            <p:inputText id="txtCotizacion" value="#{movimientoFacturacionBean.m.cotizacion}" style="text-align: right;"
+                                         readonly="#{not empty movimientoFacturacionBean.m.id or not movimientoFacturacionBean.circuito.actualizaVenta eq 'VT'}"
+                                         required="true"
+                                         requiredMessage="La cotización es necesaria" >
+                                <f:convertNumber pattern="#,###,##0.00" />
+                                <p:ajax process="@form" update="@form"
+                                        listener="#{movimientoFacturacionBean.onChangeCotizacion()}" event="keyup" delay="500" />
+                            </p:inputText>
+                        </div>
+                    </h:panelGroup>
+
+                    <bs:outputTexWhitLink value="Repartidor *"
+                                          rendered="#{movimientoFacturacionBean.muestroCampo('C','REPDOR')}"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00579')}" />
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.repartidor}"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','REPDOR')}"
+                                    required="true" requiredMessage="Seleccione un repartidor"
+                                    dropdown="true" placeholder="Seleccionar"  maxResults="8" queryDelay="1000" forceSelection="true"
+                                    completeMethod="#{repartidorBean.complete}"
+                                    converter="#{conversoresVenta.repartidor}"
+                                    var="l" itemLabel="#{l.nombre}" itemValue="#{l}" >
+
+                        <p:ajax event="itemSelect" process="@this"  />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{l.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{l.nombre}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="2" layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             columnClasses="Container40, Container60" >
+
+                    <h:outputText value="Observaciones" rendered="#{movimientoFacturacionBean.muestroCampo('C','OBSERV')}"/>
+                    <p:inputTextarea style="width: 100%" rows="3"
+                                     value="#{movimientoFacturacionBean.m.observaciones}"
+                                     rendered="#{movimientoFacturacionBean.muestroCampo('C','OBSERV')}" >
+                        <p:ajax event="blur" process="@this" />
+                    </p:inputTextarea>
+
+                    <!--
+                    <h:outputText value="Bien de Uso"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','BIENUSO')}" />
+                    <p:selectOneRadio value="#{movimientoFacturacionBean.m.bienDeUso}"
+                                      rendered="#{movimientoFacturacionBean.muestroCampo('C','BIENUSO')}" >
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+
+                        <p:ajax process="@this" update="@form" listener="#{movimientoFacturacionBean.calcularImportes()}" />
+                    </p:selectOneRadio>
+                    -->
+
+                    <h:outputText value="Deposito"
+                                  rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}" />
+                    <p:selectOneMenu value="#{movimientoFacturacionBean.m.deposito}"
+                                     disabled="#{movimientoFacturacionBean.circuito.editaDeposito eq 'N'}"
+                                     rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}"
+                                     required="false" requiredMessage="Seleccione el depósito"
+                                     converter="#{conversoresStock.deposito}"
+                                     effect="fade" filter="true" >
+                        <p:ajax process="@this" update="@form" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value=""
+                                  rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}" />
+                    <h:outputText value=""
+                                  rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock or movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento ne 'T'}" />
+
+                    <h:outputText value="Deposito egreso"
+                                  rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}" />
+                    <p:selectOneMenu value="#{movimientoFacturacionBean.m.depositoTransferencia}"
+                                     disabled="#{movimientoFacturacionBean.circuito.editaDeposito eq 'N'}"
+                                     rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                                     required="true" requiredMessage="Seleccione el depósito de egreso"
+                                     converter="#{conversoresStock.deposito}"
+                                     effect="fade" filter="true" >
+                        <p:ajax process="@this" update="@form" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Deposito ingreso"
+                                  rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}" />
+                    <p:selectOneMenu value="#{movimientoFacturacionBean.m.deposito}"
+                                     disabled="#{movimientoFacturacionBean.circuito.editaDeposito eq 'N'}"
+                                     rendered="#{not empty movimientoFacturacionBean.m.comprobanteStock and movimientoFacturacionBean.m.comprobanteStock.tipoMovimiento eq 'T'}"
+                                     required="true" requiredMessage="Seleccione el depósito de ingreso"
+                                     converter="#{conversoresStock.deposito}"
+                                     effect="fade" filter="true" >
+                        <p:ajax process="@this" update="@form" />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{depositoBean.lista}" var="d" itemLabel="#{d.descripcion}" itemValue="#{d}" />
+                    </p:selectOneMenu>
+
+                    <bs:outputTexWhitLink value="Transporte"
+                                          rendered="#{movimientoFacturacionBean.muestroCampo('C','CODTRA')}"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00127')}" />
+
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.transporte}"
+                                    maxResults="8" queryDelay="1000"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','CODTRA')}"
+                                    completeMethod="#{transporteBean.complete}"
+                                    var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                                    converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" dropdown="true" >
+                        <p:ajax event="itemSelect" process="@this" />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{e.nrocta}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{e.razonSocial}" />
+                        </p:column>
+
+                        <p:column headerText="Dirección">
+                            <h:outputText value="#{e.direccion}" />
+                        </p:column>
+
+                        <p:column headerText="Teléfono">
+                            <h:outputText value="#{e.telefono}" />
+                        </p:column>
+
+                    </p:autoComplete>
+
+                    <h:outputText value="Moneda de Registación"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','MONREG')}" />
+                    <p:inputText value="#{movimientoFacturacionBean.m.monedaRegistracion.descripcion}" readonly="true"
+                                 rendered="#{movimientoFacturacionBean.muestroCampo('C','MONREG')}"/>
+
+                    <h:outputText value="C.A.E."
+                                  rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}" />
+                    <h:outputText value="#{movimientoFacturacionBean.m.movimientoVenta.numeroCAE}"
+                                  rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}"/>
+
+                    <h:outputText value="Vto C.A.E."
+                                  rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}" />
+                    <h:outputText value="#{movimientoFacturacionBean.m.movimientoVenta.vencimientoCAE}"
+                                  rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+
+                    <h:outputText value="Producto de refencia"
+                                  rendered="#{movimientoFacturacionBean.muestroCampo('C','PRDREF')}" />
+                    <p:autoComplete value="#{movimientoFacturacionBean.m.productoReferencia}"
+                                    maxResults="8" queryDelay="1000"
+                                    rendered="#{movimientoFacturacionBean.muestroCampo('C','PRDREF')}"
+                                    completeMethod="#{productoBean.complete}"
+                                    var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                    converter="#{conversoresStock.producto}" forceSelection="true" dropdown="true" >
+                        <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                        <p:column headerText="Código">
+                            <h:outputText value="#{p.codigo}" />
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{p.descripcion}" />
+                        </p:column>
+                    </p:autoComplete>
+
+                </p:panelGrid>
+
+            </p:tab>
+
+            <p:tab title="Otros datos" >
+
+                <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank"
+                             columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+                    <bs:outputTexWhitLink value="Circuito *"
+                                          rendered="#{movimientoFacturacionBean.muestroCampo('C','CIRCUI')}"
+                                          url="#{movimientoFacturacionBean.obtenerUrlMenu('SIS_00249','CIRCOM',movimientoFacturacionBean.circuito.circom,'CIRAPL',movimientoFacturacionBean.circuito.cirapl)}" />
+
+                    <p:inputText readonly="true" value="#{movimientoFacturacionBean.circuito.circom}-#{movimientoFacturacionBean.circuito.cirapl}-#{movimientoFacturacionBean.circuito.descripcion}" />
+
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+
+                    <h:outputText value="Comprobante de Facturación" />
+                    <p:inputText readonly="true" value="#{movimientoFacturacionBean.m.comprobante.codigo}-#{movimientoFacturacionBean.m.comprobante.descripcion}" />
+
+                    <h:outputText value="Comprobante de Venta" />
+                    <p:inputText readonly="true" value="#{movimientoFacturacionBean.m.comprobanteVenta.codigo}-#{movimientoFacturacionBean.m.comprobanteVenta.descripcion}" />
+
+                    <h:outputText value="Comprobante de Stock" />
+                    <p:inputText readonly="true" value="#{movimientoFacturacionBean.m.comprobanteStock.codigo}-#{movimientoFacturacionBean.m.comprobanteStock.descripcion}" />
+
+                    <h:outputText value="Comprobante de Tesoreria" />
+                    <p:inputText readonly="true" value="#{movimientoFacturacionBean.m.comprobanteTesoreria}-#{movimientoFacturacionBean.m.comprobanteTesoreria.descripcion}" />
+
+                    <h:outputText value="Moneda de Registración" />
+                    <p:inputText value="#{movimientoFacturacionBean.m.monedaRegistracion.descripcion}"
+                                 readonly="true" />
+
+                </p:panelGrid>
+
+            </p:tab>
+
+        </p:tabView>
+
+
+
+    </p:dialog>
+
+
+
+</ui:composition>
+

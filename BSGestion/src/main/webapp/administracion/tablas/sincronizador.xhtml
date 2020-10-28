@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <!--
+                        <f:viewParam name="TITULO"  value="#{sincronizadorBean.titulo}"/>
+                        <f:event type="preRenderView" listener="#{sincronizadorBean.iniciarVariables}" />-->
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Sincronizador
+        </ui:define>
+
+        <ui:define name="titulo-header">
+            Sincronizador
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:spacer width="100%" height="1em" />
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+            <p:spacer width="100%" height="1em" />
+
+            <!-- DATOS -->
+            <p:panel header="Sincronizador" style="min-height: 300px;" >
+                <!--
+                <p:progressBar ajax="true" value="#{sincronizadorBean.progreso}" labelTemplate="{value}%"
+                               styleClass="animated" global="false" />
+                -->
+
+                <div class="EmptyBox20" />
+
+                <p:commandButton value="Sinc. Productos"
+                                 actionListener="#{sincronizadorBean.sincronizarProductos()}"
+                                 process="@this"
+                                 update="@form"/>
+
+                <p:commandButton value="Sinc. Depositos"
+                                 actionListener="#{sincronizadorBean.sincronizarDepositos()}"
+                                 process="@this"
+                                 update="@form"/>
+
+                <p:commandButton value="Sinc. Proyectos"
+                                 actionListener="#{sincronizadorBean.sincronizarProyectos()}"
+                                 process="@this"
+                                 update="@form"/>
+
+                <p:commandButton value="Sinc. Formulas"
+                                 actionListener="#{sincronizadorBean.sincronizarFormulas()}"
+                                 process="@this"
+                                 update="@form"/>
+
+                <p:commandButton value="Sinc. Ordenes Produccion"
+                                 actionListener="#{sincronizadorBean.sincronizarOrdenesProduccion()}"
+                                 process="@this"
+                                 update="@form"/>
+
+            </p:panel>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+
+
+

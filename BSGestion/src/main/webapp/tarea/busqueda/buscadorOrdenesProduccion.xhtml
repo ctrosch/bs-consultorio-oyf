@@ -1,0 +1,76 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorOrdenesProduccion" header="Ordenes de producción" modal="true"
+              widgetVar="dlg_orden_produccion"              
+              draggable="false"
+              position="top"
+              minHeight="400" 
+              responsive="true" 
+              showEffect="fade"              
+              hideEffect="fade" > 
+
+        <h:form prependId="false" >
+
+            <p:dataTable id="detalleOP" value="#{tareaBean.pendienteProduccion}" 
+                         var="i" scrollable="true" scrollHeight="400" resizeMode="expand" liveResize="true" reflow="true"
+                         emptyMessage="No se encontraron ordenes de producción pendientes"                          
+                         selectionMode="single"    
+                         style="max-width: 950px;"                         
+                         selection="#{tareaBean.movimientoPendiente}" rowKey="#{i}"
+                         rendered="#{not empty tareaBean.pendienteProduccion}"  >
+
+                <p:ajax event="rowSelect" 
+                        update="@form: formulario" 
+                        listener="#{tareaBean.seleccionarOrdenProduccion}"
+                        oncomplete="PF('dlg_orden_produccion').hide()" />
+
+                <f:facet name="header">
+                    Ordenes de producción pendientes
+                </f:facet>
+
+                <p:column headerText="Número" width="80" styleClass="TexAlCenter"
+                          filterBy="#{i.nrofor}" filterMatchMode="contains" >                            
+                    <h:outputText value="#{i.nrofor}" >    
+                        <f:convertNumber pattern="00000000" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Fecha" width="80" styleClass="TexAlCenter" >    
+                    <h:outputText value="#{i.fchmov}"  >    
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>                                               
+                </p:column>
+                
+                <p:column headerText="Planta" width="90" >    
+                    <h:outputText value="#{i.planta.descripcion}" />                      
+                </p:column>
+
+                <p:column headerText="Producto" width="350" 
+                          filterBy="#{i.descripcion}" filterMatchMode="contains">    
+                    <h:outputText value="#{i.descripcion}" />                      
+                </p:column>
+                
+                <p:column headerText="P Producción" width="75" style="text-align: right;" >    
+                    <h:outputText value="#{i.pendienteProduccion}" />                      
+                </p:column>
+                
+                <p:column headerText="P Procesos." width="75" style="text-align: right;" >    
+                    <h:outputText value="#{i.pendienteProceso}" />                      
+                </p:column>
+                
+                <p:column headerText="P Insumos." width="75" style="text-align: right;" >    
+                    <h:outputText value="#{i.pendienteConsumo}" />                      
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

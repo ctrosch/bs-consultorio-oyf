@@ -1,0 +1,56 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{comprobanteSaludBean.buscar()}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{comprobanteSaludBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{comprobanteSaludBean.guardar(false)}"
+                    rendered="#{not empty comprobanteSaludBean.comprobante and comprobanteSaludBean.modoVista eq 'D'}"
+                    update="@form" />
+
+        <p:menuitem value="Duplicar" icon="fa fa-copy"
+                    actionListener="#{comprobanteSaludBean.duplicar()}"
+                    rendered="#{comprobanteSaludBean.modoVista eq 'D'}"
+                    update="@form" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{comprobanteSaludBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty comprobanteSaludBean.comprobante and not comprobanteSaludBean.esNuevo and comprobanteSaludBean.comprobante.auditoria.debaja eq 'N'}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{comprobanteSaludBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty comprobanteSaludBean.comprobante and not comprobanteSaludBean.esNuevo and comprobanteSaludBean.comprobante.auditoria.debaja eq 'S'}"
+                    process="@this"
+                    update="@form" />
+
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

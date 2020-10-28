@@ -1,0 +1,102 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- DATOS -->
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-7 ui-md-12 ui-lg-6, ui-g-5 ui-md-12 ui-lg-6" >
+
+        <h:panelGroup layout="block" >
+
+            <p:panelGrid columns="2" layout="grid"
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="ui-g-7 ui-md-12 ui-lg-6, ui-g-5 ui-md-12 ui-lg-6" >
+
+                <h:outputText value="Código" />
+                <p:inputText value="#{condicionPagoProveedorBean.condicion.codigo}"
+                             readonly="#{not condicionPagoProveedorBean.esNuevo}"
+                             required="true"
+                             requiredMessage="El código es necesario" />
+
+                <h:outputText value="Descripción" />
+                <p:inputText value="#{condicionPagoProveedorBean.condicion.descripcion}"
+                             required="true"
+                             requiredMessage="La descripción es necesaria" />
+
+                <h:outputText value="Imputa en Cuenta Corriente" />
+                <p:selectOneRadio value="#{condicionPagoProveedorBean.condicion.imputaCuentaCorriente}"
+                                  required="true"
+                                  requiredMessage="Seleccione si Imputa en Cuenta Corriente">
+                    <f:selectItem itemLabel="Si" itemValue="S" />
+                    <f:selectItem itemLabel="No" itemValue="N" />
+                </p:selectOneRadio>
+
+            </p:panelGrid>
+        </h:panelGroup>
+
+
+        <p:tabView>
+            <p:tab title="Cuotas">
+
+                <p:dataTable id="tablaCondicionPago" value="#{condicionPagoProveedorBean.condicion.cuotas}" var="i"
+                             resizeMode="expand" liveResize="true"
+                             emptyMessage="No se encontraron items. Haga clic en agregar items"
+                             rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+
+
+
+                    <f:facet name="footer" >
+
+                        <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                         actionListener="#{condicionPagoProveedorBean.nuevoItemCondicionPagoProveedor}"
+                                         value="Agregar Condición"
+                                         process="tablaCondicionPago"
+                                         update="tablaCondicionPago" />
+
+                    </f:facet>
+
+
+                    <p:column headerText="Cant Días" width="50" style="text-align: center;"  >
+                        <p:inputText value="#{i.diasDePago}" >
+                            <f:convertNumber pattern="##" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="Nro Cuota"  >
+                        <p:inputText value="#{i.cuotas}" >
+                            <f:convertNumber pattern="##" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="Porcentaje"  >
+                        <p:inputText value="#{i.porcentaje}" >
+                            <f:convertNumber pattern="##0.00" />
+                        </p:inputText>
+                    </p:column>
+
+                    <p:column headerText="" width="50" style="text-align: center;" >
+
+                        <p:commandLink process="tablaCondicionPago" update="tablaCondicionPago,message,messageg"
+                                       actionListener="#{condicionPagoProveedorBean.eliminarItemCondicionPago(i)}" >
+                            <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                            <i class="fa fa-close fa-2x Red" ></i>
+                        </p:commandLink>
+
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:tab>
+
+        </p:tabView>
+
+    </p:panelGrid>
+
+</ui:composition>
+

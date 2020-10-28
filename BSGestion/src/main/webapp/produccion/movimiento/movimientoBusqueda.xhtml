@@ -1,0 +1,152 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+    
+    
+    <!-- BUSQUEDA -->
+    <p:panel id="panelBusqueda" header="Busqueda" rendered="#{movimientoProduccionBean.buscaMovimiento}" >
+
+        <p:panelGrid columns="4" layout="grid" style="max-width: 900px;"   
+                     styleClass="ui-panelgrid-blank" 
+                     columnClasses="ui-g-6,ui-g-6">   
+
+            <h:panelGroup layout="block" style="text-align: left;">
+                <h:outputText value="Formulario" />
+                <p:remoteCommand name="procesarFormularioFacturacion"                                          
+                                 process="@this" update="txtFormularioFacturacion"  
+                                 actionListener="#{movimientoProduccionBean.procesarFormulario}" />
+                <p:commandButton icon="fa fa-search" styleClass="Fright"
+                                 rendered="#{movimientoProduccionBean.m.comprobante.modulo ne 'FC'}"                                         
+                                 process="@this" 
+                                 oncomplete="PF('dlgFormularioFacturacion').show()" />
+            </h:panelGroup>  
+
+            <h:panelGroup id="txtFormularioFacturacion" layout="block">  
+
+                <p:inputText readonly="true"
+                             rendered="#{not empty movimientoProduccionBean.formulario}"
+                             value="#{movimientoProduccionBean.formulario.descripcion}" />
+
+                <p:inputText readonly="true"
+                             rendered="#{empty movimientoProduccionBean.formulario}"
+                             value="" />                        
+            </h:panelGroup>
+
+            <h:outputText value="" />       
+            <h:outputText value="" />       
+
+            <h:outputText value="Fecha formulario" />                    
+            <h:panelGroup layout="block"> 
+
+                <div class="Wid50 Fleft">                               
+                    <p:calendar value="#{movimientoProduccionBean.fechaMovimientoDesde}"                                     
+                                placeholder="Desde"
+                                pattern="dd/MM/yyyy"   />                        
+                </div>
+                <div class="Wid50 Fright">                        
+                    <p:calendar value="#{movimientoProduccionBean.fechaMovimientoHasta}"                                     
+                                placeholder="Hasta"
+                                pattern="dd/MM/yyyy"   />                        
+                </div>                       
+            </h:panelGroup>
+
+            <h:outputText value="Solo pendientes" />   
+            <p:selectBooleanCheckbox value="#{movimientoProduccionBean.seleccionaPendiente}" >
+                <p:ajax event="change" process="@this"/>
+            </p:selectBooleanCheckbox>
+
+            <h:outputText value="Número formulario" />                    
+            <h:panelGroup layout="block" >
+
+                <div class="Wid50 Fleft">    
+                    <p:inputText value="#{movimientoProduccionBean.numeroFormularioDesde}"  placeholder="Desde"/>
+                </div>
+
+                <div class="Wid50 Fright">                        
+                    <p:inputText value="#{movimientoProduccionBean.numeroFormularioHasta}"  placeholder="Hasta"/>
+                </div>
+
+            </h:panelGroup>
+
+            <h:outputText value="" />       
+            <h:outputText value="" />       
+
+        </p:panelGrid>
+
+        <p:spacer width="100%" height="1em" /> 
+
+        <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank" > 
+
+            <p:commandButton value="Buscar" icon="fa fa-search"
+                             process="panelBusqueda" 
+                             update="@form"                                                                          
+                             actionListener="#{movimientoProduccionBean.buscarMovimiento()}"   />
+
+            <p:commandButton value="Limpiar" icon="fa fa-trash"
+                             process="panelBusqueda" 
+                             update="@form"                                                                          
+                             actionListener="#{movimientoProduccionBean.resetParametros}"   />
+
+            <p:commandButton value="Cancelar" icon="fa fa-close"
+                             immediate="true"
+                             update="@form" >
+                <f:setPropertyActionListener target="#{movimientoProduccionBean.buscaMovimiento}" value="#{false}" />
+            </p:commandButton>
+
+        </p:panelGrid>
+
+        <p:spacer width="100%" height="1em" /> 
+
+        <p:dataTable id="detalle" value="#{movimientoProduccionBean.movimientos}" var="i" 
+                     resizableColumns="true" resizeMode="expand" liveResize="true"
+                     paginator="true" rows="15"
+                     rendered="#{not empty movimientoProduccionBean.movimientos}"  >
+
+            <f:facet name="header">
+                Movimientos encontrados
+            </f:facet>
+
+            <p:column headerText="Formulario" >
+                <h:outputText value="#{i.formulario.codigo}" />                            
+            </p:column>
+
+            <p:column headerText="Número" >                            
+                <h:outputText value="#{i.numeroFormulario}" >    
+                    <f:convertNumber pattern="00000000" />
+                </h:outputText>
+            </p:column>
+
+            <p:column headerText="Fecha" >    
+                <h:outputText value="#{i.fechaMovimiento}"  >    
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>                                               
+            </p:column>
+
+            <p:column headerText="" width="10%" style="text-align: center;">
+                <p:commandButton icon="fa fa-edit"
+                                 title="Seleccionar movimiento"
+                                 actionListener="#{movimientoProduccionBean.seleccionarMovimiento(i)}"
+                                 process="@this"
+                                 update="@form"  />
+
+                <h:outputLink value="#{application.contextPath}/facturacion/seguimiento-comprobante/#{i.formulario.modfor}/#{i.formulario.codigo}/#{i.numeroFormulario}"
+                              styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                              style="color: white;"
+                              title="Ver Seguimiento de comprobante"
+                              target="_blank" >
+
+                    <span class="ui-button-icon-left ui-icon ui-c fa fa-list-ul"></span>
+                    <span class="ui-button-text ui-c">ui-button</span>                        
+                </h:outputLink>  
+
+            </p:column>
+
+        </p:dataTable>
+    </p:panel>
+    <p:spacer width="100%" height="1em" rendered="#{movimientoProduccionBean.buscaMovimiento}" />  
+
+</ui:composition>
+

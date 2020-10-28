@@ -1,0 +1,57 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar"/>
+
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{usuarioBean.buscar()}"
+                    update="@form"
+                    process="@this"
+                    immediate="true" />
+
+        <p:menuitem value="Nuevo" icon="fa fa-plus" id="btnNew"
+                    actionListener="#{usuarioBean.nuevo}"
+                    process="@this"
+                    update="@form"
+                    immediate="true" >
+            <p:confirm header="Confirmacion" message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{usuarioBean.guardar(false)}"
+                    rendered="#{not usuarioBean.buscaMovimiento}"
+                    update="@form" />
+
+        <p:menuitem value="Asignar Permisos" icon="fa fa-key"
+                    url="#{request.contextPath}#{usuarioBean.obtenerUrlMenu('SIS_00063')}"
+                    target="_blank"
+                    rendered="#{not usuarioBean.buscaMovimiento}" />
+
+        <p:menuitem value="Deshabilitar" icon="fa fa-ban"
+                    actionListener="#{usuarioBean.habilitaDeshabilita('N')}"
+                    rendered="#{not empty usuarioBean.usuario and not usuarioBean.esNuevo and usuarioBean.usuario.estado.id ne 9}"
+                    process="@this"
+                    update="@form" />
+
+        <p:menuitem value="Habilitar" icon="fa fa-check"
+                    actionListener="#{usuarioBean.habilitaDeshabilita('S')}"
+                    rendered="#{not empty usuarioBean.usuario and not usuarioBean.esNuevo and usuarioBean.usuario.estado.id ne 1}"
+                    process="@this"
+                    update="@form" />
+
+    </p:menubar>
+
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

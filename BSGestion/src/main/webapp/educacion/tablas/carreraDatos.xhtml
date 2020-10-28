@@ -1,0 +1,317 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="6" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2,ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-3 ui-lg-2" >
+
+        <h:outputText value="Unidad de Negocio *" />
+        <p:autoComplete value="#{carreraBean.carrera.unidadNegocio}" dropdown="true" forceSelection="true"
+                        disabled="#{not carreraBean.esNuevo}"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Unidad de Negocio"
+                        completeMethod="#{unidadNegocioBean.complete}"
+                        converter="#{conversoresGeneral.unidadNegocio}"
+                        var="u" itemLabel="#{u.nombre}" itemValue="#{u}" >
+            <f:selectItem itemLabel="Seleccionar" itemValue="" />
+            <p:ajax event="itemSelect" listener="#{carreraBean.asignarCodigo}" process="@this" update="codigo"  />
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="Código *" />
+        <p:inputText id="codigo" value="#{carreraBean.carrera.codigo }" readonly="true" rendered="#{not empty carreraBean.carrera}" />
+
+        <h:outputText value="Titulo *" />
+        <p:inputText id="tituloCurso" value="#{carreraBean.carrera.titulo}"
+                     required="true" requiredMessage="El título es obligatorio" />
+
+        <bs:outputTexWhitLink value="Area *"
+                              url="#{carreraBean.obtenerUrlMenu('SIS_00575','CODIGO',carreraBean.carrera.area.codigo)}" />
+
+        <p:autoComplete value="#{carreraBean.carrera.area}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Area de Educación"
+                        completeMethod="#{areaEducacionBean.complete}"
+                        converter="#{conversoresEducacion.areaEducacion}"
+                        var="a" itemLabel="#{a.descripcion}" itemValue="#{a}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+
+        <bs:outputTexWhitLink value="Tipo de Carrera *"
+                              url="#{carreraBean.obtenerUrlMenu('SIS_00587','CODIGO',carreraBean.carrera.tipoCarrera.codigo)}" />
+
+        <p:autoComplete value="#{carreraBean.carrera.tipoCarrera}" dropdown="true" forceSelection="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Tipo de Curso"
+                        completeMethod="#{tipoCarreraBean.complete}"
+                        converter="#{conversoresEducacion.tipoCarrera}"
+                        var="t" itemLabel="#{t.descripcion}" itemValue="#{t}" >
+            <p:ajax event="itemSelect" process="@this" />
+        </p:autoComplete>
+
+        <h:outputText value="Imagen" />
+        <p:inputText value="#{carreraBean.carrera.imagen}" />
+
+    </p:panelGrid>
+
+    <p:panelGrid columns="2" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-5 ui-md-3 ui-lg-2, ui-g-7 ui-md-9 ui-lg-10" >
+
+        <h:outputText value="Detalle  " />
+        <p:inputTextarea cols="80" rows="3" value="#{carreraBean.carrera.descripcion}" />
+
+    </p:panelGrid>
+
+    <p:tabView>
+
+        <!--
+        <p:tab title="Aranceles">
+
+            <p:dataTable  id="tablaAranceles" var="i"  resizeMode="expand" liveResize="true"
+                          value="#{carreraBean.carrera.aranceles}"
+                          emptyMessage="No se encontraron items. Haga clic en agregar items"
+                          rowStyleClass="#{i.conError  ? 'conError' : null}" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack MaxWid200"
+                                     actionListener="#{carreraBean.nuevoArancel() }"
+                                     value="Agregar Arancel"
+                                     process="tablaAranceles"
+                                     update="tablaAranceles" />
+                </f:facet>
+
+                <p:column headerText="Detalle" width="30" styleClass="TexAlCenter"
+                          rendered="#{carreraBean.muestroCampo('D','DETALL')}"   >
+                    <p:rowToggler  />
+                </p:column>
+
+                <p:column headerText="Año de referencia"  >
+                    <p:inputText value="#{i.anioLectivo}"
+                                 required="true"
+                                 requiredMessage="El año el obligatorio" />
+                </p:column>
+
+                <p:column headerText="Descripcion"  >
+                    <p:inputText value="#{i.descripcion}"
+                                 required="true"
+                                 requiredMessage="La descripción es obligatoria" />
+                </p:column>
+
+                <p:column headerText="Disponible Desde"  >
+                    <p:calendar value="#{i.fechaDesde}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"  >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="Disponible Hasta"  >
+                    <p:calendar value="#{i.fechaHasta}"
+                                pattern="dd/MM/yyyy"
+                                showOn="button"
+                                navigator="true"
+                                mask="true"  >
+                        <p:ajax event="dateSelect"  process="@this" />
+                    </p:calendar>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaAranceles" update="tablaAranceles,message,messageg"
+                                   actionListener="#{carreraBean.eliminarItemArancel(d)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+                <p:rowExpansion  >
+
+                    <div class="Wid90 Fright MarAuto WidAutoOnMobile">
+
+                        <p:dataTable id="detalleItem" value="#{i.items}" var="d"
+                                     resizeMode="expand" liveResize="true" >
+
+                            <f:facet name="footer">
+                                <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                                 value="Agregar item" process="detalleItem" update="detalleItem,message,messageg"
+                                                 actionListener="#{carreraBean.nuevoItemArancel(i)}" />
+                            </f:facet>
+
+                            <p:column headerText="Concepto"  >
+
+                                <p:autoComplete value="#{d.concepto}"
+                                                required="true" requiredMessage="Seleccione el concepto"
+                                                maxResults="8" queryDelay="1000" dropdown="true"
+                                                completeMethod="#{conceptoEducacionBean.complete}"
+                                                var="p" itemLabel="#{p.codigo} #{p.descripcion}" itemValue="#{p}"
+                                                converter="#{conversoresGeneral.concepto}" >
+
+                                    <p:ajax event="itemSelect" process="@this"  />
+
+                                    <p:column headerText="Tipo">
+                                        <h:outputText value="#{p.tipoConcepto.descripcion}" />
+                                    </p:column>
+
+                                    <p:column headerText="Código">
+                                        <h:outputText value="#{p.codigo}" />
+                                    </p:column>
+
+                                    <p:column headerText="Descripción">
+                                        <h:outputText value="#{p.descripcion}" />
+                                    </p:column>
+
+                                </p:autoComplete>
+
+                            </p:column>
+
+                            <p:column headerText="Período"  >
+
+                                <p:autoComplete value="#{d.periodo}"  dropdown="true" forceSelection="true"
+                                                maxResults="8" queryDelay="1000"
+                                                completeMethod="#{periodoBean.complete}"
+                                                required="true" requiredMessage="El período es obligatorio"
+                                                var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                                                converter="#{conversoresGeneral.periodo}" >
+
+                                    <p:ajax event="itemSelect" process="@this"  />
+                                </p:autoComplete>
+
+                            </p:column>
+
+                            <p:column headerText="Cant. Cuotas" width="60"  >
+
+                                <p:inputText value="#{d.cantidad}" style="text-align: right;" >
+                                    <f:convertNumber pattern="0" />
+                                </p:inputText>
+
+                            </p:column>
+
+                            <p:column headerText="N° Cta Desde" width="60"  >
+                                <p:inputText value="#{d.cuotaDesde}" style="text-align: right;" >
+                                    <f:convertNumber pattern="0" />
+                                </p:inputText>
+                            </p:column>
+
+                            <p:column headerText="N° Cta Hasta" width="60"  >
+                                <p:inputText value="#{d.cuotaHasta}" style="text-align: right;" >
+                                    <f:convertNumber pattern="0" />
+                                </p:inputText>
+                            </p:column>
+
+                            <p:column headerText="Día de Vto" width="60" >
+
+                                <p:inputText value="#{d.diaVencimientoSegunPeriodo}" style="text-align: right;" >
+                                    <f:convertNumber pattern="0" />
+
+                                </p:inputText>
+
+                            </p:column>
+
+                            <p:column headerText="Fecha Cal. Vto"  >
+                                <p:selectOneMenu value="#{d.origenFechaCalculoVencimiento}"
+                                                 required="true" requiredMessage="Seleccione la fecha origen para cálculo de vencimiento"  >
+                                    <p:ajax process="@this" />
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                                    <f:selectItem itemLabel="Fecha de Movimiento" itemValue="M" />
+                                    <f:selectItem itemLabel="Fecha inicio Cursado" itemValue="I" />
+                                </p:selectOneMenu>
+                            </p:column>
+
+                            <p:column headerText="Importe Unitario"  width="100" >
+                                <p:inputText value="#{d.importe}" style="text-align: right;" >
+                                    <f:convertNumber pattern="###,###,##0.00" />
+                                </p:inputText>
+                            </p:column>
+
+                            <p:column headerText="Eliminar" width="50" style="text-align: center;" >
+
+                                <p:commandLink process="detalleItem" update="detalleItem,message,messageg"
+                                               actionListener="#{carreraBean.eliminarItemArancel(d)}"  >
+                                    <p:confirm header="Confirmación" message="Está seguro que desea borrar el item" icon="ui-icon-alert" />
+                                    <i class="fa fa-close fa-2x Red" ></i>
+                                </p:commandLink>
+
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+
+
+                </p:rowExpansion>
+
+
+
+            </p:dataTable>
+
+
+        </p:tab>
+        -->
+
+        <p:tab title="Sucursales Habilitadas">
+
+            <p:dataTable id="tablaSucursal" value="#{carreraBean.carrera.sucursales}" var="s" styleClass="MaxWid600"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="50" paginator="false">
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{carreraBean.nuevoItemSucursal()}"
+                                     immediate="true"
+                                     value="Agregar Sucursal"
+                                     process="tablaSucursal"
+                                     update="tablaSucursal" />
+
+                </f:facet>
+
+                <p:column headerText="Sucursal" >
+
+                    <p:selectOneMenu value="#{s.sucursal}"
+                                     required="true" requiredMessage="Seleccione la sucursal"
+                                     converter="#{conversoresGeneral.sucursal}"
+                                     effect="fade"  >
+                        <p:ajax process="@this"  />
+                        <f:selectItem itemValue="" itemLabel="Seleccionar" />
+                        <f:selectItems value="#{sucursalBean.lista}"
+                                       var="c" itemLabel="#{c.nombre}" itemValue="#{c}" />
+                    </p:selectOneMenu>
+
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaSucursal" update="tablaSucursal,message,messageg"
+                                   actionListener="#{carreraBean.eliminarItemSucursal(s)}"
+                                   immediate="true" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar la sucursal?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:tab>
+
+    </p:tabView>
+
+
+</ui:composition>
+

@@ -1,0 +1,113 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+
+    <p:panelGrid columns="4" layout="grid"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Código *" rendered="#{not empty equipoBean.equipo.codigo}"  />
+        <p:inputText value="#{equipoBean.equipo.codigo}"
+                     readonly="true"
+                     rendered="#{not empty equipoBean.equipo.codigo}"
+                     required="true"
+                     requiredMessage="El código es necesario" />
+
+        <h:outputText value="" rendered="#{not empty equipoBean.equipo.codigo}"  />
+        <h:outputText value="" rendered="#{not empty equipoBean.equipo.codigo}"  />
+
+
+        <bs:outputTexWhitLink value="Tipo *"
+                              url="#{equipoBean.obtenerUrlMenu('SIS_00346','CODIGO',equipoBean.equipo.tipo.codigo)}" />
+        <p:autoComplete value="#{equipoBean.equipo.tipo}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Tipo de Equipo"
+                        completeMethod="#{equipoTipoBean.complete}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresTaller.equipoTipo}" forceSelection="true" >
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+        </p:autoComplete>
+
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <bs:outputTexWhitLink value="Marca *"
+                              url="#{equipoBean.obtenerUrlMenu('SIS_00344','CODIGO',equipoBean.equipo.marca.codigo)}" />
+        <p:autoComplete value="#{equipoBean.equipo.marca}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Marca de Equipo"
+                        completeMethod="#{equipoMarcaBean.complete}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresTaller.equipoMarca}" forceSelection="true" >
+            <p:ajax event="itemSelect" listener="#{equipoBean.filtrarModelo}" process="@this" update="@this" />
+
+        </p:autoComplete>
+
+        <bs:outputTexWhitLink value="Modelo *"
+                              url="#{equipoBean.obtenerUrlMenu('SIS_00345','CODIGO',equipoBean.equipo.modelo.codigo)}" />
+        <p:autoComplete value="#{equipoBean.equipo.modelo}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        required="true" requiredMessage="Debe seleccionar Modelo"
+                        completeMethod="#{equipoModeloBean.complete}"
+                        var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                        converter="#{conversoresTaller.equipoModelo}" forceSelection="true" >
+            <p:ajax event="itemSelect" listener="#{equipoBean.filtrarContacto}" process="@this" update="@this" />
+
+        </p:autoComplete>
+
+        <h:outputText value="Nro serie" />
+        <p:inputText value="#{equipoBean.equipo.nserie}"  />
+
+        <h:outputText value="Descripción" />
+        <p:inputText value="#{equipoBean.equipo.descripcion}"
+                     required="true" requiredMessage="La descripción es necesaria" />
+
+        <bs:outputTexWhitLink value="Entidad comercial *"
+                              url="#{equipoBean.obtenerUrlMenu('SIS_00083','NROCTA',equipoBean.equipo.entidadComercial.nrocta)}" />
+
+        <p:autoComplete value="#{equipoBean.equipo.entidadComercial}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{clienteBean.complete}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+        </p:autoComplete>
+
+
+        <bs:outputTexWhitLink value="Contacto *"
+                              url="#{equipoBean.obtenerUrlMenu('SIS_00339','CODIGO',equipoBean.equipo.contacto.id)}" />
+
+        <p:autoComplete value="#{equipoBean.equipo.contacto}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{contactoBean.complete}"
+                        var="e" itemLabel="#{e.nombre}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.contacto}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="@this" />
+
+        </p:autoComplete>
+
+    </p:panelGrid>
+
+
+</ui:composition>
+

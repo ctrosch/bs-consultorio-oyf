@@ -1,0 +1,59 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- APLICACIONES -->
+
+    <div class="EmptyBox10" />
+
+    <p:dataTable id="tAplicaciones" paginator="true" rows="20" value="#{movimientoFacturacionBean.m.movimientoVenta.itemCuentaCorrienteAplicacion}" var="d"
+                 rendered="#{not empty movimientoFacturacionBean.m.movimientoVenta.itemCuentaCorrienteAplicacion}"
+                 resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado aplicaciones">
+
+        <f:facet name="header">
+            Aplicaciones en cuenta corriente
+        </f:facet>
+
+        <p:column headerText="Comprobante" styleClass="TexAlCenter" >
+
+            <h:outputText value="#{d.movimiento.formulario.codigo} " />
+            <h:outputText value="#{d.movimiento.puntoVenta.codigo}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+            <h:outputText value="#{d.movimiento.numeroFormulario}" >
+                <f:convertNumber pattern="-00000000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha" styleClass="TexAlCenter" >
+            <h:outputText value="#{d.movimiento.fechaMovimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Vencimiento" styleClass="TexAlCenter" >
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Cuota" styleClass="TexAlCenter" >
+            <h:outputText value="#{d.cuota}" />
+        </p:column>
+
+        <p:column headerText="Importe"  >
+            <h:outputText value="#{d.importe}" styleClass="Fright" >
+                <f:convertNumber pattern="$ #,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+    </p:dataTable>
+
+
+</ui:composition>
+

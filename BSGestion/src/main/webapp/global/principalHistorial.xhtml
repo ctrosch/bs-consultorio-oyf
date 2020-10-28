@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pv="http://primefaces.org/volt"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <!-- RECIENTES -->
+    <p:panel id="pHistorial" widgetVar="pHistorial" styleClass="fadeIn" style="border:none;"
+             toggleable="true" collapsed="#{usuarioSessionBean.usuario.historialVisible eq 'N'}"  >
+
+        <div class="EmptyBox10" />
+
+        <div class="CardTopic Fs15 FontVoltSemiBold">
+            Historial
+            <p:commandLink styleClass="Fright Fs20 " style="width:auto"
+                           actionListener="#{usuarioSessionBean.toggleHistorial() }"
+                           onclick="PF('pHistorial').toggle()"
+                           update="@form" >
+                <i class="fa fa-close" ></i>
+            </p:commandLink>
+        </div>
+        <div class="Separator"></div>
+
+        <div class="p-grid p-align-center">
+
+            <ui:repeat value="#{principalBean.recientes}" var="r" >
+
+                <bs:itemMenu codigo="#{r.menu.codigo}" title="#{r.menu.modulo.codigo} - #{r.menu.nombre}" icono="#{r.menu.icono}" url="#{r.menu.urlCompleta}" />
+
+            </ui:repeat>
+
+        </div>
+
+    </p:panel>
+
+    <div class="EmptyBox10" />
+
+</html>

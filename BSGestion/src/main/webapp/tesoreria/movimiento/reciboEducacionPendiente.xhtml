@@ -1,0 +1,88 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- SALDOS PENDIENTES -->
+    <p:dataTable id="tDebitos" value="#{reciboEducacionBean.debitos}" var="d"
+                 rendered="#{not empty reciboEducacionBean.m.entidad and empty reciboEducacionBean.m.id}"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se han encontrado cuotas pendientes" >
+
+        <p:column headerText="Carrera" width="200"  >
+            <h:outputText value="#{d.itemMovimientoEducacion.movimiento.carrera.titulo }"  />
+        </p:column>
+
+        <p:column headerText="Observaciones" width="200"  >
+            <h:outputText value="#{d.observaciones}"  />
+        </p:column>
+
+        <p:column headerText="Cuota" styleClass="TexAlCenter" width="50"  >
+            <h:outputText value="#{d.cuotas}" />
+        </p:column>
+
+        <p:column headerText="Vencimiento" width="80" styleClass="TexAlCenter" >
+
+            <h:outputText value="#{d.fechaVencimiento}" >
+                <f:convertDateTime pattern="dd/MM/yyyy" />
+            </h:outputText>
+
+            <i class="fa fa-circle fa-2x #{(d.diasVencidos > 30  ? 'Red' : (d.diasVencidos > 0  ? 'Orange' : (d.diasVencidos > -5000   ? 'Green' : null)))}"
+               style="padding-left: 3px;"></i>
+
+        </p:column>
+
+        <p:column headerText="Imp. Pendiente" width="80" styleClass="TexAlCenter" >
+
+            <h:outputText id="importePendiente" value="#{d.pendiente}" styleClass="Fright" >
+                <f:convertNumber pattern="#,###,##0.0000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Intereses" width="80" styleClass="TexAlCenter" >
+
+            <h:outputText id="importeInteres" value="#{d.importeInteres}" styleClass="Fright" >
+                <f:convertNumber pattern="#,###,##0.0000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Calc. Int." width="50" styleClass="TexAlCenter" >
+            <p:selectBooleanCheckbox value="#{d.calculaInteres}" >
+                <p:ajax listener="#{reciboEducacionBean.modificaDebito(d)}" update="@form" />
+            </p:selectBooleanCheckbox>
+        </p:column>
+
+        <p:column headerText="Imp. Aplicar" width="80" >
+
+            <p:inputText id="importeAplicar" value="#{d.importeAplicar}"
+                         rendered="#{reciboEducacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaPrimaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.0000" />
+                <p:ajax event="keyup" delay="500"
+                        listener="#{reciboEducacionBean.modificaDebito(d)}"
+                        update=":formulario:totales,message, messageg" />
+            </p:inputText>
+
+            <p:inputText value="#{d.importeAplicarSecundario}" rendered="#{reciboEducacionBean.m.monedaRegistracion.codigo eq aplicacionBean.parametro.codigoMonedaSecundaria}"
+                         style="text-align: right;" >
+                <f:convertNumber pattern="#,##0.0000" />
+                <p:ajax event="keyup" delay="500"
+                        listener="#{reciboEducacionBean.modificaDebito(d)}"
+                        update=":formulario:totales,message, messageg" />
+            </p:inputText>
+        </p:column>
+
+        <p:column headerText="Seleccionar" width="80" styleClass="TexAlCenter" >
+            <p:selectBooleanCheckbox  value="#{d.seleccionado}" >
+                <p:ajax update="@form" listener="#{reciboEducacionBean.marcarDebito(d)}" />
+            </p:selectBooleanCheckbox>
+        </p:column>
+
+    </p:dataTable>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

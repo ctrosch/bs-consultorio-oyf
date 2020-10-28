@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ST_MVH" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="21db4006-82c7-4753-bdd2-6f5767781961">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="detalle" uuid="528f0a9f-a722-41b2-beae-6ff7dfb2bc98">
+		<parameter name="ID" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+     fc_movimiento_item.`ID` AS fc_movimiento_item_ID,
+     ABS(fc_movimiento_item.`CANTID`) AS fc_movimiento_item_CANTID,
+     fc_movimiento_item.`NROITM` AS fc_movimiento_item_NROITM,
+     fc_movimiento_item.`COTIZA` AS fc_movimiento_item_COTIZA,
+     fc_movimiento_item.`DEPOSI` AS fc_movimiento_item_DEPOSI,
+     d.`NATRI1` AS NATRI1,
+     d.`NATRI2` AS NATRI2,
+     d.`NATRI3` AS NATRI3,
+     d.`NATRI4` AS NATRI4,
+     fc_movimiento_item.`NATRI5` AS fc_movimiento_item_NATRI5,
+     fc_movimiento_item.`NATRI6` AS fc_movimiento_item_NATRI6,
+     fc_movimiento_item.`NATRI7` AS fc_movimiento_item_NATRI7,
+     IFNULL(fc_movimiento_item.OBSERVA,'') AS fc_movimiento_item_OBSERV,
+     fc_movimiento_item.`PRECIO` AS fc_movimiento_item_PRECIO,
+     fc_movimiento_item.`PRESEC` AS fc_movimiento_item_PRESEC,
+     fc_movimiento_item.`SUCURS` AS fc_movimiento_item_SUCURS,
+     fc_movimiento_item.`COFLIS` AS fc_movimiento_item_COFLIS,
+     fc_movimiento_item.`ID_MCAB` AS fc_movimiento_item_ID_MCAB,
+     fc_movimiento_item.`ARTCOD` AS fc_movimiento_item_ARTCOD,
+     fc_movimiento_item.`UNIMED` AS fc_movimiento_item_UNIMED,
+     st_producto.`CODIGO` AS st_producto_CODIGO,
+     st_producto.`TIPPRO` AS st_producto_TIPPRO,
+     fc_movimiento_item.`DESCRP` AS st_producto_DESCRP
+FROM
+     `st_producto` st_producto
+     INNER JOIN `fc_movimiento_item` fc_movimiento_item ON st_producto.`CODIGO` = fc_movimiento_item.`ARTCOD`
+     inner join fc_movimiento_item_detalle d on d.ID_IDET = fc_movimiento_item.ID
+WHERE fc_movimiento_item.ID_MCAB = $P{ID}
+ORDER BY fc_movimiento_item.NROITM]]>
+		</queryString>
+		<field name="fc_movimiento_item_ID" class="java.lang.Integer"/>
+		<field name="fc_movimiento_item_CANTID" class="java.math.BigDecimal"/>
+		<field name="fc_movimiento_item_NROITM" class="java.lang.Integer"/>
+		<field name="fc_movimiento_item_COTIZA" class="java.math.BigDecimal"/>
+		<field name="fc_movimiento_item_DEPOSI" class="java.lang.String"/>
+		<field name="NATRI1" class="java.lang.String">
+			<fieldDescription><![CDATA[Atributo 1]]></fieldDescription>
+		</field>
+		<field name="NATRI2" class="java.lang.String">
+			<fieldDescription><![CDATA[Atributo 2]]></fieldDescription>
+		</field>
+		<field name="NATRI3" class="java.lang.String">
+			<fieldDescription><![CDATA[Atributo 3]]></fieldDescription>
+		</field>
+		<field name="NATRI4" class="java.lang.String">
+			<fieldDescription><![CDATA[Atributo 4]]></fieldDescription>
+		</field>
+		<field name="fc_movimiento_item_NATRI5" class="java.lang.String"/>
+		<field name="fc_movimiento_item_NATRI6" class="java.lang.String"/>
+		<field name="fc_movimiento_item_NATRI7" class="java.lang.String"/>
+		<field name="fc_movimiento_item_OBSERV" class="java.lang.String"/>
+		<field name="fc_movimiento_item_PRECIO" class="java.math.BigDecimal"/>
+		<field name="fc_movimiento_item_PRESEC" class="java.math.BigDecimal"/>
+		<field name="fc_movimiento_item_SUCURS" class="java.lang.String"/>
+		<field name="fc_movimiento_item_COFLIS" class="java.lang.String"/>
+		<field name="fc_movimiento_item_ID_MCAB" class="java.lang.Integer"/>
+		<field name="fc_movimiento_item_ARTCOD" class="java.lang.String"/>
+		<field name="fc_movimiento_item_UNIMED" class="java.lang.String"/>
+		<field name="st_producto_CODIGO" class="java.lang.String"/>
+		<field name="st_producto_TIPPRO" class="java.lang.String"/>
+		<field name="st_producto_DESCRP" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="LOGO" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="ID" class="java.lang.Integer"/>
+	<parameter name="CANT_COPIAS" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EMP_NOMBRE" class="java.lang.String"/>
+	<parameter name="EMP_RAZON_SOCIAL" class="java.lang.String"/>
+	<parameter name="EMP_DIRECCION" class="java.lang.String"/>
+	<parameter name="EMP_CIUDAD" class="java.lang.String"/>
+	<parameter name="EMP_PROVINCIA" class="java.lang.String"/>
+	<parameter name="EMP_PAIS" class="java.lang.String"/>
+	<parameter name="EMP_TELEFONO" class="java.lang.String"/>
+	<parameter name="EMP_EMAIL" class="java.lang.String"/>
+	<parameter name="EMP_CUIT" class="java.lang.String"/>
+	<parameter name="EMP_IB" class="java.lang.String"/>
+	<parameter name="EMP_INIACT" class="java.lang.String"/>
+	<parameter name="EMP_CONDICION_IVA" class="java.lang.String"/>
+	<parameter name="EMP_IMPMUN" class="java.lang.String"/>
+	<parameter name="CODEMP" class="java.lang.String"/>
+	<parameter name="CODSUC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select
+
+  fc_movimiento.ID As fc_movimiento_ID,
+  fc_movimiento.MODCOM As fc_movimiento_MODCOM,
+  fc_movimiento.CODCOM As fc_movimiento_CODCOM,
+  fc_movimiento.CODFOR As fc_movimiento_CODFOR,
+  fc_movimiento.MODFOR As fc_movimiento_MODFOR,
+  fc_movimiento.NROFOR As fc_movimiento_NROFOR,
+  fc_movimiento.FCHMOV As fc_movimiento_FCHMOV,
+  fc_movimiento.SUCURS As fc_movimiento_SUCURS,
+  fc_movimiento.DEPOSI As fc_movimiento_DEPOSI,
+  fc_movimiento.DEPTRA As fc_movimiento_DEPTRA,
+  fc_movimiento.COFSEC As fc_movimiento_COFSEC,
+  fc_movimiento.COTIZA As fc_movimiento_COTIZA,
+  fc_movimiento.OBSERV As fc_movimiento_OBSERV,
+  fc_movimiento.NROCTA As fc_movimiento_NROCTA,
+  gr_formulario.LETRID As gr_formulario_LETRID,
+  gr_formulario.DESCRP As gr_formulario_DESCRP,
+  gr_formulario.SUCURS As gr_formulario_SUCURS,
+  st_deposito.DESCRP As st_deposito_DESCRP,
+  en_entidad.RAZONS,
+  en_entidad.NROCTA,
+  en_entidad.NRODOC,
+  gr_condicion_iva.DESCRP As gr_condicion_iva_DESCRP,
+  gr_localidad.CODIGO As gr_localidad_CODIGO,
+  gr_localidad.DESCRP As gr_localidad_DESCRP,
+  gr_provincia.DESCRP As gr_provincia_DESCRP,
+  en_entidad.FNTSIA,
+  en_entidad.DIRECC,
+  en_entidad.NUMERO,
+  en_entidad.DEPTOS,
+  en_entidad.DPPISO,
+t.DESCRP as TRANS_DESCRP,
+  t.DIRECC AS TRANS_DIRECC,
+  t.TELEFN AS TRANS_TELEFN
+From fc_movimiento fc_movimiento
+Inner Join gr_formulario gr_formulario On fc_movimiento.MODFOR = gr_formulario.MODFOR And gr_formulario.CODFOR = fc_movimiento.CODFOR
+Inner Join st_deposito st_deposito On fc_movimiento.DEPOSI = st_deposito.CODIGO
+Left Join en_entidad On fc_movimiento.NROCTA = en_entidad.NROCTA
+Inner Join gr_condicion_iva On en_entidad.CNDIVA = gr_condicion_iva.CODIGO
+Inner Join gr_localidad On en_entidad.CODPOS = gr_localidad.ID
+Inner Join gr_provincia On en_entidad.CODPRO = gr_provincia.CODIGO And en_entidad.CODPAI = gr_provincia.CODPAI
+Left Join gr_transporte t On fc_movimiento.CODTRA = t.CODIGO,
+gr_copias gr_copias
+Where
+  fc_movimiento.ID_MST = $P{ID}
+and gr_copias.ID <= $P{CANT_COPIAS}]]>
+	</queryString>
+	<field name="fc_movimiento_ID" class="java.lang.Integer"/>
+	<field name="fc_movimiento_MODCOM" class="java.lang.String"/>
+	<field name="fc_movimiento_CODCOM" class="java.lang.String"/>
+	<field name="fc_movimiento_CODFOR" class="java.lang.String"/>
+	<field name="fc_movimiento_MODFOR" class="java.lang.String"/>
+	<field name="fc_movimiento_NROFOR" class="java.lang.Integer"/>
+	<field name="fc_movimiento_FCHMOV" class="java.sql.Date"/>
+	<field name="fc_movimiento_SUCURS" class="java.lang.String"/>
+	<field name="fc_movimiento_DEPOSI" class="java.lang.String"/>
+	<field name="fc_movimiento_DEPTRA" class="java.lang.String"/>
+	<field name="fc_movimiento_COFSEC" class="java.lang.String"/>
+	<field name="fc_movimiento_COTIZA" class="java.math.BigDecimal"/>
+	<field name="fc_movimiento_OBSERV" class="java.lang.String"/>
+	<field name="fc_movimiento_NROCTA" class="java.lang.String"/>
+	<field name="gr_formulario_LETRID" class="java.lang.String"/>
+	<field name="gr_formulario_DESCRP" class="java.lang.String"/>
+	<field name="gr_formulario_SUCURS" class="java.lang.String"/>
+	<field name="st_deposito_DESCRP" class="java.lang.String"/>
+	<field name="RAZONS" class="java.lang.String">
+		<fieldDescription><![CDATA[Razón Social]]></fieldDescription>
+	</field>
+	<field name="NROCTA" class="java.lang.String">
+		<fieldDescription><![CDATA[Código]]></fieldDescription>
+	</field>
+	<field name="NRODOC" class="java.lang.String">
+		<fieldDescription><![CDATA[Número de documento ]]></fieldDescription>
+	</field>
+	<field name="gr_condicion_iva_DESCRP" class="java.lang.String"/>
+	<field name="gr_localidad_CODIGO" class="java.lang.String"/>
+	<field name="gr_localidad_DESCRP" class="java.lang.String"/>
+	<field name="gr_provincia_DESCRP" class="java.lang.String"/>
+	<field name="FNTSIA" class="java.lang.String">
+		<fieldDescription><![CDATA[Nombre Fantasía]]></fieldDescription>
+	</field>
+	<field name="DIRECC" class="java.lang.String">
+		<fieldDescription><![CDATA[Calle]]></fieldDescription>
+	</field>
+	<field name="NUMERO" class="java.lang.String">
+		<fieldDescription><![CDATA[Numero Dirección]]></fieldDescription>
+	</field>
+	<field name="DEPTOS" class="java.lang.String">
+		<fieldDescription><![CDATA[Departamento]]></fieldDescription>
+	</field>
+	<field name="DPPISO" class="java.lang.String">
+		<fieldDescription><![CDATA[Piso]]></fieldDescription>
+	</field>
+	<field name="TRANS_DESCRP" class="java.lang.String"/>
+	<field name="TRANS_DIRECC" class="java.lang.String"/>
+	<field name="TRANS_TELEFN" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="93" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="342" y="34" width="77" height="12" uuid="4d8e8030-7b4c-42a6-92ec-667ced1c1436"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fc_movimiento_FCHMOV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="00000000">
+				<reportElement x="476" y="34" width="74" height="12" uuid="2e9ea2ea-78b9-4c76-9c44-0465cb4cb333"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fc_movimiento_NROFOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="62" y="7" width="325" height="14" uuid="46887d98-5c81-48b2-a857-6671ec3abb12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAZONS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="81" y="46" width="156" height="15" uuid="b1c48ada-45a5-4782-981e-47a6e37c3460"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gr_condicion_iva_DESCRP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="70" y="27" width="473" height="14" uuid="ba428011-9f23-494a-a80d-5745cff9b9c3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{DIRECC}==null?"":$F{DIRECC})
++($F{gr_localidad_CODIGO}==null?"":"("+$F{gr_localidad_CODIGO}+")")
++($F{gr_localidad_DESCRP}==null || $F{gr_localidad_DESCRP}.isEmpty() ?"":" " + $F{gr_localidad_DESCRP})
++($F{gr_provincia_DESCRP}==null || $F{gr_provincia_DESCRP}.isEmpty() ?"":" - "+$F{gr_provincia_DESCRP})]]></textFieldExpression>
+			</textField>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="476" y="6" width="67" height="15" uuid="0707209a-4a9c-40a3-9a17-c5f9f7cd22f1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fc_movimiento_NROCTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="421" y="46" width="106" height="15" uuid="97dc5253-eb13-497d-990c-efc01d512674"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRODOC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="550" splitType="Stretch">
+			<componentElement>
+				<reportElement x="5" y="89" width="545" height="366" isRemoveLineWhenBlank="true" uuid="47186046-a2f4-4b95-82d7-1c8e79167632"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="detalle" uuid="f241fc0f-b662-481b-9dde-ef99ca9efda2">
+						<datasetParameter name="ID">
+							<datasetParameterExpression><![CDATA[$F{fc_movimiento_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="53" uuid="61d54d6e-97f3-4fe1-9939-4be26d726410">
+						<jr:tableHeader height="5" rowSpan="1"/>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField pattern="###0" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="53" height="16" uuid="37203da4-87a6-480e-8b06-6e7b2516433f"/>
+								<textElement textAlignment="Right" verticalAlignment="Top">
+									<font size="10"/>
+									<paragraph leftIndent="5" rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fc_movimiento_item_CANTID}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="75" uuid="fe0ca9ba-3f50-4fdd-980f-62fb1c945b60">
+						<jr:tableHeader height="5" rowSpan="1"/>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField pattern="###0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="75" height="16" uuid="b290a680-0027-4513-87ec-19cc458e4fc4"/>
+								<textElement textAlignment="Center" verticalAlignment="Top">
+									<font size="10"/>
+									<paragraph rightIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fc_movimiento_item_ARTCOD}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="33" uuid="afe7a156-11ef-4918-8a60-2f07421138c3">
+						<jr:tableHeader height="5" rowSpan="1"/>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="33" height="16" uuid="3261d92b-2016-479b-a7ee-f88bc87b15c1"/>
+								<textElement textAlignment="Center" verticalAlignment="Top">
+									<font size="10"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fc_movimiento_item_UNIMED}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="382" uuid="d9615124-07af-4828-8b26-931a49ab1d0c">
+						<jr:tableHeader height="5" rowSpan="1"/>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="382" height="15" uuid="ebcf747b-2d59-4d69-83e9-bb9d3da220a6"/>
+								<textElement verticalAlignment="Top">
+									<font size="10"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{st_producto_DESCRP}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement x="0" y="15" width="382" height="0" uuid="4f0bc88e-7520-4d3a-b840-3240b48a1a01"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9"/>
+									<paragraph leftIndent="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($F{NATRI1}==null || $F{NATRI1}.isEmpty()?"":" Nro Motor "+$F{NATRI1}+"\n")
++($F{NATRI2}==null || $F{NATRI2}.isEmpty()?"":" Nro Chasis "+$F{NATRI2}+"\n")
++$F{fc_movimiento_item_OBSERV}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement x="0" y="466" width="62" height="11" uuid="efb43653-0e96-477d-ac2d-a99ab6f9a73c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observaciones:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="62" y="466" width="483" height="24" uuid="3dc5ef02-93a3-47b1-b61d-e49ecafbfd4e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fc_movimiento_OBSERV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="73" y="35" width="325" height="14" uuid="a9e261b0-d3d3-4af3-a817-5cacf3ab7060"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField pattern="00000000" isBlankWhenNull="true">
+				<reportElement x="73" y="15" width="325" height="14" uuid="ce7a8848-f179-4276-9eb1-bead777d4551"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TRANS_DESCRP}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

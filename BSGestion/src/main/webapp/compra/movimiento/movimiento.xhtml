@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+
+            <f:viewParam name="ID_MENU"      value="#{movimientoCompraBean.codMenu}"/>
+            <f:viewParam name="TITULO"  value="#{movimientoCompraBean.titulo}"/>
+            <f:viewParam name="CIRCOM"  value="#{movimientoCompraBean.CIRCOM}"/>
+            <f:viewParam name="CIRAPL"  value="#{movimientoCompraBean.CIRAPL}"/>
+
+            <f:viewParam name="CODCO"  value="#{movimientoCompraBean.CODCO}"/>
+            <f:viewParam name="SUCCO"  value="#{movimientoCompraBean.SUCCO}"/>
+
+            <f:viewParam name="CODPV"  value="#{movimientoCompraBean.CODPV}"/>
+            <f:viewParam name="SUCPV"  value="#{movimientoCompraBean.SUCCO}"/>
+
+            <f:viewParam name="CODCJ"  value="#{movimientoCompraBean.CODCJ}"/>
+            <f:viewParam name="SUCCJ"  value="#{movimientoCompraBean.SUCCO}"/>
+
+            <f:viewParam name="CODST"  value="#{movimientoCompraBean.CODST}"/>
+            <f:viewParam name="SUCST"  value="#{movimientoCompraBean.SUCST}"/>
+
+            <f:viewParam name="NROCTA"   value="#{movimientoCompraBean.NROCTA}"/>
+
+            <f:event type="preRenderView" listener="#{movimientoCompraBean.iniciarVariables}" />
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+
+            <ui:param name="TITULO" value="#{movimientoCompraBean.titulo}" />
+            <ui:param name="ID_MENU" value="#{movimientoCompraBean.codMenu}" />
+            <ui:param name="CODREP" value="#{movimientoCompraBean.codigoReporte}" />
+            <ui:param name="CODVIS" value="#{movimientoCompraBean.codigoVista}" />
+
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{movimientoCompraBean.titulo}
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            #{movimientoCompraBean.titulo}
+        </ui:define>
+
+
+
+        <ui:define name="contenido" >
+
+            <p:remoteCommand name="procesarProducto" process="@this" update="@form"
+                             actionListener="#{movimientoCompraBean.procesarProducto}" />
+
+            <p:remoteCommand name="procesarProductos" process="@this" update="@form"
+                             actionListener="#{movimientoCompraBean.procesarProductos()}" />
+
+            <p:remoteCommand name="procesarStock" process="@this" update="@form"
+                             actionListener="#{movimientoCompraBean.procesarStock}" />
+
+            <ui:include src="movimientoMenu.xhtml" />
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <ui:fragment rendered="#{movimientoCompraBean.modoVista eq 'P'}" >
+                <ui:include src="movimientoPendiente.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{movimientoCompraBean.modoVista eq 'B'}" >
+                <ui:include src="movimientoBusqueda.xhtml" />
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty movimientoCompraBean.m and movimientoCompraBean.modoVista eq 'D'}" >
+
+                <ui:include src="movimientoDatos.xhtml" />
+                <ui:include src="movimientoDetalle.xhtml"  />
+
+                <div class="EmptyBox10" />
+                <div class="Container60 Responsive50 NoPadding" style="padding-right: 10px !important;">
+                    <ui:include src="movimientoDatosAdicionales.xhtml"  />
+                </div>
+                <div class="Container40 Responsive50 NoPadding" >
+                    <ui:include src="movimientoTotales.xhtml"  />
+                </div>
+                <ui:include src="movimientoAplicaciones.xhtml"  />
+
+            </ui:fragment>
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{movimientoCompraBean.muestraReporte}"
+                               nombreArchivo="#{movimientoCompraBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+
+            <!-- ENVIO COMPROBANTE -->
+            <bs:envioComprobante solicitaEmail="#{movimientoCompraBean.solicitaEmail}"
+                                 email="#{movimientoCompraBean.emailEnvioComprobante}"
+                                 informacionAdicional ="#{movimientoCompraBean.informacionAdicional}"
+                                 actionListener="#{movimientoCompraBean.enviarNotificaciones()}"  />
+
+            <!--
+            <ui:include src="/compra/busqueda/buscadorPendiente.xhtml" />
+            -->
+            <ui:include src="/stock/busqueda/buscadorProducto.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorProductoNew.xhtml" />
+            <ui:include src="/stock/busqueda/buscadorStock.xhtml" />
+            <ui:include src="/stock/informes/consultaStock.xhtml" />
+        </ui:define>
+
+
+    </ui:composition>
+</html>
+

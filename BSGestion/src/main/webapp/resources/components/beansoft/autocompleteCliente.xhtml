@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+
+        <title></title>
+
+    </h:head>
+
+    <h:body>
+
+        <composite:interface displayName="Autocomplete cliente" >
+            <composite:attribute name="value" required="true" />
+            <composite:attribute name="muestraReporte" required="true" />
+        </composite:interface>
+
+        <composite:implementation>
+
+            <p:autoComplete value="#{equipoBean.equipo.entidadComercial}" dropdown="true"
+                            maxResults="8" queryDelay="1000"
+                            completeMethod="#{clienteBean.complete}"
+                            var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                            converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+                <p:ajax event="itemSelect" process="@this" update="@this" />
+
+                <p:column headerText="Nro cuenta" width="100">
+                    <h:outputText value="#{e.nrocta}" />
+                </p:column>
+
+                <p:column headerText="Razón social">
+                    <h:outputText value="#{e.razonSocial}" />
+                </p:column>
+
+                <p:column headerText="Nombre Fantasía">
+                    <h:outputText value="#{e.nombreFantasia}" />
+                </p:column>
+
+            </p:autoComplete>
+
+        </composite:implementation>
+
+    </h:body>
+
+</html>

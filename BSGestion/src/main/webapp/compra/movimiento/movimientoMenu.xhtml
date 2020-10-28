@@ -1,0 +1,124 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:sticky target="menuBar" />
+    <!-- MENU -->
+
+    <!-- MENU -->
+    <p:menubar id="menuBar">
+
+        <p:menuitem value="Buscar" icon="fa fa-search"
+                    actionListener="#{movimientoCompraBean.buscar()}"
+                    immediate="true"
+                    update="@form" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoCompraBean.modoVista eq 'B' or empty movimientoCompraBean.m.itemsProducto}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem id="btnNew" value="Nuevo" icon="fa fa-plus"
+                    actionListener="#{movimientoCompraBean.nuevo()}"
+                    process="@this"
+                    update="@form, dialogos"
+                    immediate="true" >
+            <p:confirm header="Confirmacion"
+                       disabled="#{movimientoCompraBean.modoVista eq 'B' or empty movimientoCompraBean.m.itemsProducto}"
+                       message="¿Está seguro? Perderá todos los cambios no guardados" icon="ui-icon-alert" />
+        </p:menuitem>
+
+        <p:menuitem value="Guardar" icon="fa fa-save"
+                    actionListener="#{movimientoCompraBean.guardar(false)}"
+                    rendered="#{not empty movimientoCompraBean.m and movimientoCompraBean.modoVista eq 'D'}"
+                    update="@form" />
+
+        <p:submenu label="Pendientes" icon="fa fa-list-alt"
+                   rendered="#{empty movimientoCompraBean.m.id and movimientoCompraBean.modoVista eq 'D' and not empty movimientoCompraBean.circuito.circuitosRelacionados}" >
+
+            <p:menuitem value="#{movimientoCompraBean.circuito.circuitosRelacionados[0].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoCompraBean.verPendientes(movimientoCompraBean.circuito.circuitosRelacionados[0])}"
+                        rendered="#{not empty movimientoCompraBean.circuito.circuitosRelacionados[0]}"
+                        process="@this"
+                        update="@form">
+            </p:menuitem>
+
+            <p:menuitem value="#{movimientoCompraBean.circuito.circuitosRelacionados[1].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoCompraBean.verPendientes(movimientoCompraBean.circuito.circuitosRelacionados[1])}"
+                        rendered="#{not empty movimientoCompraBean.circuito.circuitosRelacionados[1]}"
+                        process="@this"
+                        update="@form">
+            </p:menuitem>
+
+            <p:menuitem value="#{movimientoCompraBean.circuito.circuitosRelacionados[2].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoCompraBean.verPendientes(movimientoCompraBean.circuito.circuitosRelacionados[2])}"
+                        rendered="#{not empty movimientoCompraBean.circuito.circuitosRelacionados[2]}"
+                        process="@this"
+                        update="@form">
+            </p:menuitem>
+
+            <p:menuitem value="#{movimientoCompraBean.circuito.circuitosRelacionados[3].circuitoAplicacion.descripcion}"
+                        icon="fa fa-download"
+                        actionListener="#{movimientoCompraBean.verPendientes(movimientoCompraBean.circuito.circuitosRelacionados[3])}"
+                        rendered="#{not empty movimientoCompraBean.circuito.circuitosRelacionados[3]}"
+                        process="@this"
+                        update="@form">
+            </p:menuitem>
+
+        </p:submenu>
+
+        <p:submenu label="Imprimir" icon="fa fa-print" rendered="#{not empty movimientoCompraBean.m.id}" >
+
+            <p:menuitem value="Comprobante de Compra" icon="fa fa-print"
+                        actionListener="#{movimientoCompraBean.imprimir('CO')}"
+                        rendered="#{movimientoCompraBean.m.comprobante.modulo eq 'CO'}"
+                        process="@this" >
+            </p:menuitem>
+
+            <p:menuitem value="Comprobante de Proveedor" icon="fa fa-print"
+                        actionListener="#{movimientoCompraBean.imprimir('PV')}"
+                        rendered="#{not empty movimientoCompraBean.m.movimientoProveedor}"
+                        process="@this" >
+            </p:menuitem>
+
+            <p:menuitem value="Comprobante de Stock" icon="fa fa-print"
+                        actionListener="#{movimientoCompraBean.imprimir('ST')}"
+                        rendered="#{not empty movimientoCompraBean.m.movimientoStock}"
+                        process="@this" >
+            </p:menuitem>
+
+            <p:menuitem value="Comprobante de Tesoreria" icon="fa fa-print"
+                        actionListener="#{movimientoCompraBean.imprimir('CJ')}"
+                        rendered="#{not empty movimientoCompraBean.m.movimientoTesoreria}"
+                        process="@this" >
+            </p:menuitem>
+
+        </p:submenu>
+
+        <p:menuitem value="Enviar E-mail" icon="fa fa-envelope"
+                    actionListener="#{movimientoCompraBean.preparoEnvioNotificaciones}"
+                    rendered="#{not empty movimientoCompraBean.m.id}"
+                    process="@this"
+                    update="dialogos"
+                    oncomplete="PF('dlgEnvioComprobante').show()" >
+        </p:menuitem>
+
+        <p:menuitem value="Cuenta Corriente" icon="fa fa-info-circle"
+                    rendered="#{not empty movimientoCompraBean.m.proveedor and movimientoCompraBean.modoVista eq 'D'}"
+                    url="#{request.contextPath}#{movimientoCompraBean.obtenerUrlMenu('SIS_00164','NROCTA',movimientoCompraBean.m.proveedor.nrocta)}"
+                    target="_blank"
+                    process="@this" >
+        </p:menuitem>
+
+    </p:menubar>
+
+    <div class="EmptyBox10" />
+
+</ui:composition>
+

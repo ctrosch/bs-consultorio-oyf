@@ -1,0 +1,101 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorTransporte" header="Transportes" modal="true" 
+              widgetVar="dlgTransporte"
+              resizable="false"
+              draggable="false"
+              position="top"
+              showEffect="fade" hideEffect="fade"
+              style="max-width: 900px;" responsive="true" >
+
+        <h:form prependId="false" >
+            
+            <p:focus for="txtBusquedaTransporte"/>
+            
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" >
+                                
+                <p:inputText id="txtBusquedaTransporte" value="#{transporteBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaTransporte" listener="#{transporteBean.buscar}"/>
+                </p:inputText>
+               
+            </p:panelGrid>        
+
+            <p:dataTable id="tablaTransporte" value="#{transporteBean.lista}" var="e"
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron resultados"
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{transporteBean.transporte}" rowKey="#{e}"
+                         rowStyleClass="#{e.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+                
+                <p:ajax event="rowSelect" listener="#{transporteBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlgTransporte').hide(), procesarTransporte()" />
+                    
+                <p:column headerText="Código" width="100" style="text-align: center;"
+                          sortBy="#{e.codigo}"   >                         
+                    <h:outputText value="#{e.codigo}" />
+                </p:column>
+
+                <p:column headerText="Descripción" width="300" style="text-align: left;"
+                          sortBy="#{e.descripcion}" >                    
+                    <h:outputText value="#{e.descripcion}" />                                        
+                </p:column>
+                
+                <p:column headerText="Teléfono" width="150" style="text-align: left;"
+                          sortBy="#{e.telefono}" >                    
+                    <h:outputText value="#{e.telefono}" />                                        
+                </p:column>
+              
+                <p:column headerText="Correo electrónico" width="200" style="text-align: center;" >
+                    <h:outputText value="#{e.email}" />   
+                </p:column>
+                 
+                <p:column headerText="Responsable" width="200" style="text-align: center;" >
+                     <h:outputText value="#{e.responsable}" />   
+                </p:column>
+                
+                <p:column headerText="Dirección" width="200" style="text-align: left;" >
+                    <h:outputText value="#{e.direccion}" />  
+                </p:column>
+                
+                <p:column headerText="Localidad" width="200" style="text-align: left;" >
+                    <h:outputText value="#{e.localidad.descripcion}" />  
+                </p:column>
+                
+                <p:column headerText="Entidad comercial" width="200" style="text-align: left;" >
+                    <h:outputText value="#{e.entidad.nrocta} - #{e.entidad.razonSocial}" />  
+                </p:column>
+                                
+            </p:dataTable> 
+            
+            <div class="EmptyBox10" />            
+            <p:panelGrid columns="2" layout="grid"                               
+                         styleClass="ui-panelgrid-blank"
+                         columnClasses="Container40, Container60" >
+
+                <h:panelGroup layout="block" >                       
+                    <p:selectBooleanCheckbox value="#{estadoTransporteBean.mostrarDebaja}" >
+                        <p:ajax process="@this" update="tablaTransporte" listener="#{estadoTransporteBean.buscar}" />
+                    </p:selectBooleanCheckbox>                    
+                    <h:outputText value="Mostrar registros deshabilitados" />                    
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" >                                                        
+                    <h:outputText value="Cantidad de Registros: " />                    
+                    <p:inputText id="cantRegistroTransporte" value="#{estadoTransporteBean.cantidadRegistros}" style="max-width: 80px;"/>                    
+                    <p:commandButton value="Aplicar" icon="fa fa-check"
+                                     style="max-width: 100px; margin-left: 1px;"
+                                     actionListener="#{estadoTransporteBean.buscar}"
+                                     process="@this,cantRegistroTransporte" update="tablaTransporte" />
+                </h:panelGroup>
+            </p:panelGrid>
+            
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

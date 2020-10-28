@@ -1,0 +1,77 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <p:dialog id="buscadorDireccionEntregaRem" modal="true"
+              header="Direcciónes de Entrega Remitente"
+              widgetVar="dlg_direccion_entrega_rem"
+              resizable="false"
+              draggable="false"
+              width="850" minHeight="400" style="min-width: 850px;"
+              showEffect="fade" hideEffect="fade"> 
+        
+        <h:form prependId="false" >
+            
+            <p:focus for="txtBusquedaRE"/>
+            
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" >
+                               
+                <p:inputText id="txtBusquedaRE" value="#{direccionEntregaBean.txtBusqueda}" autocomplete="false" placeholder="Ingrese busqueda" >
+                    <p:ajax event="keyup" delay="500"  process="@this" update="tablaDireccionEntregaRem" listener="#{direccionEntregaBean.buscar}"/>
+                </p:inputText>
+
+            </p:panelGrid>
+            
+            <p:dataTable id="tablaDireccionEntregaRem" value="#{direccionEntregaBean.lista}" var="i" 
+                         resizeMode="expand" liveResize="true"
+                         emptyMessage="No se encontraron datos"                         
+                         rows="10" paginator="true"
+                         selectionMode="single" selection="#{direccionEntregaBean.direccionEntrega}" rowKey="#{i}"
+                         rowStyleClass="#{i.auditoria.debaja eq 'S'  ? 'registroDeBaja' : null}" >
+            
+                <p:ajax event="rowSelect" listener="#{direccionEntregaBean.onSelect}" update="@form" 
+                        oncomplete="PF('dlg_direccion_entrega_rem').hide(), procesarDireccionEntregaRem()" />
+
+                <p:column headerText="Código" sortBy="#{i.codigo}"  width="15%" style="text-align: center;"  >
+                    <h:outputText value="#{i.codigo}" />
+                </p:column>
+
+                <p:column headerText="Calle" sortBy="#{i.direccion}" width="40%"  
+                          filterBy="#{i.direccion}"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.direccion}" />
+                </p:column>
+                
+                <p:column headerText="Calle" sortBy="#{i.numero}" width="12%" >
+                    <h:outputText value="#{i.numero}" />
+                </p:column>
+                
+                <p:column headerText="Dto. Piso" sortBy="#{i.departamentoPiso}" width="15%"   >
+                    <h:outputText value="#{i.departamentoPiso}" />
+                </p:column>
+                
+                <p:column headerText="Calle" sortBy="#{i.departamentoNumero}" width="12%" >
+                    <h:outputText value="#{i.departamentoNumero}" />
+                </p:column>
+                
+                 <p:column headerText="Localidad" sortBy="#{i.localidad.descripcion}" width="25%"  
+                           filterBy="#{i.localidad.descripcion}"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.localidad.descripcion}" />
+                </p:column>
+                
+                <p:column headerText="Provincia" sortBy="#{i.provincia.descripcion}" width="25%"  
+                          filterBy="#{i.provincia.descripcion}"
+                          filterMatchMode="contains" >
+                    <h:outputText value="#{i.provincia.descripcion}" />
+                </p:column>
+            </p:dataTable>     
+        </h:form>        
+
+
+    </p:dialog>
+
+</ui:composition>

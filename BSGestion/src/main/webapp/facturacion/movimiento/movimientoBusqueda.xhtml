@@ -1,0 +1,268 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" >
+
+    <!-- BUSQUEDA -->
+    <p:panelGrid id="panelBusqueda" columns="4" layout="grid" style="max-width: 900px;"
+                 styleClass="ui-panelgrid-blank"
+                 columnClasses="ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4,ui-g-4 ui-md-4 ui-lg-2,ui-g-8 ui-md-8 ui-lg-4" >
+
+        <h:outputText value="Fecha formulario" />
+        <h:panelGroup layout="block">
+
+            <div class="Wid50 Fleft">
+                <p:calendar value="#{movimientoFacturacionBean.fechaMovimientoDesde}"
+                            placeholder="Desde"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true"  >
+                    <p:ajax event="dateSelect"  process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}" />
+                </p:calendar>
+            </div>
+            <div class="Wid50 Fright">
+                <p:calendar value="#{movimientoFacturacionBean.fechaMovimientoHasta}"
+                            placeholder="Hasta"
+                            pattern="dd/MM/yyyy"
+                            showOn="button"
+                            navigator="true"
+                            mask="true" >
+                    <p:ajax event="dateSelect"  process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}" />
+                </p:calendar>
+            </div>
+        </h:panelGroup>
+
+        <h:outputText value="Solo pendientes" />
+        <p:selectBooleanCheckbox value="#{movimientoFacturacionBean.mostrarSoloPendiente}" >
+            <p:ajax event="change" process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}"  />
+        </p:selectBooleanCheckbox>
+
+        <h:outputText value="Número formulario" />
+        <h:panelGroup layout="block" >
+
+            <div class="Wid50 Fleft">
+                <p:inputText value="#{movimientoFacturacionBean.numeroFormularioDesde}"  placeholder="Desde" >
+                    <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}"/>
+                </p:inputText>
+            </div>
+
+            <div class="Wid50 Fright">
+                <p:inputText value="#{movimientoFacturacionBean.numeroFormularioHasta}"  placeholder="Hasta" >
+                    <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}"/>
+                </p:inputText>
+            </div>
+
+        </h:panelGroup>
+
+        <h:outputText value="Canal de Venta" />
+        <p:autoComplete value="#{movimientoFacturacionBean.canalVenta}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{canalVentaBean.complete}"
+                        var="e" itemLabel="#{e.descripcion}" itemValue="#{e}"
+                        converter="#{conversoresVenta.canalVenta}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}" />
+
+        </p:autoComplete>
+
+        <h:outputText value="Cliente" />
+        <p:autoComplete value="#{movimientoFacturacionBean.cliente}" dropdown="true"
+                        maxResults="8" queryDelay="1000"
+                        completeMethod="#{clienteBean.complete}"
+                        var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
+                        converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
+
+            <p:ajax event="itemSelect" process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}" />
+
+            <p:column headerText="Nro cuenta" width="100">
+                <h:outputText value="#{e.nrocta}" />
+            </p:column>
+
+            <p:column headerText="Razón social">
+                <h:outputText value="#{e.razonSocial}" />
+            </p:column>
+
+            <p:column headerText="Nombre Fantasía">
+                <h:outputText value="#{e.nombreFantasia}" />
+            </p:column>
+
+        </p:autoComplete>
+
+        <h:outputText value="Razón social o nombre" />
+        <p:inputText value="#{movimientoFacturacionBean.razonSocial}" >
+            <p:ajax event="keyup" delay="500" process="@this" update="movimientos" listener="#{movimientoFacturacionBean.buscar()}"/>
+        </p:inputText>
+
+    </p:panelGrid>
+
+    <div class="EmptyBox5" />
+
+    <div class="Container100 TexAlLeft">
+
+        <p:commandButton value="Limpiar" icon="fa fa-trash" styleClass="RedBack MaxWid100"
+                         process="@form"
+                         update="@form"
+                         actionListener="#{movimientoFacturacionBean.limpiarFiltroBusqueda()}"   />
+
+    </div>
+
+    <div class="EmptyBox5" />
+
+    <p:dataTable id="movimientos" value="#{movimientoFacturacionBean.movimientos}" var="i"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"  >
+
+        <f:facet name="header">
+            Movimientos encontrados
+        </f:facet>
+
+        <f:facet name="footer">
+            <div class="p-grid" >
+
+                <div class="p-col-8 p-md-3 " >
+                    <!--
+                    <p:selectOneMenu value="#{movimientoFacturacionBean.accionEnLote}"  >
+                        <p:ajax process="@this" update="movimientos" />
+                        <f:selectItem itemLabel="Acción en lote" itemValue="" />
+                        <f:selectItem itemLabel="Enviar Email"    itemValue="E" />
+                        <f:selectItem itemLabel="Anular Comprobante" itemValue="A" />
+                    </p:selectOneMenu>
+                    -->
+                </div>
+
+                <div class="p-col-4 p-md-1" >
+                    <p:commandButton value="Aplicar" icon="fa fa-check" styleClass="GreenBack"
+                                     rendered="#{not empty movimientoFacturacionBean.accionEnLote}"
+                                     process="@form"
+                                     update="@form"
+                                     actionListener="#{movimientoFacturacionBean.aplicarAccionEnLotes()}"   />
+                </div>
+
+                <div class="p-col-12 p-md-8 TexAlRight" >
+
+                    <h:outputText value="Cantidad de Registros: " />
+                    <p:inputText id="cantRegistros" value="#{movimientoFacturacionBean.cantidadRegistros}" style="max-width: 80px;" styleClass="TexAlRight"/>
+                    <p:commandButton icon="fa fa-check" styleClass="GreenBack"
+                                     style="margin-left: 1px;"
+                                     actionListener="#{movimientoFacturacionBean.buscar()}"
+                                     process="@form" update="movimientos" />
+
+                </div>
+            </div>
+        </f:facet>
+
+        <!--
+        <p:column headerText="Sel." width="50" styleClass="TexAlCenter" >
+            <p:selectBooleanCheckbox  value="#{i.seleccionado}" >
+                <p:ajax update="@form"  />
+            </p:selectBooleanCheckbox>
+        </p:column>
+        -->
+
+        <p:column headerText="Acciones" width="150" styleClass="TexAlCenter" >
+
+            <p:commandLink title="Seleccionar movimiento" styleClass="icono-datatable"
+                           actionListener="#{movimientoFacturacionBean.seleccionarMovimiento(i)}"
+                           process="@this"
+                           update="@form"  >
+                <i class="fa fa-check fa-2x Green" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Imprimir Comprobante de Facturación" styleClass="icono-datatable"
+                           actionListener="#{movimientoFacturacionBean.imprimir(i,'FC')}"
+                           rendered="#{i.comprobante.modulo eq 'FC'}"
+                           process="@this" >
+                <i class="fa fa-print fa-2x Orange" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Imprimir Comprobante de Venta" styleClass="icono-datatable"
+                           actionListener="#{movimientoFacturacionBean.imprimir(i,'VT')}"
+                           rendered="#{not empty i.movimientoVenta}"
+                           process="@this" >
+                <f:setPropertyActionListener value="#{i}" target="#{movimientoFacturacionBean.m}" />
+                <i class="fa fa-print fa-2x Orange" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Imprimir Comprobante de Stock" styleClass="icono-datatable"
+                           actionListener="#{movimientoFacturacionBean.imprimir(i,'ST')}"
+                           rendered="#{not empty i.movimientoStock}"
+                           process="@this" >
+                <i class="fa fa-print fa-2x Lime" ></i>
+            </p:commandLink>
+
+            <p:commandLink title="Enviar comprobante" styleClass="icono-datatable"
+                           actionListener="#{movimientoFacturacionBean.preparoEnvioNotificaciones(i)}"
+                           process="@this"
+                           update="dialogos"
+                           oncomplete="PF('dlgEnvioComprobante').show()" >
+                <i class="fa fa fa-envelope fa-2x Blue" ></i>
+            </p:commandLink>
+
+
+            <h:outputLink value="#{application.contextPath}/facturacion/seguimiento-comprobante/#{i.formulario.modfor}/#{i.formulario.codigo}/#{i.numeroFormulario}"
+                          styleClass="icono-datatable"
+                          title="Ver Seguimiento de comprobante"
+                          target="_blank" >
+
+                <i class="fa fa-list-ul fa-2x Blue"></i>
+
+            </h:outputLink>
+
+        </p:column>
+
+        <p:column headerText="Formulario" width="60" styleClass="TexAlCenter"  >
+            <h:outputText value="#{i.formulario.codigo}" />
+        </p:column>
+
+        <p:column headerText="Número" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.numeroFormulario}" >
+                <f:convertNumber pattern="0000" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Fecha" width="100" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Nro Cuenta" width="60" styleClass="TexAlCenter"  >
+            <h:outputText value="#{i.cliente.nrocta}" />
+        </p:column>
+
+        <p:column headerText="Razón social" width="300"  >
+            <h:outputText value="#{i.razonSocial}" />
+        </p:column>
+
+        <p:column headerText="" width="30" styleClass="TexAlCenter" >
+            <f:facet name="header">
+                <i class="fa fa-at fa-2x Blue"></i>
+            </f:facet>
+            <h:outputText value="#{i.correos.size()}" />
+        </p:column>
+
+        <p:column headerText="" width="30" styleClass="TexAlCenter" >
+            <f:facet name="header">
+                <i class="fa fa-paperclip fa-2x Blue"></i>
+            </f:facet>
+            <h:outputText value="#{i.archivosAdjuntos.size()}" />
+        </p:column>
+
+        <p:column headerText="Importe" width="100" >
+            <h:outputText value="#{i.importeTotal}" styleClass="Fright" >
+                <f:convertNumber pattern="###,###,##0.00" />
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Transporte" width="250"  >
+            <h:outputText value="#{i.transporte.razonSocial}" />
+        </p:column>
+
+    </p:dataTable>
+
+
+
+</ui:composition>
+

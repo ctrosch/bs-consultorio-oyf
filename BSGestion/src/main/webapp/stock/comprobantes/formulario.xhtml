@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:viewParam name="ID_MENU" value="#{impresionFormularioStockBean.codMenu}"/>
+            <f:viewParam name="TITULO" value="#{impresionFormularioStockBean.titulo}"/>
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            #{impresionFormularioStockBean.titulo}
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <p:spacer width="100%" height="1em" rendered="#{impresionFormularioStockBean.solicitaEmail}"  />
+
+            <p:panel header="#{impresionFormularioStockBean.titulo}" >
+
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid500"
+                             columnClasses="Container40, Container60" >
+
+                    <h:outputText value="Formulario" />
+                    <h:panelGroup id="formularioStock" layout="block" style="text-align: left;">
+                        <p:remoteCommand name="procesarFormularioStock"
+                                         process="@this" update="formularioStock"
+                                         actionListener="#{impresionFormularioStockBean.procesarFormulario}" />
+                        <p:commandButton icon="fa fa-search" process="@this" oncomplete="PF('dlg_formulario_stock').show()" />
+                        <h:outputText value="#{impresionFormularioStockBean.formulario.descripcion}" />
+                    </h:panelGroup>
+
+                    <h:outputText value="Número" />
+                    <p:inputText value="#{impresionFormularioStockBean.numeroFormulario}"  />
+
+                    <h:outputText value="Cant. Copias" />
+                    <p:inputText value="#{impresionFormularioStockBean.copias}"  >
+                        <f:convertNumber integerOnly="true" maxIntegerDigits="1"  />
+                    </p:inputText>
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank informePanelGrid900" >
+
+                    <p:commandButton value="Ver reporte" icon="fa fa-print"
+                                     actionListener="#{impresionFormularioStockBean.verReporte}"
+                                     update="@form" />
+
+                    <p:commandButton value="Limpiar Filtros" icon="fa fa-trash" process="@this"
+                                     actionListener="#{impresionFormularioStockBean.resetParametros}"
+                                     update="@form" />
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <div class="EmptyBox10" />
+
+            <!-- REPORTE -->
+            <bs:dialogoReporte muestraReporte="#{impresionFormularioStockBean.muestraReporte}"
+                               nombreArchivo="#{impresionFormularioStockBean.nombreArchivo}" />
+
+        </ui:define>
+
+        <ui:define name="dialogos" >
+            <ui:include src="/stock/busqueda/buscadorFormulario.xhtml" />
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+
