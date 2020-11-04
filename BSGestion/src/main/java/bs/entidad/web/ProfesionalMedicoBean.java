@@ -9,6 +9,7 @@ import bs.entidad.modelo.Categoria;
 import bs.entidad.modelo.Contacto;
 import bs.entidad.modelo.DireccionEntregaEntidad;
 import bs.entidad.modelo.EntidadComercial;
+import bs.entidad.modelo.EntidadHorario;
 import bs.entidad.modelo.EstadoEntidad;
 import bs.entidad.modelo.ImpuestoPorEntidad;
 import bs.entidad.modelo.Origen;
@@ -181,6 +182,21 @@ public class ProfesionalMedicoBean extends GenericBean implements Serializable {
 
         try {
             entidadRN.eliminarItemImpuesto(entidad, itemImpuesto);
+            JsfUtil.addWarningMessage("Se ha borrado el item");
+        } catch (Exception ex) {
+            JsfUtil.addErrorMessage("Error " + ex);
+        }
+    }
+
+    public void nuevoItemHorario() {
+
+        entidadRN.nuevoItemHorario(entidad);
+    }
+
+    public void eliminarItemHorario(EntidadHorario itemHorario) {
+
+        try {
+            entidadRN.eliminarItemHorario(entidad, itemHorario);
             JsfUtil.addWarningMessage("Se ha borrado el item");
         } catch (Exception ex) {
             JsfUtil.addErrorMessage("Error " + ex);

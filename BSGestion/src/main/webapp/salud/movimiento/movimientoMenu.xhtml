@@ -33,12 +33,9 @@
                     rendered="#{not empty movimientoSaludBean.m and movimientoSaludBean.modoVista eq 'D'}"
                     update="@form" />
 
-        <p:menuitem value="Pendientes" icon="fa fa-list-alt"
+        <p:menuitem value="#{(movimientoSaludBean.m.comprobante.tipoComprobante eq 'SA'?'Turnos Pendientes':(movimientoSaludBean.m.comprobante.tipoComprobante eq 'IA'?'Pacientes en Espera':'Pendientes'))}" icon="fa fa-list-alt"
                     actionListener="#{movimientoSaludBean.buscarPendientes() }"
-                    rendered="#{empty movimientoSaludBean.m.id and movimientoSaludBean.modoVista eq 'D'
-                                and (movimientoSaludBean.m.comprobante.tipoComprobante eq 'RT'
-                                or movimientoSaludBean.m.comprobante.tipoComprobante eq 'SA'
-                                or movimientoSaludBean.m.comprobante.tipoComprobante eq 'IA' ) }"
+                    rendered="#{empty movimientoSaludBean.m.id and movimientoSaludBean.modoVista eq 'D'}"
                     oncomplete="PF('dlgPendiente').show()"
                     process="@this" update="buscadorPendiente" >
         </p:menuitem>
@@ -56,6 +53,20 @@
             <p:confirm header="Confirmación"
                        message="¿Está seguro de anular o revertir el movimiento #{movimientoSaludBean.m.formulario.descripcion}  #{movimientoSaludBean.m.puntoVenta.codigo} #{movimientoSaludBean.m.numeroFormulario}?" icon="ui-icon-alert" />
             <i class="fa fa-close fa-2x Red" ></i>
+        </p:menuitem>
+
+        <p:menuitem value="Ver Historia Clínica" icon="fa fa-info-circle"
+                    rendered="#{not empty movimientoSaludBean.m.paciente and movimientoSaludBean.modoVista eq 'D'}"
+                    url="#{request.contextPath}#{movimientoSaludBean.obtenerUrlMenu('SIS_00695','NROCTA',movimientoSaludBean.m.paciente.nrocta)}"
+                    target="_blank"
+                    process="@this" >
+        </p:menuitem>
+
+        <p:menuitem value="Datos Paciente" icon="fa fa-info-circle"
+                    rendered="#{not empty movimientoSaludBean.m.paciente and movimientoSaludBean.modoVista eq 'D'}"
+                    url="#{request.contextPath}#{movimientoSaludBean.obtenerUrlMenu('SIS_00695','NROCTA',movimientoSaludBean.m.paciente.nrocta)}"
+                    target="_blank"
+                    process="@this" >
         </p:menuitem>
 
 

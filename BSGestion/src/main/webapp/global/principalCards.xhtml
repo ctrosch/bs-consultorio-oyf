@@ -71,6 +71,14 @@
                  rendered="#{dashboardBean.cantCuentasContables > 0 and dashboardBean.isActiveModulo('CG')}"
                  url="#{dashboardBean.obtenerUrlMenu('SIS_00420')}"  />
 
+        <bs:card title="Médicos" value="#{dashboardBean.cantProfesionales}"
+                 rendered="#{dashboardBean.cantProfesionales > 0 and dashboardBean.isActiveModulo('SA')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00696')}"  />
+
+        <bs:card title="Pacientes" value="#{dashboardBean.cantPacientes}"
+                 rendered="#{dashboardBean.cantPacientes > 0 and dashboardBean.isActiveModulo('SA')}"
+                 url="#{dashboardBean.obtenerUrlMenu('SIS_00695')}"  />
+
     </div>
 
 

@@ -46,6 +46,11 @@
         <p:inputText id="nombProf" value="#{profesionalMedicoBean.entidad.nombre}"
                      required="true" requiredMessage="Debe ingresar el nombre/s del Profesor" />
 
+        <h:outputText value="Nro. de Matricula " />
+        <p:inputText  value="#{profesionalMedicoBean.entidad.nroMatricula}"  />
+
+        <h:outputText value=" " />
+        <h:outputText value=" " />
 
         <h:outputText value="Tipo/Nro Documento *" />
         <h:panelGroup id="pnTipoDoc" layout="block"  >
@@ -139,6 +144,20 @@
             -->
         </p:inputText>
 
+
+        <h:outputText value="Cantidad de Turnos Diarios *" />
+        <p:inputText value="#{profesionalMedicoBean.entidad.cantidadTurnosDiarios}"
+                     required="true" requiredMessage="La cantidad de turnos diarios es obligatoria"
+                     validatorMessage="Ingrese una cantidád válida">
+            <f:validateLength minimum="0" maximum="100" />
+        </p:inputText>
+
+        <h:outputText value="Duración Turno en minutos *" />
+        <p:inputNumber  value="#{profesionalMedicoBean.entidad.duracionTurno}" minValue="0" maxValue="60" decimalPlaces="0" required="true" requiredMessage="La duración del Turno es obligatorio" />
+
+        <h:outputText value=" " />
+        <h:outputText value=" " />
+
         <p:inputText value="#{profesionalMedicoBean.entidad.razonSocial}"
                      style="display: none"/>
 
@@ -162,6 +181,102 @@
     </p:panelGrid>
 
     <div class="EmptyBox10"> </div>
+
+    <p:tabView id="tbDatosAsociados" activeIndex="#{profesionalMedicoBean.indexTab1}"  >
+
+        <p:ajax event="tabChange" listener="#{profesionalMedicoBean.onTab1Change}" />
+
+        <p:tab id="t0" title="Grilla horaria" >
+
+            <p:dataTable id="tablaHO" var="h"  style="max-width: 1200px;"
+                         value="#{profesionalMedicoBean.entidad.horarios}"
+                         emptyMessage="No se encontraron resultados"
+                         resizableColumns="true" resizeMode="expand" liveResize="true"
+                         rows="10" paginator="true" >
+
+                <f:facet name="footer" >
+
+                    <p:commandButton icon="fa fa-plus" styleClass="GreenBack"
+                                     actionListener="#{profesionalMedicoBean.nuevoItemHorario()}"
+                                     value="Agregar Horario"
+                                     process="tablaHO"
+                                     update="tablaHO" />
+                </f:facet>
+
+
+                <p:column headerText="Día de la semana" width="150" style="text-align: center;" >
+                    <p:selectOneMenu value="#{h.diaSemana}"
+                                     required="true" requiredMessage="Seleccione día de la semana" >
+                        <p:ajax process="@this"  />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Lunes" itemValue="2 - Lunes" />
+                        <f:selectItem itemLabel="Martes" itemValue="3 - Martes" />
+                        <f:selectItem itemLabel="Miércoles" itemValue="4 - Miércoles" />
+                        <f:selectItem itemLabel="Jueves" itemValue="5 - Jueves" />
+                        <f:selectItem itemLabel="Viernes" itemValue="6 - Viernes" />
+                        <f:selectItem itemLabel="Sábado" itemValue="7 - Sábado" />
+                        <f:selectItem itemLabel="Domingo" itemValue="1 - Domingo" />
+                    </p:selectOneMenu>
+
+                </p:column>
+
+                <p:column headerText="Atiende Turno Mañana" width="100" style="text-align: center;" >
+                    <p:selectOneMenu value="#{h.atiendeTurnoMañana}"
+                                     required="true" requiredMessage="Seleccione si atiende por la mañana" >
+                        <p:ajax process="@this"  />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneMenu>
+
+                </p:column>
+
+                <p:column headerText="Hora Inicio Mañana" width="100" style="text-align: center;" >
+                    <p:calendar timeOnly="true"   value="#{h.horaInicioMañana}"  pattern="HH:mm" required="#{h.atiendeTurnoMañana eq 'S'}" requiredMessage="La hora Inicio de la Mañana es obligatoria"/>
+                </p:column>
+
+                <p:column headerText="Hora Fin Mañana" width="100" style="text-align: center;" >
+                    <p:calendar timeOnly="true"   value="#{h.horaFinMañana}"  pattern="HH:mm" required="#{h.atiendeTurnoMañana eq 'S'}" requiredMessage="La hora Fin de la Mañana es obligatoria"/>
+                </p:column>
+
+                <p:column headerText="Atiende Turno Tarde" width="100" style="text-align: center;" >
+                    <p:selectOneMenu value="#{h.atiendeTurnoTarde}"
+                                     required="true" requiredMessage="Seleccione si atiende por la tarde" >
+                        <p:ajax process="@this"  />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" />
+                        <f:selectItem itemLabel="Si" itemValue="S" />
+                        <f:selectItem itemLabel="No" itemValue="N" />
+                    </p:selectOneMenu>
+
+                </p:column>
+
+                <p:column headerText="Hora Inicio Tarde" width="100" style="text-align: center;" >
+                    <p:calendar timeOnly="true"   value="#{h.horaInicioTarde}"  pattern="HH:mm" required="#{h.atiendeTurnoTarde eq 'S'}" requiredMessage="La hora Inicio de la Tarde es obligatoria"/>
+                </p:column>
+
+                <p:column headerText="Hora Fin Tarde" width="100" style="text-align: center;" >
+                    <p:calendar timeOnly="true"   value="#{h.horaFinTarde}"  pattern="HH:mm" required="#{h.atiendeTurnoTarde eq 'S'}" requiredMessage="La hora Fin de la Tarde es obligatoria"/>
+                </p:column>
+
+                <p:column headerText="" width="50" style="text-align: center;" >
+
+                    <p:commandLink process="tablaHO" update="@form"
+                                   actionListener="#{profesionalMedicoBean.eliminarItemHorario(h)}" >
+                        <p:confirm header="Confirmación" message="Está seguro que desea borrar el item?" icon="ui-icon-alert" />
+                        <i class="fa fa-close fa-2x Red" ></i>
+                    </p:commandLink>
+
+                </p:column>
+
+
+            </p:dataTable>
+
+        </p:tab>
+
+
+
+
+    </p:tabView>
 
 </ui:composition>
 

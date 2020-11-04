@@ -308,6 +308,11 @@ public class Parametro implements Serializable {
         return System.getProperty("catalina.base") + File.separator + "docroot" + File.separator + nombreCarpetaArchivos + File.separator + "productos" + File.separator;
     }
 
+    public String getPathCarpetaAdjuntos() {
+
+        return System.getProperty("catalina.base") + File.separator + "docroot" + File.separator + nombreCarpetaArchivos + File.separator + "adjuntos" + File.separator;
+    }
+
     public String getPathCarpetaProcesos() {
 
         return System.getProperty("catalina.base") + File.separator + "docroot" + File.separator + nombreCarpetaArchivos + File.separator + "procesos" + File.separator;
@@ -323,6 +328,11 @@ public class Parametro implements Serializable {
     public String getPathCarpetaUsuarios() {
 
         return System.getProperty("catalina.base") + File.separator + "docroot" + File.separator + nombreCarpetaArchivos + File.separator + "usuarios" + File.separator;
+    }
+
+    public String getUrlCarpetaAdjuntos() {
+
+        return urlServidor + "/" + nombreCarpetaArchivos + "/" + "adjuntos" + "/";
     }
 
     public String getUrlCarpetaArchivos() {

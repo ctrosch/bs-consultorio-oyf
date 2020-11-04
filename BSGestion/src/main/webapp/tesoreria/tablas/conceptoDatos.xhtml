@@ -43,7 +43,7 @@
                         var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
                         converter="#{conversoresTesoreria.cuentaTesoreria}" >
 
-            <p:ajax event="itemSelect" process="@this" update="@this" />
+            <p:ajax event="itemSelect" process="@this" />
 
             <p:column headerText="Tipo ">
                 <h:outputText value="#{p.tipoCuenta.descripcion}" />

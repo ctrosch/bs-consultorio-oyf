@@ -109,6 +109,38 @@ public class MovimientoSaludDAO extends BaseDAO {
 
     }
 
+    public int getCantidadPacientesByEstado(String tipoComprobante, String estado, EntidadComercial profesional, Date fechaMovimiento) {
+
+        try {
+            String sQuery = "SELECT count(e) FROM MovimientoSalud e "
+                    + "WHERE e.comprobante.tipoComprobante = :tipoComprobante "
+                    + "AND e.estado.codigo = :estado "
+                    + (fechaMovimiento != null ? "AND e.fechaMovimiento = :fechaMovimiento " : "")
+                    + (profesional != null ? "AND e.profesional.nrocta LIKE :nrocta " : "")
+                    + "AND e.horaMovimiento IS NOT NULL ";
+
+            Query q = getEm().createQuery(sQuery);
+
+            q.setParameter("tipoComprobante", tipoComprobante);
+            q.setParameter("estado", estado);
+
+            if (fechaMovimiento != null) {
+                q.setParameter("fechaMovimiento", fechaMovimiento);
+            }
+            if (profesional != null) {
+                q.setParameter("profesional", profesional.getNrocta());
+            }
+
+            return (q.getSingleResult() != null ? ((Long) q.getSingleResult()).intValue() : 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error getCantidadPacientesByEstado ");
+            return 0;
+        }
+
+    }
+
     public List<MovimientoSalud> getMovimientoSaludEspera(EntidadComercial profesional) {
 
         try {
@@ -159,6 +191,29 @@ public class MovimientoSaludDAO extends BaseDAO {
             e.printStackTrace();
             System.err.println("Error al obtener el turno dado");
             return true;
+        }
+    }
+
+    public Integer controlarCantidadTurnosDado(Date fechaMovimiento, EntidadComercial profesional) {
+        try {
+
+            String sQuery = "SELECT count(e) FROM MovimientoSalud e "
+                    + "WHERE "
+                    + "e.fechaMovimiento = :fechaMovimiento "
+                    + "AND e.profesional.nrocta LIKE :nrocta "
+                    + "AND e.estado.codigo IN ('E','R','H')";
+
+            Query q = getEm().createQuery(sQuery);
+
+            q.setParameter("fechaMovimiento", fechaMovimiento);
+            q.setParameter("nrocta", profesional.getNrocta());
+
+            return ((Long) q.getSingleResult()).intValue();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error al obtener la cantidad de turnos dados por fecha");
+            return 999;
         }
     }
 

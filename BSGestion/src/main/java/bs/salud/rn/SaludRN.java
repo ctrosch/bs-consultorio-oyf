@@ -8,6 +8,7 @@ import bs.administracion.modelo.Parametro;
 import bs.administracion.rn.ModuloRN;
 import bs.administracion.rn.ParametrosRN;
 import bs.entidad.modelo.EntidadComercial;
+import bs.entidad.modelo.EntidadHorario;
 import bs.entidad.modelo.EntidadObraSocial;
 import bs.global.excepciones.ExcepcionGeneralSistema;
 import bs.global.modelo.ArchivoAdjunto;
@@ -66,9 +67,19 @@ public class SaludRN {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public synchronized MovimientoSalud guardar(MovimientoSalud m) throws Exception {
+
+        SimpleDateFormat fecha = new SimpleDateFormat("dd/MM/yyyy");
         preSave(m);
         control(m);
         if (m.getId() == null) {
+            if (m.getComprobante().getTipoComprobante().equals("RT")) {
+
+                controlCantidadTurnos(m);
+            }
+            if (m.getComprobante().getTipoComprobante().equals("SA") && m.getMovimientoAplicado() == null) {
+
+                controlCantidadTurnos(m);
+            }
 
 //            calcularImportes(m);
             tomarNumeroFormulario(m);
@@ -77,6 +88,13 @@ public class SaludRN {
             // Solo edito si el comprobante es una reserva de turno o un informe de atención
 //        } else if (m.getComprobante().getTipoComprobante().equals("RT") || m.getComprobante().getTipoComprobante().equals("IA")) {
         } else {
+            if (m.getComprobante().getTipoComprobante().equals("RT")) {
+                Date fechaComprobanteAModificar = saludDAO.getMovimientoSalud(m.getId()).getFechaMovimiento();
+                if (!fecha.format(fechaComprobanteAModificar).equals(fecha.format(m.getFechaMovimiento()))) {
+                    controlRangoHorasEnOtraFecha(m);
+                    controlCantidadTurnos(m);
+                }
+            }
             m = saludDAO.editar(m);
         }
 
@@ -214,18 +232,71 @@ public class SaludRN {
 
     }
 
-//    public boolean controlarAlumnoSiEstaInscripto(MovimientoEducacion m) {
-//
-//        if (m.getComprobante().getEsComprobanteReversion().equals("S")) {
-//            return false;
-//        }
-//
-//        if (m.getCurso() == null) {
-//            return false;
-//        }
-//
-//        return educacionDAO.controlarAlumnoSiEstaInscripto(m.getAlumno().getNrocta(), m.getCarrera().getCodigo(), m.getCurso().getCodigo());
-//    }
+    public void controlCantidadTurnos(MovimientoSalud m) throws ExcepcionGeneralSistema, Exception {
+        Integer cantidadTurno = saludDAO.controlarCantidadTurnosDado(m.getFechaMovimiento(), m.getProfesional());
+        if (cantidadTurno >= m.getProfesional().getCantidadTurnosDiarios()) {
+            throw new ExcepcionGeneralSistema("No se puede guardar . La cantidad de turnos diarios del profesional " + m.getNombreProfesional() + " ya fue completada.-");
+        }
+    }
+
+    public void controlRangoHorasEnOtraFecha(MovimientoSalud m) throws ExcepcionGeneralSistema, Exception {
+        SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+        GregorianCalendar gcalendario = new GregorianCalendar();
+        gcalendario.setTime(m.getFechaMovimiento());
+
+        if (m.getProfesional().getHorarios() != null && !m.getProfesional().getHorarios().isEmpty()) {
+            for (EntidadHorario horario : m.getProfesional().getHorarios()) {
+                if (Integer.parseInt(horario.getDiaSemana().substring(0, 1).trim()) == gcalendario.get(Calendar.DAY_OF_WEEK)) {
+                    if (horario.getAtiendeTurnoMañana().equals("S") && horario.getAtiendeTurnoTarde().equals("S")) {
+                        if (!horario.getHoraInicioMañana().equals(m.getHoraMovimiento())) {
+                            if (!horario.getHoraFinMañana().equals(horario.getHoraInicioTarde())) {
+                                if (m.getHoraMovimiento().equals(horario.getHoraFinMañana())) {
+                                    throw new ExcepcionGeneralSistema("No se puede guardar . La hora " + formatoHora.format(m.getHoraMovimiento()) + " no se encuentra en dicha grilla horario esa fecha .-");
+                                }
+                            }
+                            if (m.getHoraMovimiento().equals(horario.getHoraFinTarde())) {
+                                throw new ExcepcionGeneralSistema("No se puede guardar . La hora " + formatoHora.format(m.getHoraMovimiento()) + " no se encuentra en dicha grilla horario esa fecha .-");
+                            }
+
+                            if (!(horario.getHoraInicioMañana().before(m.getHoraMovimiento()) && m.getHoraMovimiento().before(horario.getHoraFinMañana()))) {
+                                if (!(horario.getHoraInicioTarde().before(m.getHoraMovimiento()) && m.getHoraMovimiento().before(horario.getHoraFinTarde()))) {
+                                    throw new ExcepcionGeneralSistema("No se puede guardar . La hora " + formatoHora.format(m.getHoraMovimiento()) + " no se encuentra en dicha grilla horario esa fecha .-");
+                                }
+                            }
+                        }
+
+                    } else if (horario.getAtiendeTurnoMañana().equals("S")) {
+
+                        if (m.getHoraMovimiento().equals(horario.getHoraFinMañana())) {
+                            throw new ExcepcionGeneralSistema("No se puede guardar . La hora " + formatoHora.format(m.getHoraMovimiento()) + " no se encuentra en dicha grilla horario esa fecha .-");
+                        }
+                        if (!horario.getHoraInicioMañana().equals(m.getHoraMovimiento())) {
+                            if (!(horario.getHoraInicioMañana().before(m.getHoraMovimiento()) && m.getHoraMovimiento().before(horario.getHoraFinMañana()))) {
+                                throw new ExcepcionGeneralSistema("No se puede guardar . La hora " + formatoHora.format(m.getHoraMovimiento()) + " no se encuentra en dicha grilla horario esa fecha .-");
+                            }
+                        }
+
+                    } else if (horario.getAtiendeTurnoTarde().equals("S")) {
+
+                        if (m.getHoraMovimiento().equals(horario.getHoraFinTarde())) {
+                            throw new ExcepcionGeneralSistema("No se puede guardar . La hora " + formatoHora.format(m.getHoraMovimiento()) + " no se encuentra en dicha grilla horario esa fecha .-");
+                        }
+                        if (!horario.getHoraInicioTarde().equals(m.getHoraMovimiento())) {
+                            if (!(horario.getHoraInicioTarde().before(m.getHoraMovimiento()) && m.getHoraMovimiento().before(horario.getHoraFinTarde()))) {
+                                throw new ExcepcionGeneralSistema("No se puede guardar . La hora " + formatoHora.format(m.getHoraMovimiento()) + " no se encuentra en dicha grilla horario esa fecha .-");
+                            }
+                        }
+
+                    }
+
+                    break;
+                }
+            }
+
+        }
+
+    }
+
     public boolean controlarSiEstaTurnoDado(MovimientoSalud m) {
 
         return saludDAO.controlarSiEstaTurnoDado(m.getFechaMovimiento(), m.getHoraMovimiento(), m.getProfesional());
@@ -242,7 +313,12 @@ public class SaludRN {
         return saludDAO.getMovimientoSaludEspera(profesional);
     }
 
-    public List<Date> completeHorario(Date fechaMovimiento, EntidadComercial profesional) {
+    public int getCantidadPacientesByEstado(String tipoComprobante, String estado, EntidadComercial profesional, Date fechaMovimiento) {
+
+        return saludDAO.getCantidadPacientesByEstado(tipoComprobante, estado, profesional, fechaMovimiento);
+    }
+
+    public List<Date> completeHorario2(Date fechaMovimiento, EntidadComercial profesional) {
 
         List<MovimientoSalud> movimientos = new ArrayList<MovimientoSalud>();
         movimientos = saludDAO.getMovimientoSaludEspera(fechaMovimiento, profesional);
@@ -320,6 +396,101 @@ public class SaludRN {
         } else {
 
             return horarios;
+        }
+
+    }
+
+    public List<Date> completeHorario(Date fechaMovimiento, EntidadComercial profesional) {
+
+        List<MovimientoSalud> movimientos = new ArrayList<MovimientoSalud>();
+        movimientos = saludDAO.getMovimientoSaludEspera(fechaMovimiento, profesional);
+        Date hora = null;
+        Date horarioInicioMañana = null;
+        Date horarioFinMañana = null;
+        Date horarioInicioTarde = null;
+        Date horarioFinTarde = null;
+        Boolean flag = false;
+        Boolean atiendeMañana = false;
+        Boolean atiendeTarde = false;
+        Integer duracionTurno = profesional.getDuracionTurno();
+
+        GregorianCalendar gcalendario = new GregorianCalendar();
+        gcalendario.setTime(fechaMovimiento);
+
+        if (profesional.getHorarios() != null && !profesional.getHorarios().isEmpty()) {
+            for (EntidadHorario horario : profesional.getHorarios()) {
+                if (Integer.parseInt(horario.getDiaSemana().substring(0, 1).trim()) == gcalendario.get(Calendar.DAY_OF_WEEK)) {
+                    horarioInicioMañana = horario.getHoraInicioMañana();
+                    horarioFinMañana = horario.getHoraFinMañana();
+                    horarioInicioTarde = horario.getHoraInicioTarde();
+                    horarioFinTarde = horario.getHoraFinTarde();
+                    atiendeMañana = horario.getAtiendeTurnoMañana().equals("S");
+                    atiendeTarde = horario.getAtiendeTurnoTarde().equals("S");
+                    flag = true;
+                    break;  //En BD tenemos que colocar la opcion de que profesional y dia de la semana no se pueden repetir
+                }
+            }
+        }
+
+        if (flag) {
+            GregorianCalendar gc = new GregorianCalendar();
+            List<Date> horarios = new ArrayList<>();
+
+            if (atiendeMañana) {
+
+                //Turno mañana
+                horarios.add(horarioInicioMañana);
+
+                gc.setTime(horarioInicioMañana);
+                gc.set(Calendar.MINUTE, gc.get(Calendar.MINUTE) + duracionTurno);
+                hora = gc.getTime();
+                while (hora.before(horarioFinMañana)) {
+                    horarios.add(hora);
+                    gc.setTime(hora);
+                    gc.set(Calendar.MINUTE, gc.get(Calendar.MINUTE) + duracionTurno);
+                    hora = gc.getTime();
+                }
+            }
+
+            if (atiendeTarde) {
+
+                //Turno Tarde
+                horarios.add(horarioInicioTarde);
+
+                gc.setTime(horarioInicioTarde);
+                gc.set(Calendar.MINUTE, gc.get(Calendar.MINUTE) + duracionTurno);
+                hora = gc.getTime();
+                while (hora.before(horarioFinTarde)) {
+                    horarios.add(hora);
+                    gc.setTime(hora);
+                    gc.set(Calendar.MINUTE, gc.get(Calendar.MINUTE) + duracionTurno);
+                    hora = gc.getTime();
+                }
+
+            }
+
+            List<Date> horas = new ArrayList<>();
+            List<Date> horasMovimientos = new ArrayList<>();
+
+            if (movimientos != null && !movimientos.isEmpty()) {
+                for (MovimientoSalud mov : movimientos) {
+                    horasMovimientos.add(mov.getHoraMovimiento());
+                }
+
+                for (Date h : horarios) {
+                    if (!horasMovimientos.contains(h)) {
+                        horas.add(h);
+                    }
+                }
+
+                return horas;
+            } else {
+
+                return horarios;
+            }
+
+        } else {
+            return new ArrayList<Date>();
         }
 
     }
@@ -484,12 +655,6 @@ public class SaludRN {
 
     }
 
-    public MovimientoSalud nuevoTurno(MovimientoSalud movimiento, SelectEvent selectEvent) {
-        Date fechaEvento = (Date) selectEvent.getObject();
-        movimiento.setFechaMovimiento(fechaEvento);
-        return movimiento;
-    }
-
     public ScheduleModel actualizarCalendario(List<MovimientoSalud> lista) throws ParseException {
         eventModel = new DefaultScheduleModel();
         ParametroSalud ps = parametroSaludRN.getParametro();
@@ -602,6 +767,21 @@ public class SaludRN {
 
     public void setEventModel(ScheduleModel eventModel) {
         this.eventModel = eventModel;
+    }
+
+    public void cargarHistoriaClinica(MovimientoSalud m) {
+
+        if (m.getPaciente() == null) {
+            return;
+        }
+
+        Map<String, String> filtro = saludDAO.getFiltro();
+
+        filtro.put("comprobante.tipoComprobante = ", "'IA'");
+        filtro.put("paciente.nrocta = ", "'" + m.getPaciente().getNrocta() + "'");
+
+        m.setHistoriaClinica(saludDAO.getListaByBusqueda(filtro, 100));
+
     }
 
 }

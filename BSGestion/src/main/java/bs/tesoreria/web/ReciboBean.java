@@ -30,6 +30,7 @@ public class ReciboBean extends MovimientoTesoreriaBean {
 
     private List<ItemPendienteCuentaCorriente> debitos;
     private BigDecimal totalDebe;
+    private BigDecimal totalDebeSecundario;
 
     /**
      * Creates a new instance of CajaBean
@@ -43,6 +44,7 @@ public class ReciboBean extends MovimientoTesoreriaBean {
 
         if (!beanIniciado) {
             totalDebe = BigDecimal.ZERO;
+            totalDebeSecundario = BigDecimal.ZERO;
             super.iniciarVariables();
         }
     }
@@ -53,7 +55,15 @@ public class ReciboBean extends MovimientoTesoreriaBean {
         if (m.isEsAnticipo()) {
             m.setDebitos(null);
         } else {
-            totalDebe = cuentaCorrienteRN.sumarSaldos(debitos, m.getMonedaRegistracion().getCodigo());
+
+            if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaPrimaria())) {
+                totalDebe = cuentaCorrienteRN.sumarSaldos(debitos, m.getMonedaRegistracion().getCodigo());
+            }
+
+            if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaSecundaria())) {
+                totalDebeSecundario = cuentaCorrienteRN.sumarSaldos(debitos, m.getMonedaRegistracion().getCodigo());
+            }
+
         }
 
         if (!puedoGuardar()) {
@@ -64,7 +74,8 @@ public class ReciboBean extends MovimientoTesoreriaBean {
 
         if (m.getId() != null) {
             totalDebe = BigDecimal.ZERO;
-            debitos = new ArrayList<ItemPendienteCuentaCorriente>();
+            totalDebeSecundario = BigDecimal.ZERO;
+            debitos = new ArrayList<>();
         }
     }
 
@@ -91,7 +102,7 @@ public class ReciboBean extends MovimientoTesoreriaBean {
         }
 
         if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaSecundaria())) {
-            if (!m.isEsAnticipo() && totalDebe.compareTo(m.getImporteTotalDebeSecundario()) != 0) {
+            if (!m.isEsAnticipo() && totalDebeSecundario.compareTo(m.getImporteTotalDebeSecundario()) != 0) {
                 JsfUtil.addErrorMessage("El importe a aplicar es diferente a la suma de los conceptos ingresados");
                 todoOK = false;
             }
@@ -148,7 +159,8 @@ public class ReciboBean extends MovimientoTesoreriaBean {
             JsfUtil.addErrorMessage("El saldo pendiente que está modificando no está seleccionado");
         }
 
-        totalDebe = cuentaCorrienteRN.sumarSaldos(debitos, m.getMonedaRegistracion().getCodigo());
+        calcularTotal();
+
     }
 
     public void marcarDebito(ItemPendienteCuentaCorriente i) {
@@ -156,25 +168,14 @@ public class ReciboBean extends MovimientoTesoreriaBean {
         if (i.isSeleccionado()) {
 
             if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaPrimaria())) {
-                i.setImporteAplicar(i.getPendiente());
 
-//                BigDecimal disponible = m.getImporteTotalDebe().add(totalDebe.negate());
-//
-//                if (i.getImporteAplicar().compareTo(disponible) > 0) {
-//                    i.setImporteAplicar(disponible);
-////                    JsfUtil.addWarningMessage("El importe a aplicar es mayor al pendiente");
-//                }
+                i.setImporteAplicar(i.getPendiente());
                 i.setImporteAplicarSecundario(i.getImporteAplicar().divide(m.getCotizacion(), 2, RoundingMode.HALF_UP));
             }
 
             if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaSecundaria())) {
-                i.setImporteAplicarSecundario(i.getPendienteSecundario());
 
-//                BigDecimal disponible = m.getImporteTotalDebeSecundario().add(totalDebe.negate());
-//
-//                if (i.getImporteAplicarSecundario().compareTo(disponible) > 0) {
-//                    i.setImporteAplicarSecundario(disponible);
-//                }
+                i.setImporteAplicarSecundario(i.getPendienteSecundario());
                 i.setImporteAplicar(i.getImporteAplicarSecundario().multiply(m.getCotizacion()).setScale(2, RoundingMode.HALF_UP));
             }
 
@@ -183,9 +184,21 @@ public class ReciboBean extends MovimientoTesoreriaBean {
             i.setImporteAplicarSecundario(BigDecimal.ZERO);
         }
 
-        totalDebe = cuentaCorrienteRN.sumarSaldos(debitos, m.getMonedaRegistracion().getCodigo());
+        calcularTotal();
     }
 
+    public void calcularTotal() {
+
+        if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaPrimaria())) {
+            totalDebe = cuentaCorrienteRN.sumarSaldos(debitos, m.getMonedaRegistracion().getCodigo());
+        }
+
+        if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaSecundaria())) {
+            totalDebeSecundario = cuentaCorrienteRN.sumarSaldos(debitos, m.getMonedaRegistracion().getCodigo());
+        }
+    }
+
+    @Override
     public void asignarTotal(ItemMovimientoTesoreria item) {
 
         if (item.getDebeHaber().equals("D")) {
@@ -194,7 +207,14 @@ public class ReciboBean extends MovimientoTesoreriaBean {
             m.getItemsHaber().forEach(i -> i.setImporte(BigDecimal.ZERO));
         }
 
-        item.setImporte(totalDebe);
+        if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaPrimaria())) {
+            item.setImporte(totalDebe);
+        }
+
+        if (m.getMonedaRegistracion().getCodigo().equals(parametrosRN.getParametro().getCodigoMonedaSecundaria())) {
+            item.setImporte(totalDebeSecundario);
+        }
+
         calcularImportes();
     }
 
@@ -213,6 +233,14 @@ public class ReciboBean extends MovimientoTesoreriaBean {
 
     public void setTotalDebe(BigDecimal totalDebe) {
         this.totalDebe = totalDebe;
+    }
+
+    public BigDecimal getTotalDebeSecundario() {
+        return totalDebeSecundario;
+    }
+
+    public void setTotalDebeSecundario(BigDecimal totalDebeSecundario) {
+        this.totalDebeSecundario = totalDebeSecundario;
     }
 
 }

@@ -53,7 +53,7 @@ public class EntidadTransporte implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Sucursal sucursal;
 
-    @JoinColumn(name = "CODTRA", referencedColumnName = "CODIGO", nullable = false)
+    @JoinColumn(name = "CODTRA", referencedColumnName = "NROCTA", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EntidadComercial transporte;
 

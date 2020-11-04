@@ -324,6 +324,15 @@ public class EntidadComercial implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private CanalVenta canalVenta;
 
+    @Column(name = "CNTTUR")
+    private int cantidadTurnosDiarios;
+
+    @Column(name = "DURTUR")
+    private Integer duracionTurno;
+
+    @Column(name = "NROMAT", length = 30)
+    private String nroMatricula;
+
     @Embedded
     private Auditoria auditoria;
 
@@ -354,6 +363,9 @@ public class EntidadComercial implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "entidadComercial", fetch = FetchType.LAZY)
     private List<EntidadChofer> choferes;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profesionalMedico", fetch = FetchType.LAZY)
+    private List<EntidadHorario> horarios;
+
     @Transient
     private String conDeuda;
 
@@ -369,6 +381,7 @@ public class EntidadComercial implements Serializable {
         this.soloContado = "N";
         this.entidadComodin = "N";
         this.pideCodigoAutorizacion = "S";
+        this.cantidadTurnosDiarios = 1;
     }
 
     public EntidadComercial(TipoEntidad tipo) {
@@ -1117,6 +1130,38 @@ public class EntidadComercial implements Serializable {
 
     public void setChoferes(List<EntidadChofer> choferes) {
         this.choferes = choferes;
+    }
+
+    public int getCantidadTurnosDiarios() {
+        return cantidadTurnosDiarios;
+    }
+
+    public void setCantidadTurnosDiarios(int cantidadTurnosDiarios) {
+        this.cantidadTurnosDiarios = cantidadTurnosDiarios;
+    }
+
+    public List<EntidadHorario> getHorarios() {
+        return horarios;
+    }
+
+    public void setHorarios(List<EntidadHorario> horarios) {
+        this.horarios = horarios;
+    }
+
+    public Integer getDuracionTurno() {
+        return duracionTurno;
+    }
+
+    public void setDuracionTurno(Integer duracionTurno) {
+        this.duracionTurno = duracionTurno;
+    }
+
+    public String getNroMatricula() {
+        return nroMatricula;
+    }
+
+    public void setNroMatricula(String nroMatricula) {
+        this.nroMatricula = nroMatricula;
     }
 
     @Override

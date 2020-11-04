@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml" >
+
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{usuarioSessionBean.checkExpiredAndClose()}" />
+        </f:metadata>
+
+        <ui:define name="titulo" >
+            Parámetros Salud
+        </ui:define>
+
+        <ui:define name="titulo-header" >
+            Parámetros Salud
+        </ui:define>
+
+        <ui:define name="menu">
+            <p:menubar id="menuBar">
+                <p:menuitem value="Guardar" icon="fa fa-save"
+                            actionListener="#{parametroSaludBean.guardar}"
+                            update="@form" />
+            </p:menubar>
+        </ui:define>
+
+        <ui:define name="contenido" >
+
+            <p:messages id="message" showDetail="true" /><p:growl id="messageg" showDetail="true" life="4000" />
+
+            <div class="EmptyBox10" />
+
+            <!-- DATOS -->
+            <p:panel header="" >
+
+                <p:tabView id="tbView" >
+
+                    <p:tab title="Configurar Grilla Horaria" >
+
+                        <p:fieldset   >
+                            <f:facet name="legend" >
+                                <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroDiaLunes}" >
+                                    <p:ajax process="@this" listener="#{parametroSaludBean.checkLunes}" update="lunes"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Lunes" />
+
+                            </f:facet>
+
+                            <p:panelGrid id= "lunes" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroMananaLunes}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaLunes}" >
+                                            <p:ajax process="@this"  update="mananaLunes"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Mañana" />
+
+                                    </f:facet>
+                                    <p:panelGrid id="mananaLunes" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true" value="#{parametroSaludBean.parametro.horaInicioMananaLunes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaLunes}" />
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinMananaLunes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaLunes}"/>
+                                    </p:panelGrid>
+
+
+                                </p:fieldset>
+
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroTardeLunes}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaLunes}">
+                                            <p:ajax process="@this" update="tardeLunes" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Tarde" />
+                                    </f:facet>
+
+                                    <p:panelGrid id="tardeLunes" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"  value="#{parametroSaludBean.parametro.horaInicioTardeLunes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeLunes}"/>
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinTardeLunes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeLunes}"/>
+                                    </p:panelGrid>
+
+                                </p:fieldset>
+
+
+                            </p:panelGrid>
+                        </p:fieldset>
+
+                        <p:fieldset   >
+                            <f:facet name="legend" >
+                                <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroDiaMartes}" >
+                                    <p:ajax process="@this" listener="#{parametroSaludBean.checkMartes}" update="martes"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Martes" />
+
+                            </f:facet>
+
+                            <p:panelGrid id= "martes" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroMananaMartes}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaMartes}" >
+                                            <p:ajax process="@this"  update="mananaMartes"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Mañana" />
+
+                                    </f:facet>
+                                    <p:panelGrid id="mananaMartes" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioMananaMartes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaMartes}" />
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinMananaMartes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaMartes}"/>
+                                    </p:panelGrid>
+
+
+                                </p:fieldset>
+
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroTardeMartes}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaMartes}">
+                                            <p:ajax process="@this" update="tardeMartes" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Tarde" />
+                                    </f:facet>
+
+                                    <p:panelGrid id="tardeMartes" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioTardeMartes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeMartes}"/>
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinTardeMartes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeMartes}"/>
+                                    </p:panelGrid>
+
+                                </p:fieldset>
+
+
+                            </p:panelGrid>
+                        </p:fieldset>
+
+                        <p:fieldset   >
+                            <f:facet name="legend" >
+                                <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroDiaMiercoles}" >
+                                    <p:ajax process="@this" listener="#{parametroSaludBean.checkMiercoles}" update="miercoles"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Miércoles" />
+
+                            </f:facet>
+
+                            <p:panelGrid id= "miercoles" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroMananaMiercoles}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaMiercoles}" >
+                                            <p:ajax process="@this"  update="mananaMiercoles"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Mañana" />
+
+                                    </f:facet>
+                                    <p:panelGrid id="mananaMiercoles" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioMananaMiercoles}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaMiercoles}" />
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinMananaMiercoles}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaMiercoles}"/>
+                                    </p:panelGrid>
+
+
+                                </p:fieldset>
+
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroTardeMiercoles}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaMiercoles}">
+                                            <p:ajax process="@this" update="tardeMiercoles" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Tarde" />
+                                    </f:facet>
+
+                                    <p:panelGrid id="tardeMiercoles" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioTardeMiercoles}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeMiercoles}"/>
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinTardeMiercoles}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeMiercoles}"/>
+                                    </p:panelGrid>
+
+                                </p:fieldset>
+
+
+                            </p:panelGrid>
+                        </p:fieldset>
+
+                        <p:fieldset   >
+                            <f:facet name="legend" >
+                                <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroDiaJueves}" >
+                                    <p:ajax process="@this" listener="#{parametroSaludBean.checkJueves}" update="jueves"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Jueves" />
+
+                            </f:facet>
+
+                            <p:panelGrid id= "jueves" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroMananaJueves}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaJueves}" >
+                                            <p:ajax process="@this"  update="mananaJueves"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Mañana" />
+
+                                    </f:facet>
+                                    <p:panelGrid id="mananaJueves" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioMananaJueves}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaJueves}" />
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinMananaJueves}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaJueves}"/>
+                                    </p:panelGrid>
+
+
+                                </p:fieldset>
+
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroTardeJueves}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaJueves}">
+                                            <p:ajax process="@this" update="tardeJueves" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Tarde" />
+                                    </f:facet>
+
+                                    <p:panelGrid id="tardeJueves" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioTardeJueves}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeJueves}"/>
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinTardeJueves}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeJueves}"/>
+                                    </p:panelGrid>
+
+                                </p:fieldset>
+
+
+                            </p:panelGrid>
+                        </p:fieldset>
+
+
+                        <p:fieldset   >
+                            <f:facet name="legend" >
+                                <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroDiaViernes}" >
+                                    <p:ajax process="@this" listener="#{parametroSaludBean.checkViernes}" update="viernes"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Viernes" />
+
+                            </f:facet>
+
+                            <p:panelGrid id= "viernes" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroMananaViernes}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaViernes}" >
+                                            <p:ajax process="@this"  update="mananaViernes"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Mañana" />
+
+                                    </f:facet>
+                                    <p:panelGrid id="mananaViernes" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioMananaViernes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaViernes}" />
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinMananaViernes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaViernes}"/>
+                                    </p:panelGrid>
+
+
+                                </p:fieldset>
+
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroTardeViernes}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaViernes}">
+                                            <p:ajax process="@this" update="tardeViernes" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Tarde" />
+                                    </f:facet>
+
+                                    <p:panelGrid id="tardeViernes" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioTardeViernes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeViernes}"/>
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinTardeViernes}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeViernes}"/>
+                                    </p:panelGrid>
+
+                                </p:fieldset>
+
+
+                            </p:panelGrid>
+                        </p:fieldset>
+
+                        <p:fieldset   >
+                            <f:facet name="legend" >
+                                <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroDiaSabado}" >
+                                    <p:ajax process="@this" listener="#{parametroSaludBean.checkSabado}" update="sabado"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Sábado" />
+
+                            </f:facet>
+
+                            <p:panelGrid id= "sabado" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroMananaSabado}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaSabado}" >
+                                            <p:ajax process="@this"  update="mananaSabado"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Mañana" />
+
+                                    </f:facet>
+                                    <p:panelGrid id="mananaSabado" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioMananaSabado}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaSabado}" />
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinMananaSabado}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaSabado}"/>
+                                    </p:panelGrid>
+
+
+                                </p:fieldset>
+
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroTardeSabado}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaSabado}">
+                                            <p:ajax process="@this" update="tardeSabado" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Tarde" />
+                                    </f:facet>
+
+                                    <p:panelGrid id="tardeSabado" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioTardeSabado}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeSabado}"/>
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinTardeSabado}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeSabado}"/>
+                                    </p:panelGrid>
+
+                                </p:fieldset>
+
+
+                            </p:panelGrid>
+                        </p:fieldset>
+
+
+                        <p:fieldset   >
+                            <f:facet name="legend" >
+                                <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroDiaDomingo}" >
+                                    <p:ajax process="@this" listener="#{parametroSaludBean.checkDomingo}" update="domingo"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="Domingo" />
+
+                            </f:facet>
+
+                            <p:panelGrid id= "domingo" columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                         columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroMananaDomingo}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaDomingo}" >
+                                            <p:ajax process="@this"  update="mananaDomingo"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Mañana" />
+
+                                    </f:facet>
+                                    <p:panelGrid id="mananaDomingo" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioMananaDomingo}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaDomingo}" />
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinMananaDomingo}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroMananaDomingo}"/>
+                                    </p:panelGrid>
+
+
+                                </p:fieldset>
+
+                                <p:fieldset   >
+                                    <f:facet name="legend" >
+                                        <p:selectBooleanCheckbox value="#{parametroSaludBean.seleccionadoRegistroTardeDomingo}" disabled="#{not parametroSaludBean.seleccionadoRegistroDiaDomingo}">
+                                            <p:ajax process="@this" update="tardeDomingo" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value="Tarde" />
+                                    </f:facet>
+
+                                    <p:panelGrid id="tardeDomingo" columns="4" layout="grid"
+                                                 styleClass="ui-panelgrid-blank"
+                                                 columnClasses="ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5,ui-g-4 ui-md-4 ui-lg-1,ui-g-8 ui-md-8 ui-lg-5" >
+                                        <h:outputText value="Hora Inicio :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaInicioTardeDomingo}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeDomingo}"/>
+                                        <h:outputText value="Hora Fin :" />
+                                        <p:calendar timeOnly="true"   value="#{parametroSaludBean.parametro.horaFinTardeDomingo}"  pattern="HH:mm" disabled="#{not parametroSaludBean.seleccionadoRegistroTardeDomingo}"/>
+                                    </p:panelGrid>
+
+                                </p:fieldset>
+
+
+                            </p:panelGrid>
+                        </p:fieldset>
+
+
+
+                    </p:tab>
+
+                    <p:tab title="Configurar Otros Datos">
+                        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank"
+                                     columnClasses="ui-g-12 ui-md-6, ui-g-12 ui-md-6"  >
+
+                            <h:outputText value="Estado *" />
+                            <p:autoComplete value="#{parametroSaludBean.parametro.estado}" dropdown="true"
+                                            maxResults="8" queryDelay="1000"
+                                            completeMethod="#{estadoSaludBean.complete}"
+                                            var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"
+                                            converter="#{conversoresSalud.estado}" forceSelection="true" >
+                                <p:ajax event="itemSelect" process="@this" update="@this" />
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{p.codigo}" />
+                                </p:column>
+
+                                <p:column headerText="Descripcion">
+                                    <h:outputText value="#{p.descripcion}" />
+                                </p:column>
+
+                            </p:autoComplete>
+
+                            <h:outputText value="Duración Turno en minutos *" />
+                            <p:inputNumber  value="#{parametroSaludBean.parametro.duracionTurno}" minValue="0" maxValue="60" decimalPlaces="0" />
+
+                        </p:panelGrid>
+
+                        <p:spacer height="20" />
+
+                    </p:tab>
+
+                </p:tabView>
+            </p:panel>
+
+        </ui:define>
+
+    </ui:composition>
+
+</html>
+
+
+

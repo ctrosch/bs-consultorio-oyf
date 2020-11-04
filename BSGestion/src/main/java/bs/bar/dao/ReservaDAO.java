@@ -67,7 +67,7 @@ public class ReservaDAO extends BaseDAO {
                 q.setParameter("salon", salon.getCodigo());
             }
 
-            return ((Long) q.getSingleResult()).intValue();
+            return (q.getSingleResult() != null ? ((Long) q.getSingleResult()).intValue() : 0);
 
         } catch (NoResultException e) {
             return 0;

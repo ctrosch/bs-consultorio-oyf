@@ -192,6 +192,9 @@ public class MovimientoSalud implements IAuditableEntity, Serializable {
     @OrderBy("fechaAdjunto")
     private List<ArchivoAdjunto> adjuntos;
 
+    @Transient
+    private List<MovimientoSalud> historiaClinica;
+
     @Embedded
     private Auditoria auditoria;
 
@@ -477,6 +480,14 @@ public class MovimientoSalud implements IAuditableEntity, Serializable {
 
     public void setAdjuntos(List<ArchivoAdjunto> adjuntos) {
         this.adjuntos = adjuntos;
+    }
+
+    public List<MovimientoSalud> getHistoriaClinica() {
+        return historiaClinica;
+    }
+
+    public void setHistoriaClinica(List<MovimientoSalud> historiaClinica) {
+        this.historiaClinica = historiaClinica;
     }
 
     @Override

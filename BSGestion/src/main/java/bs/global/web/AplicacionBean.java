@@ -95,6 +95,13 @@ public class AplicacionBean extends GenericBean implements Serializable {
             }
 
             //Verificamos carpeta de productos de la organizacion, de lo contrario la creamos
+            folder = new File(parametro.getPathCarpetaAdjuntos());
+            if (!folder.isDirectory()) {
+                System.err.println("Crea directorio adjuntos");
+                folder.mkdirs();
+            }
+
+            //Verificamos carpeta de productos de la organizacion, de lo contrario la creamos
             folder = new File(parametro.getPathCarpetaProductos());
             if (!folder.isDirectory()) {
                 System.err.println("Crea directorio productos");

@@ -17,6 +17,7 @@ import bs.global.web.GenericBean;
 import bs.prestamo.rn.PrestamoRN;
 import bs.produccion.modelo.MovimientoProduccion;
 import bs.produccion.rn.ProduccionRN;
+import bs.salud.rn.SaludRN;
 import bs.stock.rn.ProductoRN;
 import bs.tarea.modelo.Tarea;
 import bs.tarea.rn.TareaRN;
@@ -70,11 +71,14 @@ public class DashboardBean extends GenericBean implements Serializable {
     private ProduccionRN produccionRN;
     @EJB
     private TareaRN tareaRN;
+    @EJB
+    private SaludRN saludRN;
 
     @EJB
     private PrestamoRN prestamoRN;
 
     private BarChartModel estadisticasVenta;
+    private BarChartModel estadisticasSalud;
     private PieChartModel vencidoVencer;
     private int cantClientes;
     private int cantProveedores;
@@ -86,6 +90,11 @@ public class DashboardBean extends GenericBean implements Serializable {
     private int cantProductos;
     private int cantPrestamos;
     private int cantCuentasContables;
+    private int cantProfesionales;
+    private int cantPacientes;
+    private int cantPacientesEnTurnos;
+    private int cantPacientesEnEspera;
+    private int cantPacientesEnAtencion;
 
     private List<PendienteCompraDetalle> pendienteCompra;
     private List<MovimientoVenta> ultimasVentas;
@@ -99,6 +108,10 @@ public class DashboardBean extends GenericBean implements Serializable {
     private String datosVentas;
     private String labelsVentas;
     private String datosVencidoVencer;
+
+    private String datosTurnos;
+    private String datosAtencion;
+    private String labelsSalud;
 
     /**
      * Creates a new instance of DashboardBean
@@ -148,6 +161,19 @@ public class DashboardBean extends GenericBean implements Serializable {
 
         if (isActiveModulo("PD")) {
             actualizarOrdenesProduccion();
+        }
+
+        if (isActiveModulo("SA")) {
+
+            cargarEstadisticaSaludMensuales();
+
+            cantPacientes = entidadRN.getCantidadByTipo("6");
+            cantProfesionales = entidadRN.getCantidadByTipo("7");
+
+            cantPacientesEnTurnos = saludRN.getCantidadPacientesByEstado("RT", "E", null, null);
+            cantPacientesEnEspera = saludRN.getCantidadPacientesByEstado("OC", "R", null, null);
+            cantPacientesEnAtencion = saludRN.getCantidadPacientesByEstado("IC", "A", null, null);
+
         }
 //        cargarRankingProductos();
     }
@@ -352,6 +378,64 @@ public class DashboardBean extends GenericBean implements Serializable {
         this.estadisticasVenta = estadisticasVenta;
     }
 
+    private void cargarEstadisticaSaludMensuales() {
+
+        String sql = "Select "
+                + " YEAR(sa_movimiento.FCHMOV) as ANIO, "
+                + " MONTH(sa_movimiento.FCHMOV) as MES, "
+                + " COUNT(CASE gr_comprobante.TIPCOM WHEN 'RT' THEN sa_movimiento.ID ELSE NULL END) As CANT_TURNOS, "
+                + " COUNT(CASE gr_comprobante.TIPCOM WHEN 'IA' THEN sa_movimiento.ID ELSE NULL END) As CANT_ATENCION "
+                + " From  sa_movimiento "
+                + " Inner Join gr_comprobante On sa_movimiento.MODCOM = gr_comprobante.MODCOM AND sa_movimiento.CODCOM = gr_comprobante.CODCOM "
+                + " Where sa_movimiento.FCHMOV >= DATE_ADD(now(),INTERVAL -150 DAY)  "
+                + " AND gr_comprobante.TIPCOM = 'IA' "
+                + " Group By MONTH(sa_movimiento.FCHMOV), YEAR(sa_movimiento.FCHMOV) "
+                + " Order By 1 Asc, 2 Asc ";
+
+        List<Object[]> resultado = dashboardRN.executeSQL(sql);
+
+        //ChartSeries cantidades = new ChartSeries();
+        //cantidades.setLabel("Cantidad");
+        labelsSalud = "";
+        datosTurnos = "";
+        datosAtencion = "";
+
+        if (resultado != null && !resultado.isEmpty()) {
+
+            resultado.forEach((r) -> {
+
+                String nombre = ((Integer) r[1]).toString();
+                Number valor = (Number) r[2];
+                Number valor1 = (Number) r[3];
+
+                if (labelsSalud.isEmpty()) {
+                    labelsSalud += "\"" + JsfUtil.getMeses().get(nombre) + "\"";
+                } else {
+                    labelsSalud += ", \"" + JsfUtil.getMeses().get(nombre) + "\"";
+                }
+
+                if (datosTurnos.isEmpty()) {
+                    datosTurnos += valor.toString();
+                } else {
+                    datosTurnos += "," + valor.toString();
+                }
+
+                if (datosAtencion.isEmpty()) {
+                    datosAtencion += valor1.toString();
+                } else {
+                    datosAtencion += "," + valor1.toString();
+                }
+            });
+
+        } else {
+
+            String nombre = "N/D";
+            Number valor = 1;
+            Number valor1 = 1;
+        }
+
+    }
+
     public int getCantClientes() {
         return cantClientes;
     }
@@ -510,6 +594,78 @@ public class DashboardBean extends GenericBean implements Serializable {
 
     public void setCantCursos(int cantCursos) {
         this.cantCursos = cantCursos;
+    }
+
+    public int getCantProfesionales() {
+        return cantProfesionales;
+    }
+
+    public void setCantProfesionales(int cantProfesionales) {
+        this.cantProfesionales = cantProfesionales;
+    }
+
+    public int getCantPacientes() {
+        return cantPacientes;
+    }
+
+    public void setCantPacientes(int cantPacientes) {
+        this.cantPacientes = cantPacientes;
+    }
+
+    public int getCantPacientesEnTurnos() {
+        return cantPacientesEnTurnos;
+    }
+
+    public void setCantPacientesEnTurnos(int cantPacientesEnTurnos) {
+        this.cantPacientesEnTurnos = cantPacientesEnTurnos;
+    }
+
+    public int getCantPacientesEnEspera() {
+        return cantPacientesEnEspera;
+    }
+
+    public void setCantPacientesEnEspera(int cantPacientesEnEspera) {
+        this.cantPacientesEnEspera = cantPacientesEnEspera;
+    }
+
+    public int getCantPacientesEnAtencion() {
+        return cantPacientesEnAtencion;
+    }
+
+    public void setCantPacientesEnAtencion(int cantPacientesEnAtencion) {
+        this.cantPacientesEnAtencion = cantPacientesEnAtencion;
+    }
+
+    public BarChartModel getEstadisticasSalud() {
+        return estadisticasSalud;
+    }
+
+    public void setEstadisticasSalud(BarChartModel estadisticasSalud) {
+        this.estadisticasSalud = estadisticasSalud;
+    }
+
+    public String getDatosTurnos() {
+        return datosTurnos;
+    }
+
+    public void setDatosTurnos(String datosTurnos) {
+        this.datosTurnos = datosTurnos;
+    }
+
+    public String getDatosAtencion() {
+        return datosAtencion;
+    }
+
+    public void setDatosAtencion(String datosAtencion) {
+        this.datosAtencion = datosAtencion;
+    }
+
+    public String getLabelsSalud() {
+        return labelsSalud;
+    }
+
+    public void setLabelsSalud(String labelsSalud) {
+        this.labelsSalud = labelsSalud;
     }
 
 }

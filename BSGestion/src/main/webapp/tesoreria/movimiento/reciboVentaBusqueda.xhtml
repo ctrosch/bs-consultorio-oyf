@@ -65,7 +65,7 @@
                         var="e" itemLabel="#{e.razonSocial}" itemValue="#{e}"
                         converter="#{conversoresEntidad.entidadComercial}" forceSelection="true" >
 
-            <p:ajax event="itemSelect" process="@this" update="@this" listener="#{reciboBean.buscar()}" />
+            <p:ajax event="itemSelect" process="@this" update="movimientos" listener="#{reciboBean.buscar()}" />
 
             <p:column headerText="Nro cuenta" width="100">
                 <h:outputText value="#{e.nrocta}" />

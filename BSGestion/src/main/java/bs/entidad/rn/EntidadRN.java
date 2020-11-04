@@ -14,6 +14,7 @@ import bs.entidad.modelo.EntidadActividadComercial;
 import bs.entidad.modelo.EntidadCamion;
 import bs.entidad.modelo.EntidadChofer;
 import bs.entidad.modelo.EntidadComercial;
+import bs.entidad.modelo.EntidadHorario;
 import bs.entidad.modelo.EntidadObraSocial;
 import bs.entidad.modelo.EntidadTransporte;
 import bs.entidad.modelo.ImpuestoPorEntidad;
@@ -189,6 +190,38 @@ public class EntidadRN implements Serializable {
                     }
                 }
 
+            }
+
+            if (entidad.getHorarios() != null && !entidad.getHorarios().isEmpty()) {
+                for (EntidadHorario horario : entidad.getHorarios()) {
+                    if (horario.getAtiendeTurnoMañana().equals("S") && horario.getAtiendeTurnoTarde().equals("S")) {
+                        if (horario.getHoraInicioMañana().after(horario.getHoraFinMañana())) {
+                            throw new ExcepcionGeneralSistema("En el dia " + horario.getDiaSemana() + " la hora inicio de la mañana es mayor que la hora fin de la mañana");
+                        }
+                        if (horario.getHoraFinMañana().after(horario.getHoraInicioTarde())) {
+                            throw new ExcepcionGeneralSistema("En el dia " + horario.getDiaSemana() + " la hora fin de la mañana es mayor que la hora inicio de la tarde");
+                        }
+
+                        if (horario.getHoraInicioTarde().after(horario.getHoraFinTarde())) {
+                            throw new ExcepcionGeneralSistema("En el dia " + horario.getDiaSemana() + " la hora inicio de la tarde es mayor que la hora fin de la tarde");
+                        }
+                        continue;
+                    }
+
+                    if (horario.getAtiendeTurnoMañana().equals("S")) {
+                        if (horario.getHoraInicioMañana().after(horario.getHoraFinMañana())) {
+                            throw new ExcepcionGeneralSistema("En el dia " + horario.getDiaSemana() + " la hora inicio de la mañana es mayor que la hora fin de la mañana");
+                        }
+
+                    }
+
+                    if (horario.getAtiendeTurnoTarde().equals("S")) {
+                        if (horario.getHoraInicioTarde().after(horario.getHoraFinTarde())) {
+                            throw new ExcepcionGeneralSistema("En el dia " + horario.getDiaSemana() + " la hora inicio de la tarde es mayor que la hora fin de la tarde");
+                        }
+                    }
+
+                }
             }
         }
     }
@@ -795,6 +828,65 @@ public class EntidadRN implements Serializable {
 
     }
 
+    public void nuevoItemHorario(EntidadComercial entidad) {
+
+        if (entidad != null) {
+
+            if (entidad.getHorarios() == null) {
+                entidad.setHorarios(new ArrayList<EntidadHorario>());
+            }
+
+            EntidadHorario itemHorario = new EntidadHorario();
+            itemHorario.setNroitm(entidad.getHorarios().size() + 1);
+            itemHorario.setProfesionalMedico(entidad);
+
+            entidad.getHorarios().add(itemHorario);
+        }
+    }
+
+    public void eliminarItemHorario(EntidadComercial entidad, EntidadHorario itemHorario) throws ExcepcionGeneralSistema, Exception {
+
+        if (itemHorario == null) {
+            throw new ExcepcionGeneralSistema("Item vació, nada para anular");
+        }
+
+        boolean fItemBorrado = false;
+        int i = 0;
+        int indiceItemBorrar = -1;
+
+        for (EntidadHorario item : entidad.getHorarios()) {
+
+            if (item.getNroitm() >= 0) {
+
+                if (item.getNroitm() == itemHorario.getNroitm()) {
+                    indiceItemBorrar = i;
+                }
+            }
+            i++;
+        }
+
+        //Borramos los items productos
+        if (indiceItemBorrar >= 0) {
+            EntidadHorario remove = entidad.getHorarios().remove(indiceItemBorrar);
+
+            if (remove != null) {
+
+                if (remove.getId() != null) {
+                    entidadDAO.eliminar(EntidadHorario.class, remove.getId());
+                }
+                fItemBorrado = true;
+            }
+        }
+
+        if (!fItemBorrado) {
+            throw new ExcepcionGeneralSistema("No es posible borrar el item");
+        }
+
+        reorganizarNroItem(entidad);
+        entidad = guardar(entidad, false);
+
+    }
+
     private void reorganizarNroItem(EntidadComercial entidad) {
 
         //Reorganizamos los números de items
@@ -857,6 +949,15 @@ public class EntidadRN implements Serializable {
 
             i = 1;
             for (EntidadChofer item : entidad.getChoferes()) {
+                item.setNroitm(i);
+                i++;
+            }
+        }
+
+        if (entidad.getHorarios() != null) {
+
+            i = 1;
+            for (EntidadHorario item : entidad.getHorarios()) {
                 item.setNroitm(i);
                 i++;
             }

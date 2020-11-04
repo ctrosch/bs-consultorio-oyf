@@ -114,9 +114,39 @@
 
         </div>
 
+        <div class="EmptyBox20"></div>
     </h:panelGroup>
 
-    <div class="EmptyBox20"></div>
+    <h:panelGroup id="panelCuadros2" layout="block" styleClass="Container100 Responsive100"
+                  rendered="#{dashboardBean.isActiveModulo('SA')}" >
+
+        <div class="Flex FlexWrap">
+            <div class="Container50 Responsive100 Flex">
+                <div class="Card BordNone">
+                    <div class="EmptyBox5"></div>
+                    <div class="CardTopic Fs15 FontVoltSemiBold">Turnos Vs Informes de Atención</div>
+                    <div class="Separator"></div>
+                    <div class="EmptyBox5"></div>
+
+                    <canvas id="myChartSA001" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+            <div class="Container50 Responsive100 Flex">
+                <div class="Card BordNone">
+                    <div class="EmptyBox5"></div>
+                    <div class="CardTopic Fs15 FontVoltSemiBold">% Disponibilidad</div>
+                    <div class="Separator"></div>
+                    <div class="EmptyBox5"></div>
+                    <canvas id="myChartSA002" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="EmptyBox20"></div>
+
+    </h:panelGroup>
 
 
     <h:panelGroup layout="block" styleClass="Container100 Responsive100"
@@ -221,42 +251,49 @@
 
     <script>
         var ctx = document.getElementById("myChart");
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: [#{dashboardBean.labelsVentas}],
-                datasets: [{
-                        label: 'Ventas en pesos',
-                        data: [#{dashboardBean.datosVentas}],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255,99,132,1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
+
+        if (ctx) {
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [#{dashboardBean.labelsVentas}],
+                    datasets: [{
+                            label: 'Ventas en pesos',
+                            data: [#{dashboardBean.datosVentas}],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
                         }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                    }
                 }
-            }
-        });
+            });
+
+        }
+
+
 
         var data = {
             labels: [
@@ -281,14 +318,118 @@
 
 
         var ctx2 = document.getElementById("myChart2");
-        // For a pie chart
-        var myPieChart = new Chart(ctx2, {
-            type: 'pie',
-            data: data,
-            options: {
-                responsive: true
-            }
-        });
+
+        if (ctx2) {
+
+            var myPieChart = new Chart(ctx2, {
+                type: 'pie',
+                data: data,
+                options: {
+                    responsive: true
+                }
+            });
+
+
+        }
+
+
+        var ctxSA001 = document.getElementById("myChartSA001");
+
+        if (ctxSA001) {
+
+            var myChartSA001 = new Chart(ctxSA001, {
+                type: 'bar',
+                data: {
+                    labels: ["Septiembre", "Octubre", "Noviembre"],
+                    datasets: [{
+                            label: 'Turnos',
+                            data: [15.00, 24.00, 39.00],
+                            backgroundColor: ['rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: ['rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1},
+                        {
+                            label: 'Informes de Atención',
+                            data: [19.00, 25.00, 40.00],
+                            backgroundColor: ['rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(1, 102, 245, 0.2)',
+                                'rgba(255, 159, 54, 0.2)'
+                            ],
+                            borderColor: ['rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(1, 102, 245, 0.2)',
+                                'rgba(255, 159, 54, 0.2)'
+                            ],
+                            borderWidth: 1}
+                    ]
+                },
+                options: {scales: {yAxes: [{
+                                ticks: {beginAtZero: true
+                                }
+                            }]
+                    }
+                }
+            });
+
+        }
+
+
+        var ctxSA002 = document.getElementById("myChartSA002");
+
+        if (ctxSA002) {
+
+            var myChartSA002 = new Chart(ctxSA002, {
+                type: 'horizontalBar',
+                data: {
+                    labels: ["Fernando Krljih", "Erica Perez"],
+                    datasets: [{
+                            label: 'Disponibilidad',
+                            data: [15.00, 24.00],
+                            backgroundColor: ['rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: ['rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1}
+                    ]
+                },
+                options: {scales: {yAxes: [{
+                                ticks: {beginAtZero: true
+                                }
+                            }]
+                    }
+                }
+            });
+
+        }
+
+
+
 
     </script>
 

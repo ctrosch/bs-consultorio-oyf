@@ -198,7 +198,7 @@ AND IF(LENGTH($P{CLAS02}) > 0, p.CLAS02 = $P{CLAS02},1=1)
 AND IF(LENGTH($P{CLAS03}) > 0, p.CLAS03 = $P{CLAS03},1=1)
 AND m.CODSUC IN(SELECT n.CODSUC FROM sg_usuario_sucursal n inner join sg_usuario u on n.CODUSU = u.ID WHERE u.USUARIO = $P{USUARIO})
 GROUP BY c.ID_MOV, c.NROCTA, c.FCHMOV, c.ID_PRES, c.`CUOTAS`
-ORDER BY c.NROCTA, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
+ORDER BY c.NROCTA, p.FCHCRE, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
 	</queryString>
 	<field name="ID_MOV" class="java.lang.Integer">
 		<fieldDescription><![CDATA[Movimiento]]></fieldDescription>
@@ -433,14 +433,14 @@ ORDER BY c.NROCTA, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
 				<text><![CDATA[Comprobante]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="189" y="15" width="69" height="15" uuid="8753bfa5-67cd-49a7-af21-6a0b290083a0"/>
+				<reportElement x="284" y="15" width="69" height="15" uuid="8753bfa5-67cd-49a7-af21-6a0b290083a0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha Comp.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="120" y="15" width="69" height="15" uuid="0f29530b-07f7-40e7-af5e-3d05081078bf"/>
+				<reportElement x="215" y="15" width="69" height="15" uuid="0f29530b-07f7-40e7-af5e-3d05081078bf"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -454,7 +454,7 @@ ORDER BY c.NROCTA, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
 				<text><![CDATA[Razón Social]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="68" y="15" width="52" height="15" uuid="2fcea7df-8cde-4c70-a368-61f7adcf71df"/>
+				<reportElement x="163" y="15" width="52" height="15" uuid="2fcea7df-8cde-4c70-a368-61f7adcf71df"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -482,7 +482,7 @@ ORDER BY c.NROCTA, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
 				<text><![CDATA[Debe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="351" y="15" width="48" height="15" uuid="abb5a1ee-1500-4f5a-b046-56eca2679141"/>
+				<reportElement x="364" y="15" width="35" height="15" uuid="abb5a1ee-1500-4f5a-b046-56eca2679141"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -493,7 +493,7 @@ ORDER BY c.NROCTA, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
 	<detail>
 		<band height="14">
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="189" y="0" width="69" height="12" uuid="1ce3ba65-a347-449c-bb08-621b58ac25d5"/>
+				<reportElement x="284" y="0" width="69" height="12" uuid="1ce3ba65-a347-449c-bb08-621b58ac25d5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -503,21 +503,21 @@ ORDER BY c.NROCTA, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
 				<reportElement x="0" y="12" width="555" height="1" forecolor="#999999" uuid="4f90148f-f430-4eb9-baf2-e871628e03eb"/>
 			</line>
 			<textField>
-				<reportElement x="0" y="0" width="68" height="12" uuid="98577cd0-0711-4b45-88c7-f395f1e397fb"/>
+				<reportElement x="0" y="0" width="144" height="12" uuid="98577cd0-0711-4b45-88c7-f395f1e397fb"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{CODFOR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DESCOM}]]></textFieldExpression>
 			</textField>
 			<textField pattern="00000000">
-				<reportElement x="120" y="0" width="69" height="12" uuid="5adcf248-fefc-4d7d-8271-158002f1355b"/>
+				<reportElement x="215" y="0" width="69" height="12" uuid="5adcf248-fefc-4d7d-8271-158002f1355b"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NROFOR}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="68" y="0" width="52" height="12" uuid="14917b68-e467-4483-9600-5a82790344b8"/>
+				<reportElement x="163" y="0" width="52" height="12" uuid="14917b68-e467-4483-9600-5a82790344b8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -544,8 +544,8 @@ ORDER BY c.NROCTA, p.CODIGO, m.FCHMOV, m.CODFOR, m.NROFOR, c.CUOTAS]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{MONREG}.equals("USD") ?$F{HABER_SEC}:$F{HABER}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00">
-				<reportElement x="351" y="0" width="49" height="12" uuid="f2c44429-9a3f-4c7b-9aa0-81be44802712"/>
+			<textField pattern="#,##0">
+				<reportElement x="364" y="0" width="36" height="12" uuid="f2c44429-9a3f-4c7b-9aa0-81be44802712"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>

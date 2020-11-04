@@ -1,0 +1,54 @@
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:bs="http://java.sun.com/jsf/composite/components/beansoft" >
+
+    <p:dataTable id="movimientos" value="#{movimientoSaludBean.m.historiaClinica}" var="i"
+                 scrollable="true" scrollHeight="300" resizeMode="expand" liveResize="true"
+                 emptyMessage="No se encontraron datos" >
+
+        <p:column headerText="Fecha" width="80" styleClass="TexAlCenter" >
+            <h:outputText value="#{i.fechaMovimiento}"  >
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputText>
+        </p:column>
+
+        <p:column headerText="Profesional" width="150" >
+            <h:outputText value="#{i.profesional.nombreComplete}" />
+        </p:column>
+
+        <p:column headerText="Detalle" width="200" >
+            <h:outputText value="#{i.detalleConsulta}" />
+        </p:column>
+
+        <p:column headerText="Observaciones" width="200" >
+            <h:outputText value="#{i.observaciones}" />
+        </p:column>
+
+        <p:column headerText="Archivos" width="150" >
+
+            <p:dataList value="#{i.adjuntos}" var="a" >
+
+                <h:outputText value="#{a.nombre}" />
+
+                <h:outputLink value="#{a.pathArchivo}"
+                              rendered="#{not empty a.pathArchivo}" target="_blank" >
+
+                    <i class="fa fa-external-link" ></i>
+                </h:outputLink>
+
+            </p:dataList>
+
+
+        </p:column>
+
+    </p:dataTable>
+
+
+
+</ui:composition>
+

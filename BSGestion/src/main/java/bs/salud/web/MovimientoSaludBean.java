@@ -200,6 +200,8 @@ public class MovimientoSaludBean extends GenericBean implements Serializable {
 
             if (m.getComprobante().getTipoComprobante().equals("RT")) {
                 actualizarCalendario();
+                PrimeFaces.current().executeScript("PF('dlgTurno').hide();");
+                PrimeFaces.current().executeScript("PF('dlgTurno').hide();");
             }
             JsfUtil.addInfoMessage("El documento " + m.getFormulario().getDescripcion() + "-" + m.getNumeroFormulario() + " se guardó correctamente", "");
 //            cuentaContableBean.setCuentaContable(null);
@@ -463,6 +465,10 @@ public class MovimientoSaludBean extends GenericBean implements Serializable {
             filtro.put("estado.codigo = ", "'E'");
         }
 
+        if (m.getFechaMovimiento() != null) {
+            filtro.put("fechaMovimiento = ", JsfUtil.getFechaSQL(m.getFechaMovimiento()));
+        }
+
         if (paciente != null) {
 
             filtro.put("paciente.nrocta = ", "'" + paciente.getNrocta() + "'");
@@ -591,6 +597,10 @@ public class MovimientoSaludBean extends GenericBean implements Serializable {
             try {
                 saludRN.asignarPaciente(m, m.getPaciente());
 
+                if (m.getComprobante().getTipoComprobante().equals("IA")) {
+                    saludRN.cargarHistoriaClinica(m);
+                }
+
             } catch (Exception ex) {
                 JsfUtil.addErrorMessage("No es posible asignar paciente " + ex);
             }
@@ -680,7 +690,8 @@ public class MovimientoSaludBean extends GenericBean implements Serializable {
     public void onDateSelect(SelectEvent selectEvent) {
 
         nuevo();
-        m = saludRN.nuevoTurno(m, selectEvent);
+        Date fechaEvento = (Date) selectEvent.getObject();
+        m.setFechaMovimiento(fechaEvento);
         m.setProfesional(profesional);
         procesarProfesional();
         completeHorario();
@@ -719,7 +730,7 @@ public class MovimientoSaludBean extends GenericBean implements Serializable {
             String extension = split[split.length - 1].toLowerCase();
             String archivo = m.getPaciente().getNrocta() + "_" + sdf.format(new Date()) + "_" + JsfUtil.getCadenaAlfanumAleatoria(5) + "." + extension;
 
-            File file = new File(aplicacionBean.getParametro().getPathCarpetaProductos() + archivo);
+            File file = new File(aplicacionBean.getParametro().getPathCarpetaAdjuntos() + archivo);
 
             // write the inputStream to a FileOutputStream
             OutputStream out = new FileOutputStream(file);
@@ -734,7 +745,8 @@ public class MovimientoSaludBean extends GenericBean implements Serializable {
             out.flush();
             out.close();
 
-            archivoAdjunto.setPathArchivo(aplicacionBean.getParametro().getUrlCarpetaProductos() + archivo);
+            archivoAdjunto.setNombre(archivo);
+            archivoAdjunto.setPathArchivo(aplicacionBean.getParametro().getUrlCarpetaArchivos() + archivo);
 
 //            if (!esNuevo) {
 //                saludRN.guardar(m);
